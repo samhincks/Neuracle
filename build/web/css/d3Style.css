@@ -1,0 +1,127 @@
+/* 
+    Document   : d3Style
+    Created on : Jul 3, 2013, 11:32:06 AM
+    Author     : samhincks
+    Description:
+        Purpose of the stylesheet follows.
+*/
+  .step {
+        width: 1000px;
+        height: 1000px;
+        display: block;
+        padding: 100px;
+        font-size: 200px;
+        border: 10px solid black;
+
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing:    border-box;
+        -ms-box-sizing:     border-box;
+        -o-box-sizing:      border-box;
+        box-sizing:         border-box;
+    }
+
+   .chart {
+      font: 10px sans-serif;
+      background-color: ghostwhite;
+      text-align: right;
+      padding: 3px;
+      margin: 1px;
+      color: white;
+      position:absolute; /*if relative positioning, then charts will display one after another*/
+      width: 100%;
+      height: 100%;
+    }
+
+    .chart rect {
+       stroke: white;
+    }
+
+    .x.axis {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+    .y.axis {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+/*            path {
+        stroke: steelblue;
+        stroke-width: 2;
+        fill: none;
+    }*/
+
+    .d3line {
+        fill: none;
+        stroke-width: 7px;
+        opacity: 0.4;
+    }
+    .d3line:hover {
+        opacity:0.9;
+    }
+    .expectedLine {
+            opacity: 0.7;
+            stroke: black;
+     }
+     .percentageLabbel {
+         z-index: 60;
+         opacity: 1;
+     }
+ 
+
+    /*
+    * The CSS below is intended for the "global" styles of svg.line-graph, not specifics per graph such as color of lines
+    * which is expected to come from the data itself (even though it can be done via CSS as well if wanted)
+    */
+
+
+    svg.line-graph text {
+            cursor: default;
+    }
+
+    svg.line-graph .hover-line {
+            stroke: #6E7B8B;
+    }
+
+    svg.line-graph .hide {
+            opacity: 0;
+    }
+
+    svg.line-graph .axis {
+      shape-rendering: crispEdges;
+    }
+
+    svg.line-graph .x.axis line {
+      stroke: #D3D3D3;
+    }
+
+    svg.line-graph .x.axis .minor {
+      stroke-opacity: .5;
+    }
+
+    svg.line-graph .x.axis path {
+      display: none;
+    }
+
+    svg.line-graph .x.axis text {
+            font-size: 10px;
+    }
+
+    svg.line-graph .y.axis line, .y.axis path {
+      fill: none;
+      stroke: #000;
+    }
+
+    svg.line-graph .y.axis text {
+            font-size: 12px;
+    }
+
+    svg.line-graph .scale-button:not(.selected):hover {
+            text-decoration: underline;
+            cursor: pointer !important;
+    }
+
+    svg.line-graph .date-label {
+            fill: #6E7B8B;
+    }

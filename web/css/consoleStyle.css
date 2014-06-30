@@ -1,0 +1,72 @@
+/* 
+    Document   : consoleStyle
+    Created on : Jul 3, 2013, 11:33:00 AM
+    Author     : samhincks
+    Description:
+        Purpose of the stylesheet follows.
+*/
+    #console {   
+        width:99.8%;
+        height: 99.7%;
+        background-color: #EEEEEE;
+        border: 2% solid #CCCCCC;
+        font-family: "Monaco","Courier New",monospace; 
+        overflow: auto;
+        position: relative;
+    } 
+
+    #pastmessages {
+        margin-left:5%;
+        margin-right:5%;
+        padding-top: 5%;
+    }
+
+    .systemmess {   
+        padding:2%;
+        background-color: whitesmoke; 
+        border-radius: 15px;    
+    }
+
+    .redline {     
+        color: crimson; 
+    }
+    .orangeline {
+        color: #F80 
+    } 
+    .greenline {
+      color : #00B85C
+    }
+    .blueline {
+        color : blue;
+    }
+    .usermessage {
+       margin-top:2%;
+       margin-bottom: 2%;    
+    }
+    .prompt {     
+        margin-left: 5%;
+    } 
+    .cursor {
+        height: 10%;
+        width: 10%;
+        background-color:#666666; 
+    }
+
+    input {
+        background: #EEEEEE;
+        height: 10%; 
+        width: 80%;
+        border: none;
+        outline: none;
+        font-family: "Monaco","Courier New",monospace; 
+        font-size: 15px;
+    }
+
+    input:text {
+        font-family: "Monaco","Courier New",monospace; 
+    }
+
+    input:focus {
+        border: none; 
+        outline: none;    
+    }

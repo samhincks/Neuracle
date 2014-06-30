@@ -1,0 +1,111 @@
+/* 
+    Document   : style
+    Created on : Aug 2, 2012, 10:45:28 AM
+    Author     : Sam Hincks
+    Description:
+        Purpose of the stylesheet follows.
+*/
+   
+    /**Governing the main layout. 
+    **/
+  
+    #timemine {
+        width:100%;
+        height:100%;
+        background:snow;
+        position:fixed;
+        border-color: black;
+    }
+    
+    .component {
+        border-style: solid;
+        border-width:1%;
+        border-color: black;
+        position: fixed;
+    }
+    
+    .infoBox {
+        background: whitesmoke;
+        height: 12%;
+        width: 75%;
+        left: 12.5%;
+        position:absolute;
+        z-index: 3;
+        opacity: 0.6;
+        top: 2%;
+        padding:10px;
+        font-family: "Monaco","Courier New",monospace; 
+    }
+    
+    #topLeft { 
+        width: 49%;
+        height: 59%;
+        background:ghostwhite;
+        opacity: 0.8;
+        z-index: 1;
+    }
+     #topRight {
+        width:49.5%;
+        height:59%;
+        opacity: 0.8;
+        left:50%;
+        background:ghostwhite;
+        z-index:1;
+    }
+    
+    #bottomLeft {
+        top: 65%;
+        left:2%;
+        width: 15%;
+    }
+    
+    #bottomRight {
+        width: 60%;
+        height: 38%;
+        background:whitesmoke;
+        top:61%;
+        left: 20%;
+        z-index: 2;
+    }
+    
+    #onText {
+        margin-bottom: 10px;
+        color:grey;
+        font-family:  "Monaco", "Courier New", monospace; 
+        -webkit-user-select: none; /* Chrome/Safari */        
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* IE10+ */
+    }
+    
+    #onButton {
+        margin-left: 32.5px;
+        margin-bottom: -5px;
+    }
+
+    #container {
+        margin-left: 400px ;
+    }
+
+    #instruction {
+        margin-left: 200px;
+        color:grey;
+        font-size: 20px;
+        font-family:  "Monaco", "Courier New", monospace; 
+        -webkit-user-select: none; /* Chrome/Safari */        
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* IE10+ */
+    }
+
+    #line {
+        width: 600px;
+        height: 3px;
+        background-color: black;
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+    
+    #dataLayers {height: 400px; width: 400px; margin: 0px; }
+    /*.dropChannel {float: right; width: 60px; height: 60px; border: 1px solid #999; background: black;}*/
+    /*.dropChannel:hover{background-color:grey;}*/
+    #fileUpload {margin: 2%; }
+    *.unselectable {-moz-user-select: -moz-none;-khtml-user-select: none;-webkit-user-select: none;-ms-user-select: none;user-select: none;}
