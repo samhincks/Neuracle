@@ -25,6 +25,26 @@ import datetime
 DEVICE = 'CMS50D'
 #DEVICE = 'fNIRS'
 
+
+"""
+%y: Year
+%m: Month
+%d: Day of the month
+%H: Hour (24H)
+%I: Hour (12H)
+%M: Minute
+%S: Second
+%f: Microsecond
+
+%x: MM/DD/(YY)YY
+%X: HH:MM:SS
+
+"""
+
+ADDTIMESTAMP = True
+#TIMEFORMAT = "%m/%d %X.%f"
+TIMEFORMAT = "%X.%f"
+
 # Read data from Serial port. When you use different COM PORT, Change "port"
 
 if DEVICE == 'CMS50D':
@@ -88,11 +108,13 @@ def addChunkToDB(host, port, user, pw, db, count, chunk):
     cur=conn.cursor()   
                  
     #Insert the data to the Table REALTIME            
-    time = str(datetime.datetime.now())
-   # cur.execute("""INSERT INTO REALTIME(Uk1,YAxis,Uk2,PRbpm,SpO2,Time) VALUES
-    #  (%s,%s,%s,%s,%s,%s)""",(chunk[0],chunk[1],chunk[2],chunk[3],chunk[4],time))
-    cur.execute("""INSERT INTO REALTIME(Uk1,YAxis,Uk2,PRbpm,SpO2) VALUES
-      (%s,%s,%s,%s,%s)""",(chunk[0],chunk[1],chunk[2],chunk[3],chunk[4]))
+    if ADDTIMESTAMP:
+        time = datetime.datetime.now().strftime(TIMEFORMAT)
+        cur.execute("""INSERT INTO REALTIME(Uk1,YAxis,Uk2,PRbpm,SpO2,Time) VALUES
+          (%s,%s,%s,%s,%s,%s)""",(chunk[0],chunk[1],chunk[2],chunk[3],chunk[4],time))
+    else:
+        cur.execute("""INSERT INTO REALTIME(Uk1,YAxis,Uk2,PRbpm,SpO2) VALUES
+          (%s,%s,%s,%s,%s)""",(chunk[0],chunk[1],chunk[2],chunk[3],chunk[4]))
     conn.commit()
     cur.close()
     conn.close()
@@ -114,36 +136,24 @@ def readFromCMS50D():
     oneChunk = []
     
     i = 0
-
-    # Align to the 5 byte chunk
-    while not aligned:
+    while True: #i < 1000:
         for line in ser.read():
-            if line > 127:
-                aligned = True
-                for i in range(chunkSize-1):
-                    ser.read()
-
-    while True:
-        for line in ser.read():
-            oneChunk.append(line)
-            #oneChunk = readChunk(chunkSize)
-            i+=1
-            if len(oneChunk) == 5: # Chunk reading complete
-                print(oneChunk)
-                data.append(oneChunk)
-                addChunkToDB('127.0.0.1', 3306, 'root', 'fnirs196',
-                        'newttt', count, oneChunk)
-                count = count+1
-                oneChunk = []
-
-    '''
-    while i < 1000:
-        for j in range(chunkSize):
-            for line in ser.read():
+            if not aligned:
                 if line > 127:
+                    aligned = True
                     oneChunk.append(line)
-
-    '''
+            else:
+                oneChunk.append(line)
+                #oneChunk = readChunk(chunkSize)
+                i+=1
+                if len(oneChunk) == 5: # Chunk reading complete
+                    print(oneChunk)
+                    data.append(oneChunk)
+                    addChunkToDB('127.0.0.1', 3306, 'root', 'fnirs196',
+                            'newttt', count, oneChunk)
+                    count = count+1
+                    oneChunk = []
+                    aligned = False
 
     # First chunk is sometimes not the right size (??)
     data.pop(0) 
@@ -161,8 +171,10 @@ def main():
     cur=conn.cursor() 
 
     cur.execute("DROP TABLE IF EXISTS " + tableName)
-    #createQuery = "CREATE TABLE " + tableName +" (Uk1 VARCHAR(45), YAxis VARCHAR(45), Uk2 VARCHAR(45), PRbpm VARCHAR(45), SpO2 VARCHAR(45), Time VARCHAR(45))"; 
-    createQuery = "CREATE TABLE " + tableName +" (Uk1 VARCHAR(45), YAxis VARCHAR(45), Uk2 VARCHAR(45), PRbpm VARCHAR(45), SpO2 VARCHAR(45))"; 
+    if ADDTIMESTAMP:
+        createQuery = "CREATE TABLE " + tableName +" (Uk1 VARCHAR(45), YAxis VARCHAR(45), Uk2 VARCHAR(45), PRbpm VARCHAR(45), SpO2 VARCHAR(45), Time VARCHAR(45))"; 
+    else:
+        createQuery = "CREATE TABLE " + tableName +" (Uk1 VARCHAR(45), YAxis VARCHAR(45), Uk2 VARCHAR(45), PRbpm VARCHAR(45), SpO2 VARCHAR(45))"; 
    
     cur.execute(createQuery)
 
