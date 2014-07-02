@@ -86,20 +86,61 @@ public class InputParser {
         return retString;
         
     }
-    // If the user input opensocket,it call Client in the realtimereceiver package
-    private String openSocket()throws Exception{
-        Client cl = new Client();
-        String retString = "";
-        retString  = cl.run();
-        return retString;
+    private MiscellaneousParser miscParser;
+    public InputParser() {
+        miscParser = new MiscellaneousParser();
+    } 
+    public JSONObject parseInput(String input, ThisActionBeanContext ctx) throws JSONException, Exception {
+        JSONObject jsonObj = null; 
+        try {
+            
+            //.. retrieve the data layer that's currently selected
+            DataLayerDAO dl = ctx.getCurrentDataLayer();
+            if (dl != null) {
+                currentDataLayer = dl.dataLayer;
+                System.out.println("Just got currentdatalayer" + currentDataLayer.id);
+            } else {
+                System.err.println("No loaded datalayers");
+            }
+
+            //.. retreive the techinique that's currently selected
+            TechniqueDAO techDAO = ctx.getCurrentTechnique();
+            if (techDAO != null) {
+                currentTechnique = techDAO.technique;
+            }
+            
+           // String command = input.split("(")
+            
+            //jsonObj = miscParser.execute(input, ctx, currentDataLayer);
+             
+            /* if (jsonObj == null)
+                 jsonObj = transformationParser.execute(input); */ 
+             
+             
+             //.. finally if nothing recognized this command, complain at user
+             if (jsonObj == null) {
+                 jsonObj = new JSONObject();
+                 jsonObj.put("error", "No command " + input + " exists");
+             }
+             
+             
+                 
+             return jsonObj;
+
+         }
+         catch (Exception e) {
+            e.printStackTrace();
+            jsonObj.put("error", e.getMessage());
+            return jsonObj;
+        }
     }
+ 
     /**Generate an appropriate response.
      * jsonObj.action == any actions we want to take on the JS side, for example changing view
      * jsonObj.content == any messages we want to display
      * jsonObj.error == any error messages we want to display
-     
      */
-    public JSONObject parseInput(String input, ThisActionBeanContext ctx) throws JSONException, Exception {
+    public JSONObject parseInput2(String input, ThisActionBeanContext ctx) throws JSONException, Exception {
         this.ctx = ctx;
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("content", "");
@@ -139,66 +180,8 @@ public class InputParser {
         }
         
      
-        //.. startsWith register
-        if (input.startsWith("register")) {
-            try {
-                System.out.println("str reg："+input);
-                boolean finished =registerUserFromString(input);
-                if(finished){
-                    jsonObj.put("content", "Registration successful!");
-                    JSONObject actionObj = new JSONObject();
-                    actionObj.put("id", "register"); 
-                    jsonObj.put("action", actionObj);
-                }else{
-                    jsonObj.put("content", "Registration failed,please try again!");
-                    JSONObject actionObj = new JSONObject();
-                    actionObj.put("id", "register"); 
-                    jsonObj.put("action", actionObj);
-                } 
-            }catch(Exception ex){
-                //System.err.println("unable to register");
-                System.err.println(ex.getMessage());
-                jsonObj.put("content", ex.getMessage());
-                JSONObject actionObj = new JSONObject();
-                actionObj.put("id", "register"); 
-                jsonObj.put("action", actionObj);
-            }
-            return jsonObj;
-        }
-        if (input.startsWith("save")) {
-            //String userId = (String) ctx.getRequest().getSession().getAttribute("userId");
-            String userId = "fnirs196";
-            if (userId == null) {
-                jsonObj.put("content", "Please login, and then save!");
-            } else {
-                boolean finished = saveDataLayer();
-                if(finished) {
-                    jsonObj.put("content", "Save successful!");
-                } else {
-                    jsonObj.put("content", "There is no data to be saved!");
-                }
-            }   
-        }
-        if (input.startsWith("login")) {
-            if(input.length()<=8) throw new Exception ("Please enter the account and password! like 'login(username,password)'!Please try again");
-            String strInfo=input.substring(6, input.length()-1);//.. delete command
-            String [] parts = strInfo.split(",");
-            String userId = ctx.userDAO.login(parts[0], parts[1]);
-            if (userId != null ) {
-                ctx.getRequest().getSession().setAttribute("userId", userId);
-                ctx.getRequest().getSession().setAttribute("userName", parts[0]);
-                 ctx.getRequest().getSession().setAttribute("password", parts[1]);
-                jsonObj.put("content", "loginSuccess");
-            } else {
-                 jsonObj.put("content", "Account number or password is wrong!");
-            }
-        }
         
-        // Receive the data from fake server and show them on the console area
-             else if(input.startsWith("opensocket")){              
-                 jsonObj.put("content", openSocket());                        
-               
-             }
+       
         //.. remove upper letters; trim spaces
         input = input.toLowerCase();
         input = input.trim();
@@ -350,7 +333,64 @@ public class InputParser {
                  actionObj.put("id", "reload");
                  jsonObj.put("action", actionObj);
                  jsonObj.put("content", "Clearing surface.. ");
-             } 
+             }
+            
+            //.. startsWith register
+            if (input.startsWith("register")) {
+                try {
+                    System.out.println("str reg：" + input);
+                    boolean finished = registerUserFromString(input);
+                    if (finished) {
+                        jsonObj.put("content", "Registration successful!");
+                        JSONObject actionObj = new JSONObject();
+                        actionObj.put("id", "register");
+                        jsonObj.put("action", actionObj);
+                    } else {
+                        jsonObj.put("content", "Registration failed,please try again!");
+                        JSONObject actionObj = new JSONObject();
+                        actionObj.put("id", "register");
+                        jsonObj.put("action", actionObj);
+                    }
+                } catch (Exception ex) {
+                    //System.err.println("unable to register");
+                    System.err.println(ex.getMessage());
+                    jsonObj.put("content", ex.getMessage());
+                    JSONObject actionObj = new JSONObject();
+                    actionObj.put("id", "register");
+                    jsonObj.put("action", actionObj);
+                }
+                return jsonObj;
+            }
+            if (input.startsWith("save")) {
+                //String userId = (String) ctx.getRequest().getSession().getAttribute("userId");
+                String userId = "fnirs196";
+                if (userId == null) {
+                    jsonObj.put("content", "Please login, and then save!");
+                } else {
+                    boolean finished = saveDataLayer();
+                    if (finished) {
+                        jsonObj.put("content", "Save successful!");
+                    } else {
+                        jsonObj.put("content", "There is no data to be saved!");
+                    }
+                }
+            }
+            if (input.startsWith("login")) {
+                if (input.length() <= 8) {
+                    throw new Exception("Please enter the account and password! like 'login(username,password)'!Please try again");
+                }
+                String strInfo = input.substring(6, input.length() - 1);//.. delete command
+                String[] parts = strInfo.split(",");
+                String userId = ctx.userDAO.login(parts[0], parts[1]);
+                if (userId != null) {
+                    ctx.getRequest().getSession().setAttribute("userId", userId);
+                    ctx.getRequest().getSession().setAttribute("userName", parts[0]);
+                    ctx.getRequest().getSession().setAttribute("password", parts[1]);
+                    jsonObj.put("content", "loginSuccess");
+                } else {
+                    jsonObj.put("content", "Account number or password is wrong!");
+                }
+            }
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -1140,14 +1180,16 @@ public class InputParser {
     }
     
     private String getDataLayers() throws Exception {
-        String retString ="";
+        String retString = "";
         DataLayersDAO dlDAOs = ctx.getDataLayers();
-        for (int i =0; i < dlDAOs.getDataLayers().size(); i++) {
+        for (int i = 0; i < dlDAOs.getDataLayers().size(); i++) {
             DataLayer dl = dlDAOs.getDataLayers().get(i);
             retString += dl.getId() + " with " + dl.getCount() + " pts " + " and mean of " + dl.getMean();
-            if(i !=  dlDAOs.getDataLayers().size()-1) retString += "::";
+            if (i != dlDAOs.getDataLayers().size() - 1) {
+                retString += "::";
+            }
         }
-        
+
         return retString;
     }
     
