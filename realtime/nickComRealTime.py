@@ -92,8 +92,8 @@ def readFromfNIRS():
                     cur=conn.cursor()   
                              
     #Insert the data to the Table REALTIME            
-                    cur.execute("""INSERT INTO REALTIME1(IndexID,Chanel1,Chanel2) VALUES
-                      (%s,%s,%s)""",(count,chanel1,chanel2))
+                    cur.execute("""INSERT INTO REALTIME1(Channel1,Channel2) VALUES
+                      (%s,%s)""",(chanel1,chanel2))
                     conn.commit()
                     cur.close()
                     conn.close()
@@ -162,27 +162,30 @@ def readFromCMS50D():
     for set in zip(*data):
         print(set)
         print()
+
+
 def main():
     print("connected to: " + ser.portstr)
-    
-    tableName = "REALTIME"
 
     conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='fnirs196', db='newttt')
     cur=conn.cursor() 
-
-    cur.execute("DROP TABLE IF EXISTS " + tableName)
-    if ADDTIMESTAMP:
-        createQuery = "CREATE TABLE " + tableName +" (Uk1 VARCHAR(45), YAxis VARCHAR(45), Uk2 VARCHAR(45), PRbpm VARCHAR(45), SpO2 VARCHAR(45), Time VARCHAR(45))"; 
-    else:
-        createQuery = "CREATE TABLE " + tableName +" (Uk1 VARCHAR(45), YAxis VARCHAR(45), Uk2 VARCHAR(45), PRbpm VARCHAR(45), SpO2 VARCHAR(45))"; 
-   
-    cur.execute(createQuery)
-
-         
-
+    
     if DEVICE == "CMS50D":
+        tableName = "REALTIME"
+        cur.execute("DROP TABLE IF EXISTS " + tableName)
+        if ADDTIMESTAMP:
+            createQuery = "CREATE TABLE " + tableName +\
+            " (Uk1 VARCHAR(45), YAxis VARCHAR(45), Uk2 VARCHAR(45), PRbpm VARCHAR(45), SpO2 VARCHAR(45), Time VARCHAR(45))"; 
+        else:
+            createQuery = "CREATE TABLE " + tableName +\
+            " (Uk1 VARCHAR(45), YAxis VARCHAR(45), Uk2 VARCHAR(45), PRbpm VARCHAR(45), SpO2 VARCHAR(45))"; 
+        cur.execute(createQuery)
         readFromCMS50D()
     elif DEVICE == "fNIRS":
+        tableName = "REALTIME1"
+        cur.execute("DROP TABLE IF EXISTS " + tableName)
+        createQuery = "CREATE TABLE " + tableName +" (Channel1 VARCHAR(45), Channel2 VARCHAR(45))"; 
+        cur.execute(createQuery)
         readFromfNIRS()
     
     ser.close()

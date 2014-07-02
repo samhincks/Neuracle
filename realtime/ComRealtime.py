@@ -28,7 +28,7 @@ conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='fnirs19
 cur=conn.cursor() 
 
 cur.execute("DROP TABLE IF EXISTS " + tableName)
-createQuery = "CREATE TABLE " + tableName +" (Chanel1 VARCHAR(45), Chanel2 VARCHAR(45))"; 
+createQuery = "CREATE TABLE " + tableName +" (Channel1 VARCHAR(45), Channel2 VARCHAR(45))"; 
 cur.execute(createQuery)
 
          
@@ -58,13 +58,12 @@ while True:
                 #query = "INSERT INTO " + tableName + "(IndexID, Channel1,Channel2) VALUES ( "+count +","+channel1+","+channel2+")"
                 #print(query)   
                 #cur.execute(query)        
-                cur.execute("""INSERT INTO REALTIME1(Chanel1,Chanel2) VALUES
+                cur.execute("""INSERT INTO REALTIME1(Channel1,Channel2) VALUES
                   (%s,%s)""",(chanel1,chanel2))
                 conn.commit()
                 cur.close()
                 conn.close()
                 output = str('$')
                 count = count+1
-            
 
 ser.close()
