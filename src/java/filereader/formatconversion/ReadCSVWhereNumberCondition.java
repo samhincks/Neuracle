@@ -4,8 +4,8 @@
  */
 package filereader.formatconversion;
 
-import filereader.EvanVis;
-import filereader.NoRestExperiment;
+import filereader.experiments.EvanVis;
+import filereader.experiments.NoRestExperiment;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;

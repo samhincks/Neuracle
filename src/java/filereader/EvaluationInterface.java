@@ -80,7 +80,7 @@ public class EvaluationInterface {
             if (filename.contains("back")) frameSize = 0.16f;
             f.FRAMESIZE= frameSize;
             ChannelSet cs = f.readData(",", filename);
-            ChannelSet baseline = f.readData(",", "input/UAV_processed/4.csv");
+            //  ChannelSet baseline = f.readData(",", "input/UAV_processed/4.csv");
 
             //cs.detrend(baseline, 1.2, false);
 
@@ -188,8 +188,8 @@ public class EvaluationInterface {
         fs.addFeaturesFromConsole(features, "*", "*");*/
 
         ts.addTechnique(fs);
-        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.info, 0.8f));
-        ts.addTechnique(new Transformation(Transformation.TransformationType.None));
+        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.None, 0.8f));
+        ts.addTechnique(new Transformation(Transformation.TransformationType.CalcOxy));
         ts.addTechnique(new PassFilter());//PassFilter.FilterType.LowPass, 0.35));
 
         return ts;

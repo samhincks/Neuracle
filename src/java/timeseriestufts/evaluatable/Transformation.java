@@ -9,7 +9,7 @@ package timeseriestufts.evaluatable;
  * @author samhincks
  */
 public class Transformation extends Technique {
-    public static enum TransformationType{ZScore, Anchor, MovingAverage, None};
+    public static enum TransformationType{ZScore, Anchor, MovingAverage, CalcOxy, None};
     public TransformationType type;
     public int mAReadingsBack; 
     
