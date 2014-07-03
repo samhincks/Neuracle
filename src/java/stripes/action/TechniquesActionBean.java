@@ -15,6 +15,7 @@ import timeseriestufts.evaluatable.AttributeSelection;
 import timeseriestufts.evaluatable.ClassificationAlgorithm;
 import timeseriestufts.evaluatable.FeatureSet;
 import timeseriestufts.evaluatable.Technique;
+import timeseriestufts.evaluatable.WekaClassifier;
 import timeseriestufts.kth.streams.DataLayer;
 
 /**
@@ -32,8 +33,11 @@ public class TechniquesActionBean extends BaseActionBean{
                 JSONObject obj = new JSONObject();    
                 obj.put("id", t.getId());
                 
-                if (t.technique instanceof ClassificationAlgorithm)
+                if (t.technique instanceof ClassificationAlgorithm) {
                     obj.put("type","Classifier"); 
+                    WekaClassifier wc = (WekaClassifier) t.technique;
+                    obj.put("trained", wc.timesTrained);
+                }
                 else if (t.technique instanceof FeatureSet)
                     obj.put("type","FeatureSet"); 
                 else if (t.technique instanceof AttributeSelection)

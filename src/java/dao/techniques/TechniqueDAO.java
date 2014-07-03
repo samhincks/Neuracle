@@ -42,11 +42,12 @@ public class TechniqueDAO {
          JSONObject descObj = new JSONObject();
          descObj.put("id", technique.getId());
          descObj.put("type", technique.getClass().getSimpleName());
-         
+
          //.. if machine learning algorithm or 
          if(technique instanceof WekaClassifier){
              WekaClassifier wc = (WekaClassifier) technique;
              descObj.put("value", wc.mlAlgorithm);
+             jsonObj.put("trained", wc.timesTrained);
          }
          
          else if (technique instanceof FeatureSet) {

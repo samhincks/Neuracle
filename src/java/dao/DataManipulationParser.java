@@ -24,6 +24,7 @@ import timeseriestufts.evaluatable.Technique;
 import timeseriestufts.evaluatable.TechniqueSet;
 import timeseriestufts.evaluatable.WekaClassifier;
 import timeseriestufts.evaluatable.performances.Performances;
+import timeseriestufts.evaluatable.performances.Predictions;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.quad.MultiExperiment;
@@ -67,7 +68,7 @@ public class DataManipulationParser extends Parser{
         
         //--EVALUATE 
         command = new Command("evaluate");
-        command.documentation = "EVALUATE --> With a 3D dataset (a collection of instances) selected and connected to"
+        command.documentation = " With a 3D dataset (a collection of instances) selected and connected to"
                + " at least one of each TechniqueSet (feature set, attribute selection, machine learning, and settings,"
                + " evaluates the dataset by creating a machine learning algorithm on different partitions of the data"
                + " and evaluating it on unseen instances ::";
@@ -81,6 +82,21 @@ public class DataManipulationParser extends Parser{
                 + " and all subsequent points as differences from 0";
         commands.put(command.id, command);
 
+        //--TRAIN
+        command = new Command("train");
+        command.documentation = " With a 3D dataset (a collection of instances) selected and connected to\"\n" +
+"               + \" at least one of each TechniqueSet (feature set, attribute selection, machine learning, and settings," +
+                " trains a classifier which can be applied to any other arbitrary channelset, that is synchronized or not";
+        commands.put(command.id, command);
+        
+        //-- CLASSIFY 
+        command = new Command("classify");
+        command.documentation =" With a 2D channelset selected and intersecting a trained machine learning "
+                + " algorithm, classifies the 2D channelset with an instance length matching that length"
+                + " in the training; if the machine learning algorithm supports confidence, also provides a confidence.";
+        command.parameters = "1[OPTIONAL] k = provide a new classification every kth reading";
+        
+        
 
         
     }
@@ -122,6 +138,16 @@ public class DataManipulationParser extends Parser{
             c.action = "reload";
         }
         
+        else if (command.startsWith("train")) {
+            c = commands.get("train");
+            c.retMessage = train(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
+            c.action = "reloadT";
+        }
+        
+        else if (command.startsWith("classify(")) {
+            c = commands.get("classify");
+            c.retMessage = classify(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
+        }
 
         if (c == null) {
             return null;
@@ -246,11 +272,15 @@ public class DataManipulationParser extends Parser{
         if (input.startsWith("makeml(") || input.startsWith("newml(")) {
             makeMLAlgorithm(id, techniquesDAO); //.. id is the name: jRip, J48, 
             return ("Successfully made machine learning algorithm " + id);
-        } else if (input.startsWith("makefs(") || input.startsWith("newfeatureset(")) {
+        } 
+        
+        else if (input.startsWith("makefs(") || input.startsWith("newfeatureset(")) {
             TechniqueDAO tDAO = new TechniqueDAO(new FeatureSet(id));
             techniquesDAO.addTechnique(id, tDAO);
             return ("Successfully made Feature Set " + id);
-        } //. MAKE Attribute Selection - Handle
+        } 
+
+        //. MAKE Attribute Selection - Handle
         else if (input.startsWith("makeas(") || input.startsWith("newattributeselection(")) {
             if (parameters.length < 2 && (!(parameters[0].startsWith("none")))) {
                 throw new Exception("Must specify how many attribtues to keep as second parameter");
@@ -299,7 +329,7 @@ public class DataManipulationParser extends Parser{
         techniquesDAO.addTechnique(id, tDAO);
     }
     
-        /**
+     /**
      * Handle evaluate(), when the selected element is an Experiment.
      * evaluate(5) for evaluation across 5 folds Assume Techniques have been
      * populated via the interface.
@@ -510,4 +540,132 @@ public class DataManipulationParser extends Parser{
         return retString;
     }
     
+    
+    /**
+     * Handle evaluate(), when the selected element is an Experiment.
+     * evaluate(5) for evaluation across 5 folds Assume Techniques have been
+     * populated via the interface.
+     *
+     * Bugs: multi-analysis. The retString classification accuracy doesnt owrk
+     */
+    private String train(String[] parameters, DataLayerDAO dDAO, Performances performances) throws Exception {
+        if (!(currentDataLayer instanceof Experiment || currentDataLayer instanceof MultiExperiment)) {
+            throw new Exception("You must split the data into instances first, e.g. (split(labelName)");
+        }
+
+        //.. Add technique description to return string
+        String retString = "Training classifer ... ";
+       
+        //.. currently Experiment could either be MultiExperiment or Experiment
+        if (currentDataLayer instanceof Experiment) {
+            if (!dDAO.hasOneOfEachTechnique()) {
+                throw new Exception(dDAO.getId() + " does not appear to be connected to all the necessary Evaluation Techniques. "
+                        + "Please overlap the dataset with one of each");
+            }
+
+            //.. Get a Technique Set for every connected technique
+            ArrayList<TechniqueSet> techniquesToEvaluate = this.getTechniquesForEvaluations(dDAO, performances);
+            
+            if (techniquesToEvaluate.size() > 1) throw new Exception("Since it's connected to more than one of every technique"
+                    + " it is ambiguous which is connected to what");
+            Experiment experiment = (Experiment) currentDataLayer;
+
+            //.. get Dataset - either a new one or one stored in performancs
+            Dataset dataset = getDatasetForEvaluations(experiment.id, performances);
+
+            double total = 0;
+
+            //.. Train the classifier but also evaluate internally, so the user has some notion of
+            //... how good it is
+            for (TechniqueSet t : techniquesToEvaluate) {
+                System.out.println("Using " + t.getFeatureSet().getId() + " " + t.getFeatureSet().getConsoleString() + " " + t.getFeatureSet().getFeatureDescriptionString());
+                experiment.evaluate(t, dataset, -1);
+                WekaClassifier wc = experiment.train(t);
+                total += t.getMostRecentAverage();
+                
+                //.. save variables for when this will be classified
+                wc.lastInstanceLength = experiment.getFirstInstance().getNumPointsAtZero();
+                wc.lastTrainedClassification = experiment.classification;
+                wc.lastTechniqueTested =t;
+                wc.timesTrained++;
+            }
+            retString += "The internal accuracy of this classifier in leave-one-out was " + (total / techniquesToEvaluate.size());
+
+            return retString;
+        } 
+        
+        else if (currentDataLayer instanceof MultiExperiment) {
+            if (true) throw new Exception(" NOT YET IMPLEMENTED ");
+            
+            QuadDAO qDAO = (QuadDAO) dDAO;
+            MultiExperiment multi = (MultiExperiment) currentDataLayer;
+
+            //.. set daoWithTechniques to the first datalayer that is connected 
+            DataLayerDAO daoWithTechniques = null;
+            for (TriDAO pDAO : qDAO.piles) {
+                if (pDAO.hasOneOfEachTechnique()) {
+                    //.. throw an exception if more than one complete technique set is connected
+                    if (daoWithTechniques != null) {
+                        throw new Exception("At least two datalayers are connected to a complete set of techniques. Please connect only one and the rest will be evaluated using the same TechniqueSet");
+                    }
+
+                    daoWithTechniques = pDAO;
+                }
+            }
+
+            //.. throw exception if none are connected
+            if (daoWithTechniques == null) {
+                throw new Exception("None of the selected datalayers appear to be connected to all the necessary Evaluation Techniques. "
+                        + "Please overlap the dataset with one of each");
+            }
+
+            //.. Get a Technique Set for every connected technique with the one that is connected 
+            ArrayList<TechniqueSet> techniquesToEvaluate = this.getTechniquesForEvaluations(daoWithTechniques, performances);
+
+            //.. get a dataset for each experiment to be evaluated. Attach it to the underlying experiment (this is the non-obvious part)
+            for (TriDAO pDAO : qDAO.piles) {
+                Experiment thisE = (Experiment) pDAO.dataLayer;
+                thisE.setDataset(getDatasetForEvaluations(thisE.id, performances));
+            }
+
+            //.. evaluate each techniqueset on each experiment
+            for (TechniqueSet t : techniquesToEvaluate) {
+                multi.evaluate(t, -1);
+            }
+            double total = 0; //.. pct correct
+
+            //.. retrieve each of the selected datasets and sum their stats
+            for (TriDAO pDAO : qDAO.piles) {
+                Experiment thisE = (Experiment) pDAO.dataLayer;
+                Dataset d = thisE.getDataSet();
+                total += d.getMostRecentAverage();
+            }
+
+            retString += "::Across all, %CORR: " + (total / qDAO.piles.size());
+            return retString;
+        }
+        return "Unexpected evaluation failure. Actually, unreachable statement";
+    }
+    
+    private String classify(String [] parameters, DataLayerDAO dDAO, Performances performances) throws Exception{
+        int readEvery =5;
+        if (parameters.length>0) readEvery = Integer.parseInt(parameters[0]);
+        
+        if(!(currentDataLayer instanceof ChannelSet)) throw new Exception("The command classify only "
+                + "applies to 2D Channelsets " + currentDataLayer.id + " doesn't fit that bill");
+        ChannelSet cs = (ChannelSet) currentDataLayer;
+        
+        //.. retrieve the hovered over classifier, and bitch if somethings wrong
+        ArrayList<ClassificationAlgorithm> classifiers =  dDAO.getClassifiers();
+        if (classifiers.size() >1) throw new Exception("It is ambiguous which classifier you want to use");
+        if (classifiers.isEmpty()) throw new Exception("You must connect the dataset with a trained classifier");
+
+       WekaClassifier classifier = (WekaClassifier) classifiers.get(0);
+         
+       //..Classify the 
+       Predictions p = classifier.testRealStream(classifier.lastTrainedClassification,
+               classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), performances), cs, classifier.lastInstanceLength, readEvery, null);
+       
+       return "Successfully classified this dataset, and made " + p.predictions.size() + " predictions";
+    }
 }

@@ -56,9 +56,6 @@ function ConsoleArea() {
     }
     
     
-    
-   
-    
     /**Return false if we don't have support for routing this message in javascript. 
      *Otherwise, decide how to handle the user's input in javascript */ 
     this.parseLocally = function(userText) {
@@ -69,13 +66,13 @@ function ConsoleArea() {
          }
          
          //.. if this is an evaluation command first save the connections to the context
-         if(userText.startsWith("evaluate")) {
+         if(userText.startsWith("evaluate(") || userText.startsWith("train(")) {
              javaInterface.postConnectionsToTechnique();
              return false;//.. return false as we still want to go to java
          }
          
          //.. if we made fs with wrong name
-         if (userText.startsWith("makefs")) {
+         if (userText.startsWith("makefs(")) {
              if (userText.indexOf(",") != -1) return true;
              return false;
          }
@@ -90,7 +87,7 @@ function ConsoleArea() {
          
          //.. For periodically updating what the current label is of a synchronized
          //... dataset
-         if(userText.startsWith("streamLabel")) {
+         if(userText.startsWith("streamLabel(")) {
             var mes = userText.split("("); //.. will be parameters (100,200)
             var params = mes[1].split(",");
             

@@ -111,21 +111,33 @@ function DatalayerArea(selection) {
     /**techniques is an array of JSONObjs streamed from Java. Add the ones that don't already exist
      **/
     this.addTechniques = function(techniques) {
+
         //... Add the techniques that may have been created       
         for (var i =0; i< techniques.length; i++) { 
             var t = techniques[i];
+            console.log(t);
+            console.log(t.type + " , " + t.trained);
 
             //.. the technique that should be reloaded
             var idName = t.id;
+            $("#" + idName).width(12.0);
             if (this.techniques.getTechniqueById(idName) ==null) { //.. if we haven't added this dl yet'
                 var newTechnique = new Technique(t);
                 addTechToCanvas(newTechnique);
                 newTechnique.initializePlumb();
                 this.techniques.addTechnique(newTechnique);
             }
+            
+            else if (t.type =="Classifier" && t.trained>0) {
+                var curWidth = $("#"+idName).width();
+                var curHeight = $("#" + idName).height();
+                $("#"+idName).width(curWidth*1.3);
+                $("#" +idName).height(curHeight * 1.3);
+            }
+
         }
     }
-    
+
     var intersectRect = function(r1, r2) {
         return !(r2.left > r1.right || 
                  r2.right < r1.left || 

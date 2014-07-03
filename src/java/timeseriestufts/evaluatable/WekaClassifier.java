@@ -57,8 +57,17 @@ import wlsvm.WLSVM;
  * adaboost 1575
  */
 public class WekaClassifier  extends ClassificationAlgorithm{
+    //.. Used if a classifier is trained, and saved, to be used for later, potentially realtime classification
+    public int timesTrained =0;
+    public TechniqueSet lastTechniqueTested;
+    public Classification lastTrainedClassification;
+    public int lastInstanceLength;
+    //---------------------------
+            
+            
+    
 
-    public static enum MLType {jrip, j48, lmt, nb, tnn, smo, simple, logistic, adaboost,libsvm, multilayer, cvsmo, gridsmo};
+    public static enum MLType {jrip, j48, lmt, nb, tnn, smo, simple, logistic,adaboost, libsvm, multilayer, cvsmo, gridsmo};
     public MLType mlAlgorithm;
     public WekaData wekaData; // we may want to know filters etc
     private J48 j48;
