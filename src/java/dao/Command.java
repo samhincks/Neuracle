@@ -13,17 +13,23 @@ import org.json.JSONObject;
  * @author samhincks
  */
 public class Command {
-    public String id ="";
+    public String id;
     public String parameters ="";
     public String debug ="";
     public String retMessage =""; //.. populated when the command is executed
-    public String action =""; //.. populated when the command is executed
+    public String documentation =""; //.. populated when the command is executed
+    public String action = null;
+    public JSONObject data =null;
 
+    public Command(String id) {
+        this.id = id;
+    }
+    
     public JSONObject getJSONObject() throws Exception{
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("content", retMessage);
-        jsonObj.put("action", action);
-        
+        if(action!= null)jsonObj.put("action", action);
+        if(data!= null) jsonObj.put("data",data);
         return jsonObj;
     }
 }

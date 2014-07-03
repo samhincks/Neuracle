@@ -78,7 +78,8 @@ public class ThisActionBeanContext extends ActionBeanContext{
     /**Get dataLayersDAO
      * @return 
      */
-    public DataLayersDAO getDataLayers() {
+    public DataLayersDAO getDataLayers() throws Exception{
+        if (dataLayersDAO == null) throw new Exception("There are no datasets loaded");
         return dataLayersDAO;
     }
     
