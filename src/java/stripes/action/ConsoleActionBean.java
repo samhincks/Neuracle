@@ -53,18 +53,6 @@ public class ConsoleActionBean extends DataLayerActionBean {
             }
             jsonObj = inputParser.parseInput(consoleInput, ctx);
            
-            //.. We have some additional action to do
-            if(!jsonObj.get("action").equals("")) {
-                //.. reload ActionBean. Do anything? No
-                if(jsonObj.get("action").equals("reload")) {
-                    //return new ForwardResolution(INDEX);
-                }
-                
-                //.. If our action is SAX? We can probably handle this all here
-                if (jsonObj.get("action").equals("sax")) {
-                    
-                }
-            }
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));
         }
         catch(Exception e) {

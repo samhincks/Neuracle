@@ -89,14 +89,11 @@ public class DataManipulationParser extends Parser{
             DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception {
         this.ctx = ctx;
         this.currentDataLayer = currentDataLayer;
-        this.currentTechnique = techDAO.technique;
+        if(this.techDAO != null)
+            this.currentTechnique = techDAO.technique;
         Command c = null;
-
-        if (command.startsWith("save")) {
-        } 
-       
         //.. filter.movingaverage(), .lowpass()
-        if (command.startsWith("filter.")) {
+        if (command.startsWith("filter")) {
             c = commands.get("filter");
             c.retMessage = filter(command, parameters);
             c.action = "reload";

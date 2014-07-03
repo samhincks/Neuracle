@@ -72,6 +72,7 @@ public class MiscellaneousParser extends Parser{
         //-- GETLABELS
         command = new Command("getlabels");
         command.documentation = "Returns all available labels and conditions on selected dataset ";
+        command.debug = "Unclear why there is not a proper error message when there are no labels";
         commands.put(command.id, command);
         
         //-- GETLABELS
@@ -136,7 +137,7 @@ public class MiscellaneousParser extends Parser{
         DataLayersDAO dlDAOs = ctx.getDataLayers();
         for (int i = 0; i < dlDAOs.getDataLayers().size(); i++) {
             DataLayer dl = dlDAOs.getDataLayers().get(i);
-            retString += dl.getId() + " with " + dl.getCount() + " pts " + " and mean of " + dl.getMean();
+            retString += dl.getId() + " with " + dl.getCount()+ " pts " + " and # channels " + dl.getChannelCount();
             if (i != dlDAOs.getDataLayers().size() - 1) {
                 retString += "::";
             }
@@ -251,6 +252,11 @@ public class MiscellaneousParser extends Parser{
             }
         } else if (currentDataLayer instanceof ChannelSet) {
             ChannelSet bd = (ChannelSet) currentDataLayer;
+           
+            if (bd == null) throw new Exception("ChannelSet " + bd + " does not exist");
+
+            if (bd.markers.isEmpty()) throw new Exception("There are no labels on this dataset");
+                     
             ArrayList<Markers> markers = bd.markers;
             for (int i = 0; i < markers.size(); i++) {
                 Markers m = markers.get(i);

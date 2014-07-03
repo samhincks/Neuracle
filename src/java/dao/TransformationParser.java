@@ -28,9 +28,6 @@ import timeseriestufts.kth.streams.tri.TridimensionalLayer;
  * @author samhincks
  */
 public class TransformationParser extends Parser{
-    public Hashtable<String, Command> commands;
-    public ThisActionBeanContext ctx;
-    public DataLayer currentDataLayer;
     
     public TransformationParser(){
         commands = new Hashtable();
@@ -79,7 +76,7 @@ public class TransformationParser extends Parser{
         Command c = null;
 
         if (command.startsWith("randomlylabel")) {
-            c = commands.get("save");
+            c = commands.get("randomlylabel");
             c.retMessage = this.randomlyLabel(parameters);
         }
 
@@ -110,7 +107,7 @@ public class TransformationParser extends Parser{
      * is how long each trial should be
      */
     private String randomlyLabel(String [] parameters) throws Exception {
-        String filename = parameters[0];
+        String filename = currentDataLayer.id;
         int trialLength = 10;
         if (parameters.length > 0) {
             trialLength = Integer.parseInt(parameters[0]);
@@ -142,6 +139,7 @@ public class TransformationParser extends Parser{
      * trigger it. Makes so that data coming in receives the input label*
      */
     private String label(String [] parameters) throws Exception {
+        if (parameters.length < 3) throw new Exception("Command requires three parameters. filename, curLabelName, curLabelValue");
         //.. In this new way of doing things, we are going to need to have created a Markers object,
         //.. which would always have a Markers object that was set equal to the number of datapoints
         String filename = parameters[0];
@@ -207,7 +205,8 @@ public class TransformationParser extends Parser{
         String labelName = parameters[0];
         labelName = labelName.replace(")", ""); //.. remove )
         labelName = labelName.replace("\"", "");
-
+        
+        
         //.. get all chansets
         ArrayList<ChannelSet> chanSets = getChanSets();
         String retString = "";

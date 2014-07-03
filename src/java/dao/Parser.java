@@ -72,7 +72,7 @@ public abstract class Parser {
      */
     protected ArrayList<ChannelSet> getChanSets() throws Exception {
         if (!(currentDataLayer instanceof ChannelSet) && !(currentDataLayer instanceof ChannelSetSet)) {
-            throw new Exception("The selected dataset must be a Channel Set or ChannelSetSet");
+            throw new Exception("The selected dataset " + currentDataLayer.id +" must be a Channel Set or ChannelSetSet");
         }
 
         //.. add all chansets to ChanSets

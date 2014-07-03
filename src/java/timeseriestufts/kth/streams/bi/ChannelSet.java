@@ -28,7 +28,7 @@ import timeseriestufts.kth.streams.tri.Experiment;
  * @author Sam
  */
 public class ChannelSet extends BidimensionalLayer<Channel>{
-    public ArrayList<Markers> markers; //.. markers describing where each condition starts and ends
+    public ArrayList<Markers> markers = new ArrayList(); //.. markers describing where each condition starts and ends
     
     public Integer realEnd; //.. its position in a former layer. 
     public Integer realStart;//... If we're setting these its derived from another layer

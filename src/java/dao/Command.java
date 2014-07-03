@@ -28,7 +28,11 @@ public class Command {
     public JSONObject getJSONObject() throws Exception{
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("content", retMessage);
-        if(action!= null)jsonObj.put("action", action);
+        if(action!= null) {
+            JSONObject jsObj = new JSONObject();
+            jsObj.put("id", action);
+            jsonObj.put("action", jsObj);
+        }
         if(data!= null) jsonObj.put("data",data);
         return jsonObj;
     }

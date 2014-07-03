@@ -57,7 +57,6 @@ public class ExternalDataParser extends Parser{
         command.documentation = "Stream, in realtime, data from a database being updated and "
                 + " return that data into a visualization";
         command.action = "csrefresh";
-        command.parameters = "1. tablename = the name of the remote database table";
         command.debug = "Works, but with high refresh rates, all breaks. ";
         commands.put(command.id, command);
         
@@ -189,7 +188,7 @@ public class ExternalDataParser extends Parser{
      * herself. *
      */
     public JSONObject stream(String [] parameters) throws Exception {
-        String filename = parameters[0];
+        String filename = currentDataLayer.id;
 
         if (ctx.dataLayersDAO.streams.containsKey(filename)) {
             BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(filename);

@@ -92,7 +92,10 @@ public class InputParser {
             
             //String command = input.split("(")[0];
             String [] parameters = this.getParameters(input);
-            jsonObj = miscParser.execute(input,parameters, ctx, currentDataLayer,techDAO);
+            jsonObj = this.rapidExecute(input,parameters, ctx, currentDataLayer,techDAO);
+            
+            if (jsonObj ==null)
+                jsonObj = miscParser.execute(input,parameters, ctx, currentDataLayer,techDAO);
             
             if (jsonObj == null)
                 jsonObj = dataParser.execute(input,parameters,ctx,currentDataLayer,techDAO);
@@ -104,7 +107,6 @@ public class InputParser {
                 jsonObj = mlParser.execute(input, parameters,ctx,currentDataLayer,techDAO); 
             
              
-             
              //.. finally if nothing recognized this command, complain at user
              if (jsonObj == null) {
                  jsonObj = new JSONObject();
@@ -112,16 +114,36 @@ public class InputParser {
              }
                  
              return jsonObj;
-
          }
+        
          catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); //.. comment this out when deliver a stable version
+            jsonObj = new JSONObject();
             jsonObj.put("error", e.getMessage());
             return jsonObj;
         }
     }
  
-   
+   public JSONObject rapidExecute(String command, String[] parameters, ThisActionBeanContext ctx,
+            DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception {
+        this.ctx = ctx;
+        this.currentDataLayer = currentDataLayer;
+        Command c = null;
+
+        if (command.startsWith("debug")) {
+             c = new Command("debug");
+             c.retMessage = "selected = " + currentDataLayer.id;
+        }
+        else if (command.startsWith("exdebug")) {
+             c = new Command("debug2");
+             throw new Exception("Here is the message that should be displayed in red");
+        }
+
+        if (c == null) {
+            return null;
+        }
+        return c.getJSONObject();
+    }
     
     
     /**Return what is enumerated inside the parens, ie x, y and z from function(x,y,z)*
