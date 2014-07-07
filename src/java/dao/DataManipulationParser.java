@@ -148,11 +148,6 @@ public class DataManipulationParser extends Parser{
         
         else if (command.startsWith("classify")) {
             c = commands.get("classify");
-            System.out.println(ctx.getPerformances());
-            System.out.println(ctx.getCurrentDataLayer());
-            System.out.println(parameters.length);
-
-            System.out.println(c.id);
             c.retMessage = classify(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
         }
 
@@ -615,7 +610,7 @@ public class DataManipulationParser extends Parser{
                     if (daoWithTechniques != null) {
                         throw new Exception("At least two datalayers are connected to a complete set of techniques. Please connect only one and the rest will be evaluated using the same TechniqueSet");
                     }
-
+ 
                     daoWithTechniques = pDAO;
                 }
             }
@@ -644,7 +639,7 @@ public class DataManipulationParser extends Parser{
             //.. retrieve each of the selected datasets and sum their stats
             for (TriDAO pDAO : qDAO.piles) {
                 Experiment thisE = (Experiment) pDAO.dataLayer;
-                Dataset d = thisE.getDataSet();
+                Dataset d = thisE.getDataSet(); 
                 total += d.getMostRecentAverage();
             }
 

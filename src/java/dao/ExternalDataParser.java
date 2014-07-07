@@ -81,7 +81,7 @@ public class ExternalDataParser extends Parser{
         else if (command.startsWith("stream")) {
             c = commands.get("stream");
             c.data = this.stream(parameters);
-        }
+        } 
 
         if (c == null) {
             return null;

@@ -77,7 +77,7 @@ function ChartArea(id) {
             dataA.start = data.start + added;
             dataA.end = data.end + added;
             added += dataA.values[0].length;//dataA.data.length;
-            console.log( dataA.values[0].length);
+
             // for each data series ...
             var newData = [];
             data.values.forEach(function(dataSeries, index) {

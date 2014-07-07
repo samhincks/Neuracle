@@ -202,7 +202,7 @@ public class InputParser {
 
             
             JSONObject response = new JSONObject();
-            int TEST =4;
+            int TEST =5;
             if (TEST ==0) 
                  response= ip.parseInput("removeallbut(a,b)", ctx);
             
@@ -240,9 +240,8 @@ public class InputParser {
                  
                 response = ip.parseInput("classify", ctx);
                 System.out.println(response);
-                
             }
-            
+           
             
             System.out.println(response.get("content"));
             System.out.println(response.get("action"));

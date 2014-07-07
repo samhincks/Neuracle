@@ -30,10 +30,10 @@ public class Command {
         jsonObj.put("content", retMessage);
         if(action!= null) {
             JSONObject jsObj = new JSONObject();
-            jsObj.put("id", action);
+            jsObj.put("id", action); 
+            jsObj.put("data", data);
             jsonObj.put("action", jsObj);
         }
-        if(data!= null) jsonObj.put("data",data);
         return jsonObj;
     }
 }

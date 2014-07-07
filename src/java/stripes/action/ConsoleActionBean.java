@@ -48,7 +48,9 @@ public class ConsoleActionBean extends DataLayerActionBean {
             }
             
             //.. if this is an evaluation command, set the technique parameters
-            if (connections != null &&consoleInput.startsWith("evaluate(")){
+            if (connections != null && (consoleInput.startsWith("evaluate") 
+                    || consoleInput.startsWith("train")
+                    || consoleInput.startsWith("classify"))){
                 setTechniqueParams();
             }
             jsonObj = inputParser.parseInput(consoleInput, ctx);

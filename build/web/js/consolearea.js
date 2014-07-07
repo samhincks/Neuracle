@@ -66,7 +66,8 @@ function ConsoleArea() {
          }
          
          //.. if this is an evaluation command first save the connections to the context
-         if(userText.startsWith("evaluate(") || userText.startsWith("train(")) {
+         if(userText.startsWith("evaluate") || userText.startsWith("train") 
+                 ||userText.startsWith("classify") ) {
              javaInterface.postConnectionsToTechnique();
              return false;//.. return false as we still want to go to java
          }

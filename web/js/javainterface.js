@@ -122,11 +122,10 @@ function JavaInterface() {
         var overlaps = datalayerArea.getIntersectedTechniques();
         for (var i in overlaps){
             var ol = overlaps[i];
-            console.log(ol);
             var conn = ol.sourceId +":"+ol.targetId;
+            console.log(conn);
             postArray.push(conn);
         }
-        
         
         //3.Save them to TechniqueForm; wait for the console to pass them
         $("#connections").val(postArray);

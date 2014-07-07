@@ -115,8 +115,6 @@ function DatalayerArea(selection) {
         //... Add the techniques that may have been created       
         for (var i =0; i< techniques.length; i++) { 
             var t = techniques[i];
-            console.log(t);
-            console.log(t.type + " , " + t.trained);
 
             //.. the technique that should be reloaded
             var idName = t.id;
