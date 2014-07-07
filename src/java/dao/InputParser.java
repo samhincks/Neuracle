@@ -181,17 +181,28 @@ public class InputParser {
         InputParser ip = new InputParser();
         
         //.. The necessary parts of a test: a context, a datalayer, and a datalayerDAO 
-        ThisActionBeanContext ctx = new ThisActionBeanContext();
+        ThisActionBeanContext ctx = new ThisActionBeanContext(true);
 
-        //.. put experiment in tridao
-        Experiment e = Experiment.generate(6, 1, 20);
-        TriDAO tDAO = new TriDAO(e);
-        
-        //.. set the ctx's current dao. 
-//        ctx.addDataLayer("e", tDAO);
         try{
+            //.. put experiment in tridao
+            ChannelSet b = ChannelSet.generate(1, 200);
+            ChannelSet c = ChannelSet.generate(1, 200);
+            
+            Markers m = Markers.generate(10, 20);
+            b.addMarkers(m);
+            b.id = "b";
+            c.id = "c";
+            c.addMarkers(m);
+            BiDAO bDAO = new BiDAO(b);
+            BiDAO cDAO = new BiDAO(c);
+
+            //.. set the ctx's current dao. 
+            ctx.addDataLayer("b", bDAO);
+            ctx.addDataLayer("c", cDAO);
+
+            
             JSONObject response = new JSONObject();
-            int TEST =3;
+            int TEST =4;
             if (TEST ==0) 
                  response= ip.parseInput("removeallbut(a,b)", ctx);
             
@@ -207,6 +218,30 @@ public class InputParser {
             if (TEST ==3) {
                 response = ip.parseInput("label(", ctx);
             }
+            if (TEST ==4) {
+                TechniqueSet ts = TechniqueSet.generate();
+                ctx.setCurrentName("b");
+                response = ip.parseInput("split(name)",ctx);
+                ctx.setCurrentName("bname");
+                TriDAO tDAO = (TriDAO) ctx.getCurrentDataLayer();
+                
+                TechniqueDAO wc = new TechniqueDAO(ts.getClassifier());
+                tDAO.addConnection(wc);
+                tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
+                tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
+                
+                response = ip.parseInput("train", ctx);
+                System.out.println(response);
+                
+                //.. Having trained, now test
+                ctx.setCurrentName("c");
+                bDAO = (BiDAO) ctx.getCurrentDataLayer();
+                bDAO.addConnection(wc);
+                 
+                response = ip.parseInput("classify", ctx);
+                System.out.println(response);
+                
+            }
             
             
             System.out.println(response.get("content"));
@@ -215,71 +250,10 @@ public class InputParser {
 
         }
         catch (Exception ex) {
-            
+            ex.printStackTrace();
         }
 
     }
     
-    
-    public boolean saveDataLayer() throws Exception{
-        if (ctx.dataLayersDAO.getDataLayers().size() > 0) {
-            for (DataLayer dl :ctx.dataLayersDAO.getDataLayers()){
-                   System.out.println("thats  " + dl.id);
-                   JSONObject obj = new JSONObject();
-                   String filename =  dl.getId();
-                   DataLayerDAO dlGiver = ctx.dataLayersDAO.get(filename); 
-            
-                    //.. select the file
-                    filename = filename.split("-")[0]+".csv";
-                    ChannelSet channelSet = (ChannelSet) dlGiver.dataLayer;
-                    ArrayList<Channel> rawValues =  channelSet.streams;
-                    
-                    //.. connect to SQL
-                    MySqlDAO mydao=new MySqlDAO();
-                    String uuIdStr= UUID.randomUUID().toString();
-                    mydao.connSQL();
-                    
-                    //.. get the id of the user, a number
-                    String userId = (String) ctx.getRequest().getSession().getAttribute("userId");
-                   
-                    //.. Retrieve the datalayer that is associated with this user - but this assumes that there is only ONE
-                    ResultSet datalayerData = mydao.selectSQL("select * from datalayer where user_id='"+userId+"' and file_name like '" + filename.split(".cvs")[0]+"%'");
-                    while(datalayerData.next()) {
-                        mydao.deleteSQL("delete from datalayer where id ='"+datalayerData.getString(1)+"'");
-                        mydao.deleteSQL("delete from datalayer where parent_id ='"+datalayerData.getString(1)+"'");
-                        mydao.deleteSQL("delete from datalayer_id where parent_id ='"+datalayerData.getString(1)+"'");
-                    }
-                    datalayerData.close();
-                    boolean num = mydao.insertSQL("insert into datalayer(id,user_id,parent_id,data,file_name) VALUES ('"+uuIdStr+"','"+userId+"','"+null+"','"+null+"', '"+filename+"')");
-                    mydao.deconnSQL();
-
-                    for(Channel rowValue : rawValues){
-                        StringBuffer flotArrays = new StringBuffer();
-                        for (int l = 0; l < rowValue.numPoints; l++){
-                         flotArrays.append(","+rowValue.getPointOrNull(l));
-                        }
-                        mydao.connSQL();
-                        Boolean result=mydao.insertSQL("insert into datalayer(id,user_id,parent_id,data,file_name) VALUES ('"+UUID.randomUUID().toString()+"','"+null+"','"+uuIdStr+"','"+flotArrays.toString().substring(1)+"', '"+rowValue.getId()+"')");
-                        mydao.deconnSQL();
-                  } 
-
-                    //.. Having built a channel structure and label structure, label the channel
-                    //... structure according to the label structure
-                    for (Markers markers : channelSet.markers) {
-                        Labels labels = markers.saveLabels;
-                        StringBuffer str = new StringBuffer();
-                        for (Label label : labels.channelLabels) {
-                            str.append(","+label.value);
-                        }
-                        mydao.connSQL();
-                        mydao.insertSQL("insert into label(id,datalayer_id,labelName,channelLabels) VALUES ('"+ UUID.randomUUID().toString()+"','"+uuIdStr+"','"+labels.labelName+"','"+str.toString().substring(1)+"')");
-                        mydao.deconnSQL();
-                    }
-            }
-        } else {
-            return false;
-        }
-        return true;
-    }
 
 }

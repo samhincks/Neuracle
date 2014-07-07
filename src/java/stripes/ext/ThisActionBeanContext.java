@@ -20,6 +20,13 @@ public class ThisActionBeanContext extends ActionBeanContext{
         ValidationError s = new SimpleError(error);
         this.getValidationErrors().addGlobalError(s);
     }
+    public ThisActionBeanContext() {
+        
+    }
+    public ThisActionBeanContext(boolean test) {
+        this.test = test;
+    }
+    public boolean test = false;
  
     private static String currentDataLayer;
     private static String currentTechnique;
@@ -53,7 +60,8 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public void addDataLayer(String key, DataLayerDAO dataLayerDAO) {
         //.. Remeber the current DataLayerName
         currentDataLayer = key;
-        setCurrent(currentDataLayer, dataLayerDAO);  
+        if(!(test))
+            setCurrent(currentDataLayer, dataLayerDAO);  
         dataLayersDAO.addStream(key, dataLayerDAO);
     }
 

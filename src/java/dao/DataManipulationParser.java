@@ -95,6 +95,8 @@ public class DataManipulationParser extends Parser{
                 + " algorithm, classifies the 2D channelset with an instance length matching that length"
                 + " in the training; if the machine learning algorithm supports confidence, also provides a confidence.";
         command.parameters = "1[OPTIONAL] k = provide a new classification every kth reading";
+        commands.put(command.id, command);
+
         
         
 
@@ -144,8 +146,13 @@ public class DataManipulationParser extends Parser{
             c.action = "reloadT";
         }
         
-        else if (command.startsWith("classify(")) {
+        else if (command.startsWith("classify")) {
             c = commands.get("classify");
+            System.out.println(ctx.getPerformances());
+            System.out.println(ctx.getCurrentDataLayer());
+            System.out.println(parameters.length);
+
+            System.out.println(c.id);
             c.retMessage = classify(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
         }
 
@@ -648,7 +655,7 @@ public class DataManipulationParser extends Parser{
     }
     
     private String classify(String [] parameters, DataLayerDAO dDAO, Performances performances) throws Exception{
-        int readEvery =5;
+        int readEvery =25;
         if (parameters.length>0) readEvery = Integer.parseInt(parameters[0]);
         
         if(!(currentDataLayer instanceof ChannelSet)) throw new Exception("The command classify only "
@@ -662,7 +669,9 @@ public class DataManipulationParser extends Parser{
 
        WekaClassifier classifier = (WekaClassifier) classifiers.get(0);
          
-       //..Classify the 
+        System.out.println(classifier.lastInstanceLength + " , " + classifier.lastTechniqueTested.getClassifier().getId() + " , "
+                + classifier.lastTrainedClassification.wekaString);
+       //..Classify the  
        Predictions p = classifier.testRealStream(classifier.lastTrainedClassification,
                classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), performances), cs, classifier.lastInstanceLength, readEvery, null);
        

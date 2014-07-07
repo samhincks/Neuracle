@@ -387,7 +387,6 @@ public class Experiment extends TridimensionalLayer<Instance>{
         //.. retrieve classifier and train it
         WekaClassifier myClassifier = (WekaClassifier) ts.getClassifier();
         myClassifier.buildClassifier(instances);
-        System.out.println("training = " + myClassifier.timesTrained);
         //.. return it, trained
         return myClassifier;
     }

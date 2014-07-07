@@ -12,7 +12,7 @@ import java.io.BufferedWriter;
  */
 public class Dataset extends Evaluatable {
 
-    static Dataset generate() {
+    public static Dataset generate() {
         return new Dataset("test");
     }
  

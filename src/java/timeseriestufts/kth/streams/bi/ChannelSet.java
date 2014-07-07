@@ -415,6 +415,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         //.. starting at instanceLength and advancing by everyK, build a new Instance and classify it
         for (int i = instanceLength; i < this.minPoints(); i += everyK) {
             int start = i - instanceLength, end = i;
+            
             //.. get Instance between i and instancelength back
             Instance myInstance = this.getInstance(c.name, start, end);
             if( c.hasCondition(myInstance.condition))

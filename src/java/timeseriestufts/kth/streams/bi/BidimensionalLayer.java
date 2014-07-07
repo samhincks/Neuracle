@@ -100,7 +100,7 @@ public abstract class BidimensionalLayer<T extends UnidimensionalLayer> extends 
     
     @Override
     public double getMedian(){
-        System.err.println("Not built");
+       // System.err.println("Not built");
         return -1;
     }
      /**Returns the standard deviation of values in data
@@ -108,7 +108,7 @@ public abstract class BidimensionalLayer<T extends UnidimensionalLayer> extends 
      */
     @Override
     public  double getStdDev() {
-        System.err.println("Not built");
+     //   System.err.println("Not built");
         return -1;
     }   
     
@@ -117,7 +117,7 @@ public abstract class BidimensionalLayer<T extends UnidimensionalLayer> extends 
      */
     @Override
     public  double getStdErr() {
-        System.err.println("Not built");
+       // System.err.println("Not built");
         return -1;
     }
     
@@ -126,7 +126,7 @@ public abstract class BidimensionalLayer<T extends UnidimensionalLayer> extends 
      */
     @Override
     public double getMin() {
-        System.err.println("Not built");
+      //  System.err.println("Not built");
         return -1;
     }   
    
@@ -135,7 +135,7 @@ public abstract class BidimensionalLayer<T extends UnidimensionalLayer> extends 
      */
     @Override
     public double getMax() {
-        System.err.println("Not built");
+       // System.err.println("Not built");
         return -1;
     }
     
@@ -144,7 +144,7 @@ public abstract class BidimensionalLayer<T extends UnidimensionalLayer> extends 
      */
     @Override
     public double getMode() {
-        System.err.println("Not built");
+       // System.err.println("Not built");
         return -1;      
     }
     
