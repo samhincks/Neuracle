@@ -24,6 +24,7 @@ import sys
 import serial #https://learn.adafruit.com/arduino-lesson-17-email-sending-movement-detector/installing-python-and-pyserial
 import argparse
 import numpy as np
+import pymysql
 from time import sleep
 from collections import deque
 
@@ -31,6 +32,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 PORT = '/dev/tty.uart-79FF427A4D083033'
+MYSQL = True
 
 X_MIN = 0
 X_MAX = 100
@@ -67,15 +69,31 @@ class AnalogPlot:
         try:
             line = self.ser.readline()
             data = []
-            print line
+            print(line)
             if line[0] == '$':
-                print "Line=", line[:-1], '.'
-                print "Bits=", line[1:5],line[6:10]
-                data = [float(int(line[1:5])),float(int(line[6:10]))]
+                v1 = line[1:5]
+                v2 = line[6:10]
+
+                print "Line=", line
+                print "Bits=", v1, v2
+                data = [float(int(v1)),float(int(v2))]
+
+                if MYSQL:
+                    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='fnirs196', db='newttt')
+                    cur=conn.cursor()   
+                             
+                    #Insert the data to the Table REALTIME            
+                    cur.execute("""INSERT INTO REALTIME1(Channel1,Channel2) VALUES
+                      (%s,%s)""",(v1,v2))
+                    conn.commit()
+                    cur.close()
+                    conn.close()
+
+
                 #data = [float(val) for val in line.split()]
                 # print data
             else:
-                print "squak"
+                print("squak")
             if(len(data) == 2):
                 self.add(data)
                 a0.set_data(range(self.maxLen), self.ax)
@@ -93,6 +111,16 @@ class AnalogPlot:
 
 # main() function
 def main():
+
+    if MYSQL:
+        # Set up mysql database
+        conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='fnirs196', db='newttt')
+        cur=conn.cursor() 
+        tableName = "REALTIME1"
+        cur.execute("DROP TABLE IF EXISTS " + tableName)
+        createQuery = "CREATE TABLE " + tableName +" (Channel1 VARCHAR(45), Channel2 VARCHAR(45))"; 
+        cur.execute(createQuery)
+
     # create parser
     parser = argparse.ArgumentParser(description="LDR serial")
     # add expected arguments
