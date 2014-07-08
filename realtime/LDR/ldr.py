@@ -92,8 +92,6 @@ class AnalogPlot:
 
                 #data = [float(val) for val in line.split()]
                 # print data
-            else:
-                print("squak")
             if(len(data) == 2):
                 self.add(data)
                 a0.set_data(range(self.maxLen), self.ax)
@@ -139,13 +137,6 @@ def main():
 
 
     s = serial.Serial(strPort, 9600)
-    #while(1):
-    #    print "yay"
-    #    line = s.readline()
-    #    print "boo"
-    #    print line
-
-
 
     # plot parameters
     analogPlot = AnalogPlot(strPort, 100)
