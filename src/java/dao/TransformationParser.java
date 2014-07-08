@@ -172,10 +172,9 @@ public class TransformationParser extends Parser{
         }
     }
     
-        /**
+     /**
      * Handle: keep(x,y,z) removeAllBut(x,y,z) keeps only the instances with
      * classes x,y,z. Make a new experiment out of this and add to session
-     *
      */
     private String keep(String [] parameters) throws Exception {
         String retString = "";
@@ -191,7 +190,8 @@ public class TransformationParser extends Parser{
             ctx.dataLayersDAO.addStream(e.id, pDAO);
 
             //.. Generate a console message which includes num instance, num of each condition
-            retString = "Created : " + e.getId() + " with " + e.matrixes.size() + " instances::";
+            retString = "Created : " + e.getId() + " with " + e.matrixes.size() + " instances:: "
+                    + " " + super.getColorsMessage(e); 
         }
         return retString;
     }
@@ -222,7 +222,7 @@ public class TransformationParser extends Parser{
                     biDAO.addMarkers(m);
                 }
             }
-
+            
             //.. make the triplet layer
             retString += makeExperiment(cs, labelName);
         }

@@ -47,6 +47,20 @@ public class DataManipulationParser extends Parser{
         command.debug = "Not entirely clear how x,y translates into filter hz values";
         commands.put(command.id, command);
         
+        //-- calcoxy 
+        command = new Command("calcoxy");
+        command.documentation = " With a 2D channelset selected, multiply 690 and 830 cols"
+                + " to produce rows with oxygenated and deoxygenated hemoglobin values";
+        command.debug = "Only works with hard-coded channel locations";
+        commands.put(command.id, command);
+        
+        //-- zscore 
+        command = new Command("zscore");
+        command.documentation = " With a 2D channelset selected, replace each value by its standard"
+                + "score, the difference between it and the global average, divided by the standard deviation";
+        commands.put(command.id, command);
+
+        
         //--ADD FEATURES
         command = new Command("addfeatures");
         command.documentation = " With a feature set selected, adds a set of feature descriptions. ";
@@ -96,7 +110,12 @@ public class DataManipulationParser extends Parser{
                 + " in the training; if the machine learning algorithm supports confidence, also provides a confidence.";
         command.parameters = "1[OPTIONAL] k = provide a new classification every kth reading";
         commands.put(command.id, command);
-
+        
+        //-- fnirs 
+        command = new Command("fnirs");
+        command.documentation = " Applies a range of data-manipulations to the selected datasets, "
+                + " ultimate putting it into the best visualizable form";
+        commands.put(command.id, command);
         
         
 
@@ -110,12 +129,26 @@ public class DataManipulationParser extends Parser{
         if(this.techDAO != null)
             this.currentTechnique = techDAO.technique;
         Command c = null;
+        
         //.. filter.movingaverage(), .lowpass()
         if (command.startsWith("filter")) {
             c = commands.get("filter");
             c.retMessage = filter(command, parameters);
             c.action = "reload";
         } 
+        
+        else if (command.startsWith("calcoxy")) {
+            c = commands.get("calcoxy");
+            c.retMessage = calcOxy(parameters);
+            c.action = "reload";
+        }
+        
+        else if (command.startsWith("zscore")) {
+            c = commands.get("zscore");
+            c.retMessage = zScore(parameters);
+            c.action = "reload";
+        }
+        
         
         //.. addFeatures(*,*,*)
         else if (command.startsWith("addfeatures")) {
@@ -150,6 +183,12 @@ public class DataManipulationParser extends Parser{
             c = commands.get("classify");
             c.retMessage = classify(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
         }
+        else if (command.startsWith("fnirs")) {
+            c = commands.get("fnirs");
+            c.retMessage = fnirs(parameters);
+            c.action = "reload";
+        }
+
 
         if (c == null) {
             return null;
@@ -186,7 +225,7 @@ public class DataManipulationParser extends Parser{
      */
     private String applyMovingAverage(ChannelSet cs, String [] parameters) throws Exception {
         //.. extract the one parameter : how many readings back. Default is 5
-        int readingsBack = 5;
+        int readingsBack = 10;
         if (parameters.length > 0) {
             readingsBack = Integer.parseInt(parameters[0]);
         }
@@ -234,6 +273,33 @@ public class DataManipulationParser extends Parser{
         return "Created " + filteredSet.id + " a copy of " + cs.id;
     }
     
+  
+    private String calcOxy(String [] parameters) throws Exception{
+        ArrayList<ChannelSet> chanSets = getChanSets();
+
+        for (ChannelSet cs : chanSets) {
+            ChannelSet filteredSet = cs.calcOxy(true,null,null); //.. we want a copy
+            filteredSet.setParent(cs.id);
+            BiDAO mDAO = new BiDAO(filteredSet);
+            ctx.dataLayersDAO.addStream(filteredSet.id, mDAO);
+        }
+        
+        return "Modified " + chanSets.size() + ";;" + "0->7 : Probe A. 8->15;; :"
+                + " ProbeB;; 0->3&8->12 : HbO;;... 0,4,8,12: closest;; 3,7,11,15 : farthest";
+    }
+    
+    private String zScore(String[] parameters) throws Exception {
+        ArrayList<ChannelSet> chanSets = getChanSets();
+
+        for (ChannelSet cs : chanSets) { 
+            ChannelSet filteredSet = cs.zScore(true); //.. we want a copy
+            filteredSet.setParent(cs.id);
+            BiDAO mDAO = new BiDAO(filteredSet);
+            ctx.dataLayersDAO.addStream(filteredSet.id, mDAO);
+        }
+
+        return "ZScored " + chanSets.size() + "";
+    }
     /**
      * HANDLE: addFeature(mean, 1, :) or (mean, 1, WHOLE)
      * addFeature(slope^mean,1^2, WHOLE^ Immensely complex.*
@@ -671,5 +737,32 @@ public class DataManipulationParser extends Parser{
                classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), performances), cs, classifier.lastInstanceLength, readEvery, null);
        
        return "Successfully classified this dataset, and made " + p.predictions.size() + " predictions";
+    }
+    
+    public String fnirs(String [] parameters) throws Exception{
+        ArrayList<ChannelSet> chanSets = getChanSets();
+        String retString = "";
+        for (ChannelSet cs : chanSets) {
+            ChannelSet filteredSet = cs.calcOxy(true, null, null); //.. we want a copy
+            
+            filteredSet = cs.movingAverage(10, false);
+            filteredSet = cs.zScore(false);
+            
+            Experiment e = filteredSet.splitByLabel("condition");
+            ArrayList<String> toKeep = new ArrayList();
+            toKeep.add("easy");
+            toKeep.add("hard");
+            toKeep.add("rest"); 
+            e = e.removeAllClassesBut(toKeep);
+            e = e.anchorToZero(false);
+            e.setParent(cs.getId()); //.. set parent to what we derived it from
+
+            //.. make a new data access object, and add it to our stream
+            TriDAO pDAO = new TriDAO(e);
+            ctx.dataLayersDAO.addStream(e.id, pDAO);
+            retString += "Creating : " + e.getId() + " with " + e.matrixes.size() + " instances::" +
+                    super.getColorsMessage(e);
+        }
+        return retString;
     }
 }

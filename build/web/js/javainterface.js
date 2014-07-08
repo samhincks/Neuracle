@@ -58,7 +58,6 @@ function JavaInterface() {
        
         //.. no error, then render the object datalayers
         else {
-            console.log("l : " +JSONobj.datalayers.length);
             datalayerArea.addDatalayers(JSONobj.datalayers);
             reinit(); //.. relaod the drag/drop properties
         }

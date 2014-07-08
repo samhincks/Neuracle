@@ -15,6 +15,7 @@ import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.BidimensionalLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
+import timeseriestufts.kth.streams.bi.Instance;
 import timeseriestufts.kth.streams.quad.MultiExperiment;
 import timeseriestufts.kth.streams.tri.ChannelSetSet;
 import timeseriestufts.kth.streams.tri.Experiment;
@@ -89,7 +90,6 @@ public abstract class Parser {
     }
 
     protected String makeExperiment(ChannelSet cs, String labelName) throws Exception {
-
         Experiment e = cs.splitByLabel(labelName);
         e.setId(cs.getId() + labelName);
         e.setParent(cs.getId()); //.. set parent to what we derived it from
@@ -97,9 +97,34 @@ public abstract class Parser {
         //.. make a new data access object, and add it to our stream
         TriDAO pDAO = new TriDAO(e);
         ctx.dataLayersDAO.addStream(e.id, pDAO);
-
-        //.. Generate a console message which includes num instance, num of each condition
-        return "Created : " + e.getId() + " with " + e.matrixes.size() + " instances::";
+       
+        //.. Generate a console message which includes num instance, num of each condition, and color
+        String retString = "Created : " + e.getId() + " with " + e.matrixes.size() + " instances"
+                + "::" + getColorsMessage(e);
+        return retString;
+        
+    }
+    
+    protected String getColorsMessage(Experiment e) {
+        String retString ="";
+        String[] colors = new String[]{"blue", "orange", "green", "red", "purple"};
+        int index = 0;
+        String lastCondition = "";
+        ArrayList<String> added = new ArrayList();
+        
+        //.. Iterate through all instances, counting each occurrence of a new condition
+        //... and assigning it a color based on the order 
+        for (Instance i : e.matrixes) {
+            if ((!i.condition.equals(lastCondition))) {
+                if (!added.contains(i.condition)){
+                    retString += i.condition + " = " + colors[index] + ", ";
+                    index++;
+                    added.add(i.condition);
+                }
+                lastCondition = i.condition;
+            }
+        }
+        return retString;
     }
     
 }

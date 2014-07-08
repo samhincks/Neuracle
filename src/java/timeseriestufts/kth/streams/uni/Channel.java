@@ -316,7 +316,18 @@ public class Channel extends UnidimensionalLayer  {
     
    /**Z-Score the data; subtract the mean, and divide by standard deviation for each*/
     public Channel zScore (boolean copy) throws Exception{
-        if (copy) throw new Exception ("Zsscore true Not yet implemented");
+        if (copy) {
+            double avg = this.getMean();
+            double std = this.getStdDev();
+            Channel sc = new Channel(this.framesize, this.numPoints);
+            sc.setId(id + "zscore");
+
+            //.. add the filtered points to the new synched channel
+            for (int i = 0; i < numPoints; i++) {
+                 sc.addPoint((float) ((super.getPointOrNull(i) -avg) / std));
+            }
+            return sc;
+        }
         else {
             double avg = this.getMean();
             double std = this.getStdDev();

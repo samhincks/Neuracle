@@ -22,11 +22,16 @@ function LineChart() {
         height = 400,
         margin = {top:20, left: 30, right: 30, bottom: 20 };
     
+    //.. if this is true we set min and max to be the minimimum or maximum found in the area chart
+    //... otherwise it is the min and max in the raw data
+    var setHeightByAreaChart = false; 
+    
     var key = "ch1"; //.. the set of elements in view. If its an array it's acceptable to use index position
     var channels = function(d) {return d;}; //.. function for retrieving the numeric data from input-data, by default we want row.ch1, row.ch2. But maybe we want to store data in an array
     var selection;// = d3.select("body").append("svg:svg");
     var color = d3.scale.category10(); // to generate a different color for each line
     var max, min; //.. the maximum and minimum values of the dataset
+    
     
     /**PRIVATE VARIABLES*/
     //.. computed from data and configuration
@@ -46,12 +51,15 @@ function LineChart() {
     var chartTrans = 2000;
     var thickness = 10; //.. the higher thinnes the thinner it will be
     var sdevSensitivity = 10; //.. higher value means thickness is more determined by standard deviation
+    var drawn; //.. used in transition to average to store averages and standard deviations
+    var xAxis;
+    var yAxis;
     
     //..  The chart itself; sets everything after a fresh customization   
     //... input: selection, defaults to body
     function chart(s) {
         if (data == null) return;
-        
+
         //.. if there is an optional parameter of selection
         if (arguments.length) {
             d3.selectAll('.chart').remove(); //.. remove if it exists already
@@ -60,8 +68,10 @@ function LineChart() {
         else selection = d3.select("body").append("svg:svg");
         try {channels(data[0][0])[key];}catch(error){ throw("Specify proper keys and channel functions for accessing data")};
         
-        min = this.getMin(key);
-        max = this.getMax(key);
+        if (!(setHeightByAreaChart)){
+            min = this.getMin(key);
+            max = this.getMax(key);
+        }
         
         //.. calculate desired scales
         y= d3.scale.linear()
@@ -105,7 +115,7 @@ function LineChart() {
         }
         
         //.. Add an x axis
-        var xAxis = d3.svg.axis()
+        xAxis = d3.svg.axis()
             .scale(x) //.. use same scaling function as for x
             .orient("bottom");
             
@@ -121,7 +131,7 @@ function LineChart() {
             .text("Time");
             
        //.. Add a y axis
-       var yAxis = d3.svg.axis()
+       yAxis = d3.svg.axis()
            .scale(y)
            .orient("right");
        
@@ -162,6 +172,7 @@ function LineChart() {
                 return d3.max(d, function(d){
                     return channels(d)[key];})});
     }
+    
     
     //.. returns the length of the longest array
     this.getLongest = function () {
@@ -226,7 +237,7 @@ function LineChart() {
      **/
     chart.transitionToAverage = function(totalTime) {
          var lines = d3.selectAll(".d3line")[0];
-         var drawn = new Array(); //.. hash holding what has been drawn once
+         drawn = new Array(); //.. hash holding what has been drawn once
          
          if (arguments.length != 0) { //.. if total time is specified
               lineTrans = totalTime / lines.length;
@@ -234,18 +245,75 @@ function LineChart() {
          }
          //..for each line, transform it into the the std.dev area chart
          for (var i=0; i < lines.length; i++) {
-             var oldLine = lines[i]
+             var oldLine = lines[i];
              var instance = data[i];
              var condition = instance[0].condition;
              var existingAvg = drawn[condition]; //.. retrieve past avg calulculations if any 
 
              //..  Recompute average and standard deviation of this and past lines of same condition
              drawn[condition] = existingAvg = getAverageOfTwoArrays(existingAvg, instance);
-             
              mergeToArea(existingAvg, condition, instance, oldLine,i);
          }
     }
-  
+    
+    chart.transitionScale = function(totalTime) {   
+         var maxOfAC = getMaxOfAC("value");
+         var minOfAC = getMinOfAC("value");
+         y= d3.scale.linear()
+            .domain([minOfAC,maxOfAC]) //.. doubly nested since a 2d array (too expensive?)
+            .range([height - margin.top, 0 + margin.bottom]); //.. these need to be flipped because svg's are anchored at topleft
+        
+        console.log(maxOfAC + " , " + minOfAC);
+
+         //.. Add a y axis
+         yAxis = d3.svg.axis()
+           .scale(y)
+           .orient("right");
+   
+         chartTrans = chartTrans * 1000;
+
+         svg.select(".y")
+                 .transition()
+                 .duration(chartTrans)
+                 .call(yAxis);
+         
+         //.. Next redraw all data, so that it transitions to this new scale
+         for (var property in drawn){
+            svg.selectAll("#area" + property)
+                   .data([drawn[property]])
+                   .transition()
+                   .duration(chartTrans)
+                   .attr("d", area);
+       }
+
+    }
+    
+    //.. returns the maximum value in area chart
+    var getMaxOfAC = function(key) { 
+        var all = [];
+        for (var property in drawn) {
+            all.push(drawn[property]);
+        }
+        
+        return d3.max(all, 
+            function(d) {
+                return d3.max(d, function(d){
+                    return (d[key] +(d.getStdDev()/2.0));})});
+    }
+    //.. returns the maximum value in area chart
+    var getMinOfAC = function(key) {
+        var all = [];
+        for (var property in drawn) {
+            all.push(drawn[property]);
+        }
+
+        return d3.min(all,
+                function(d) {
+                    return d3.min(d, function(d) {
+                        return (d[key] - (d.getStdDev() / 2.0));
+                    })
+                });
+    }
     
     /**Move individual line and summed-class-area chart to a location, representing the condition's 
      *average and standard deviation
@@ -304,11 +372,11 @@ function LineChart() {
     * The area cannot push us outside the chart
     **/
    var areaHeight = function(stdDev) {
-       
-       var minimum = y(min)/512; //.. the distance from top to bottom divided by X
-       var added = y(max-stdDev)/2; //.. most of the distance added to based on std deviation
-       console.log(added);
-       return (minimum+added);
+//       var minimum = y(min)/512; //.. the distance from top to bottom divided by X
+ //      var added = y(max-stdDev)/2; //.. most of the distance added to based on std deviation
+       console.log(stdDev);
+       return stdDev;
+       //return (minimum+added);
    }
   
    
@@ -318,8 +386,8 @@ function LineChart() {
           area = d3.svg.area()
             .interpolate("basis")
             .x(function(d,i) {return x(i); })
-            .y0(function(d) { if (d.numExamples ==1) return y(d.value)-2; return y(d.value)+areaHeight(d.getStdDev()); })
-            .y1(function(d) {if (d.numExamples ==1) return y(d.value)+2; return y(d.value) - areaHeight(d.getStdDev()); });
+            .y0(function(d) { if (d.numExamples ==1) return y(d.value)-2; return y(d.value+(d.getStdDev()/2.0)) /*+areaHeight(d.getStdDev())*/; })
+            .y1(function(d) {if (d.numExamples ==1) return y(d.value)+2; return y(d.value -(d.getStdDev()/2.0))  /*-areaHeight(d.getStdDev())*/; });
         
            var ent =svg.selectAll(".area")
               .data([avgArray])
@@ -329,7 +397,7 @@ function LineChart() {
                .attr("id", "area"+condition)
                .attr("class", "avgArea")
                .attr("d", area)
-               .style("fill", color(condition))
+               .style("fill", color(condition)) ///color(condition)
                .style("opacity", 0.9);
     }
     

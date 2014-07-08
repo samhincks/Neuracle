@@ -7,8 +7,8 @@ function ChartArea(id) {
    var chart = new Chart();
    var streamChart; 
    this.displayedDL=""; //.. set to currently displayed datalayer
-   this.timeToTransition = 500;
-   this.transitionLength = 3000;
+   this.timeToTransition = 200;
+   this.transitionLength = 300;
    var added =0;
    
    /*Given a jsonObj packaged as a 2D or 3D datalayer display it in the graph
@@ -18,7 +18,7 @@ function ChartArea(id) {
    this.displayChart = function (JSONobj) {
         if(JSONobj.type == "experiment"){
             var channels = JSONobj.instances[0][0].channels;
-            
+
             //.. add a menu for selecting channel 
             $("#channelSelection").remove();
             $(selection).append("<select id = channelSelection> </select>" );
@@ -38,6 +38,10 @@ function ChartArea(id) {
                       d3Chart.key(channel);
                       d3Chart(selection);
                       setTimeout(function() {d3Chart.transitionToAverage()},this.timeToTransition);
+                      
+                      //... should be a copy of what's below
+                      setTimeout(function() {d3Chart.transitionScale(this.transitionLength*3.0)}, (this.timeToTransition*2.0)+this.transitionLength);
+
             });
             
             //.. build the line chart with default width and height and key
@@ -58,11 +62,10 @@ function ChartArea(id) {
                     d3Chart.addRow(instance[k],i);
                 }
             }
-            console.log("length = " + this.transitionLength);
-            console.log("time = " + this.timeToTransition);
             //.. instantiate chart, then make it automatically transition to average
             d3Chart(selection);
             setTimeout(function() {d3Chart.transitionToAverage()},this.timeToTransition);
+            setTimeout(function() {d3Chart.transitionScale(this.transitionLength*3.0)}, (this.timeToTransition*2.0)+this.transitionLength);
         }
         
         else if(JSONobj.type == "channelset") {
@@ -78,7 +81,9 @@ function ChartArea(id) {
             dataA.end = data.end + added;
             added += dataA.values[0].length;//dataA.data.length;
 
-            // for each data series ...
+            console.log(dataA.start + " , " + dataA.end + " , " + added);
+           
+           // for each data series ...
             var newData = [];
             data.values.forEach(function(dataSeries, index) {
                 // take the first value and move it to the end

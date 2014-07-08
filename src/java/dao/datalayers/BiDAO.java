@@ -237,7 +237,6 @@ public class BiDAO extends DataLayerDAO {
 
 
                 JSONArray channelData = new JSONArray();
-
                 //.. add points at specified increments
                 for (int j = startingPoint; j < numPoints; j += pointsInc) {
                     float p = channel.getPointOrNull(j);

@@ -11,16 +11,16 @@ import org.json.JSONObject;
 /**
  *
  * @author samhincks
- */
+ */  
 public class Command {
     public String id;
-    public String parameters ="";
+    public String parameters =""; 
     public String debug ="";
     public String retMessage =""; //.. populated when the command is executed
     public String documentation =""; //.. populated when the command is executed
     public String action = null;
     public JSONObject data =null;
-
+ 
     public Command(String id) {
         this.id = id;
     }

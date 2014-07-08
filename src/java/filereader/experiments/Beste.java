@@ -33,7 +33,7 @@ public class Beste extends EvaluationInterface{
     public static void main(String[] args) {
         try {
             Beste nr = new Beste();
-            nr.evaluateSingles();
+            //nr.evaluateSingles();
             nr.testPreprocess();
             
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class Beste extends EvaluationInterface{
             //.. read
             TSTuftsFileReader f = new TSTuftsFileReader();
             f.readEvery = 1;
-            String filename = "input/bestemusic/bestemusic06.csv";
+            String filename = "input/bestemusic/bestemusic01.csv";
             if (filename.contains("back")) frameSize = 0.16f;
             f.FRAMESIZE= frameSize;
             ChannelSet cs = f.readData(",", filename);
@@ -80,7 +80,7 @@ public class Beste extends EvaluationInterface{
             cs.calcOxy(false, null, null);
             cs.movingAverage(25, false);
             cs.zScore(false);
-            cs.writeToFile("output/bestemusic06Oxy.csv", 20, true);
+            cs.writeToFile("output/bestemusic01Oxy.csv", 20, true);
            
             /*Experiment e = cs.splitByLabel("condition");
              e = e.removeAllClassesBut(toKeep);

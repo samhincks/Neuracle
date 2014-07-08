@@ -223,7 +223,16 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     }
     
     public ChannelSet zScore(boolean copy) throws Exception{
-       if (copy) throw new Exception("copy=true not yet implemented");
+       if (copy) {
+           ChannelSet cs = getCopy(this.id + "zscore");
+
+           for (Channel c : streams) {
+               Channel c2 =c.zScore(true);
+               cs.addStream(c2);
+           }
+           
+           return cs;
+       }
        else {
             for(UnidimensionalLayer u : streams) {
                 Channel thisChan = (Channel) u;
@@ -430,32 +439,40 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
      * the flickered light was at wavelength 690 and 830, multiplying by some constant,
      * and dividing by some other constant. 
      * @param copy : if true, make a deep copy, otherwise modify this
-     * @param 690Cols : indexes of 690. if null, assume the first half are 690. if empty, second half are 690
+     * @param 690Cols : indexes of 690. if null, assume the first four are 690. if empty, second half are 690
      * @param 830 : indexes of 830. Same position in these arrays mean they are paired
      **/
     public ChannelSet calcOxy(boolean copy, ArrayList<Integer> sixNinetyCols, ArrayList<Integer> eightThirtyCols) throws Exception{
         if (this.streams.size() % 2 != 0) throw new Exception("Double check columns, since # not divisible by two");
         int half = this.streams.size() / 2;
+        int quarter = this.streams.size() / 4;
         
         //.. assume the first ones pertain to sixenty, and that its a mirror
+        /**EDIT: The first 4 are 830, the next four are 690. 
+         * Then this repeats for probe B. 
+         **/
         if (sixNinetyCols == null) {
             sixNinetyCols = new ArrayList();
             eightThirtyCols = new ArrayList();
-
-            for (int i=0; i < half; i++ ) {
+            
+            //.. PROBE A
+            for (int i = 0; i < quarter; i++) {
                 sixNinetyCols.add(i);
-                eightThirtyCols.add(i+half);
+                eightThirtyCols.add(i + quarter);
+            }
+            
+            //.. PROBE B
+            for (int i = half; i < half +quarter; i++) {
+                sixNinetyCols.add(i);
+                eightThirtyCols.add(i + quarter);
             }
         }
         
-        //.. assume second oens pertain to sixeninenty
-        else if (sixNinetyCols.isEmpty()) {
-            eightThirtyCols = new ArrayList();
-            for (int i=0; i < half; i++ ) {
-                sixNinetyCols.add(i+half);
-                eightThirtyCols.add(i);
-            }
-        }
+        /** So if these defaults are used then:
+         *  The snc[0] is ProbeA, 690, closest, 
+         *  and it corresponds to etc[0] which is ProbeA 690 Closest
+         *  At snc[4] it flips, and its Probe B
+         **/
         
         if (sixNinetyCols.size() != eightThirtyCols.size()) throw new Exception("CALCOXY: There must be as many of both columns");
         
@@ -479,7 +496,11 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 
                 //.. HbO = (abs690*ed830-abs830*ed690)/den*1000; % concentration change (micromolar).
                 Channel HbOChan = new Channel(snCol.getFramesize(), snCol.getCount());
-                HbOChan.id = i + "HbO";
+                HbOChan.id ="HbO-" + i + "-";
+                //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
+                if (i < quarter) HbOChan.id += "A";
+                else HbOChan.id += "B";
+                
                 for (int j =0; j < minSize; j++) {
                     float hbO = Math.abs(snCol.getPoint(j)) * ed830 - Math.abs(etCol.getPoint(j))*ed690;
                     hbO = hbO / (den *1000.0f);
@@ -489,7 +510,12 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
 
                 //.. Hb = (abs830 * eo690 - abs690 * eo830) / den * 1000; % concentration change(micromolar)
                 Channel HbChan = new Channel(snCol.getFramesize(), snCol.getCount());
-                HbChan.id = i + "Hb";
+              
+                HbChan.id = "Hb-"+i;
+                //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
+                if (i < quarter) HbOChan.id += "-A";
+                else HbOChan.id += "-B";
+                
                 for (int j = 0; j < minSize; j++) {
                     float hb = Math.abs(etCol.getPoint(j)) * eo690 - Math.abs(snCol.getPoint(j)) * eo830;
                     hb = hb / (den * 1000.0f);
@@ -516,7 +542,11 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 }
 
                 //.. HbO = (abs690*ed830-abs830*ed690)/den*1000; % concentration change (micromolar).
-                snCol.id = i + "HbO";
+                snCol.id = "HbO-" +i +"-";
+                //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
+                if (i < quarter) snCol.id += "A";
+                else snCol.id += "B";
+                
                 for (int j = 0; j < minSize; j++) {
                     float hbO = Math.abs(snCol.getPoint(j)) * ed830 - Math.abs(etCol.getPoint(j)) * ed690;
                     hbO = hbO / (den * 1000.0f);
@@ -524,7 +554,11 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 }
 
                 //.. Hb = (abs830 * eo690 - abs690 * eo830) / den * 1000; % concentration change(micromolar)
-                etCol.id = i + "Hb";
+                etCol.id = "Hb-" +i;
+                //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
+                if (i < quarter) etCol.id += "-A";
+                else etCol.id += "-B";
+                
                 for (int j = 0; j < minSize; j++) {
                     float hb = Math.abs(etCol.getPoint(j)) * eo690 - Math.abs(snCol.getPoint(j)) * eo830;
                     hb = hb / (den * 1000.0f);
@@ -545,6 +579,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             bw.write(streams.get(i).id);
             if (i != streams.size()-1) bw.write(",");
         }
+        if (!(markers.isEmpty())) bw.write(",");
         for (int j = 0; j < markers.size(); j += writeEvery) {
             Markers m = markers.get(j);
             bw.write(m.name);
@@ -585,7 +620,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     
     public static void main(String [] args) {
         try{
-            int numChannels = 2;
+            int numChannels = 16;
             int numReadings =40;
             ChannelSet cs = ChannelSet.generate(numChannels,numReadings);
             Markers markers = Markers.generate(5, 8);
@@ -627,8 +662,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             //.. TEST CALCULATING OXY
             if (TEST ==4) {
                 ChannelSet cs2 = cs.calcOxy(true, null, null);
-                cs2.printStream();
-                cs2.writeToFile("output/oxy.csv", 1, false);
+                //cs2.printStream();
+              //  cs2.writeToFile("output/oxy.csv", 1, false);
             }
         }
         catch(Exception e) {e.printStackTrace();}
