@@ -67,6 +67,14 @@
         left: 20%;
         z-index: 2;
     }
+    #farBottomRight {
+        width: 19%;
+        height: 18%;
+        background:ghostwhite;
+        top:61%;
+        left: 80%;
+        z-index: 2;
+    }
     
     #onText {
         margin-bottom: 10px;

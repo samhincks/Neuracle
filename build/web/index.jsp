@@ -51,6 +51,11 @@
             
             </div>
             
+            <!--Where we place our the description of selection-->
+            <div id ="farBottomRight" class ="component">         
+
+            </div>
+            
             <!--For communicating File variables to Stripes -->             
             <div id ="bottomLeft" class ="component">
                <s:form beanclass ="stripes.action.DataLayerActionBean" id = "submitform" class ="unselectable"> 
@@ -104,6 +109,7 @@
         <script type="text/javascript" src="js/TSChart.js"></script> 
         <script type="text/javascript" src="js/BarChart.js"></script> 
         <script type="text/javascript" src="js/chart.js"></script>
+        <script type="text/javascript" src="js/descriptionarea.js"></script>
         <script type="text/javascript" src="js/chartarea.js"></script>
         <script type="text/javascript" src="js/datalayerarea.js"></script> 
         <script type="text/javascript" src="js/plumb.js"></script> 

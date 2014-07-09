@@ -5,7 +5,8 @@
  ***/
 
 var consoleArea = new ConsoleArea();
-var chartArea = new ChartArea("#topRight");
+var descriptionArea = new DescriptionArea("#farBottomRight");
+var chartArea = new ChartArea("#topRight", descriptionArea);
 var javaInterface = new JavaInterface();
 var channelSurface = new ChannelSurface();
 var plumb = new Plumb();

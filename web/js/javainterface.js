@@ -151,12 +151,15 @@ function JavaInterface() {
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
         
         else if (JSONobj.description != null) {
-             chartArea.displayDescription(JSONobj.description);
+             //chartArea.displayDescription(JSONobj.description);
+             descriptionArea.displayDescription(JSONobj.description);
+
         }
        
        //.. otherwise no error, so we display the graph
         if (JSONobj.performance != null) {
-            chartArea.displayPerformance(JSONobj.performance);
+           // chartArea.displayPerformance(JSONobj.performance);
+            descriptionArea.displayPerformance(JSONobj.performance);
         }
     }
    

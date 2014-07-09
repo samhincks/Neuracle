@@ -13,7 +13,7 @@ import dao.datalayers.TriDAO;
 import dao.techniques.TechniqueDAO;
 import dao.techniques.TechniquesDAO;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Hashtable; 
 import org.json.JSONObject;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.evaluatable.AttributeSelection;

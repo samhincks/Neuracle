@@ -2,9 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-function ChartArea(id) {
+function ChartArea(id, descArea) {
    var selection = id;
    var chart = new Chart();
+   var descriptionArea = descArea;
    var streamChart; 
    this.displayedDL=""; //.. set to currently displayed datalayer
    this.timeToTransition = 200;
@@ -18,6 +19,7 @@ function ChartArea(id) {
     *       an object with a collection of channels, time, and condition. channels indexed by index.
     */
    this.displayChart = function (JSONobj) {
+        $(selection).children().remove();
         lastGraph = JSONobj.type;
         if(JSONobj.type == "experiment"){
             var channels = JSONobj.instances[0][0].channels;
@@ -72,9 +74,7 @@ function ChartArea(id) {
             window.onkeyup = function(e) {
                 var key = e.keyCode ? e.keyCode : e.which;
                 if (lastGraph == "experiment") {
-                    console.log(key);
                     if (key ==16) {
-                        console.log(d3Chart.hasTransitioned);
                         if (!(d3Chart.hasTransitioned)) {
                             d3Chart.transitionToAverage();
                             setTimeout(function() {d3Chart.transitionScale()}, (self.timeToTransition+self.transitionLength));
@@ -158,11 +158,9 @@ function ChartArea(id) {
             }, 100);
             */ 
         
-        
         this.displayedDL = JSONobj.id;
+        descriptionArea.displayedDL = this.displayedDL;
     }
-    
-   
     
     
     /** A lightweight stream of a datalayer. Inside a little information box, display a table
