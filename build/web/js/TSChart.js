@@ -49,6 +49,7 @@ function LineChart() {
     var area;
     var lineTrans =2000;
     var chartTrans = 2000;
+    var transitionLength =2000; //.. the length of a scale transition
     var thickness = 10; //.. the higher thinnes the thinner it will be
     var sdevSensitivity = 10; //.. higher value means thickness is more determined by standard deviation
     var drawn; //.. used in transition to average to store averages and standard deviations
@@ -152,9 +153,12 @@ function LineChart() {
         return chart;
     }   
     
-    chart.transitionLength = function(_) {
+    chart.singleTransitionLength = function(_) {
         chartTrans = _;
         lineTrans = _;
+    }
+    chart.transitionLength = function(_) {
+        transitionLength = _;
     }
     /**-------------PUBLIC DATA FUNCTIONS----------**/
     //.. Returns the minimum value in all arrays at the specified key
@@ -256,25 +260,23 @@ function LineChart() {
          }
     }
     
-    chart.transitionScale = function(totalTime) {   
+    /**Alter the scale, so that it is fit to the area chart as opposed to the indiviudal lines
+     * Since its in setTimeout, it cant take a parameter without a hack**/
+    chart.transitionScale = function() {   
          var maxOfAC = getMaxOfAC("value");
          var minOfAC = getMinOfAC("value");
          y= d3.scale.linear()
             .domain([minOfAC,maxOfAC]) //.. doubly nested since a 2d array (too expensive?)
             .range([height - margin.top, 0 + margin.bottom]); //.. these need to be flipped because svg's are anchored at topleft
         
-        console.log(maxOfAC + " , " + minOfAC);
-
          //.. Add a y axis
          yAxis = d3.svg.axis()
            .scale(y)
            .orient("right");
    
-         chartTrans = chartTrans * 1000;
-
          svg.select(".y")
                  .transition()
-                 .duration(chartTrans)
+                 .duration(transitionLength)
                  .call(yAxis);
          
          //.. Next redraw all data, so that it transitions to this new scale
@@ -282,10 +284,10 @@ function LineChart() {
             svg.selectAll("#area" + property)
                    .data([drawn[property]])
                    .transition()
-                   .duration(chartTrans)
+                   .duration(transitionLength)
                    .attr("d", area);
-       }
-
+          }
+       
     }
     
     //.. returns the maximum value in area chart

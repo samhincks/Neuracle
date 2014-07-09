@@ -9,6 +9,7 @@ function ChartArea(id) {
    this.displayedDL=""; //.. set to currently displayed datalayer
    this.timeToTransition = 200;
    this.transitionLength = 300;
+   this.singleTransition; //.. total transition / each line
    var added =0;
    
    /*Given a jsonObj packaged as a 2D or 3D datalayer display it in the graph
@@ -31,16 +32,17 @@ function ChartArea(id) {
             }
             var d3Chart = LineChart();
             
+            var self = this;
             //.. add event listener for this menu
              var menu = d3.select("#channelSelection")
                   .on("change", function() {
                       var channel = menu.property("value");
                       d3Chart.key(channel);
                       d3Chart(selection);
-                      setTimeout(function() {d3Chart.transitionToAverage()},this.timeToTransition);
+                      setTimeout(function() {d3Chart.transitionToAverage()},self.timeToTransition);
                       
                       //... should be a copy of what's below
-                      setTimeout(function() {d3Chart.transitionScale(this.transitionLength*3.0)}, (this.timeToTransition*2.0)+this.transitionLength);
+                      setTimeout(function() {d3Chart.transitionScale()}, (self.transitionLength) + self.timeToTransition/*(this.timeToTransition*10.0)+this.transitionLength*/);
 
             });
             
@@ -49,8 +51,11 @@ function ChartArea(id) {
             var height = $(selection).height();
             d3Chart.channels(function(d){return d.channels;}).key(11).width(width).height(height); //.. so we show the first channel
             
+            
             //.. the total duration of the area chart swallowing a line, scale to number of instances
-            d3Chart.transitionLength(this.transitionLength / JSONobj.instances.length);//..set transition length
+            this.singleTransition = this.transitionLength / JSONobj.instances.length;
+            d3Chart.singleTransitionLength(this.singleTransition);//..set transition length
+            d3Chart.transitionLength(this.transitionLength);
 
             //.. for each instnace (which all begin at 0)
             for (var i=0; i<JSONobj.instances.length; i++) {
@@ -65,7 +70,7 @@ function ChartArea(id) {
             //.. instantiate chart, then make it automatically transition to average
             d3Chart(selection);
             setTimeout(function() {d3Chart.transitionToAverage()},this.timeToTransition);
-            setTimeout(function() {d3Chart.transitionScale(this.transitionLength*3.0)}, (this.timeToTransition*2.0)+this.transitionLength);
+            setTimeout(function() {d3Chart.transitionScale(this.transitionLength)}, (this.timeToTransition+this.transitionLength));
         }
         
         else if(JSONobj.type == "channelset") {
