@@ -48,7 +48,7 @@
 
             <!--Where we place our Chart-->
             <div id ="topRight" class ="component">         
-            
+               
             </div>
             
             <!--Where we place our the description of selection-->

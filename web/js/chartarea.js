@@ -13,6 +13,7 @@ function ChartArea(id, descArea) {
    this.singleTransition; //.. total transition / each line
    var added =0;
    var lastGraph = "none";
+   var border =20;
    
    /*Given a jsonObj packaged as a 2D or 3D datalayer display it in the graph
     *Experiment JSONObj =  A collection of instances = a collection of rows =
@@ -35,9 +36,9 @@ function ChartArea(id, descArea) {
                     .text(i)); 
             }
             var d3Chart = LineChart();
-            
             var self = this;
-            //.. add event listener for this menu
+           
+           //.. add event listener for this menu
             var menu = d3.select("#channelSelection")
                   .on("change", function() {
                       var channel = menu.property("value");
@@ -47,10 +48,9 @@ function ChartArea(id, descArea) {
             });
             
             //.. build the line chart with default width and height and key
-            var width = $(selection).width();
-            var height = $(selection).height();
+            var width = $(selection).width() - border;
+            var height = $(selection).height() - border;
             d3Chart.channels(function(d){return d.channels;}).key(11).width(width).height(height); //.. so we show the first channel
-            
             
             //.. the total duration of the area chart swallowing a line, scale to number of instances
             this.singleTransition = this.transitionLength / JSONobj.instances.length;
@@ -67,6 +67,7 @@ function ChartArea(id, descArea) {
                     d3Chart.addRow(instance[k],i);
                 }
             }
+
             //.. instantiate chart, then make it automatically transition to average
             d3Chart(selection);
             

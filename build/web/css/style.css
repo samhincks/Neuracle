@@ -52,6 +52,7 @@
         background:ghostwhite;
         z-index:1;
     }
+
     
     #bottomLeft {
         top: 65%;
@@ -84,6 +85,7 @@
         -moz-user-select: none; /* Firefox */
         -ms-user-select: none; /* IE10+ */
     }
+    
     
     #onButton {
         margin-left: 32.5px;

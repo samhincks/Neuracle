@@ -21,7 +21,7 @@ function LineChart() {
     
     /**CONFIGURATION VARIABLES**/
     //.. width, height, margin. If these are customizable we need settors 
-    var width = 700, 
+    var wdith = 700, 
         height = 400,
         margin = {top:20, left: 30, right: 30, bottom: 20 };
     
@@ -63,7 +63,7 @@ function LineChart() {
     //... input: selection, defaults to body
     function chart(s) {
         if (data == null) return;
-        
+        console.log(width);
         //.. if there is an optional parameter of selection
         if (arguments.length) {
             d3.selectAll('.chart').remove(); //.. remove if it exists already
@@ -89,7 +89,7 @@ function LineChart() {
         if (typeof(svg) == "object") {
             d3.select(".chart").remove();
         }
-        
+
         //.. make our chart... does it make sense to reinstantiate chart each time? can we still do transition
         svg = selection
             .attr("class","chart")

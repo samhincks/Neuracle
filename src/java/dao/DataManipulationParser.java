@@ -118,8 +118,6 @@ public class DataManipulationParser extends Parser{
         commands.put(command.id, command);
         
         
-
-        
     }
 
     public JSONObject execute(String command, String[] parameters, ThisActionBeanContext ctx,
