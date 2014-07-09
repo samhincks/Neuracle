@@ -11,12 +11,14 @@ function ChartArea(id) {
    this.transitionLength = 300;
    this.singleTransition; //.. total transition / each line
    var added =0;
+   var lastGraph = "none";
    
    /*Given a jsonObj packaged as a 2D or 3D datalayer display it in the graph
     *Experiment JSONObj =  A collection of instances = a collection of rows =
     *       an object with a collection of channels, time, and condition. channels indexed by index.
     */
    this.displayChart = function (JSONobj) {
+        lastGraph = JSONobj.type;
         if(JSONobj.type == "experiment"){
             var channels = JSONobj.instances[0][0].channels;
 
@@ -34,16 +36,12 @@ function ChartArea(id) {
             
             var self = this;
             //.. add event listener for this menu
-             var menu = d3.select("#channelSelection")
+            var menu = d3.select("#channelSelection")
                   .on("change", function() {
                       var channel = menu.property("value");
                       d3Chart.key(channel);
                       d3Chart(selection);
-                      setTimeout(function() {d3Chart.transitionToAverage()},self.timeToTransition);
-                      
-                      //... should be a copy of what's below
-                      setTimeout(function() {d3Chart.transitionScale()}, (self.transitionLength) + self.timeToTransition/*(this.timeToTransition*10.0)+this.transitionLength*/);
-
+                     
             });
             
             //.. build the line chart with default width and height and key
@@ -69,8 +67,22 @@ function ChartArea(id) {
             }
             //.. instantiate chart, then make it automatically transition to average
             d3Chart(selection);
-            setTimeout(function() {d3Chart.transitionToAverage()},this.timeToTransition);
-            setTimeout(function() {d3Chart.transitionScale(this.transitionLength)}, (this.timeToTransition+this.transitionLength));
+            
+            //.. when user clicks space the chart transitions
+            window.onkeyup = function(e) {
+                var key = e.keyCode ? e.keyCode : e.which;
+                if (lastGraph == "experiment") {
+                    console.log(key);
+                    if (key ==16) {
+                        console.log(d3Chart.hasTransitioned);
+                        if (!(d3Chart.hasTransitioned)) {
+                            d3Chart.transitionToAverage();
+                            setTimeout(function() {d3Chart.transitionScale()}, (self.timeToTransition+self.transitionLength));
+                        }
+                    }
+                }
+            }
+            
         }
         
         else if(JSONobj.type == "channelset") {

@@ -16,6 +16,9 @@
 */
 
 function LineChart() {
+    /**PUBLIC VARIABLES**/
+    this.hasTransitioned = false;
+    
     /**CONFIGURATION VARIABLES**/
     //.. width, height, margin. If these are customizable we need settors 
     var width = 700, 
@@ -60,7 +63,7 @@ function LineChart() {
     //... input: selection, defaults to body
     function chart(s) {
         if (data == null) return;
-
+        
         //.. if there is an optional parameter of selection
         if (arguments.length) {
             d3.selectAll('.chart').remove(); //.. remove if it exists already
@@ -139,7 +142,8 @@ function LineChart() {
        svg.append("g")
            .attr("class", "y axis")
            .call(yAxis);
-        
+        chart.hasTransitioned = false;
+
         return chart;
     }
     
@@ -240,6 +244,7 @@ function LineChart() {
     /** One by one, remove an instance from each class and build a new area line view 
      **/
     chart.transitionToAverage = function(totalTime) {
+        this.hasTransitioned = true;
          var lines = d3.selectAll(".d3line")[0];
          drawn = new Array(); //.. hash holding what has been drawn once
          
