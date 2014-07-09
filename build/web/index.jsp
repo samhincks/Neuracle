@@ -110,6 +110,7 @@
         <script type="text/javascript" src="js/BarChart.js"></script> 
         <script type="text/javascript" src="js/chart.js"></script>
         <script type="text/javascript" src="js/descriptionarea.js"></script>
+        <script type="text/javascript" src="js/streamchart.js"></script> 
         <script type="text/javascript" src="js/chartarea.js"></script>
         <script type="text/javascript" src="js/datalayerarea.js"></script> 
         <script type="text/javascript" src="js/plumb.js"></script> 
@@ -120,7 +121,6 @@
         <script type="text/javascript" src="js/javainterface.js"></script> 
         <script type="text/javascript" src="js/events.js"></script> 
         <script type="text/javascript" src="js/labeler.js"></script> 
-
         
         <script type="text/javascript" src="js/sample_data.js"></script> 
         <script type="text/javascript" src="js/movingLinegraph.js"></script> 

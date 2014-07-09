@@ -13,7 +13,6 @@ function JavaInterface() {
     /**Having parsed the input and considered a response, post it to console*/
     this.returnFromConsole = function(xhr) {
         var JSONobj = eval('('+ xhr +')'); 
-        console.log(JSONobj.content);
         if (JSONobj.error != null)
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
         else if(JSONobj.content != "")
