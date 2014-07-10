@@ -107,8 +107,10 @@ function reinit() {
     //.. if a channel set is dbl-clicked
     $(".dropChannel").dblclick(function (e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
-        console.log(curKey);
-        javaInterface.postToDataLayer();
+        if (curKey==18)
+            javaInterface.postToDataLayer("frequency");
+        else
+            javaInterface.postToDataLayer();
     });
     
     //.. if a technique is click (do essentially same as if channel is
@@ -117,12 +119,14 @@ function reinit() {
         javaInterface.getTechniqueStats();
     });
     
-    var curKey; 
-    //.. when user clicks space the chart transitions
-    window.onkeypress = function(e) {
-        var curKey = e.keyCode ? e.keyCode : e.which;
-    }
-    
+    var curKey;
+   $(document).keydown(function (e) {
+       curKey = e.which;
+   });
+    $(document).keyup(function(e) {
+        curKey = 0;
+    });
+
     
 }
 /**THIS USED TO BE IN REINIT() but it was too broken so we have to exclude it*/

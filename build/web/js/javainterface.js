@@ -81,7 +81,14 @@ function JavaInterface() {
     }
     
     /**Having selected an element, get a stream of its data to display it. */
-    this.postToDataLayer = function() {
+    this.postToDataLayer = function(message) {
+        if (arguments.length) {
+            if (message == "frequency")
+                $('#frequency').val(true);
+        }
+        else {
+            $('#frequency').val(false);
+        }
         $('#merge').val(false); //.. so that we don't call a method that merges datalayers'
         $('#stats').val(false); 
         var form = $('#content'); 
@@ -157,8 +164,11 @@ function JavaInterface() {
        
        //.. otherwise no error, so we display the graph
         if (JSONobj.performance != null) {
-           // chartArea.displayPerformance(JSONobj.performance);
-            descriptionArea.displayPerformance(JSONobj.performance);
+            chartArea.displayPerformance(JSONobj.performance);
+        }
+        
+        if (JSONobj.frequency != null) {
+            chartArea.displayFrequency(JSONobj.frequency);
         }
     }
    

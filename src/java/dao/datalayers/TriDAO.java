@@ -14,7 +14,7 @@ import timeseriestufts.kth.streams.bi.Instance;
 import timeseriestufts.kth.streams.tri.ChannelSetSet;
 import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.tri.TridimensionalLayer;
-import timeseriestufts.kth.streams.uni.UnidimensionalLayer;
+import timeseriestufts.kth.streams.uni.UnidimensionalLayer; 
 
 
 /**
@@ -120,6 +120,50 @@ public class TriDAO extends DataLayerDAO {
       * This will match the performance JSON, in 
       **/
      public JSONObject getFreqDomainJSON() throws Exception {
-         throw new Exception("Not yet implemented");
+         JSONObject jsonObj = new JSONObject();
+
+         //.. no matter what, return a basic description of the data layer even if it hasnt been evaluated
+         JSONObject descObj = new JSONObject();
+         descObj.put("id", "a");
+         descObj.put("type", "b");
+
+         //.. if machine learning algorithm or 
+         descObj.put("value", "c");
+         jsonObj.put("trained", "d");
+
+         //.. what more - maybe available layers? then we might have to know what type of layer it is
+         jsonObj.put("description", descObj);
+         JSONArray frequencies = new JSONArray();
+         for (int k =0; k < 5; k++) {
+            JSONObject fObj = new JSONObject();
+
+            fObj.put("value", 0.2);
+            fObj.put("expected", 0.3);
+            fObj.put("label", "e");
+
+            JSONArray subVals = new JSONArray();
+
+            /**
+             * ERROR: each fold performance is what it should be, we get 20. We
+             * want the average over one condition, a set of 10
+             */
+            for (int i=0; i <3; i++) {
+                JSONObject subPerformance = new JSONObject();
+                subPerformance.put("value", 0.6);
+                subPerformance.put("expected", 0.5);
+                subPerformance.put("label", "f");
+                subVals.put(subPerformance);
+            }
+
+            if (subVals.length() > 1) {
+                fObj.put("subValues", subVals);
+            }
+
+            frequencies.put(fObj);
+
+         }
+         jsonObj.put("frequency", frequencies);
+         return jsonObj;
+
      }
 }

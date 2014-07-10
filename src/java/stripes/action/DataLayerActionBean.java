@@ -7,6 +7,7 @@ package stripes.action;
 import dao.datalayers.BiDAO;
 import dao.datalayers.DataLayerDAO;
 import dao.datalayers.DataLayersDAO;
+import dao.datalayers.TriDAO;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.Validate;
 import org.json.JSONException;
 import org.json.JSONObject;
+import static stripes.action.BaseActionBean.INDEX;
 import timeseriestufts.evaluatable.performances.Performances;
 import timeseriestufts.kth.streams.DataLayer;
 
@@ -97,6 +99,11 @@ public class DataLayerActionBean extends BaseActionBean{
     public boolean getStats() { return stats;}
     public void setStats(boolean stats) {this.stats = stats;}
     
+    private static boolean frequency =false;
+    public boolean getFrequency() { return frequency;}
+    public void setFrequency(boolean frequency) {this.frequency = frequency;}
+    
+    
     private boolean merge = false; //.. hacky, but set this to true if the channels should be merged
     public void setMerge(boolean merge) {this.merge = merge;} //.. set to false when its done
     public boolean getMerge() {return merge; }
@@ -112,9 +119,18 @@ public class DataLayerActionBean extends BaseActionBean{
             JSONObject jsonObj;
             
             //.. if we want to see data
-            if (!stats){ 
+            if (!stats && !frequency){ 
                jsonObj  = dlGiver.getJSON();
             }
+            
+            else if(frequency) {
+                if (!(dlGiver instanceof TriDAO)) throw new Exception(); //.. fail silently
+                else{
+                    TriDAO tDAO = (TriDAO) dlGiver;
+                    jsonObj = tDAO.getFreqDomainJSON();
+                }
+                
+            } 
             
             //.. if we want to see a stats representation of performance. 
             else {
