@@ -43,8 +43,32 @@ Time format info
 %X: HH:MM:SS
 """
 
+<<<<<<< Updated upstream
 ADDTIMESTAMP = True
 TIMEFORMAT = "%X.%f"
+=======
+
+"""
+%y: Year
+%m: Month
+%d: Day of the month
+%H: Hour (24H)
+%I: Hour (12H)
+%M: Minute
+%S: Second
+%f: Microsecond
+
+%x: MM/DD/(YY)YY
+%X: HH:MM:SS
+
+"""
+
+ADDTIMESTAMP = True
+#TIMEFORMAT = "%m/%d %X.%f"
+TIMEFORMAT = "%X.%f"
+
+# Read data from Serial port. When you use different COM PORT, Change "port"
+>>>>>>> Stashed changes
 
 if DEVICE == 'CMS50D':
     ser = serial.Serial(
@@ -140,6 +164,7 @@ def readFromCMS50D():
     oneChunk = []
     
     i = 0
+<<<<<<< Updated upstream
     while True:
         line = ser.read()
         # The first byte is the only one that is > 127, so align based on that
@@ -158,13 +183,55 @@ def readFromCMS50D():
                 oneChunk = []
                 aligned = False
 
+=======
+    while True: #i < 1000:
+        for line in ser.read():
+            if not aligned:
+                if line > 127:
+                    aligned = True
+                    oneChunk.append(line)
+            else:
+                oneChunk.append(line)
+                #oneChunk = readChunk(chunkSize)
+                i+=1
+                if len(oneChunk) == 5: # Chunk reading complete
+                    print(oneChunk)
+                    data.append(oneChunk)
+                    addChunkToDB('127.0.0.1', 3306, 'root', 'fnirs196',
+                            'newttt', count, oneChunk)
+                    count = count+1
+                    oneChunk = []
+                    aligned = False
+
+    # First chunk is sometimes not the right size (??)
+    data.pop(0) 
+
+    print(data)
+    for set in zip(*data):
+        print(set)
+        print()
+>>>>>>> Stashed changes
 def main():
     print("connected to: " + ser.portstr)
 
     conn = pymysql.connect(host='127.0.0.1', port=3306,
             user='root', passwd='fnirs196', db='newttt')
     cur=conn.cursor() 
+<<<<<<< Updated upstream
     
+=======
+
+    cur.execute("DROP TABLE IF EXISTS " + tableName)
+    if ADDTIMESTAMP:
+        createQuery = "CREATE TABLE " + tableName +" (Uk1 VARCHAR(45), YAxis VARCHAR(45), Uk2 VARCHAR(45), PRbpm VARCHAR(45), SpO2 VARCHAR(45), Time VARCHAR(45))"; 
+    else:
+        createQuery = "CREATE TABLE " + tableName +" (Uk1 VARCHAR(45), YAxis VARCHAR(45), Uk2 VARCHAR(45), PRbpm VARCHAR(45), SpO2 VARCHAR(45))"; 
+   
+    cur.execute(createQuery)
+
+         
+
+>>>>>>> Stashed changes
     if DEVICE == "CMS50D":
         tableName = "REALTIME"
         cur.execute("DROP TABLE IF EXISTS " + tableName)

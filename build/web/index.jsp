@@ -84,9 +84,7 @@
                           <span class = "prompt"> > </span> 
                           <span class = "cursor"> </span> 
                           <input id = "userinput" ></input> 
-                  </div> 
-                    <A HREF="realtime.jsp"><b> Realtime Data</b>
-                </div>  
+                  
                  <s:form beanclass ="stripes.action.ConsoleActionBean" id = "consoleForm" class ="unselectable"> 
                        <!--A message to the console--> 
                        <s:text name = "consoleInput" id = "consoleInput" style ="visibility:hidden"/> 

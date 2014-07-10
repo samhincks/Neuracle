@@ -21,7 +21,7 @@ import timeseriestufts.kth.streams.DataLayer;
  * added, for whether we want to make a new construction with this channel. 
  * @author Sam Hincks
  */
-public abstract class DataLayerDAO {
+public abstract class DataLayerDAO { 
     public boolean add = false;
     public DataLayer dataLayer;
     public ArrayList<TechniqueDAO> tDAOs = new ArrayList(); //.. Techniques that inform evaluation

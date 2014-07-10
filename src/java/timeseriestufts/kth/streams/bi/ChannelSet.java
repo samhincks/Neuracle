@@ -227,6 +227,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     }
     
     public ChannelSet zScore(boolean copy) throws Exception{
+<<<<<<< Updated upstream
        if (copy) {
            ChannelSet cs = getCopy(this.id + "zscore");
 
@@ -237,6 +238,9 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
            
            return cs;
        }
+=======
+       if (copy) throw new Exception("copy=true not yet implemented");
+>>>>>>> Stashed changes
        else {
             for(UnidimensionalLayer u : streams) {
                 Channel thisChan = (Channel) u;
@@ -622,9 +626,172 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         bw.close();
     }
     
+    /**Assume this is fNIRS data, and that the input is the intensity of reflected
+     light at DC690 and DC830; apply the modified beer-lambert law to estimate the 
+     quantity of oxygen. This amounts to combining corresponinding measurements when
+     * the flickered light was at wavelength 690 and 830, multiplying by some constant,
+     * and dividing by some other constant. 
+     * @param copy : if true, make a deep copy, otherwise modify this
+     * @param 690Cols : indexes of 690. if null, assume the first half are 690. if empty, second half are 690
+     * @param 830 : indexes of 830. Same position in these arrays mean they are paired
+     **/
+    public ChannelSet calcOxy(boolean copy, ArrayList<Integer> sixNinetyCols, ArrayList<Integer> eightThirtyCols) throws Exception{
+        if (this.streams.size() % 2 != 0) throw new Exception("Double check columns, since # not divisible by two");
+        int half = this.streams.size() / 2;
+        
+        //.. assume the first ones pertain to sixenty, and that its a mirror
+        if (sixNinetyCols == null) {
+            sixNinetyCols = new ArrayList();
+            eightThirtyCols = new ArrayList();
+
+            for (int i=0; i < half; i++ ) {
+                sixNinetyCols.add(i);
+                eightThirtyCols.add(i+half);
+            }
+        }
+        
+        //.. assume second oens pertain to sixeninenty
+        else if (sixNinetyCols.isEmpty()) {
+            eightThirtyCols = new ArrayList();
+            for (int i=0; i < half; i++ ) {
+                sixNinetyCols.add(i+half);
+                eightThirtyCols.add(i);
+            }
+        }
+        
+        if (sixNinetyCols.size() != eightThirtyCols.size()) throw new Exception("CALCOXY: There must be as many of both columns");
+        
+        //.. Constants, set by strokes of scientific genius
+        float eo690=0.956f; //.. extinction coefficient of HbO mM^-1xcm^-1 (690 nm)
+        float eo830=2.333f; //.. extinction coefficient of HbO mM^-1xcm^-1 (830 nm)
+        float ed690=4.854f; //.. extinction coefficient of Hb mM^-1xcm^-1 (690 nm)
+        float ed830=1.791f; //.. extinction coefficient of Hb mM^-1xcm^-1 (830 nm)
+        float den=eo690*ed830-eo830*ed690;
+
+        if (copy) {
+            ChannelSet cs = getCopy(this.id + "calcOxy");
+            
+            for (int i = 0; i < half; i++) {
+                Channel snCol = streams.get(sixNinetyCols.get(i));
+                Channel etCol = streams.get(eightThirtyCols.get(i));
+                
+                int minSize =0;
+                if (snCol.getCount() > etCol.getCount()) minSize = etCol.getCount();
+                else minSize = snCol.getCount();
+                
+                //.. HbO = (abs690*ed830-abs830*ed690)/den*1000; % concentration change (micromolar).
+                Channel HbOChan = new Channel(snCol.getFramesize(), snCol.getCount());
+                HbOChan.id = i + "HbO";
+                for (int j =0; j < minSize; j++) {
+                    float hbO = Math.abs(snCol.getPoint(j)) * ed830 - Math.abs(etCol.getPoint(j))*ed690;
+                    hbO = hbO / (den *1000.0f);
+                    HbOChan.addPoint(hbO);
+                }
+                cs.addStream(HbOChan);
+
+                //.. Hb = (abs830 * eo690 - abs690 * eo830) / den * 1000; % concentration change(micromolar)
+                Channel HbChan = new Channel(snCol.getFramesize(), snCol.getCount());
+                HbChan.id = i + "Hb";
+                for (int j = 0; j < minSize; j++) {
+                    float hb = Math.abs(etCol.getPoint(j)) * eo690 - Math.abs(snCol.getPoint(j)) * eo830;
+                    hb = hb / (den * 1000.0f);
+                    HbChan.addPoint(hb);
+                }
+                cs.addStream(HbChan);
+            }
+
+            return cs;
+        }
+        
+        //.. Exact same thing, but not a deep copy
+        else {
+            
+            for (int i = 0; i < half; i++) {
+                Channel snCol = streams.get(sixNinetyCols.get(i));
+                Channel etCol = streams.get(eightThirtyCols.get(i));
+
+                int minSize = 0;
+                if (snCol.getCount() > etCol.getCount()) {
+                    minSize = etCol.getCount();
+                } else {
+                    minSize = snCol.getCount();
+                }
+
+                //.. HbO = (abs690*ed830-abs830*ed690)/den*1000; % concentration change (micromolar).
+                snCol.id = i + "HbO";
+                for (int j = 0; j < minSize; j++) {
+                    float hbO = Math.abs(snCol.getPoint(j)) * ed830 - Math.abs(etCol.getPoint(j)) * ed690;
+                    hbO = hbO / (den * 1000.0f);
+                    snCol.setPoint(j,hbO);
+                }
+
+                //.. Hb = (abs830 * eo690 - abs690 * eo830) / den * 1000; % concentration change(micromolar)
+                etCol.id = i + "Hb";
+                for (int j = 0; j < minSize; j++) {
+                    float hb = Math.abs(etCol.getPoint(j)) * eo690 - Math.abs(snCol.getPoint(j)) * eo830;
+                    hb = hb / (den * 1000.0f);
+                    etCol.setPoint(j,hb);
+                }
+            }
+            return this;
+        }
+    }
+    
+    /** Write out the data in its current format to a csv file
+     * @param writeEvery : compress the file by making this larger
+     **/
+    public void writeToFile(String filename, int writeEvery, boolean labelToInt) throws Exception{
+        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filename)));
+        int numPoints = this.getMinPoints();
+        for (int i =0; i < streams.size(); i++) {
+            bw.write(streams.get(i).id);
+            if (i != streams.size()-1) bw.write(",");
+        }
+        for (int j = 0; j < markers.size(); j += writeEvery) {
+            Markers m = markers.get(j);
+            bw.write(m.name);
+            if (j != markers.size() - 1) {
+                bw.write(",");
+            }
+        }
+        bw.write("\n");
+        
+        for(int i=0; i< numPoints; i+=writeEvery) {
+           for (int j =0; j < streams.size(); j++) {
+               bw.write(String.valueOf(streams.get(j).getPoint(i)));
+               if (i != streams.size() - 1) {
+                   bw.write(",");
+               }
+           }
+           
+           //.. get label
+           for (int j =0; j < markers.size(); j+=writeEvery) {
+               Markers m = markers.get(j);
+               Labels l =m.saveLabels;
+               if (!(labelToInt))
+                   bw.write(l.channelLabels.get(i).value);
+               else {
+                   String conName = l.channelLabels.get(i).value;
+                   String index = String.valueOf(m.getClassification().getIndex(conName));
+                   //System.out.println(conName +" = "+ index);
+                   bw.write(index);
+               }
+               if (i != markers.size() - 1) {
+                   bw.write(",");
+               }
+           }
+           bw.write("\n");
+        }
+        bw.close();
+    }
+    
     public static void main(String [] args) {
         try{
+<<<<<<< Updated upstream
             int numChannels = 16;
+=======
+            int numChannels = 2;
+>>>>>>> Stashed changes
             int numReadings =40;
             ChannelSet cs = ChannelSet.generate(numChannels,numReadings);
             Markers markers = Markers.generate(5, 8);
@@ -666,8 +833,13 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             //.. TEST CALCULATING OXY
             if (TEST ==4) {
                 ChannelSet cs2 = cs.calcOxy(true, null, null);
+<<<<<<< Updated upstream
                 //cs2.printStream();
               //  cs2.writeToFile("output/oxy.csv", 1, false);
+=======
+                cs2.printStream();
+                cs2.writeToFile("output/oxy.csv", 1, false);
+>>>>>>> Stashed changes
             }
         }
         catch(Exception e) {e.printStackTrace();}
