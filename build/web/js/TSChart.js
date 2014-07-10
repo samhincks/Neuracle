@@ -233,6 +233,12 @@ function LineChart() {
         return chart;
     }
     
+    chart.maxTime = function(_) {
+        if (!arguments.length) return margin;
+        margin = _;
+        return chart;
+    }
+    
     
     
     /** Row is an object of the form:

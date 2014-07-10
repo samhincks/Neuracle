@@ -31,7 +31,8 @@ import org.apache.commons.math.util.MathUtils;
  * @author Sam Hincks
  */
 public class Channel extends UnidimensionalLayer  {
-    protected double framesize;    
+    protected double framesize;   
+    public static float HitachiRPS = 11.7925f; //.. readings per second for the hitachi
     private Complex [] transformed = null;
     private FrequencyDomain frequencyDomain = null;
     
@@ -40,7 +41,9 @@ public class Channel extends UnidimensionalLayer  {
      * @param _framesize - the interval between readings
      */
     public Channel(double framesize, int maxLength) {
-        this.framesize = framesize;    
+        this.framesize = framesize;   
+        //.. TEMP
+        this.framesize = 1 / HitachiRPS;
         data = new float[maxLength];
     }
     

@@ -7,3 +7,4 @@ build/web/WEB-INF/classes/org/json/JSONTokener.class
 build/web/WEB-INF/classes/org/json/XMLTokener.class
 build/web/WEB-INF/classes/stripes/action/TechniquesActionBean.class
 build/web/WEB-INF/classes/timeseriestufts/kth/streams/uni/Channel.class
+/dist/

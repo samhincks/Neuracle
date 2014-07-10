@@ -738,13 +738,44 @@ public class DataManipulationParser extends Parser{
     }
     
     public String fnirs(String [] parameters) throws Exception{
+        float lowpass =0;
+        float highpass=0;
+        if (parameters.length > 1) {
+            lowpass = Float.parseFloat(parameters[0]);
+            highpass = Float.parseFloat(parameters[1]);
+        }
+        else if (parameters.length >0) {
+            lowpass = Float.parseFloat(parameters[0]);
+        }
         ArrayList<ChannelSet> chanSets = getChanSets();
         String retString = "";
         for (ChannelSet cs : chanSets) {
             ChannelSet filteredSet = cs.calcOxy(true, null, null); //.. we want a copy
+            retString += "Applied CalcOxy, so that 0->7 : Probe A. 8->15" +
+"                + \" ProbeB:: 0->3&8->12 : HbO::... 0,4,8,12: closest;; 3,7,11,15 : farthest\";::";
+            if(lowpass ==0){ 
+                filteredSet = filteredSet.movingAverage(10, false);
+                retString += "Applied MovingAverage, 10 readings back::";
+            }
+             
+            if(lowpass >0 && highpass ==0){
+                filteredSet = filteredSet.lowpass(lowpass, false);
+                retString += "Applied Lowpass; Removed frequencies oscillating at above " +lowpass + "hz ::";
+            }
+            else if(highpass >0 && lowpass ==0) {
+                filteredSet = filteredSet.highpass(highpass, false);
+                retString += "Applied Highpass; Removed frequencies oscillating below " + highpass + "hz ::";
+
+            }
+            else if(lowpass >0 && highpass >0) {
+                filteredSet = filteredSet.bandpass(lowpass,highpass, false);
+                retString += "Applied Bandpass; kept frequencies oscillating between " + lowpass +" and " + highpass + "hz ::";
+            }
+           
             
-            filteredSet = cs.movingAverage(10, false);
-            filteredSet = cs.zScore(false);
+            filteredSet = filteredSet.zScore(false);
+            retString += "Z scored the data, so that each value is replaced by the difference between "
+                    + " it and the channel's corresponding mean, divided by the standard deviation::";
             
             Experiment e = filteredSet.splitByLabel("condition");
             ArrayList<String> toKeep = new ArrayList();
@@ -752,13 +783,17 @@ public class DataManipulationParser extends Parser{
             toKeep.add("hard");
             toKeep.add("rest"); 
             e = e.removeAllClassesBut(toKeep);
+            
             e = e.anchorToZero(false);
             e.setParent(cs.getId()); //.. set parent to what we derived it from
 
+            e.setId(e.id + "-l"+lowpass+"-h"+highpass);
             //.. make a new data access object, and add it to our stream
             TriDAO pDAO = new TriDAO(e);
+            
             ctx.dataLayersDAO.addStream(e.id, pDAO);
-            retString += "Creating : " + e.getId() + " with " + e.matrixes.size() + " instances::" +
+            
+            retString += " Creating : " + e.getId() + " with " + e.matrixes.size() + " instances::" +
                     super.getColorsMessage(e);
         }
         return retString;
