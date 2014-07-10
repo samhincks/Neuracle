@@ -54,22 +54,26 @@ public class Experiment extends TridimensionalLayer<Instance>{
     //.. predictions, reinstantiated each time a new evaluation is run, but saved in dataset and techniqueset
     Predictions predictions;
     
+    //.. the number of readings per second in this experiment
+    public float readingsPerSec;
+    
     /**Note Experiment not properly constructed after initialization. Must call makeInstances()*/
     /**Use this constructor if its the first time we evaluate this experiment*/
-    public Experiment(String filename, Classification c) throws Exception{
+    public Experiment(String filename, Classification c, float readingsPerSec) throws Exception{
         this.classification = c;
         this.filename = filename;
         this.id = filename + c.getId();
         this.matrixes  = new ArrayList();
-        
+        this.readingsPerSec = readingsPerSec;
     }
     
     /**If we know the classification and instances*/
-    public Experiment(String filename, Classification c, ArrayList<Instance> instances) {
+    public Experiment(String filename, Classification c, ArrayList<Instance> instances, float readingsPerSec) {
         this.classification = c;
         this.id = filename + c.getId();
         this.filename = filename;
         this.matrixes  = new ArrayList();
+        this.readingsPerSec = readingsPerSec;
 
         for (Instance i : instances) {
             super.addMatrix(i);
@@ -238,7 +242,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 instances.add(instance);
             
         }
-        return new Experiment(filename, newClassification, instances);
+        return new Experiment(filename, newClassification, instances,this.readingsPerSec);
         
     }
 
@@ -259,7 +263,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 }
             }
         }
-        Experiment newE = new Experiment(filename, newClassification, instances);
+        Experiment newE = new Experiment(filename, newClassification, instances,this.readingsPerSec);
         if (instances.size() ==0 ) System.err.println("Warning - you just removed all the instances");
         newE.setDataset(this.getDataSet());
         return newE;
@@ -284,7 +288,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 instances.add(newInstance);
             }
 
-            return new Experiment(filename, classification, instances);
+            return new Experiment(filename, classification, instances,this.readingsPerSec);
         }
         
         //.. else if we want to manipulate the same experiment, perhaps to save memory
@@ -347,7 +351,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
             instances.add(instance);
         }
         ArrayList<String> values = new ArrayList(); values.add("a"); values.add("b");
-        Experiment experiment = new Experiment("test", new Classification(values, "fakeclass"), instances);
+        Experiment experiment = new Experiment("test", new Classification(values, "fakeclass"), instances, 1);
         return experiment;
     }
 
@@ -468,7 +472,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 instances.add(newInstance);
             }
 
-            return new Experiment(filename, classification, instances);
+            return new Experiment(filename, classification, instances,this.readingsPerSec);
         }
         
         //.. else if we want to manipulate the same experiment, perhaps to save memory
@@ -510,7 +514,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
           if (removed > 0) 
               System.err.println("Removed " + removed + " instances ");
           
-          return new Experiment(filename, classification, newInstances);
+          return new Experiment(filename, classification, newInstances,this.readingsPerSec);
 
         
     }

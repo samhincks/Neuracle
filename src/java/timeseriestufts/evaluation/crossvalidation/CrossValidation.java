@@ -56,8 +56,8 @@ public class CrossValidation {
         
         //.. iterate through all training leaving i out
         for (int i = 0; i < experiment.matrixes.size(); i++) {
-            Experiment training = new Experiment(experiment.filename, experiment.classification);
-            Experiment testing = new Experiment(experiment.filename, experiment.classification); 
+            Experiment training = new Experiment(experiment.filename, experiment.classification, experiment.readingsPerSec);
+            Experiment testing = new Experiment(experiment.filename, experiment.classification, experiment.readingsPerSec); 
             
             //.. add the testing
             testing.addMatrix(experiment.matrixes.get(i));
@@ -90,8 +90,8 @@ public class CrossValidation {
         
         //.. Create a new fold
         for (int i = 0 ; i <numFolds; i++) {
-            Experiment training = new Experiment(experiment.filename, experiment.classification);
-            Experiment testing = new Experiment(experiment.filename, experiment.classification); 
+            Experiment training = new Experiment(experiment.filename, experiment.classification, experiment.readingsPerSec);
+            Experiment testing = new Experiment(experiment.filename, experiment.classification, experiment.readingsPerSec); 
             
             //.. pick the testing instances, and add to testing
             ArrayList<Integer> testingTrials = new ArrayList();

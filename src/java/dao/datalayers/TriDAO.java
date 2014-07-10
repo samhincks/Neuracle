@@ -53,12 +53,17 @@ public class TriDAO extends DataLayerDAO {
                 jsonObj.put("id", getId());
                 JSONArray instances = new JSONArray();
                 int mostPoints = exp.getMostPointsInAChannel();
-                
+                jsonObj.put("actualNumPoints", mostPoints);
+                jsonObj.put("readingsPerSec", exp.readingsPerSec);
                 //.. set constant max-points then compute how much we have to increment by if it is exceeded
                 int MAXPOINTS = 100; //.. the number of points to display
                 int pointsInc = 1;
-                if (mostPoints > MAXPOINTS) pointsInc = mostPoints / MAXPOINTS; 
-                    
+                if (mostPoints > MAXPOINTS) {
+                    pointsInc = mostPoints / MAXPOINTS;
+                    jsonObj.put("maxPoints", MAXPOINTS);
+                } 
+                else jsonObj.put("maxPoints", mostPoints);
+
                 //.. for each instance
                 for (BidimensionalLayer bd : exp.matrixes) {
                     Instance instance = (Instance)bd;
