@@ -25,8 +25,8 @@ import serial
 import pymysql
 import datetime
 
-DEVICE = 'CMS50D'
-#DEVICE = 'fNIRS'
+#DEVICE = 'CMS50D'
+DEVICE = 'fNIRS'
 
 """
 Time format info
@@ -122,7 +122,7 @@ def addChunkToDB(host, port, user, pw, db, chunk):
 def readChunk(chunkSize):
     return [ser.read() for i in range(5)]
 
-def printData(data, trans=True)
+def printData(data, trans=True):
     # First chunk is sometimes not the right size (??)
     data.pop(0)
     if trans:

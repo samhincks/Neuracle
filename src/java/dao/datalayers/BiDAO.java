@@ -217,7 +217,7 @@ public class BiDAO extends DataLayerDAO {
             }
 
             for (int i = 0; i < numChannels; i += chanInc) {
-                UnidimensionalLayer channel = channelSet.getChannel(i);
+                UnidimensionalLayer channel = channelSet.getChannel(i); 
 
                 //.. Add each point in data to JSONArray
                 //... BUT DO NOT ADD MORE THAN MAX POINTS
