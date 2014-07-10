@@ -234,8 +234,8 @@ function LineChart() {
     }
     
     chart.maxTime = function(_) {
-        if (!arguments.length) return margin;
-        margin = _;
+        if (!arguments.length) return maxTime;
+        maxTime = _;
         return chart;
     }
     

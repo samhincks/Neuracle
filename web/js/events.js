@@ -107,6 +107,7 @@ function reinit() {
     //.. if a channel set is dbl-clicked
     $(".dropChannel").dblclick(function (e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
+        console.log(curKey);
         javaInterface.postToDataLayer();
     });
     
@@ -116,6 +117,11 @@ function reinit() {
         javaInterface.getTechniqueStats();
     });
     
+    var curKey; 
+    //.. when user clicks space the chart transitions
+    window.onkeypress = function(e) {
+        var curKey = e.keyCode ? e.keyCode : e.which;
+    }
     
     
 }

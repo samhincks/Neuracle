@@ -757,16 +757,17 @@ public class DataManipulationParser extends Parser{
                 filteredSet = filteredSet.movingAverage(10, false);
                 retString += "Applied MovingAverage, 10 readings back::";
             }
-             
+              
             if(lowpass >0 && highpass ==0){
                 filteredSet = filteredSet.lowpass(lowpass, false);
                 retString += "Applied Lowpass; Removed frequencies oscillating at above " +lowpass + "hz ::";
             }
+            
             else if(highpass >0 && lowpass ==0) {
                 filteredSet = filteredSet.highpass(highpass, false);
                 retString += "Applied Highpass; Removed frequencies oscillating below " + highpass + "hz ::";
-
             }
+            
             else if(lowpass >0 && highpass >0) {
                 filteredSet = filteredSet.bandpass(lowpass,highpass, false);
                 retString += "Applied Bandpass; kept frequencies oscillating between " + lowpass +" and " + highpass + "hz ::";

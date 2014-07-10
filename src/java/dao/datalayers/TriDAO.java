@@ -112,5 +112,14 @@ public class TriDAO extends DataLayerDAO {
         return jsonObj;
      }
 
-    
+     /** Return a JSONObject representing a 3D dataset in frequency domain reprsentation
+      * the x axis are the different frequencies and the y axis the power of the frequencies.
+      * Options: we could make this a transitioning graph it returns all the different trials,
+      * and the amplitutde of the various frequencies in them, or we could average here
+      * If there were 50 trials than each bar would need to be microscopic. Maybe play around in D3 a bit?
+      * This will match the performance JSON, in 
+      **/
+     public JSONObject getFreqDomainJSON() throws Exception {
+         throw new Exception("Not yet implemented");
+     }
 }
