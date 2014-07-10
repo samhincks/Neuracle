@@ -28,15 +28,18 @@ import timeseriestufts.kth.streams.tri.Experiment;
  * @author Sam
  */
 public class ChannelSet extends BidimensionalLayer<Channel>{
+    public static float HitachiRPS = 11.7925f; //.. readings per second for the hitachi
     public ArrayList<Markers> markers = new ArrayList(); //.. markers describing where each condition starts and ends
     
     public Integer realEnd; //.. its position in a former layer. 
     public Integer realStart;//... If we're setting these its derived from another layer
-    
+    public float readingsPerSecond;
     /**Initialize Unidimensional Array and unidimensional stat representation. 
      */
     public ChannelSet() {
         streams = new ArrayList();
+        this.readingsPerSecond = HitachiRPS; //.. THIS IS A HACK, in fact it should be a parameter probably
+        
     }
     /**
      * Initialize Unidimensional Array and unidimensional stat representation.
@@ -45,6 +48,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         streams = new ArrayList();
         this.realStart = realStart;
         this.realEnd = realEnd;
+        this.readingsPerSecond = HitachiRPS; //.. HACK
     }
     
     /*if this is a derived layer with different start and end points, return that 
@@ -323,7 +327,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         if (markers ==null) throw new Exception("Must have markers to know where to split");
         labelName = labelName.toLowerCase();
         Markers relevantMarkers = getMarkersWithName(labelName);
-        Experiment experiment = new Experiment(this.id, relevantMarkers.getClassification());
+        Experiment experiment = new Experiment(this.id, relevantMarkers.getClassification(),this.readingsPerSecond);
 
         //.. Build a new Channel with new points for each trial
         for (Trial t : relevantMarkers.trials) {
@@ -430,7 +434,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             if( c.hasCondition(myInstance.condition))
                 myInstances.add(myInstance);
         }
-        return new Experiment("testingStream", c, myInstances);
+        return new Experiment("testingStream", c, myInstances, this.readingsPerSecond);
     }
     
     /**Assume this is fNIRS data, and that the input is the intensity of reflected

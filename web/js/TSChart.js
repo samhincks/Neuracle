@@ -21,9 +21,11 @@ function LineChart() {
     
     /**CONFIGURATION VARIABLES**/
     //.. width, height, margin. If these are customizable we need settors 
-    var wdith = 700, 
+    var width = 700, 
         height = 400,
         margin = {top:20, left: 30, right: 30, bottom: 20 };
+
+    var maxTime =-1;
     
     //.. if this is true we set min and max to be the minimimum or maximum found in the area chart
     //... otherwise it is the min and max in the raw data
@@ -117,10 +119,17 @@ function LineChart() {
                     return color(d[0].condition); //.. assume all have same condition
                  });
         }
+       
+       //.. the tick of the x axis, only set it if we max time has been set
+        var x2;
+        if (maxTime <0) x2=x;
+        else x2 = d3.scale.linear()
+                .domain([0, maxTime])
+                .range([0 + margin.left, width - margin.right]);  
         
         //.. Add an x axis
         xAxis = d3.svg.axis()
-            .scale(x) //.. use same scaling function as for x
+            .scale(x2) //.. use same scaling function as for x
             .orient("bottom");
             
         svg.append("g")

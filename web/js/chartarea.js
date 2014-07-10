@@ -24,7 +24,13 @@ function ChartArea(id, descArea) {
         lastGraph = JSONobj.type;
         if(JSONobj.type == "experiment"){
             var channels = JSONobj.instances[0][0].channels;
-
+            console.log(JSONobj);
+            var actualMaxPoints = JSONobj.actualNumPoints;
+            var maxPoints = JSONobj.maxPoints;
+            var readingsPerSec = JSONobj.readingsPerSec;
+            
+            console.log(actualMaxPoints + " , " + maxPoints + " , " +  readingsPerSec);
+            console.log(actualMaxPoints + " is point " +maxPoints + ", so in seconds is " + (actualMaxPoints / readingsPerSec));
             //.. add a menu for selecting channel 
             $("#channelSelection").remove();
             $(selection).append("<select id = channelSelection> </select>" );

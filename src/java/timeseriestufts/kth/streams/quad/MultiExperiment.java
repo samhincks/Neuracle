@@ -67,7 +67,7 @@ public class MultiExperiment extends QuaddimensionalLayer{
             }
             
             //.. add all the other experiments to a single experiment, the training
-            Experiment allTraining = new Experiment("Multi", testingE.classification);
+            Experiment allTraining = new Experiment("Multi", testingE.classification, testingE.readingsPerSec);
             for (int j =0; j < piles.size(); j++) {
                 if (i!= j){ //.. make sure  not to add testing
                     Experiment trainingE =  (Experiment)piles.get(j);
