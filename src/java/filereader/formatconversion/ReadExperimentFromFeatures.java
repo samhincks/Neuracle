@@ -13,6 +13,7 @@ import timeseriestufts.evaluation.featureextraction.Attribute;
 import timeseriestufts.evaluation.featureextraction.Attributes;
 import timeseriestufts.evaluation.featureextraction.NumericAttribute;
 import timeseriestufts.evaluation.featureextraction.PresetAttribute;
+import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.bi.Instance;
 import timeseriestufts.kth.streams.tri.Experiment;
 
@@ -66,7 +67,7 @@ public class ReadExperimentFromFeatures {
             instance.extractAttributes(null);
             instances.add(instance);
         }
-        Experiment e = new Experiment(br.toString(), new Classification(labels), instances); 
+        Experiment e = new Experiment(br.toString(), new Classification(labels), instances, ChannelSet.HitachiRPS); 
         
         return e;
     }
