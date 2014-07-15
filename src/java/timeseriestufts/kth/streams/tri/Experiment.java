@@ -18,8 +18,10 @@ import timeseriestufts.evaluatable.WekaClassifier;
 import timeseriestufts.evaluatable.performances.Predictions;
 import timeseriestufts.evaluation.experiment.Classification;
 import timeseriestufts.kth.streams.bi.BidimensionalLayer;
+import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.bi.Instance;
 import timeseriestufts.kth.streams.uni.Channel;
+import timeseriestufts.kth.streams.uni.FrequencyDomain;
 import timeseriestufts.kth.streams.uni.UnidimensionalLayer;
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -346,11 +348,15 @@ public class Experiment extends TridimensionalLayer<Instance>{
    
     public static Experiment generate(int numInstances, int numChannels, int numReadings) {
         ArrayList<Instance> instances = new ArrayList();
+        ArrayList<String> values = new ArrayList();
+        values.add("a");
+        values.add("b");
+
         for (int i =0; i < numInstances; i++) {
             Instance instance = Instance.generate(numChannels, numReadings);
+            instance.condition = values.get(i % 2);
             instances.add(instance);
         }
-        ArrayList<String> values = new ArrayList(); values.add("a"); values.add("b");
         Experiment experiment = new Experiment("test", new Classification(values, "fakeclass"), instances, 1);
         return experiment;
     }
@@ -519,19 +525,68 @@ public class Experiment extends TridimensionalLayer<Instance>{
         
     }
     
+    /**Return a ChanelSetSet, where each ChannelSet represents a condition
+     * and each channel is the averaged magnitude at the 
+     * assorted phases. The first channel of the channelset is the corresponding frequency 
+     **/
+    public ChannelSetSet getAveragedFourier() throws Exception{
+        ChannelSetSet css = new ChannelSetSet();
+        css.id = this.id + "fourier";
+        
+        //..Create a new channel set for each condition 
+        for(String condition : classification.values) {
+            ChannelSet cs = new ChannelSet();
+            cs.id = condition;
+            
+            //.. Create a new channel, that is the fourier averaged version
+            for(int i=0; i< this.getChannelCount(); i++) {
+                ArrayList<Channel> channels = this.getChannelsWithChannelIndexAndCondition(i, condition);
+                Channel magnitudeAverage = null;
+                int added =0;
+                //.. average each instances version of that channel together
+                for (Channel c : channels) {
+                    FrequencyDomain fd  =c.getFrequencyDomain();
+                    
+                    //.. the very first channel should be the frequencies
+                    if (added ==0) {
+                        cs.addStream(fd.frequencyChannel);
+                        magnitudeAverage = fd.magnitudeChannel;
+                    }
+                    else { //.. otherwise average that channel's magnitude with existing
+                        magnitudeAverage.merge(fd.magnitudeChannel);
+                    }
+                    added++;
+                }
+                cs.addStream(magnitudeAverage);
+            }
+            css.addChannelSet(cs);
+        }
+        return css;
+    }
+    
+    
     public static void main(String [] args) {
         try{
-            Experiment e = Experiment.generate(1,1,5);
-            e.printStream();
-            System.out.println("xxxxxxxxxx");
-            Experiment c = e.anchorToZero(true);
-            c.printStream();
-            System.out.println("xxxxxxxxxx");
+            Experiment e = Experiment.generate(4,2,6);
+            
+            int TEST =1;
+            if (TEST ==0){
+                e.printStream();
+                System.out.println("xxxxxxxxxx");
+                Experiment c = e.anchorToZero(true);
+                c.printStream();
+                System.out.println("xxxxxxxxxx");
+            }
+            
+            if (TEST ==1) {
+                //e.printStream();
+                ChannelSetSet css = e.getAveragedFourier();
+                css.printStream();
+            }
 
-            e = e.anchorToZero(false);
-            e.printStream();
         }
         catch(Exception e) {e.printStackTrace();}
     }
+
     
 }

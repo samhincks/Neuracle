@@ -22,7 +22,10 @@ public class ChannelSetSet extends TridimensionalLayer<ChannelSet> {
     }
     @Override
     public void printStream() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        for (ChannelSet cs : matrixes) {
+            System.out.println(cs.id);
+            cs.printStream();
+        }
     }
     
 }

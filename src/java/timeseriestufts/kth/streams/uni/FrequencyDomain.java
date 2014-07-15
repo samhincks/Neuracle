@@ -12,11 +12,14 @@ import org.apache.commons.math3.complex.Complex;
  */
 public class FrequencyDomain {
     public Triple [] freqDomain;
-    public int sampleRate;
+    public Channel magnitudeChannel;
+    public Channel phaseChannel;
+    public Channel frequencyChannel;
+    public Complex [] complexData;
+    public float sampleRate;
     
-    public  FrequencyDomain(Complex[] complexData, int sampleRate) {
+    public  FrequencyDomain(float sampleRate) {
          this.sampleRate = sampleRate;
-         complexToFreq(complexData);
      }
      
      
@@ -24,34 +27,67 @@ public class FrequencyDomain {
       * Values are multiples of 1/T. 
       * f[i] = i * sampleRate / fftLength
       **/
-     public  Triple [] complexToFreq(Complex [] complexData) {
-         freqDomain = new Triple[complexData.length];
-         int n = complexData.length;
-         int t = n *sampleRate;
-         double start = (double)n / (double)(2*t);
-         double add = 1/(double)t;
-         int i=0; 
-         for (Complex c : complexData) {
+     public  Triple [] complexToFreq(Complex [] complexData) throws Exception{
+         int numReadings = complexData.length/2;
+       //  freqDomain = new Triple[numReadings];
+         magnitudeChannel = new Channel(numReadings);
+         frequencyChannel = new Channel(numReadings);
+         phaseChannel = new Channel(numReadings);
+
+
+         
+         for (int i=0; i < numReadings; i++){
+             Complex c = complexData[i];
              double magnitude = Math.sqrt(c.getReal()*c.getReal() + c.getImaginary()*c.getImaginary());
              double phase = Math.atan(c.getReal() / c.getImaginary()); //. arctan(a/b). This is a simplification. its different based on quadrant
-             double frequency = (i * sampleRate) / (double)complexData.length;
-             System.out.print(frequency+ ", ");
+             double frequency = (i * (sampleRate / (double)complexData.length));
              // System.out.println(magnitude + " , " + phase + " , " + start +" , " + frequency + ", " + sampleRate + " , " + complexData.length + " , " +i);
-             freqDomain[i] = new Triple(magnitude, phase, frequency);
-             i++;
-             start +=add;
+             //freqDomain[i] = new Triple(magnitude,phase, frequency);
+             magnitudeChannel.addPoint((float) magnitude);
+             phaseChannel.addPoint((float) phase);
+             frequencyChannel.addPoint((float)frequency);
          }
-         System.out.println("");
+         
+         magnitudeChannel.normalize(false);
          return freqDomain;
      }
 
     public double getMagAtFreq(int i) {
-        return freqDomain[i].magnitude;
+        return magnitudeChannel.getPointOrNull(i);
     }
     
     
     public double getPhaseAtFreq(int i) {
-        return freqDomain[i].phase;
+        return frequencyChannel.getPointOrNull(i);
+
+    }
+    
+    public void printComplex() {
+        int i = 0;
+        for (Complex c : complexData) {
+            Double real = c.getReal();
+            Double imaginary = c.getImaginary();
+
+            System.out.print(i + ", ");
+            if (real < 0.00001) {
+                System.out.print(0);
+            } else {
+                System.out.print(real);
+            }
+            System.out.print(",");
+            if (imaginary < 0.00001) {
+                System.out.print(0);
+            } else {
+                System.out.print(imaginary);
+            }
+            System.out.println("");
+            i++;
+        }
+    }
+    public void print() {
+        //frequencyChannel.printStream();
+        frequencyChannel.printStream();
+
     }
      
      private class Triple  {
@@ -59,5 +95,13 @@ public class FrequencyDomain {
          public Triple(double magnitude, double phase, double frequency) {
              this.magnitude = magnitude; this.phase = phase; this.frequency = frequency;
          }
+         
+         public void print(){
+             System.out.println("magnitude: " + magnitude + " , phase: " + phase + " , frequency: " + frequency);
+         }
+         
      }
+     public static void main(String[] args) {
+        Channel.main(args);
+    }
 }

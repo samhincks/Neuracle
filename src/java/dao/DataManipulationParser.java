@@ -44,7 +44,9 @@ public class DataManipulationParser extends Parser{
         command.documentation = "Applies a filter to the selected channelset, returning a deep copy";
         command.parameters = "1.FILTER.MOVINGAVERAGE(readingsBack)--> apply a moving average a channel set with specified window length ::"
                 + "2.FILTER.LOWPASS(x)  3.FIlTER.HIGHPASS(x) or 4.FILTER.BANDPASS(x,y)::";
-        command.debug = "Not entirely clear how x,y translates into filter hz values";
+        command.debug = "Not entirely clear how x,y translates into filter hz values "
+                + "If I say filter.movingaverage(1), it should 'almost' take away the pulse, but"
+                + " I need to say filter.movingaverage(0.005) ";
         commands.put(command.id, command);
         
         //-- calcoxy 

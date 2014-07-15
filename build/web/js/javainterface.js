@@ -168,7 +168,7 @@ function JavaInterface() {
         }
         
         if (JSONobj.frequency != null) {
-            chartArea.displayFrequency(JSONobj.frequency);
+            chartArea.displayFrequency(JSONobj.frequency, JSONobj.description);
         }
     }
    

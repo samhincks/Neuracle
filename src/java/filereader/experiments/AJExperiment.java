@@ -173,8 +173,9 @@ public class AJExperiment {
             cs.manipulate(ts, false);
            // cs.getChannel(0).printStream();
             Complex [] transformed = cs.getChannel(0).FFT();
-             FrequencyDomain fd = new FrequencyDomain(transformed, 11);
-
+             FrequencyDomain fd = new FrequencyDomain(11);
+             fd.complexToFreq(transformed);
+             
             //.. split
             Experiment e = cs.splitByLabel("condition");
             ArrayList<String> toKeep = new ArrayList();

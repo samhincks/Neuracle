@@ -15,7 +15,8 @@
  *   */
 
 function FreqBarChart() {
-    var data;
+    var data;//.. now, each unit is an array of bars that ought to be grouped
+    var frequencies; //.. length = data.length / numConditions
     
     /**CONFIGURATION VARIABLES**/
     //.. width, height, margin. If these are customizable we need settors 
@@ -25,8 +26,10 @@ function FreqBarChart() {
         padding = 10,
         barSpaceFraction =3, //.. what proportion, 1/X, should the bars occupy
         max =1,
+        subPadding =0.2,
         min = 0,
         barClass = "d3BarRect",
+        numConditions =3; 
         transitionLength = 1000;
         
     //.. CHART variables   
@@ -44,7 +47,11 @@ function FreqBarChart() {
     //.. FUNCTIONS for extractin the data
     var computeY =  function(d) {return  y(key(d));} //. straight forward 
     var computeHeight = function(d) {return  -1*y(key(d));} //.. height must be negative
-    var computeX = function (i, barWidth) {if (data.length ==1) return x(0.5) - barWidth/2; else return padding +x(i);}; //.. determine x position based on index
+    var computeX = function (i, barWidth) {
+        if (data.length ==1) return x(0.5) - barWidth/2; 
+        else return padding +x(Math.floor(i/numConditions) + (i%numConditions) * subPadding);}; //.. determine x position based on index
+        //else return padding +x(Math.floor((i%3)*(barWidth*subPadding)));}; //.. determine x position based on index
+  
     var barWidth =20; //.. but modify based on data 
     var x, //.. compute x position from data
         y; //.. compute y position from data
@@ -52,6 +59,9 @@ function FreqBarChart() {
     //.. MISCELLANEOUS PRIVATE VARIABLES
     var zoomed = false, //.. but we have a new BAR CHART!!!
         zoomedId = "zoomedBarChart"; //.. the name if its zoomed in bar chart
+    
+    var color = d3.scale.category10(); // to generate a different color for each line
+
     
     /* ALL parameters optional
       * s = selection to put it in 
@@ -61,8 +71,8 @@ function FreqBarChart() {
     function chart(s, _id, zoomedChart) {
        //.. Throw errors if there's no data, data is not accessible, min-max not in tune with values
        if (data == null) throw ("No data has been added yet");
-       if (key(data[0]) == null){ throw("Specify proper keys and channel functions for accessing data")};
-       if (d3.max(data, key) > max || d3.min(data, key) < min) throw("Maximum or minimum value in dataset more or less than specified max or min and therefore not visible in chart")
+      //  if (key(data[0]) == null){ throw("Specify proper keys and channel functions for accessing data")};
+      // if (d3.max(data, key) > max || d3.min(data, key) < min) throw("Maximum or minimum value in dataset more or less than specified max or min and therefore not visible in chart")
 
       //.. if this chart has been added before remove it (TODO: rename chart)
        if (arguments.length >0){
@@ -82,7 +92,7 @@ function FreqBarChart() {
        
        //.. x axis: a set of ticks from 0 to data.length
        x = d3.scale.linear()
-            .domain([0, data.length])
+            .domain([0, data.length/numConditions])
             .range([0, width]);
   
        y = d3.scale.linear()
@@ -105,28 +115,27 @@ function FreqBarChart() {
        //.. compute how big each bar should be
        barWidth = (width / barSpaceFraction) / data.length;
 
-       //.. enter data initially as 0,so we get a zoom up effect
+       //.. enter data initially as 0, so we get a zoom up effect
        rect.data(data).enter().append("rect")
-           .attr("y", function(d) {return  y(0.0);})
+           .attr("y", function(d) {return  y(0);})
            .attr("x", function (d, i) {return computeX(i, barWidth)})
            .attr("width", barWidth) //. scale based on how many elements
-           .attr("height", function(d) {return -1* y(0.0);})
+           .attr("height", function(d) {return -1* y(0.6);})
            .attr("class", barClass)
            .attr("id", function(d,i) {return barClass +i})
-           .style("fill", "red")
            .style("opacity", 0.1)
-           .on("mousedown", function (d, i) {chart.zoomTransition(i, subValueKey, transitionLength)})
            .on("mouseover",  function (d, i) {hoverRect(i)})
            .on("mouseout", function (d, i) {unHoverRect(d, i)});
 
+        
        //.. zoom up to actual values
        chart.transition(key, transitionLength);
-
+       console.log(frequencies);
        // ------ X AXIS--------- 
         var xAxis = d3.svg.axis()
             .scale(x) //.. use same scaling function as for x
             .orient("bottom")
-            .ticks(0); //.. set to 5 if we wanna show actual indexes
+            .tickValues(frequencies); //.. set to 5 if we wanna show actual indexes
             
         var axisG = svg.append("g")
             .attr("class", "x axis")
@@ -152,7 +161,7 @@ function FreqBarChart() {
 
         //.. draw lines where 
         if(expectedKey(data[0]) != null) //.. if data has the expceted key 
-            chart.drawLines(expectedKey);
+            chart.drawLines(expectedKey); 
 
     }
   
@@ -167,13 +176,14 @@ function FreqBarChart() {
         var t0 = svg.transition().duration(length);
         var rects = t0.selectAll("."+barClass);
         
-        rects
-           .attr("y", function(d) { return computeY(d);})
-           .attr("height", function(d) {return computeHeight(d);})
-           .attr("width", barWidth)
-           .attr("x" , function (d, i) {return computeX(i, barWidth)})
-           .style("fill", function(d) { if (betterThanChance(d)) return "green"; else return "red"});
-       
+        for (var k = 0; k <data.length; k++) {
+            rects
+               .attr("y", function(d) {return computeY(d);})
+               .attr("height", function(d) {return computeHeight(d);})
+               .attr("width", barWidth)
+               .attr("x" , function (d, i) {return computeX(i, barWidth)})
+               .style("fill", function(d, i) { return color(i %numConditions)});
+        }
         if(data[0]["expected"] != "undefined") //.. if data has the 
            rects.style("opacity", function(d) {return opacityRelativeToChance(d)}); //.. if worse than chance make MORE RED
        
@@ -208,7 +218,7 @@ function FreqBarChart() {
     var hoverRect = function(index) {
         var id = "#"+barClass+index; //.. 
         var rect = svg.select(id);
-        rect.style("fill","steelblue");
+        rect.style("opacity",0.9);
         
         //.. append  a text element displaying the value on hover
         svg.selectAll(".percentageLabel")
@@ -230,7 +240,7 @@ function FreqBarChart() {
         
         svg.selectAll(".percentageLabel").remove();
         //.. return 
-        rect.style("fill", function(d) { if (betterThanChance(d)) return "green"; else return "red"});
+        rect.style("opacity",1.0 );
     }
     
     /** Draw a line at particular point at each bar specified by access key
@@ -268,7 +278,6 @@ function FreqBarChart() {
             chart.unZoomTransition(index, accessKey, length);
             return; //.. don't zoom in.. return
        }
-        console.log(data);
 
        if (accessKey(data[0]) == null) return; //.. disabled if we cannot access subvalues
        
@@ -284,7 +293,6 @@ function FreqBarChart() {
             .attr("x", 0);
         
         var subVals = accessKey(data[index]);
-        console.log(subVals.length);
         setTimeout(function() {drawNewChart(subVals); chart.transition(key);},length);
     }
   
@@ -294,11 +302,9 @@ function FreqBarChart() {
         
         ///.. set sunbVals as dataset for this new array
         for (var i in subVals) {
-            console.log(subVals[i]);
             chart.addBar(subVals[i]);
         }
         
-        console.log(subVals[0].expected);
         chart.key(function(d) {return d.expected;});
         
         //.. give it a special Id -- zoomedId -- which is always the name when we zoom
@@ -327,6 +333,12 @@ function FreqBarChart() {
         return chart;
     }
     
+    chart.addBarArray = function(barArray) {
+        if (data == null) data = new Array();
+        data.push(barArray);
+        return chart;
+    }
+    
     chart.key = function(_){
         if (!arguments.length) return key; //.. this notation gives a get for free
         key = _;
@@ -345,6 +357,19 @@ function FreqBarChart() {
         if (!arguments.length) return min;
         min = _;
         return chart;
+    }
+    //.. the minimum value shown in the y axis
+    chart.numConditions = function(_) {
+        if (!arguments.length)
+            return numConditions;
+        numConditions = _;
+        return chart;
+    }
+    chart.frequencies = function(_) {
+        if (!arguments.length)
+            return frequencies;
+        frequencies = _;
+        return frequencies;
     }
     
     //.. set the width of the chart

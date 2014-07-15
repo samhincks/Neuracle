@@ -93,7 +93,6 @@ function ChartArea(id, descArea) {
         
         else if(JSONobj.type == "channelset") {
             d3.selectAll('.line-graph').remove(); //.. remove if it exists already
-            
             data = JSONobj.data; 
             streamChart = new LineGraph({containerId: 'topRight', data: data});
         }
@@ -158,31 +157,35 @@ function ChartArea(id, descArea) {
          setTimeout(function() {d3Chart.transition(function (d) {return d.value}, 1000)},1000);  
     }
     
-    this.displayFrequency = function(JSONobj) {
+    this.displayFrequency = function(JSONobj, JSONdescription) {
         //.. remove any existing charts
         d3.select(".chart").remove();
-
         //.. instanstiate new home-made D3 chart with width and height to cover selection
         var d3Chart = FreqBarChart();
         var width = $(selection).width();
         var height = $(selection).height();
-        
+       
         //... TODO . Make so that each is a different frequency. 
-        for (var bar in JSONobj){
-           d3Chart.addBar(JSONobj[bar]);
+        for (var i=0; i< JSONobj.length; i++){
+            d3Chart.addBar(JSONobj[i]);
         }
-        
-        d3Chart.minY(0).width(width).height(height - 5).maxY(1).key(function(d) {
-            return d.expected;
-        });
-        d3Chart(selection);
 
+        
+        d3Chart
+            .minY(0).width(width).height(height - 5).maxY(1)
+            .key(function(d) { return d.expected;})
+            .numConditions(JSONdescription.numConditions)
+            .frequencies(JSONdescription.frequenciesX);
+        
+        d3Chart(selection);
+        
+        
         ///.. gradually transition from measure of expected performance to actual performance
         setTimeout(function() {
             d3Chart.transition(function(d) {
                 return d.value
             }, 1000)
-        }, 1000);
+        }, 1000); 
     }
 }
 

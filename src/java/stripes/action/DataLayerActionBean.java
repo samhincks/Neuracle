@@ -147,6 +147,7 @@ public class DataLayerActionBean extends BaseActionBean{
         catch (Exception e) {
             //System.err.println(e.getMessage());
             //return new ForwardResolution(INDEX);
+            e.printStackTrace(); 
             JSONObject jsonObj = new JSONObject();
             jsonObj.put("error", e.getMessage());
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));

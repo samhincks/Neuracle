@@ -14,6 +14,7 @@ import timeseriestufts.kth.streams.bi.Instance;
 import timeseriestufts.kth.streams.tri.ChannelSetSet;
 import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.tri.TridimensionalLayer;
+import timeseriestufts.kth.streams.uni.Channel;
 import timeseriestufts.kth.streams.uni.UnidimensionalLayer; 
 
 
@@ -85,7 +86,6 @@ public class TriDAO extends DataLayerDAO {
                             //.. get it if we can; if we can't, no problem just put in null
                             try{
                                  val = channel.getPointOrNull(i);
-                           
                             }catch(Exception e) {}
 
                             channels.put(val); //.. it might be missing
@@ -122,47 +122,52 @@ public class TriDAO extends DataLayerDAO {
      public JSONObject getFreqDomainJSON() throws Exception {
          JSONObject jsonObj = new JSONObject();
 
+         Experiment e = (Experiment) super.dataLayer;
+         ChannelSetSet fourier = e.getAveragedFourier();
+         int numConditions = fourier.matrixes.size();
+         int numChannels = fourier.matrixes.get(0).streams.size();
+         Channel magnitude = fourier.matrixes.get(0).streams.get(0);
+         int numFrequencies = magnitude.numPoints;
+         
+         //TODO: average neighboring frequencies together, for now just increment
+         float maxFrequencies = 10;
+         int incr = (int) (numFrequencies / maxFrequencies);
+         
          //.. no matter what, return a basic description of the data layer even if it hasnt been evaluated
          JSONObject descObj = new JSONObject();
-         descObj.put("id", "a");
-         descObj.put("type", "b");
+         descObj.put("id", fourier.id);
+         descObj.put("type", "fourier");
+         descObj.put("numConditions", numConditions); //.. treat the JS array as modulo 3
+         
+         //.. outer layer is channels, even though this is not our datalayer reprsentation
+         for (int i = 1; i < numChannels; i++) { //.. i =1 since the first is the magnitude
+            JSONArray frequenciesY = new JSONArray();
 
-         //.. if machine learning algorithm or 
-         descObj.put("value", "c");
-         jsonObj.put("trained", "d");
+            //.. add the value at each condition at each frequency
+            for (int k =0; k < numFrequencies; k+=incr) { //.. these will represent the frequencies
+               //.. and for each frequency we have k bars, one for each k conditions, but we group into same array
+               for (int j = 0; j <numConditions; j++){
+                   Channel c = fourier.matrixes.get(j).getChannel(i);
+                   float point = c.getPointOrNull(k);
+                   JSONObject fObj = new JSONObject();
 
+                   fObj.put("value", point);
+                   fObj.put("expected", 0.5);
+                   fObj.put("condition", "c"+j);
+                   frequenciesY.put(fObj);
+               }
+            }
+            jsonObj.put("frequency", frequenciesY);
+         }
+         
+         //.. add the magnitudes for each frequency
+         JSONArray frequenciesX = new JSONArray();
+         for (int i = 0; i < magnitude.numPoints; i+=incr) {
+             frequenciesX.put(magnitude.getPointOrNull(i));
+         }
+         descObj.put("frequenciesX", frequenciesX);
          //.. what more - maybe available layers? then we might have to know what type of layer it is
          jsonObj.put("description", descObj);
-         JSONArray frequencies = new JSONArray();
-         for (int k =0; k < 5; k++) {
-            JSONObject fObj = new JSONObject();
-
-            fObj.put("value", 0.2);
-            fObj.put("expected", 0.3);
-            fObj.put("label", "e");
-
-            JSONArray subVals = new JSONArray();
-
-            /**
-             * ERROR: each fold performance is what it should be, we get 20. We
-             * want the average over one condition, a set of 10
-             */
-            for (int i=0; i <3; i++) {
-                JSONObject subPerformance = new JSONObject();
-                subPerformance.put("value", 0.6);
-                subPerformance.put("expected", 0.5);
-                subPerformance.put("label", "f");
-                subVals.put(subPerformance);
-            }
-
-            if (subVals.length() > 1) {
-                fObj.put("subValues", subVals);
-            }
-
-            frequencies.put(fObj);
-
-         }
-         jsonObj.put("frequency", frequencies);
          return jsonObj;
 
      }
