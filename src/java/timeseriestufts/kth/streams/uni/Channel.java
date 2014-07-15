@@ -609,7 +609,7 @@ public class Channel extends UnidimensionalLayer  {
      public static Channel generate(int numReadings) {
          
          if (numReadings == -1) {
-             Channel c = new Channel(1, 128);
+             Channel c = new Channel(1, 345);
              int MIN_RATE =7;
              for (int i = 0; i < c.data.length; i++) {
                   float point =(float) (Math.sin(i * Math.PI * 2 / MIN_RATE) + 0.0
@@ -711,19 +711,17 @@ public class Channel extends UnidimensionalLayer  {
                 String sax = c.getSAXRepresentation(3, 3);
                 System.out.println(sax);
             }
-            
+            TEST = 8; // temp
             //.. test fourier transform
             if (TEST ==8) {
                  //c = c.zScore(true);
-                 //c.printStream();
+               //  c.printStream();
                 Complex [] transformed = c.FFT();
                 FrequencyDomain fd = new FrequencyDomain(c.numPoints);
                 fd.complexToFreq(transformed);
-                fd.print();
-               // System.out.println("XXXXXXXXXXXXXXXXX");
-            
-               // System.out.println("XXXXXXXXXXXXXXXXX");
+                //fd.print();
             }
+            
             if (TEST ==86) {
                 String filename = "input/sinWave1at4hzp3at12hz.csv";
                 //.. read
@@ -735,8 +733,19 @@ public class Channel extends UnidimensionalLayer  {
                 FrequencyDomain fd = new FrequencyDomain(1);
                 fd.complexToFreq(transformed);
                 fd.print();
-
             }
+            
+            if (TEST == 872) {
+                ChannelSet beste = Beste.getChannelSet();
+                Channel b1 = beste.getChannel(0);
+                b1 = b1.zScore(false);
+                Complex[] transformed = b1.FFT();
+                FrequencyDomain fd = new FrequencyDomain((int) Channel.HitachiRPS);
+                fd.complexToFreq(transformed);
+                fd.print();
+                // System.out.println("XXXXXXXXXXXXXXXXX");
+            }
+
             //.. test fourier transform
             if (TEST ==87) {
                 ChannelSet beste = Beste.getChannelSet();
@@ -751,6 +760,7 @@ public class Channel extends UnidimensionalLayer  {
                 fd.print();
                // System.out.println("XXXXXXXXXXXXXXXXX");
             }
+            
             if (TEST ==88) {
                 short [] data = new short[c.data.length];
                 int index=0;

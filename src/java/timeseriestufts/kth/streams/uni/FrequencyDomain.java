@@ -28,14 +28,12 @@ public class FrequencyDomain {
       * f[i] = i * sampleRate / fftLength
       **/
      public  Triple [] complexToFreq(Complex [] complexData) throws Exception{
-         int numReadings = complexData.length/2;
-       //  freqDomain = new Triple[numReadings];
+         int numReadings = complexData.length /2; //.. Inexplicably, after half the data points, the rest is just a copy. Don't think its related to padding with 0 
+      //  freqDomain = new Triple[numReadings];
          magnitudeChannel = new Channel(numReadings);
          frequencyChannel = new Channel(numReadings);
          phaseChannel = new Channel(numReadings);
 
-
-         
          for (int i=0; i < numReadings; i++){
              Complex c = complexData[i];
              double magnitude = Math.sqrt(c.getReal()*c.getReal() + c.getImaginary()*c.getImaginary());
@@ -59,8 +57,22 @@ public class FrequencyDomain {
     
     public double getPhaseAtFreq(int i) {
         return frequencyChannel.getPointOrNull(i);
-
     }
+    
+    public Float getAverageMagnitudeBetween(float startFrequency, float endFrequency) throws Exception{
+        int startIndex = magnitudeChannel.findIndexOf(startFrequency);
+        int endIndex =magnitudeChannel.findIndexOf(endFrequency);
+        
+        if (startIndex >= endIndex) throw new Exception("No data between " + startFrequency + " and " + endFrequency);
+        System.out.println(startIndex + " , " + endIndex);
+        float total =0;
+        for (int i= startIndex; i < endIndex; i++) {
+            total+= magnitudeChannel.getPointOrNull(i);
+        }
+        return total / (endIndex -startIndex);
+    }
+    
+   
     
     public void printComplex() {
         int i = 0;
@@ -85,8 +97,8 @@ public class FrequencyDomain {
         }
     }
     public void print() {
-        //frequencyChannel.printStream();
-        frequencyChannel.printStream();
+       magnitudeChannel.printStream();
+       // frequencyChannel.printStream();
 
     }
      

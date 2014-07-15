@@ -537,12 +537,12 @@ public class Experiment extends TridimensionalLayer<Instance>{
         for(String condition : classification.values) {
             ChannelSet cs = new ChannelSet();
             cs.id = condition;
-            
+            int added = 0;
+            Channel magnitudeAverage = null;
+
             //.. Create a new channel, that is the fourier averaged version
             for(int i=0; i< this.getChannelCount(); i++) {
                 ArrayList<Channel> channels = this.getChannelsWithChannelIndexAndCondition(i, condition);
-                Channel magnitudeAverage = null;
-                int added =0;
                 //.. average each instances version of that channel together
                 for (Channel c : channels) {
                     FrequencyDomain fd  =c.getFrequencyDomain();
@@ -567,7 +567,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
     
     public static void main(String [] args) {
         try{
-            Experiment e = Experiment.generate(4,2,6);
+            Experiment e = Experiment.generate(2,4,6);
             
             int TEST =1;
             if (TEST ==0){

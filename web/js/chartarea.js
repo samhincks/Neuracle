@@ -169,10 +169,9 @@ function ChartArea(id, descArea) {
         for (var i=0; i< JSONobj.length; i++){
             d3Chart.addBar(JSONobj[i]);
         }
-
-        
+        console.log(JSONdescription.max);
         d3Chart
-            .minY(0).width(width).height(height - 5).maxY(1)
+            .minY(0).width(width).height(height - 5).maxY(JSONdescription.max)
             .key(function(d) { return d.expected;})
             .numConditions(JSONdescription.numConditions)
             .frequencies(JSONdescription.frequenciesX);

@@ -25,6 +25,7 @@ public class ChannelSetSet extends TridimensionalLayer<ChannelSet> {
         for (ChannelSet cs : matrixes) {
             System.out.println(cs.id);
             cs.printStream();
+            return;
         }
     }
     
