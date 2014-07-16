@@ -123,7 +123,8 @@ function FreqBarChart() {
            .attr("height", function(d) {return -1* y(0.6);})
            .attr("class", barClass)
            .attr("id", function(d,i) {return barClass +i})
-           .style("opacity", 0.1)
+           .style("opacity", 0.9)
+           .on("mousedown", function (d, i) {chart.zoomTransition(i, subValueKey, transitionLength)})
            .on("mouseover",  function (d, i) {hoverRect(i)})
            .on("mouseout", function (d, i) {unHoverRect(d, i)});
 
@@ -184,41 +185,19 @@ function FreqBarChart() {
                .attr("x" , function (d, i) {return computeX(i, barWidth)})
                .style("fill", function(d, i) { return color(i %numConditions)});
         }
-        if(data[0]["expected"] != "undefined") //.. if data has the 
-           rects.style("opacity", function(d) {return opacityRelativeToChance(d)}); //.. if worse than chance make MORE RED
        
         return chart;
     }
     
     
     
-    /*Make more opaque for performances better than chance and less opaque for performance
-     *worse than chance. Make the opacity relative to what the chance-rate is
-     **/
-    var opacityRelativeToChance = function(d) {
-       if (betterThanChance(d)) {
-           var distToMax = max - key(d);
-           var betThanChance = key(d) - d.expected;
-           if (distToMax == 0) return 1;
-           return 0.1 +(betThanChance / distToMax);
-       }   
-       
-       else {
-            return 0.1+ d.expected - key(d);
-       }
-    }
-    
-    //.. return true if better than chance
-    var betterThanChance  = function(d) {
-        return (d.value > d.expected) ?  true :  false;
-    }
     
     /* On mouseover, give feedback that suggests its going to be clicked
      */
     var hoverRect = function(index) {
         var id = "#"+barClass+index; //.. 
         var rect = svg.select(id);
-        rect.style("opacity",0.9);
+        rect.style("opacity",0.7);
         
         //.. append  a text element displaying the value on hover
         svg.selectAll(".percentageLabel")
@@ -240,7 +219,7 @@ function FreqBarChart() {
         
         svg.selectAll(".percentageLabel").remove();
         //.. return 
-        rect.style("opacity",1.0 );
+        rect.style("opacity",0.9);
     }
     
     /** Draw a line at particular point at each bar specified by access key
@@ -283,35 +262,50 @@ function FreqBarChart() {
        
        var id = "#"+barClass+index; //.. 
        var rect = svg.select(id);
-        
+       var curColor = rect.style("fill");
+       console.log(curColor);
         //.. make it seem like zooming in on the bar, filling the screen and fading to background color
         rect.transition().duration(length)
-            .style("fill", "whitesmoke")
+            .style("fill", "whitesmoke");/*
             .attr("width", width)
             .attr("height", height)
             .attr("y", -1*height)
-            .attr("x", 0);
+            .attr("x", 0);*/ 
         
+        rect.transition().duration(length*2)
+                .style("fill", "green");
         var subVals = accessKey(data[index]);
-        setTimeout(function() {drawNewChart(subVals); chart.transition(key);},length);
+        var subFreqs = data[index].subFreqs;
+        setTimeout(function() {
+            drawNewChart(subVals,subFreqs); 
+            chart.transition(key);
+        },length);
     }
   
     /**ZOOM-helper function. Draw a new chart above the old one*/
-    var drawNewChart = function(subVals) {
-        var chart = BarChart();
-        
-        ///.. set sunbVals as dataset for this new array
+    var drawNewChart = function(subVals, subFreqs) {
+        var d3Chart = FreqBarChart();
+        var width = $(selection).width();
+        var height = $(selection).height();
+
+        //... TODO . Make so that each is a different frequency. 
         for (var i in subVals) {
-            chart.addBar(subVals[i]);
+            d3Chart.addBar(subVals[i]);
         }
+        d3Chart
+                .minY(0).width(width).height(height - 5).maxY(max)
+                .key(function(d) {
+                    return d.expected;
+                })
+                .numConditions(numConditions)
+                .frequencies(subFreqs);
         
-        chart.key(function(d) {return d.expected;});
         
         //.. give it a special Id -- zoomedId -- which is always the name when we zoom
-        chart(selection, zoomedId, true); //.. set true so that we know this is a zoomed in version and we can change behavior next time zoom is pressed
+        d3Chart(selection, zoomedId, true); //.. set true so that we know this is a zoomed in version and we can change behavior next time zoom is pressed
        
         //.. transition to function where we hold value
-        setTimeout(function() {chart.transition(function (d) {return d.value}, 1000)},1000);
+        setTimeout(function() {d3Chart.transition(function (d) {return d.value}, 1000)},1000);
     } 
     
     

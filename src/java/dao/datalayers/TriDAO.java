@@ -170,8 +170,26 @@ public class TriDAO extends DataLayerDAO {
                    float average = (float) c.getMean(outerFrequencyIndexes[k], outerFrequencyIndexes[k+1]);
                    JSONObject fObj = new JSONObject();
                    fObj.put("value", average); 
-                   fObj.put("expected", 0.5);
+                   fObj.put("expected", average/2);
                    fObj.put("condition", "c"+j);
+                   
+                   //.. subValues, individual components of the signal, get what is between the average
+                   int subIncr = (int) ((outerFrequencyIndexes[k+1] -outerFrequencyIndexes[k]) / (float)numBars);
+                   JSONArray subValues = new JSONArray();
+                   JSONArray subFreqs = new JSONArray();
+                   for (int l = outerFrequencyIndexes[k]; l < outerFrequencyIndexes[k+1]; l+=subIncr) {
+                       float subAverage = (float) c.getMean(l, l+subIncr);
+                       JSONObject sObj = new JSONObject();
+                       sObj.put("value", subAverage);
+                       sObj.put("expected", 0.5);
+                       sObj.put("condition", "c" + j);
+                       subValues.put(sObj);
+                       subFreqs.put(frequency.getPointOrNull(l));
+                   }
+                   fObj.put("subValues", subValues);
+                   fObj.put("subFreqs", subFreqs);
+
+                   
                    frequenciesY.put(fObj);
                    
                    //.. if this is the largest average, save it so we know how to scale the chart

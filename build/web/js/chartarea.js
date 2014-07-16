@@ -164,12 +164,11 @@ function ChartArea(id, descArea) {
         var d3Chart = FreqBarChart();
         var width = $(selection).width();
         var height = $(selection).height();
-       
+        
         //... TODO . Make so that each is a different frequency. 
         for (var i=0; i< JSONobj.length; i++){
             d3Chart.addBar(JSONobj[i]);
         }
-        console.log(JSONdescription.max);
         d3Chart
             .minY(0).width(width).height(height - 5).maxY(JSONdescription.max)
             .key(function(d) { return d.expected;})
