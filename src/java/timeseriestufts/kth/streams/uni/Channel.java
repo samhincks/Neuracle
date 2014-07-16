@@ -13,6 +13,8 @@ import edu.hawaii.jmotif.datatype.Timeseries;
 import edu.hawaii.jmotif.logic.sax.SAXFactory;
 import edu.hawaii.jmotif.logic.sax.alphabet.Alphabet;
 import edu.hawaii.jmotif.logic.sax.alphabet.NormalAlphabet;
+import filereader.TSTuftsFileReader;
+import filereader.experiments.Beste;
 import java.util.ArrayList;
 import org.JMathStudio.DataStructure.Vector.Vector;
 import org.JMathStudio.SignalToolkit.FilterTools.IIRFilter;
@@ -24,6 +26,8 @@ import org.apache.commons.math3.transform.FastFourierTransformer;
 
 import org.apache.commons.math3.transform.TransformType;
 import org.apache.commons.math.util.MathUtils;
+import timeseriestufts.kth.streams.bi.ChannelSet;
+import timeseriestufts.kth.streams.tri.Experiment;
 
 /** A collection of floats in one channel, with a particular offset and a consistent
  * framesize determining intervals between points
@@ -31,7 +35,8 @@ import org.apache.commons.math.util.MathUtils;
  * @author Sam Hincks
  */
 public class Channel extends UnidimensionalLayer  {
-    protected double framesize;   
+    protected double framesize;  
+    public float sampleRate; //.. num samples persecond
     public static float HitachiRPS = 11.7925f; //.. readings per second for the hitachi
     private Complex [] transformed = null;
     private FrequencyDomain frequencyDomain = null;
@@ -44,17 +49,24 @@ public class Channel extends UnidimensionalLayer  {
         this.framesize = framesize;   
         //.. TEMP
         this.framesize = 1 / HitachiRPS;
+        this.sampleRate = HitachiRPS;
         data = new float[maxLength];
     }
     
     public Channel(double framesize, float [] data){
         this.data = data;
         this.numPoints = data.length;
+        //.. TEMP
+        this.framesize = 1 / HitachiRPS;
+        this.sampleRate = HitachiRPS;
     }
     public Channel(double framesize) {
         this.framesize = framesize;
         data2 = new ArrayList();
         this.synchedWithDatabase = true;
+        //.. TEMP
+        this.framesize = 1 / HitachiRPS;
+        this.sampleRate = HitachiRPS;
     }
     
     public Channel(double framesize, ArrayList<Float> data) {
@@ -62,6 +74,9 @@ public class Channel extends UnidimensionalLayer  {
         super.data2 = data;
         super.synchedWithDatabase = true;
         super.numPoints = data.size();
+        //.. TEMP
+        this.framesize = 1 / HitachiRPS;
+        this.sampleRate = HitachiRPS;
     }
     
     /** Get the frame size, interval between readings 
@@ -249,6 +264,7 @@ public class Channel extends UnidimensionalLayer  {
     
         //.. set variables for bandpass filter.
         int sampleRate = (int) (1 /this.framesize);
+        if (true) throw new Exception("Sampling at " + freq + " , sr " + sampleRate + " fs " + this.framesize);
         LowPassSP lp = new LowPassSP(freq, sampleRate);
         
         float [] signal = new float[numPoints];
@@ -317,6 +333,28 @@ public class Channel extends UnidimensionalLayer  {
         }
     }
     
+    /**Set all points between 0 and 1. Largest will be 1 and smallest will be 0. 
+     The rest are **/
+    public Channel normalize(boolean copy) throws Exception{
+       float smallest = (float) this.getMin();
+       float largest = (float) this.getMax();
+       float range = (largest - smallest);
+       float incr = 1.0f/ range;
+       
+       if (copy) throw new Exception("Copy not yet implemented");
+       else {
+           for(int i =0; i < numPoints; i++) {
+               Float p = this.getPointOrNull(i);
+               p = (p-smallest)*incr;
+               this.setPoint(i, p);
+           }
+           return this;
+       }
+       
+       
+    }
+
+    
    /**Z-Score the data; subtract the mean, and divide by standard deviation for each*/
     public Channel zScore (boolean copy) throws Exception{
         if (copy) {
@@ -327,7 +365,8 @@ public class Channel extends UnidimensionalLayer  {
 
             //.. add the filtered points to the new synched channel
             for (int i = 0; i < numPoints; i++) {
-                 sc.addPoint((float) ((super.getPointOrNull(i) -avg) / std));
+                 float p =(float) ((super.getPointOrNull(i) -avg) / std);
+                 sc.addPoint(p);
             }
             return sc;
         }
@@ -400,11 +439,14 @@ public class Channel extends UnidimensionalLayer  {
         }
     }
     
+    /**Return the frequency domain representation of this channel, 3 channels
+     * where magnitudeChannel holds the normalized magnitidues at the frequencies
+     * in frequencyChannel and phaseChannel holds the phase.  
+     **/
     public FrequencyDomain getFrequencyDomain() throws Exception{
         if (frequencyDomain != null) return frequencyDomain;
-        
-        int sampleRate = (int) (1.0/ this.framesize);
-        frequencyDomain = new FrequencyDomain(FFT(), sampleRate );
+        frequencyDomain = new FrequencyDomain(this.sampleRate);
+        frequencyDomain.complexToFreq(FFT());
         return frequencyDomain;
     }
     
@@ -427,7 +469,7 @@ public class Channel extends UnidimensionalLayer  {
             double [] newArray = new double [newLength];
             
             //.. copy old values
-            for (int i =0; i < numPoints; i++) {newArray[i] = super.getPoint(i); }
+            for (int i =0; i < numPoints; i++) {newArray[i] = super.getPoint(i)*Channel.hamming(i,newLength); }
             
             //.. add the new bogus zero values
             for (int i = numPoints; i < newLength; i++) {
@@ -545,20 +587,51 @@ public class Channel extends UnidimensionalLayer  {
         }
         
         return this;
-        
     }
    
+    /**Resolves fourier issues when channel's not a power of 2. Unclear how effective**/
+    private static double hamming(int n, int N) {
+        // assert that the absolute value is >= 0
+        assert (n <= N) : "Window sample: " + n + " is beyond expected window range: " + N;
+        double out = 0.54 - 0.46 * Math.cos(2 * Math.PI * (double) n / (N - 1));
+        return out;
+    }
+    
+    /**Return a deep copy of this channel**/
+    public Channel getCopy() {
+        Channel channel = new Channel(this.framesize, this.numPoints);
+        for (int i = 0; i < numPoints; i++) {
+            channel.addPoint(this.getPointOrNull(i));
+        }
+        return channel;
+    }
     
      public static Channel generate(int numReadings) {
+         
+         if (numReadings == -1) {
+             Channel c = new Channel(1, 345);
+             int MIN_RATE =7;
+             for (int i = 0; i < c.data.length; i++) {
+                  float point =(float) (Math.sin(i * Math.PI * 2 / MIN_RATE) + 0.0
+                          * Math.sin(i * Math.PI * 4 / MIN_RATE) + 0.0
+                          * Math.sin(i * Math.PI * 15.3 / MIN_RATE));
+                  
+                 // point = (float) (point *hamming(i, 128));
+                  c.addPoint(point);
+                  //if (i %255 ==0)System.out.println(c.getPointOrNull(i));
+             }
+             return c;
+         }
+         
          ///. if 0, then generate actual readings
          if (numReadings ==0) {
              Channel c = new Channel(1, 30); 
-             c.addPoint(16.800f);c.addPoint(16.110f);c.addPoint(16.380f);c.addPoint(16.570f);c.addPoint(16.680f);
-             c.addPoint(16.110f);c.addPoint(15.960f);c.addPoint(16.080f);c.addPoint(16.140f);c.addPoint(16.170f);
-             c.addPoint(16.430f);c.addPoint(16.570f);c.addPoint(16.320f);c.addPoint(16.030f);c.addPoint(16.110f);
-             c.addPoint(16.800f);c.addPoint(16.110f);c.addPoint(16.380f);c.addPoint(16.570f);c.addPoint(16.680f);
-             c.addPoint(16.110f);c.addPoint(15.960f);c.addPoint(16.080f);c.addPoint(16.140f);c.addPoint(16.170f);
-             c.addPoint(16.430f);c.addPoint(16.570f);c.addPoint(16.320f);c.addPoint(16.030f);c.addPoint(16.110f);
+             c.addPoint(1);c.addPoint(2);c.addPoint(3);c.addPoint(4);c.addPoint(5);
+             c.addPoint(4);c.addPoint(3);c.addPoint(2);c.addPoint(1);c.addPoint(0);
+             c.addPoint(1);c.addPoint(2);c.addPoint(3);c.addPoint(4);c.addPoint(5);
+             c.addPoint(4);c.addPoint(3);c.addPoint(2);c.addPoint(1);c.addPoint(0);
+             c.addPoint(1);c.addPoint(2);c.addPoint(3);c.addPoint(4);c.addPoint(5);
+             c.addPoint(4);c.addPoint(3);c.addPoint(2);c.addPoint(1);c.addPoint(0);
              
              return c;
          }
@@ -575,12 +648,11 @@ public class Channel extends UnidimensionalLayer  {
      
     public static void main(String [] args) {
         try{ 
-            int numPoints = 0;
+            int numPoints = -1;
             Channel c = generate(numPoints);
-            Channel b = generate(numPoints);
+            Channel b = generate(87);
             
-            int TEST =13; //.. we have our datalayer, now set what we want to test
-            c.printStream();
+            int TEST =87; //.. we have our datalayer, now set what we want to test
             
             if (TEST ==13) {
                 c.bwBandpass(4, 0.1f, 0.2f);
@@ -639,13 +711,67 @@ public class Channel extends UnidimensionalLayer  {
                 String sax = c.getSAXRepresentation(3, 3);
                 System.out.println(sax);
             }
-            
+            TEST = 8; // temp
             //.. test fourier transform
             if (TEST ==8) {
+                 //c = c.zScore(true);
+               //  c.printStream();
                 Complex [] transformed = c.FFT();
-                FrequencyDomain fd = new FrequencyDomain(transformed, 11);
-                
-                System.out.println("XXXXXXXXXXXXXXXXX");
+                FrequencyDomain fd = new FrequencyDomain(c.numPoints);
+                fd.complexToFreq(transformed);
+                //fd.print();
+            }
+            
+            if (TEST ==86) {
+                String filename = "input/sinWave1at4hzp3at12hz.csv";
+                //.. read
+                TSTuftsFileReader f = new TSTuftsFileReader();
+                ChannelSet cs = f.readData(",", filename);
+                //cs.printStream();
+                Channel ch = cs.getFirstChannel();
+                Complex[] transformed = ch.FFT();
+                FrequencyDomain fd = new FrequencyDomain(1);
+                fd.complexToFreq(transformed);
+                fd.print();
+            }
+            
+            if (TEST == 872) {
+                ChannelSet beste = Beste.getChannelSet();
+                Channel b1 = beste.getChannel(0);
+                b1 = b1.zScore(false);
+                Complex[] transformed = b1.FFT();
+                FrequencyDomain fd = new FrequencyDomain((int) Channel.HitachiRPS);
+                fd.complexToFreq(transformed);
+                fd.print();
+                // System.out.println("XXXXXXXXXXXXXXXXX");
+            }
+
+            //.. test fourier transform
+            if (TEST ==87) {
+                ChannelSet beste = Beste.getChannelSet();
+                Experiment e = beste.splitByLabel("condition");
+                Channel b1 = e.matrixes.get(3).getChannel(0);
+                b1 = b1.zScore(false);
+               // b1.printStream();
+               // b1.printStream();
+                Complex [] transformed = b1.FFT();
+                FrequencyDomain fd = new FrequencyDomain((int) Channel.HitachiRPS);
+                fd.complexToFreq(transformed);
+                fd.print();
+               // System.out.println("XXXXXXXXXXXXXXXXX");
+            }
+            
+            if (TEST ==88) {
+                short [] data = new short[c.data.length];
+                int index=0;
+                for (float s : c.data) {
+                    data[index] = (short)s;
+                    index++;
+                }
+                double[]  powers = SignalProcessing.getSpectrum(data);
+                for(Double d: powers) {
+                    System.out.println(d);
+                }
             }
             
             if (TEST ==9) {

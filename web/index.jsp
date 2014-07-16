@@ -36,8 +36,9 @@
                 <s:form beanclass ="stripes.action.DataLayerActionBean" id = "content" class ="unselectable"> 
                    <s:text name = "giver" id = "giver" style ="visibility:hidden"/> 
                    <s:text name = "receiver" id = "receiver" style ="visibility:hidden"/>     
-                   <s:text name = "merge" id = "merge" style ="visibility:hidden"/> 
                    <s:text name = "stats" id = "stats" style ="visibility:hidden"/> 
+                   <s:text name = "frequency" id = "frequency" style ="visibility:hidden"/> 
+
                 </s:form>
                 
                <s:form beanclass ="stripes.action.TechniqueActionBean" id = "techniques" class ="unselectable"> 
@@ -108,6 +109,7 @@
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <script type="text/javascript" src="js/TSChart.js"></script> 
         <script type="text/javascript" src="js/BarChart.js"></script> 
+        <script type="text/javascript" src="js/FreqBarChart.js"></script> 
         <script type="text/javascript" src="js/chart.js"></script>
         <script type="text/javascript" src="js/descriptionarea.js"></script>
         <script type="text/javascript" src="js/streamchart.js"></script> 

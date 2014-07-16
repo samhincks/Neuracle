@@ -25,19 +25,12 @@ function ChartArea(id, descArea) {
         lastGraph = JSONobj.type;
         if(JSONobj.type == "experiment"){
             var channels = JSONobj.instances[0][0].channels;
-            console.log(JSONobj);
-//              var actualMaxPoints = JSONobj.actualNumPoints;
-//            var maxPoints = JSONobj.maxPoints;
-//            var readingsPerSec = JSONobj.readingsPerSec;
-//            var maxInSeconds = (actualMaxPoints / readingsPerSec);
 
             var actualMaxPoints = JSONobj.actualNumPoints;
-            var maxPoints = JSONobj.maxPoints;
             var readingsPerSec = JSONobj.readingsPerSec;
+            var maxInSeconds = (actualMaxPoints / readingsPerSec)
             
-            console.log(actualMaxPoints + " , " + maxPoints + " , " +  readingsPerSec);
-            console.log(actualMaxPoints + " is point " +maxPoints + ", so in seconds is " + (actualMaxPoints / readingsPerSec));
-            //.. add a menu for selecting channel 
+           //.. add a menu for selecting channel 
             $("#channelSelection").remove();
             $(selection).append("<select id = channelSelection> </select>" );
             
@@ -62,8 +55,7 @@ function ChartArea(id, descArea) {
             //.. build the line chart with default width and height and key
             var width = $(selection).width() - border;
             var height = $(selection).height() - border;
-            d3Chart.channels(function(d){return d.channels;}).key(11).width(width).height(height); //.. so we show the first channel
-          //  d3Chart.channels(function(d){return d.channels;}).key(11).width(width).height(height).maxTime(maxInSeconds); //.. so we show the first channel
+            d3Chart.channels(function(d){return d.channels;}).key(11).width(width).height(height).maxTime(maxInSeconds); //.. so we show the first channel
 
             //.. the total duration of the area chart swallowing a line, scale to number of instances
             this.singleTransition = this.transitionLength / JSONobj.instances.length;
@@ -101,7 +93,6 @@ function ChartArea(id, descArea) {
         
         else if(JSONobj.type == "channelset") {
             d3.selectAll('.line-graph').remove(); //.. remove if it exists already
-            
             data = JSONobj.data; 
             streamChart = new LineGraph({containerId: 'topRight', data: data});
         }
@@ -164,6 +155,35 @@ function ChartArea(id, descArea) {
          
          ///.. gradually transition from measure of expected performance to actual performance
          setTimeout(function() {d3Chart.transition(function (d) {return d.value}, 1000)},1000);  
+    }
+    
+    this.displayFrequency = function(JSONobj, JSONdescription) {
+        //.. remove any existing charts
+        d3.select(".chart").remove();
+        //.. instanstiate new home-made D3 chart with width and height to cover selection
+        var d3Chart = FreqBarChart();
+        var width = $(selection).width();
+        var height = $(selection).height();
+        
+        //... TODO . Make so that each is a different frequency. 
+        for (var i=0; i< JSONobj.length; i++){
+            d3Chart.addBar(JSONobj[i]);
+        }
+        d3Chart
+            .minY(0).width(width).height(height - 5).maxY(JSONdescription.max)
+            .key(function(d) { return d.expected;})
+            .numConditions(JSONdescription.numConditions)
+            .frequencies(JSONdescription.frequenciesX);
+        
+        d3Chart(selection);
+        
+        
+        ///.. gradually transition from measure of expected performance to actual performance
+        setTimeout(function() {
+            d3Chart.transition(function(d) {
+                return d.value
+            }, 1000)
+        }, 1000); 
     }
 }
 

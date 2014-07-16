@@ -44,7 +44,9 @@ public class DataManipulationParser extends Parser{
         command.documentation = "Applies a filter to the selected channelset, returning a deep copy";
         command.parameters = "1.FILTER.MOVINGAVERAGE(readingsBack)--> apply a moving average a channel set with specified window length ::"
                 + "2.FILTER.LOWPASS(x)  3.FIlTER.HIGHPASS(x) or 4.FILTER.BANDPASS(x,y)::";
-        command.debug = "Not entirely clear how x,y translates into filter hz values";
+        command.debug = "Not entirely clear how x,y translates into filter hz values "
+                + "If I say filter.movingaverage(1), it should 'almost' take away the pulse, but"
+                + " I need to say filter.movingaverage(0.005) ";
         commands.put(command.id, command);
         
         //-- calcoxy 
@@ -757,16 +759,17 @@ public class DataManipulationParser extends Parser{
                 filteredSet = filteredSet.movingAverage(10, false);
                 retString += "Applied MovingAverage, 10 readings back::";
             }
-             
+              
             if(lowpass >0 && highpass ==0){
                 filteredSet = filteredSet.lowpass(lowpass, false);
                 retString += "Applied Lowpass; Removed frequencies oscillating at above " +lowpass + "hz ::";
             }
+            
             else if(highpass >0 && lowpass ==0) {
                 filteredSet = filteredSet.highpass(highpass, false);
                 retString += "Applied Highpass; Removed frequencies oscillating below " + highpass + "hz ::";
-
             }
+            
             else if(lowpass >0 && highpass >0) {
                 filteredSet = filteredSet.bandpass(lowpass,highpass, false);
                 retString += "Applied Bandpass; kept frequencies oscillating between " + lowpass +" and " + highpass + "hz ::";

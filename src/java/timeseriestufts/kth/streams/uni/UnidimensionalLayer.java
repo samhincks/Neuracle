@@ -240,8 +240,9 @@ public abstract class UnidimensionalLayer extends DataLayer {
      */
     @Override
     public void printStream() {
+        int incr =1;
         System.out.println("----------------");
-        for (int i = 0; i < numPoints; i++) {
+        for (int i = 0; i < numPoints; i+=incr) {
             System.out.println(getPointOrNull(i));
         }        
        System.out.println("----------------");
@@ -390,7 +391,21 @@ public abstract class UnidimensionalLayer extends DataLayer {
         }
         
         return total / (upToIndex -fromIndex +1);
-        
+    }
+    
+    /** Return the index of the point closest to the target float **/
+    public int findIndexOf(float target) {
+        double minDistance = this.getMax(); //.. you can never have a frequency larer than number of points
+        int minIndex = -1;
+        for (int i = 0; i < numPoints; i++) {
+            float thisFreq = getPointOrNull(i);
+            float thisDistance = Math.abs(thisFreq - target);
+            if (thisDistance < minDistance) {
+                minIndex = i;
+                minDistance = thisDistance;
+            }
+        }
+        return minIndex;
     }
     
     
