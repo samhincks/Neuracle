@@ -123,7 +123,7 @@ public class TriDAO extends DataLayerDAO {
          JSONObject jsonObj = new JSONObject();
 
          Experiment e = (Experiment) super.dataLayer;
-         ChannelSetSet fourier = e.getAveragedFourier();
+         ChannelSetSet fourier = e.getAveragedFourier(false);
          int numConditions = fourier.matrixes.size();
          int numChannels = fourier.matrixes.get(0).streams.size();
          Channel frequency = fourier.matrixes.get(0).streams.get(0);

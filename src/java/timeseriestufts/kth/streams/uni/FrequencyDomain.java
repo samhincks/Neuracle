@@ -4,7 +4,11 @@
  */
 package timeseriestufts.kth.streams.uni;
 
+import filereader.TSTuftsFileReader;
+import filereader.experiments.AJExperiment;
 import org.apache.commons.math3.complex.Complex;
+import timeseriestufts.kth.streams.bi.ChannelSet;
+import timeseriestufts.kth.streams.tri.Experiment;
 
 /**
  *
@@ -72,6 +76,27 @@ public class FrequencyDomain {
         return total / (endIndex -startIndex);
     }
     
+    /** Return the pulse, the frequency of the maximum magnitude within a specified band,
+     * ie where you'd expect the pulse. 
+     * We hardcode the minimum and maximum possible pulses, say 30 and 180, which translates
+     * to 0.5 hz and 3 hz. 
+     * Before getting pulse, do a highpass filter at 0.75f and normalize the data
+     **/
+    public int getPulse() {
+        float minPulse = 0.75f;
+        float maxPulse = 3f;
+        int startIndex = frequencyChannel.findIndexOf(minPulse);
+        int endIndex =frequencyChannel.findIndexOf(maxPulse);
+        
+        //.. get the index with the maximum between these frequencies
+        int maxMagIndex = magnitudeChannel.getIndexOfMaxBetween(startIndex, endIndex);
+        
+        float maxFrequency = frequencyChannel.getPointOrNull(maxMagIndex);
+        
+        //.. 30cycles = 0.5hz since 60*0.5 = 30, so cycles = freq*60
+        int cycles = (int) (maxFrequency * 60);
+        return cycles;
+    }
    
     
     public void printComplex() {
@@ -114,6 +139,52 @@ public class FrequencyDomain {
          
      }
      public static void main(String[] args) {
-        Channel.main(args);
+         try{
+            String [] fnirsFiles = AJExperiment.getFiles(true);
+            String [] hrFiles =AJExperiment.getFiles(false);
+            float avgDif = 0;
+            float avgDif2 =0;
+            for (int k =0; k < fnirsFiles.length; k++){
+                //System.out.println(fnirsFiles[k] + " , " + hrFiles[k]);
+
+                TSTuftsFileReader f = new TSTuftsFileReader();
+                ChannelSet cs = f.readData(",", fnirsFiles[k]);
+                 f = new TSTuftsFileReader();
+                ChannelSet cs2 = f.readData(",", hrFiles[k]);
+                //System.out.println("xxxxxxxxxxzxzxxxxxxxxxxxx");
+                //System.out.println("Now: " +fnirsFiles[k]);
+                Experiment e = cs.splitByLabel("condition");
+                Channel test = new Channel(16);
+                for (int i =0; i < 15; i++){
+                   // Channel b1 = e.matrixes.get(i).getChannel(0);
+                    Channel b1 = cs.getChannel(i);
+                    //b1 = b1.normalize(false);
+                    b1 = b1.highpass(0.75f, false);
+                    b1 = b1.normalize(false);
+                    
+                    //b1 = b1.movingAverage(2,false);
+                    //System.out.print(e.matrixes.get(i).streams.get(3).data.length+",");
+                    //b1.printStream();
+                    //System.out.print(e.matrixes.get(i).condition+",");
+                    FrequencyDomain fd = new FrequencyDomain(Channel.HitachiRPS);
+                    fd.complexToFreq(b1.FFT());
+                    test.addPoint(fd.getPulse());
+                   // fd.print();
+                // System.out.println("XXXXXXXXXXXXXXXXX");
+                }
+                
+                System.out.println(test.getMean() + " , " + test.getStdDev() + 
+                        " , " + cs2.getChannel(0).getMean() + " , " +(test.getMean() - cs2.getChannel(0).getMean()));
+                
+                avgDif +=Math.abs(test.getMean() - cs2.getChannel(0).getMean());
+                avgDif2 += test.getMean() - cs2.getChannel(0).getMean();
+
+            }
+             System.out.println("-------");
+             System.out.println((avgDif / 16.0));
+             System.out.println((avgDif2 / 16.0));
+
+         }
+         catch(Exception e){e.printStackTrace();}
     }
 }

@@ -122,7 +122,7 @@ public class Beste extends EvaluationInterface{
     }
     
     public static ChannelSet getChannelSet() throws Exception{
-            String filename = "input/bestemusic/bestemusic11.csv";
+            String filename = "input/bestemusic/bestemusic12.csv";
             //.. read
             TSTuftsFileReader f = new TSTuftsFileReader();
             ChannelSet cs = f.readData(",", filename);

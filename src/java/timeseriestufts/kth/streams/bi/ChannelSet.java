@@ -442,7 +442,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
      * the flickered light was at wavelength 690 and 830, multiplying by some constant,
      * and dividing by some other constant. 
      * @param copy : if true, make a deep copy, otherwise modify this
-     * @param 690Cols : indexes of 690. if null, assume the first four are 690. if empty, second half are 690
+     * @param 690Cols : indexes of 690. if null, assume the first four are 690. if
      * @param 830 : indexes of 830. Same position in these arrays mean they are paired
      **/
     public ChannelSet calcOxy(boolean copy, ArrayList<Integer> sixNinetyCols, ArrayList<Integer> eightThirtyCols) throws Exception{

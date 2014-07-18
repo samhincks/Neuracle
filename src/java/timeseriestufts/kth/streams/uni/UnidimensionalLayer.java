@@ -408,5 +408,20 @@ public abstract class UnidimensionalLayer extends DataLayer {
         return minIndex;
     }
     
+    /** Return the index of the maximum value between specified values
+     **/
+    public int getIndexOfMaxBetween(int startIndex, int endIndex) {
+        float largest = getPointOrNull(startIndex);
+        int index =0;
+        for (int i = startIndex; i < endIndex; i++) {
+            float thisVal = getPointOrNull(i);
+            if (thisVal > largest) {
+                largest = thisVal;
+                index =i;
+            }
+        }
+        return index;
+    }
+    
     
 }

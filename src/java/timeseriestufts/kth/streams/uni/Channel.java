@@ -264,7 +264,7 @@ public class Channel extends UnidimensionalLayer  {
     
         //.. set variables for bandpass filter.
         int sampleRate = (int) (1 /this.framesize);
-        if (true) throw new Exception("Sampling at " + freq + " , sr " + sampleRate + " fs " + this.framesize);
+       // if (true) throw new Exception("Sampling at " + freq + " , sr " + sampleRate + " fs " + this.framesize);
         LowPassSP lp = new LowPassSP(freq, sampleRate);
         
         float [] signal = new float[numPoints];
@@ -341,7 +341,18 @@ public class Channel extends UnidimensionalLayer  {
        float range = (largest - smallest);
        float incr = 1.0f/ range;
        
-       if (copy) throw new Exception("Copy not yet implemented");
+       if (copy) {
+           Channel sc = new Channel(this.framesize, this.numPoints);
+           sc.setId(id  + "norm");
+
+           //.. add the filtered points to the new synched channel
+           for (int i = 0; i < numPoints; i++) {
+               Float p = this.getPointOrNull(i);
+               p = (p - smallest) * incr;
+               sc.addPoint(p);
+           }
+           return sc;
+       }
        else {
            for(int i =0; i < numPoints; i++) {
                Float p = this.getPointOrNull(i);
@@ -597,6 +608,8 @@ public class Channel extends UnidimensionalLayer  {
         return out;
     }
     
+    
+    
     /**Return a deep copy of this channel**/
     public Channel getCopy() {
         Channel channel = new Channel(this.framesize, this.numPoints);
@@ -652,8 +665,11 @@ public class Channel extends UnidimensionalLayer  {
             Channel c = generate(numPoints);
             Channel b = generate(87);
             
-            int TEST =87; //.. we have our datalayer, now set what we want to test
+            int TEST =-1; //.. we have our datalayer, now set what we want to test
+            String test = "rrinterveral";
             
+            if (test.equals("rrinterval")) {
+            }
             if (TEST ==13) {
                 c.bwBandpass(4, 0.1f, 0.2f);
                 c.printStream();
@@ -711,7 +727,6 @@ public class Channel extends UnidimensionalLayer  {
                 String sax = c.getSAXRepresentation(3, 3);
                 System.out.println(sax);
             }
-            TEST = 8; // temp
             //.. test fourier transform
             if (TEST ==8) {
                  //c = c.zScore(true);
@@ -734,10 +749,10 @@ public class Channel extends UnidimensionalLayer  {
                 fd.complexToFreq(transformed);
                 fd.print();
             }
-            
+            TEST =873;
             if (TEST == 872) {
                 ChannelSet beste = Beste.getChannelSet();
-                Channel b1 = beste.getChannel(0);
+                Channel b1 = beste.getChannel(15);
                 b1 = b1.zScore(false);
                 Complex[] transformed = b1.FFT();
                 FrequencyDomain fd = new FrequencyDomain((int) Channel.HitachiRPS);
@@ -745,19 +760,46 @@ public class Channel extends UnidimensionalLayer  {
                 fd.print();
                 // System.out.println("XXXXXXXXXXXXXXXXX");
             }
+            if (TEST == 873) {
+                String filename = "input/labeled_fNIRSdata.csv";
+               // String filename = "input/iaps_hr_raw.csv";
 
+                //.. NEXT: SEE IF ITS JUST AN OFF-BY-X ERROR, then try a different approach.
+                //.... I CAN COUNT the number of oscillations. 
+                TSTuftsFileReader f = new TSTuftsFileReader();
+                ChannelSet cs = f.readData(",", filename);
+                Experiment e = cs.splitByLabel("condition");
+                for (int i =0; i < 15; i++){
+                    Channel b1 = e.matrixes.get(i).getChannel(0);
+                 //   Channel b1 = cs.getChannel(i);
+                   // b1 = b1.normalize(false);
+                    b1 = b1.highpass(1.0f, false);
+                    //b1 = b1.movingAverage(5,false);
+                    //System.out.print(e.matrixes.get(i).streams.get(3).data.length+",");
+                    //b1.printStream();
+                    //System.out.print(e.matrixes.get(i).condition+",");
+                    FrequencyDomain fd = new FrequencyDomain(Channel.HitachiRPS);
+                    fd.complexToFreq(b1.FFT());
+                     
+                   // fd.print();
+                    System.out.println(i + ","+fd.getPulse());
+                // System.out.println("XXXXXXXXXXXXXXXXX");
+                }
+            }
+            
             //.. test fourier transform
             if (TEST ==87) {
                 ChannelSet beste = Beste.getChannelSet();
                 Experiment e = beste.splitByLabel("condition");
-                Channel b1 = e.matrixes.get(3).getChannel(0);
+                Channel b1 = e.matrixes.get(3).getChannel(3);
                 b1 = b1.zScore(false);
                // b1.printStream();
                // b1.printStream();
                 Complex [] transformed = b1.FFT();
                 FrequencyDomain fd = new FrequencyDomain((int) Channel.HitachiRPS);
                 fd.complexToFreq(transformed);
-                fd.print();
+                //fd.print();
+                System.out.println(fd.getPulse());
                // System.out.println("XXXXXXXXXXXXXXXXX");
             }
             

@@ -28,7 +28,10 @@ import timeseriestufts.evaluatable.performances.Predictions;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.quad.MultiExperiment;
+import timeseriestufts.kth.streams.tri.ChannelSetSet;
 import timeseriestufts.kth.streams.tri.Experiment;
+import timeseriestufts.kth.streams.uni.Channel;
+import timeseriestufts.kth.streams.uni.FrequencyDomain;
 
 /**
  *
@@ -39,8 +42,14 @@ public class DataManipulationParser extends Parser{
     public DataManipulationParser(){
         commands = new Hashtable();
    
+        Command command = new Command("getpulse");
+        command.documentation = "Returns the average pulse of the channelset, or if an experiment"
+                + " the pulse at different readings";
+        command.parameters = "Channel to search for pulse, if any";
+        commands.put(command.id, command);
+        
         //-- FILTER
-        Command command = new Command("filter");
+        command = new Command("filter");
         command.documentation = "Applies a filter to the selected channelset, returning a deep copy";
         command.parameters = "1.FILTER.MOVINGAVERAGE(readingsBack)--> apply a moving average a channel set with specified window length ::"
                 + "2.FILTER.LOWPASS(x)  3.FIlTER.HIGHPASS(x) or 4.FILTER.BANDPASS(x,y)::";
@@ -130,8 +139,13 @@ public class DataManipulationParser extends Parser{
             this.currentTechnique = techDAO.technique;
         Command c = null;
         
+        if (command.startsWith("getpulse")) {
+            c = commands.get("getpulse");
+            c.retMessage = getPulse(parameters);
+        }
+        
         //.. filter.movingaverage(), .lowpass()
-        if (command.startsWith("filter")) {
+        else if (command.startsWith("filter")) {
             c = commands.get("filter");
             c.retMessage = filter(command, parameters);
             c.action = "reload";
@@ -196,6 +210,100 @@ public class DataManipulationParser extends Parser{
         return c.getJSONObject();
     }
 
+    private String getPulse(String [] parameters) throws Exception{
+        int channel= 0;
+        String retString = "";
+        if (parameters.length > 0) {
+            if (parameters[0].equals("*")) channel =-2;
+            else channel = Integer.parseInt(parameters[0]);
+        }
+        else {
+            channel = -1; //.. no parameters, then take average
+        }
+        if (currentDataLayer instanceof Experiment) {
+            Experiment e = (Experiment) currentDataLayer;
+
+            //..Create a new channel set for each condition 
+            for (String condition : e.classification.values) {
+                if (channel >=0) {
+                    ArrayList<Channel> channels = e.getChannelsWithChannelIndexAndCondition(channel, condition);
+                    float averagePulse = 0;
+                    for (Channel c : channels) {
+                        c = c.highpass(0.75f, true);
+                        c = c.normalize(true);
+                        averagePulse+= c.getFrequencyDomain().getPulse();
+                    }
+                    averagePulse = averagePulse / channels.size();
+                    retString+= condition + " measured pulse at channel " + channel+ " is " + averagePulse + " bpm ;;";
+                }
+                else if (channel == -1) {
+                    float averagePulse = 0;
+                    int tests =0;
+                    for (int i=0; i< e.getChannelCount(); i++){
+                        ArrayList<Channel> channels = e.getChannelsWithChannelIndexAndCondition(i, condition);
+                        for (Channel c : channels) {
+                            c = c.highpass(0.75f, true);
+                            c = c.normalize(true);
+                            averagePulse += c.getFrequencyDomain().getPulse();
+                            tests++;
+                        }
+                    }
+                    averagePulse = averagePulse / (float)tests;
+                    retString += condition + " measured pulse at all channels is " + averagePulse + " bpm ;;";
+               }
+                else {
+                    for (int i = 0; i < e.getChannelCount(); i++) {
+                        ArrayList<Channel> channels = e.getChannelsWithChannelIndexAndCondition(i, condition);
+                        float averagePulse = 0;
+                        for (Channel c : channels) {
+                            c = c.highpass(0.75f, true);
+                            c = c.normalize(true);
+                            averagePulse += c.getFrequencyDomain().getPulse();
+                        }
+                        averagePulse = averagePulse / channels.size();
+                        retString += condition + " measured pulse at channel " + i + " is " + averagePulse + " bpm ;;";
+                    }
+                }
+            }
+           return retString; 
+        }
+        else if (currentDataLayer instanceof ChannelSet) {
+            ChannelSet cs = (ChannelSet)currentDataLayer;
+            //cs = cs.calcOxy(true, null, null);
+            if (channel >=0){
+                Channel c = cs.getChannel(channel);
+                c = c.highpass(0.75f, true);
+                c = c.normalize(true);
+                FrequencyDomain fd = c.getFrequencyDomain();
+                retString= "Measured pulse at channel " + channel +" is " + fd.getPulse() +" bpm";
+                return retString;
+            }
+            else if (channel ==-1) {
+                float avgPulse =0;
+               for(int i=0; i <cs.getChannelCount(); i++) {
+                    Channel c = cs.getChannel(i);
+                    c = c.highpass(0.75f, true);
+                    c = c.normalize(true);
+                    FrequencyDomain fd = c.getFrequencyDomain();
+                    avgPulse += fd.getPulse();
+                }
+                retString += "Measured pulse at all channels is "  + (avgPulse / (float) cs.getChannelCount()) +" bpm ";
+                return retString;
+            }
+            else {
+                for(int i=0; i <cs.getChannelCount(); i++) {
+                    Channel c = cs.getChannel(i);
+                    c = c.highpass(0.75f, true);
+                    c = c.normalize(true);
+                    FrequencyDomain fd = c.getFrequencyDomain();
+                    retString +=  "Measured pulse at channel " + i + " is " + fd.getPulse() + " bpm ;;";
+                }
+                return retString;
+            }
+        }
+        else throw new Exception("Datalayer must be either channelset or experiment");
+    }
+    
     /**
      * Handle : filter.xxx(parameter). Apply a filter to a channelset or a channelsetset.
      */

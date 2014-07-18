@@ -420,5 +420,26 @@ public class AJExperiment {
         }
         catch(Exception e) {e.printStackTrace();}
     }
+    
+    public static String [] getFiles(boolean fnirs){
+            String filenameA = "labeled_fNIRSdata.csv";
+            String filenameB = "iaps_hr_raw.csv";
+            String folder = "input/data_for_sam3/";
+            String [] files = new String [16];
+            int i =1;
+            for (int k=0; k < files.length; k+=2) {
+                if(fnirs){
+                    files[k] = folder+i+"/iaps/"+filenameA;
+                    files[k+1] = folder + i + "/iaps/" + filenameA;
+
+                }
+                else {
+                    files[k] = folder+i+"/iaps/" + filenameB;
+                    files[k+1] = folder + i + "/iaps/" + filenameB;
+                }
+                i++;
+            }
+            return files;
+    }
  
 }

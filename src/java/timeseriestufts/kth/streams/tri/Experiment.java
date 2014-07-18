@@ -529,7 +529,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
      * and each channel is the averaged magnitude at the 
      * assorted phases. The first channel of the channelset is the corresponding frequency 
      **/
-    public ChannelSetSet getAveragedFourier() throws Exception{
+    public ChannelSetSet getAveragedFourier(boolean highpass) throws Exception{
         ChannelSetSet css = new ChannelSetSet();
         css.id = this.id + "fourier";
         
@@ -545,6 +545,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 ArrayList<Channel> channels = this.getChannelsWithChannelIndexAndCondition(i, condition);
                 //.. average each instances version of that channel together
                 for (Channel c : channels) {
+                    if (highpass) c = c.highpass(1.0f, true);
                     FrequencyDomain fd  =c.getFrequencyDomain();
                     
                     //.. the very first channel should be the frequencies
@@ -580,7 +581,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
             
             if (TEST ==1) {
                 //e.printStream();
-                ChannelSetSet css = e.getAveragedFourier();
+                ChannelSetSet css = e.getAveragedFourier(false);
                 css.printStream();
             }
 
