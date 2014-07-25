@@ -27,7 +27,7 @@ public class TechniqueSet extends Technique{
         //.. add ML, featureSet
         ts.addTechnique(new WekaClassifier(WekaClassifier.MLType.smo)); 
         FeatureSet fs = new FeatureSet("fs");
-        fs.addFeaturesFromConsole("*", "*", "*");
+        fs.addFeaturesFromConsole("slope^mean", "*", "*");
 
         ts.addTechnique(fs);
         ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.None, 180));

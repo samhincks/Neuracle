@@ -187,10 +187,11 @@ public class Instance extends ChannelSet{
      **/
     public weka.core.Instance getWekaInstance(Instances dataset) throws Exception{
         if (attributes == null) throw new Exception("Must extract attributes first");
-        if (condition == null) throw new Exception("Must set condition first");
         
         //.. make a new weka instance with num attributes + 1
-        weka.core.Instance wekaInstance=  new weka.core.Instance(getNumAttributes()+1); //.. +1 for class
+        int attrsToAdd = getNumAttributes();
+        if (condition!=null) attrsToAdd++;
+        weka.core.Instance wekaInstance=  new weka.core.Instance(attrsToAdd); //.. +1 for class
        
         //.. set its reference to the dataset
         wekaInstance.setDataset(dataset);
@@ -204,10 +205,11 @@ public class Instance extends ChannelSet{
                 wekaInstance.setValue(i, attr.nomValue);
             else //.. isntance of preset
                 wekaInstance.setValue(i, attr.numValue);
-
         }
+        
         //.. then set value of class and return
-        wekaInstance.setValue(getNumAttributes(), condition);
+        if (condition != null)
+            wekaInstance.setValue(getNumAttributes(), condition);
         return wekaInstance;
     }
 

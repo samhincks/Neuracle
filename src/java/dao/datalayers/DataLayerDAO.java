@@ -38,7 +38,8 @@ public abstract class DataLayerDAO {
     public abstract JSONObject getJSON() throws Exception;
 
     public void addConnection(TechniqueDAO td) {
-        tDAOs.add(td);
+        if(!(tDAOs.contains(td)))
+            tDAOs.add(td);
     }
     public void resetTConections() {
         tDAOs = new ArrayList();

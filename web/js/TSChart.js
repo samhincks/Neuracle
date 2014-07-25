@@ -65,7 +65,7 @@ function LineChart() {
     //... input: selection, defaults to body
     function chart(s) {
         if (data == null) return;
-        console.log(width);
+ 
         //.. if there is an optional parameter of selection
         if (arguments.length) {
             d3.selectAll('.chart').remove(); //.. remove if it exists already
@@ -107,8 +107,8 @@ function LineChart() {
             .y(function(d) {
                 return y(channels(d)[key]);
             });
-
-       //... now I want to create a collection of path elements using datum hack
+        
+        //... now I want to create a collection of path elements using datum hack
         for (var i=0; i < data.length; i++ ) {
             svg.append("path")
                 .datum(data[i]) //.. by doing datum we reserve the right to alternate which dimension of data is shown

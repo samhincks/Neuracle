@@ -47,4 +47,8 @@ public class Prediction {
     void printPrediction() {
         System.out.println("Prediction = " + prediction + " Answer = " + answer +"*"+conditionPercentage + " conf = " + pctHigher);
     }
+    @Override
+    public String toString() {
+        return prediction + ";"+confidence+";"+pctHigher;
+    }
 }

@@ -25,7 +25,6 @@ function ChartArea(id, descArea) {
         lastGraph = JSONobj.type;
         if(JSONobj.type == "experiment"){
             var channels = JSONobj.instances[0][0].channels;
-
             var actualMaxPoints = JSONobj.actualNumPoints;
             var readingsPerSec = JSONobj.readingsPerSec;
             var maxInSeconds = (actualMaxPoints / readingsPerSec)

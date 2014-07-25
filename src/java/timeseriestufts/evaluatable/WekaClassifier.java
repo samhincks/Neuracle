@@ -9,10 +9,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import timeseriestufts.evaluation.classifiers.weka.WekaData;
 import timeseriestufts.evaluatable.ClassificationAlgorithm;
+import timeseriestufts.evaluatable.performances.Prediction;
 import timeseriestufts.evaluatable.performances.Predictions;
 import timeseriestufts.evaluation.experiment.Classification;
 import timeseriestufts.kth.streams.bi.ChannelSet;
@@ -63,6 +65,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
     public Classification lastTrainedClassification;
     public int lastInstanceLength;
     //---------------------------
+
             
             
     
@@ -159,8 +162,40 @@ public class WekaClassifier  extends ClassificationAlgorithm{
         test(streamingExperiment, ts, retPredictions, asAlgosApplied);
         return retPredictions;
     }
-            
+   
+    /** Classify the last k datapoints of specified channel
+     **/
+   public Prediction getLastPrediction(ChannelSet cs) throws Exception {
+       
+       int end =  cs.getFirstChannel().numPoints-1;
+       int start = cs.getFirstChannel().numPoints - lastInstanceLength-1;
+       System.out.println(start + " , " + end + " " + lastInstanceLength);
+ 
+       Instance instance = cs.getInstance(lastTrainedClassification.name,start,end);
+       ArrayList<Instance> instances = new ArrayList();
+       instances.add(instance);
+       Experiment exp = new Experiment(cs.id,lastTrainedClassification, instances, cs.readingsPerSecond);
+       
+       //.. retrieve the instances and since we know we only have one, simply classify it
+       exp.extractAttributes(lastTechniqueTested.getFeatureSet());
+       weka.core.Instances wInstances =exp.getWekaInstances(false);
+       Classifier classifier = getClassifier();
+       
+       //.. Get guess and the confidences of all possible classifications
+       int guess = (int) classifier.classifyInstance(wInstances.firstInstance());
+       double[] confidences = classifier.distributionForInstance(wInstances.firstInstance());
+       
+       //.. Retrieve relevant components of classification
+       String guessS = lastTrainedClassification.values.get(guess);
+       Arrays.sort(confidences);
+       double secondLargest = confidences[1];
+       double confidence = confidences[guess];
+       double pctGreater = confidence / secondLargest;
+       Prediction p = new Prediction(guessS, "unknown",  confidence, pctGreater, 0);
+       return p;
 
+    
+   }
    
     
     
@@ -444,13 +479,11 @@ public class WekaClassifier  extends ClassificationAlgorithm{
         gridsmo.setYBase(10);
         gridsmo.setYExpression("pow(BASE,I)");
         gridsmo.buildClassifier(data);
-        
     }
     
     
     
     public static void main(String [] args) { 
-
         try {
             ChannelSet cs = ChannelSet.generate(1, 100);
             Markers markers = Markers.generate(10, 10);
@@ -461,7 +494,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
             TechniqueSet ts = TechniqueSet.generate();
             Dataset ds = Dataset.generate();
             
-            int TEST =0;
+            int TEST =2;
             
             if (TEST ==0 ) {
                  e.evaluate(ts, ds, TEST);
@@ -479,6 +512,16 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                 Predictions p  = wc.testRealStream(markers.getClassification(), ts, ds, pair.y, 10, 1, null);
 
                 p.printPredictions();
+            }
+            else if (TEST ==2) {
+                Tuple<Experiment, ChannelSet> pair = cs.getExperimentAndStream(markers.name, 34, 65);
+                pair.y.printInfo();
+                System.out.println("------");
+                pair.x.printInfo();
+
+                WekaClassifier wc = pair.x.train(ts);
+                Prediction p = wc.getLastPrediction(cs);
+                System.out.println(p.toString());
             }
         }
         catch(Exception e) {e.printStackTrace();}

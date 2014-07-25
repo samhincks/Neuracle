@@ -24,6 +24,7 @@ import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.quad.MultiExperiment;
 import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.tri.TridimensionalLayer;
+import timeseriestufts.kth.streams.uni.Channel;
 import timeseriestufts.kth.streams.uni.FrequencyDomain;
 
 /**
@@ -420,10 +421,21 @@ public class AJExperiment {
         }
         catch(Exception e) {e.printStackTrace();}
     }
-    
+    public static Channel getChannel() throws Exception{
+         String filename = "input/data_for_sam3/1/iaps/labeled_fNIRSdata.csv";
+          // String filename = "input/iaps_hr_raw.csv";
+
+          //.. NEXT: SEE IF ITS JUST AN OFF-BY-X ERROR, then try a different approach.
+          //.... I CAN COUNT the number of oscillations. 
+          TSTuftsFileReader f = new TSTuftsFileReader();
+          ChannelSet cs = f.readData(",", filename);
+          Experiment e = cs.splitByLabel("condition");
+          Channel b1 = e.matrixes.get(1).getChannel(0);
+          return cs.getChannel(0); 
+    }
     public static String [] getFiles(boolean fnirs){
             String filenameA = "labeled_fNIRSdata.csv";
-            String filenameB = "iaps_hr_raw.csv";
+            String filenameB = "iaps_rr_raw.csv";
             String folder = "input/data_for_sam3/";
             String [] files = new String [16];
             int i =1;

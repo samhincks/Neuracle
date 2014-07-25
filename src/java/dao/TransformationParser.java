@@ -190,7 +190,7 @@ public class TransformationParser extends Parser{
             ctx.dataLayersDAO.addStream(e.id, pDAO);
 
             //.. Generate a console message which includes num instance, num of each condition
-            retString = "Created : " + e.getId() + " with " + e.matrixes.size() + " instances:: "
+            retString = "Created --" + e.getId() + "-- with " + e.matrixes.size() + " instances:: "
                     + " " + super.getColorsMessage(e); 
         }
         return retString;

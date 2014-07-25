@@ -374,18 +374,20 @@ public class BiDAO extends DataLayerDAO {
                 int numRows = datalayerData.getRow();
                 addedInLastSynchronization = numRows - curPoints;
                 
-                //.. NOW ADD the amount to add backwards. 
+                //.. ADD the amount to add backwards. 
                 for (int j = 0; j < addedInLastSynchronization; j++) {
                     cs.appendToStream(i-1, Float.parseFloat(datalayerData.getString(i)));
                     datalayerData.previous();
                 }
                 datalayerData.last();
-                
+
                 //.. only for the first column, add any labels if any exist
                 if (i==1 && curLabels != null && labels != null) {
                     for (Labels l : labels) {
-                        String val = curLabels.get(l.labelName);
-                        l.addLabel(new Label(l.labelName, val, l.channelLabels.size()));
+                        for (int j = 0; j < addedInLastSynchronization; j++) {
+                            String val = curLabels.get(l.labelName);
+                            l.addLabel(new Label(l.labelName, val, l.channelLabels.size()));
+                        }
                     }
                 }
             }
@@ -490,6 +492,8 @@ public class BiDAO extends DataLayerDAO {
         return null;
     }
 
+    /** Add labels that will eventually be added to the dataset
+     **/
     public void addLabels(Labels labels) {
         if (this.labels == null) this.labels = new ArrayList();
         this.labels.add(labels);

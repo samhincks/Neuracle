@@ -108,5 +108,12 @@ public class TechniquesDAO {
         techniques = new HashMap();
     }
 
+    public void print() throws Exception{
+        for (TechniqueDAO td : getTechniques()){
+            System.out.print(td.getId() + " , ");
+        }
+        System.out.println("");
+    }
+
    
 }

@@ -79,9 +79,8 @@ public class InputParser {
             DataLayerDAO dl = ctx.getCurrentDataLayer();
             if (dl != null) {
                 currentDataLayer = dl.dataLayer;
-                System.out.println("Just got currentdatalayer" + currentDataLayer.id);
             } else {
-                System.err.println("No loaded datalayers");
+                if (!ctx.test)System.err.println("No loaded datalayers");
             }
 
             //.. retreive the techinique that's currently selected

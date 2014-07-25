@@ -58,7 +58,7 @@ public class TriDAO extends DataLayerDAO {
                 jsonObj.put("readingsPerSec", exp.readingsPerSec);
                 
                 //.. set constant max-points then compute how much we have to increment by if it is exceeded
-                int MAXPOINTS = 300; //.. the number of points to display
+                int MAXPOINTS =300; //.. the number of points to display
                 int pointsInc = 1;
                 if (mostPoints > MAXPOINTS) {
                     pointsInc = mostPoints / MAXPOINTS;
@@ -87,7 +87,6 @@ public class TriDAO extends DataLayerDAO {
                             try{
                                  val = channel.getPointOrNull(i);
                             }catch(Exception e) {}
-
                             channels.put(val); //.. it might be missing
                         }
                         row.put("channels", channels);
@@ -96,7 +95,6 @@ public class TriDAO extends DataLayerDAO {
                         rows.put(row);
                     }
                     instances.put(rows);
-
                 }
                 jsonObj.put("instances", instances);
                 jsonObj.put("type", "experiment");

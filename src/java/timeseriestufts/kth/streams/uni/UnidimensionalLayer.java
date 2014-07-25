@@ -145,12 +145,11 @@ public abstract class UnidimensionalLayer extends DataLayer {
         for (int i = 0; i < numPoints; i++) {
             float thisVal = getPointOrNull(i);
             float minusMean = thisVal - mean; 
-            float minusMeanSquared = (float) Math.pow(2,minusMean);
+            float minusMeanSquared = minusMean * minusMean;
             total += minusMeanSquared;
         }
         float averageMMSquared = total / numPoints;
         double stddev= Math.sqrt(averageMMSquared);
-        if (stddev >this.getMax()) return this.getMax(); ///.. HACK - what is problem here?
         return stddev;
     }
     

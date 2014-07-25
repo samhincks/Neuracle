@@ -14,6 +14,7 @@ import edu.hawaii.jmotif.logic.sax.SAXFactory;
 import edu.hawaii.jmotif.logic.sax.alphabet.Alphabet;
 import edu.hawaii.jmotif.logic.sax.alphabet.NormalAlphabet;
 import filereader.TSTuftsFileReader;
+import filereader.experiments.AJExperiment;
 import filereader.experiments.Beste;
 import java.util.ArrayList;
 import org.JMathStudio.DataStructure.Vector.Vector;
@@ -622,8 +623,8 @@ public class Channel extends UnidimensionalLayer  {
      public static Channel generate(int numReadings) {
          
          if (numReadings == -1) {
-             Channel c = new Channel(1, 345);
-             int MIN_RATE =7;
+             Channel c = new Channel(1, 128);
+             int MIN_RATE =16;
              for (int i = 0; i < c.data.length; i++) {
                   float point =(float) (Math.sin(i * Math.PI * 2 / MIN_RATE) + 0.0
                           * Math.sin(i * Math.PI * 4 / MIN_RATE) + 0.0
@@ -656,8 +657,107 @@ public class Channel extends UnidimensionalLayer  {
         }
         return c;
     }
+    /** Return a new channel where each point is the difference it and the previous
+     **/ 
+    public Channel getCopyAsDifferenceFromLast() throws Exception{
+        Channel sc = new Channel(this.framesize, this.numPoints);
+        for (int i = 0; i < numPoints; i++) {
+            if (i ==0) sc.addPoint(0);
+            else sc.addPoint(this.getPointOrNull(i) - this.getPointOrNull(i-1));
+        }
+        return sc;
+    }
    
-     
+    public ArrayList<Integer> getPeaks(boolean topPeaks) throws Exception{
+        ArrayList<Integer> peaks = new ArrayList();
+        Channel c = this.normalize(true);
+        c = this.getCopyAsDifferenceFromLast();
+        boolean goingUp = true;
+        
+        //.. count all the points where the direction shifts, save as top or bottom peak 
+        for (int i = 1; i < numPoints; i++) {
+            Float p = c.getPointOrNull(i);
+            if (p > 0) {
+                if (!(goingUp) && (!topPeaks)) //.. if its been going down, and now its going up
+                    peaks.add(i);
+                goingUp = true;
+            }
+            else if( p< 0){
+                if (goingUp && topPeaks)
+                    peaks.add(i);
+                goingUp = false;
+            }
+        }
+        return peaks;
+    }
+    
+    /** Return an estimate of the pulse in the time domain. Across all channels,
+     * this method is not as effective as the fourier transform, but it works very
+     * well for channesl 12,13,14,15, which are probe B 830. 
+     **/
+    public int getPulse() throws Exception {
+        Channel c = this.movingAverage(2, true);
+        c = c.highpass(0.6f, true); //.. optimal for quick test
+        c = c.lowpass(2, true);
+        ArrayList<Integer> peaks = c.getPeaks(true);
+        int peaksPerMin = (int) (peaks.size() / (c.numPoints/ this.sampleRate)*60);
+        return peaksPerMin;
+    }
+    
+    /** Return the heart-rate variability, the standard deviation of RR intervals.
+     **/
+    public float getHRVariability() throws Exception {
+        Channel c = this.movingAverage(2, true);
+        c = c.highpass(0.6f, true); //.. optimal for quick test
+        c = c.lowpass(2, true);
+        ArrayList<Integer> peaks = c.getPeaks(true);
+         c = new Channel(this.framesize, peaks.size());
+        for (int i =1; i < peaks.size();i++) {
+            int distance = peaks.get(i) - peaks.get(i-1);
+            float milliseconds = distance *(1/sampleRate) *1000;
+            c.addPoint(milliseconds);
+        }
+        return (float) c.getMean();
+    }
+    public static void testPulse() throws Exception {
+        
+        try{
+            String[] fnirsFiles = AJExperiment.getFiles(true);
+            String[] hrFiles = AJExperiment.getFiles(false);
+            float avgDif = 0;
+            float avgDif2 = 0;
+            for (int k = 0; k < fnirsFiles.length; k++) {
+                //System.out.println(fnirsFiles[k] + " , " + hrFiles[k]);
+
+                TSTuftsFileReader f = new TSTuftsFileReader();
+                ChannelSet cs = f.readData(",", fnirsFiles[k]);
+                f = new TSTuftsFileReader();
+                ChannelSet cs2 = f.readData(",", hrFiles[k]);
+                    //System.out.println("xxxxxxxxxxzxzxxxxxxxxxxxx");
+                //System.out.println("Now: " +fnirsFiles[k]);
+                Experiment e = cs.splitByLabel("condition");
+                Channel test = new Channel(16);
+                for (int i = 0; i < 15; i++) {
+                    Channel b1 = cs.getChannel(i); //.. 14 WAY better than the others
+                    test.addPoint(b1.getHRVariability());
+                }
+
+                System.out.println(test.getMean() + " , " + test.getStdDev()
+                        + " , " + cs2.getChannel(0).getMean() + " , " + (test.getMean() - cs2.getChannel(0).getMean()));
+
+                avgDif += Math.abs(test.getMean() - cs2.getChannel(0).getMean());
+                avgDif2 += test.getMean() - cs2.getChannel(0).getMean();
+
+            }
+            System.out.println("-------");
+            System.out.println((avgDif / 16.0));
+            System.out.println((avgDif2 / 16.0));
+
+        }
+            catch(Exception e){e.printStackTrace();}
+        
+    }
+    
      
     public static void main(String [] args) {
         try{ 
@@ -666,9 +766,24 @@ public class Channel extends UnidimensionalLayer  {
             Channel b = generate(87);
             
             int TEST =-1; //.. we have our datalayer, now set what we want to test
-            String test = "rrinterveral";
+            String test = "pulseThorough";
             
-            if (test.equals("rrinterval")) {
+            if (test.equals("rrintervalPerfSinusoid")) {
+                ArrayList<Integer> peaks = c.getPeaks(true);
+                System.out.println(peaks.size());
+            }
+            if (test.equals("pulseQuick")) {
+                c = AJExperiment.getChannel(); //.. pulse is roughly 73, so in 15 seconds you should se 73 /4 18
+                ArrayList<Integer> peaks = c.getPeaks(true);
+                System.out.println(c.getPulse());
+            }
+            if (test.equals("pulseThorough")) {
+                Channel.testPulse();
+            }
+            if (test.equals("hrInterval")) {
+                 c = AJExperiment.getChannel();
+                 System.out.println(c.getPulse());
+                 System.out.println(c.getHRVariability());
             }
             if (TEST ==13) {
                 c.bwBandpass(4, 0.1f, 0.2f);
@@ -749,7 +864,6 @@ public class Channel extends UnidimensionalLayer  {
                 fd.complexToFreq(transformed);
                 fd.print();
             }
-            TEST =873;
             if (TEST == 872) {
                 ChannelSet beste = Beste.getChannelSet();
                 Channel b1 = beste.getChannel(15);

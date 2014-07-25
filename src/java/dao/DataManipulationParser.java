@@ -24,6 +24,7 @@ import timeseriestufts.evaluatable.Technique;
 import timeseriestufts.evaluatable.TechniqueSet;
 import timeseriestufts.evaluatable.WekaClassifier;
 import timeseriestufts.evaluatable.performances.Performances;
+import timeseriestufts.evaluatable.performances.Prediction;
 import timeseriestufts.evaluatable.performances.Predictions;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
@@ -42,10 +43,17 @@ public class DataManipulationParser extends Parser{
     public DataManipulationParser(){
         commands = new Hashtable();
    
-        Command command = new Command("getpulse");
+        Command command = new Command("gethrv");
+        command.documentation = "Returns the average standard deviation of RR intervals"
+                + " of the channelset, or if an experiment";
+        command.parameters = "Channel to search for RR interval, if any. None for all, * for each"
+                + " separately";
+        commands.put(command.id, command);
+        
+        command = new Command("getpulse");
         command.documentation = "Returns the average pulse of the channelset, or if an experiment"
                 + " the pulse at different readings";
-        command.parameters = "Channel to search for pulse, if any";
+        command.parameters = "Channel to search for pulse, if any. None for all, * for each separately";
         commands.put(command.id, command);
         
         //-- FILTER
@@ -122,8 +130,20 @@ public class DataManipulationParser extends Parser{
         command.parameters = "1[OPTIONAL] k = provide a new classification every kth reading";
         commands.put(command.id, command);
         
+        //-- CLASSIFYLAST
+        command = new Command("classifylast");
+        command.documentation = " With a 2D channelset selected and intersecting a trained machine learning "
+                + " algorithm, classifies the last points of the channelset equal to the length of the training trial ";
+        commands.put(command.id, command);
+        
         //-- fnirs 
         command = new Command("fnirs");
+        command.documentation = " Applies a range of data-manipulations to the selected datasets, "
+                + " ultimate putting it into the best visualizable form";
+        commands.put(command.id, command);
+        
+        //-- fnirs 
+        command = new Command("wireless");
         command.documentation = " Applies a range of data-manipulations to the selected datasets, "
                 + " ultimate putting it into the best visualizable form";
         commands.put(command.id, command);
@@ -139,7 +159,12 @@ public class DataManipulationParser extends Parser{
             this.currentTechnique = techDAO.technique;
         Command c = null;
         
-        if (command.startsWith("getpulse")) {
+        if (command.startsWith("gethrv")) {
+            c = commands.get("gethrv");
+            c.retMessage = getHRV(parameters);
+        }
+        
+        else if (command.startsWith("getpulse")) {
             c = commands.get("getpulse");
             c.retMessage = getPulse(parameters);
         }
@@ -192,14 +217,23 @@ public class DataManipulationParser extends Parser{
             c.retMessage = train(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
             c.action = "reloadT";
         }
-        
+        else if (command.startsWith("classifylast")) {
+            c = commands.get("classifylast");
+            c.retMessage = classifyLast(parameters, ctx.getCurrentDataLayer());
+        }
         else if (command.startsWith("classify")) {
             c = commands.get("classify");
             c.retMessage = classify(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
         }
+        
         else if (command.startsWith("fnirs")) {
             c = commands.get("fnirs");
             c.retMessage = fnirs(parameters);
+            c.action = "reload";
+        }
+        else if (command.startsWith("wireless")) {
+            c = commands.get("wireless");
+            c.retMessage = wireless(parameters);
             c.action = "reload";
         }
 
@@ -210,6 +244,83 @@ public class DataManipulationParser extends Parser{
         return c.getJSONObject();
     }
 
+    private String getHRV(String [] parameters) throws Exception {
+        int channel = 0;
+        String retString = "";
+        if (parameters.length > 0) {
+            if (parameters[0].equals("*")) {
+                channel = -2;
+            } else {
+                channel = Integer.parseInt(parameters[0]);
+            }
+        } else {
+            channel = -1; //.. no parameters, then take average
+        }
+        if (currentDataLayer instanceof Experiment) {
+            Experiment e = (Experiment) currentDataLayer;
+
+            //..Create a new channel set for each condition 
+            for (String condition : e.classification.values) {
+                if (channel >= 0) {
+                    ArrayList<Channel> channels = e.getChannelsWithChannelIndexAndCondition(channel, condition);
+                    float averageHRV = 0;
+                    for (Channel c : channels) {
+                        averageHRV += c.getHRVariability();
+                    }
+                    averageHRV = averageHRV / channels.size();
+                    retString += condition + " measured pulse at channel " + channel + " is " + averageHRV + " ms ;;";
+                } else if (channel == -1) {
+                    float averageHRV = 0;
+                    int tests = 0;
+                    for (int i = 0; i < e.getChannelCount(); i++) {
+                        ArrayList<Channel> channels = e.getChannelsWithChannelIndexAndCondition(i, condition);
+                        for (Channel c : channels) {
+                            averageHRV += c.getHRVariability();
+                            tests++;
+                        }
+                    }
+                    averageHRV = averageHRV / (float) tests;
+                    retString += condition + " measured pulse at all channels is " + averageHRV + " ms ;;";
+                } else {
+                    for (int i = 0; i < e.getChannelCount(); i++) {
+                        ArrayList<Channel> channels = e.getChannelsWithChannelIndexAndCondition(i, condition);
+                        float averageHRV = 0;
+                        for (Channel c : channels) {
+                            averageHRV += c.getHRVariability();
+                        }
+                        averageHRV = averageHRV / channels.size();
+                        retString += condition + " measured pulse at channel " + i + " is " + averageHRV + " ms ;;";
+                    }
+                }
+            }
+            return retString;
+        } else if (currentDataLayer instanceof ChannelSet) {
+            ChannelSet cs = (ChannelSet) currentDataLayer;
+            //cs = cs.calcOxy(true, null, null);
+            if (channel >= 0) {
+                Channel c = cs.getChannel(channel);
+                retString = "Measured pulse at channel " + channel + " is " + c.getHRVariability()+ " ms";
+                return retString;
+            } else if (channel == -1) {
+                float averageHRV = 0;
+                for (int i = 0; i < cs.getChannelCount(); i++) {
+                    Channel c = cs.getChannel(i);
+                    averageHRV += c.getHRVariability();
+                }
+                retString += "Measured pulse at all channels is " + (averageHRV / (float) cs.getChannelCount()) + " ms ";
+                return retString;
+            } else {
+                for (int i = 0; i < cs.getChannelCount(); i++) {
+                    Channel c = cs.getChannel(i);
+                    retString += "Measured pulse at channel " + i + " is " + c.getHRVariability() + " ms ;;";
+                }
+                return retString;
+            }
+        } else {
+            throw new Exception("Datalayer must be either channelset or experiment");
+        }
+    }
+    
     private String getPulse(String [] parameters) throws Exception{
         int channel= 0;
         String retString = "";
@@ -234,7 +345,7 @@ public class DataManipulationParser extends Parser{
                         averagePulse+= c.getFrequencyDomain().getPulse();
                     }
                     averagePulse = averagePulse / channels.size();
-                    retString+= condition + " measured pulse at channel " + channel+ " is " + averagePulse + " bpm ;;";
+                    retString+= condition + " measured heart rate variability at channel " + channel+ " is " + averagePulse + " bpm ;;";
                 }
                 else if (channel == -1) {
                     float averagePulse = 0;
@@ -249,7 +360,7 @@ public class DataManipulationParser extends Parser{
                         }
                     }
                     averagePulse = averagePulse / (float)tests;
-                    retString += condition + " measured pulse at all channels is " + averagePulse + " bpm ;;";
+                    retString += condition + " measured heart rate variability at all channels is " + averagePulse + " bpm ;;";
                }
                 else {
                     for (int i = 0; i < e.getChannelCount(); i++) {
@@ -261,7 +372,7 @@ public class DataManipulationParser extends Parser{
                             averagePulse += c.getFrequencyDomain().getPulse();
                         }
                         averagePulse = averagePulse / channels.size();
-                        retString += condition + " measured pulse at channel " + i + " is " + averagePulse + " bpm ;;";
+                        retString += condition + " measured heart rate variability at channel " + i + " is " + averagePulse + " bpm ;;";
                     }
                 }
             }
@@ -275,7 +386,7 @@ public class DataManipulationParser extends Parser{
                 c = c.highpass(0.75f, true);
                 c = c.normalize(true);
                 FrequencyDomain fd = c.getFrequencyDomain();
-                retString= "Measured pulse at channel " + channel +" is " + fd.getPulse() +" bpm";
+                retString= "Measured heart rate variability at channel " + channel +" is " + fd.getPulse() +" bpm";
                 return retString;
             }
             else if (channel ==-1) {
@@ -287,7 +398,7 @@ public class DataManipulationParser extends Parser{
                     FrequencyDomain fd = c.getFrequencyDomain();
                     avgPulse += fd.getPulse();
                 }
-                retString += "Measured pulse at all channels is "  + (avgPulse / (float) cs.getChannelCount()) +" bpm ";
+                retString += "Measured heart rate variability at all channels is "  + (avgPulse / (float) cs.getChannelCount()) +" bpm ";
                 return retString;
             }
             else {
@@ -296,7 +407,7 @@ public class DataManipulationParser extends Parser{
                     c = c.highpass(0.75f, true);
                     c = c.normalize(true);
                     FrequencyDomain fd = c.getFrequencyDomain();
-                    retString +=  "Measured pulse at channel " + i + " is " + fd.getPulse() + " bpm ;;";
+                    retString +=  "Measured heart rate variability at channel " + i + " is " + fd.getPulse() + " bpm ;;";
                 }
                 return retString;
             }
@@ -725,6 +836,7 @@ public class DataManipulationParser extends Parser{
      * Bugs: multi-analysis. The retString classification accuracy doesnt owrk
      */
     private String train(String[] parameters, DataLayerDAO dDAO, Performances performances) throws Exception {
+        
         if (!(currentDataLayer instanceof Experiment || currentDataLayer instanceof MultiExperiment)) {
             throw new Exception("You must split the data into instances first, e.g. (split(labelName)");
         }
@@ -754,16 +866,10 @@ public class DataManipulationParser extends Parser{
             //.. Train the classifier but also evaluate internally, so the user has some notion of
             //... how good it is
             for (TechniqueSet t : techniquesToEvaluate) {
-                System.out.println("Using " + t.getFeatureSet().getId() + " " + t.getFeatureSet().getConsoleString() + " " + t.getFeatureSet().getFeatureDescriptionString());
+                // System.out.println("Using " + t.getFeatureSet().getId() + " " + t.getFeatureSet().getConsoleString() + " " + t.getFeatureSet().getFeatureDescriptionString());
                 experiment.evaluate(t, dataset, -1);
                 WekaClassifier wc = experiment.train(t);
                 total += t.getMostRecentAverage();
-                
-                //.. save variables for when this will be classified
-                wc.lastInstanceLength = experiment.getFirstInstance().getNumPointsAtZero();
-                wc.lastTrainedClassification = experiment.classification;
-                wc.lastTechniqueTested =t;
-                wc.timesTrained++;
             }
             retString += "The internal accuracy of this classifier in leave-one-out was " + (total / techniquesToEvaluate.size());
 
@@ -847,6 +953,33 @@ public class DataManipulationParser extends Parser{
        return "Successfully classified this dataset, and made " + p.predictions.size() + " predictions";
     }
     
+    /**Predicts the last K readings of the dataset, and returns confidence and value if possible.
+     * If this is used in conjunction with a database, synchronize with database first. 
+     **/
+    private String classifyLast(String [] parameters, DataLayerDAO dDAO) throws Exception{
+
+        if (!(currentDataLayer instanceof ChannelSet)) {
+            throw new Exception("The command classify only "
+                    + "applies to 2D Channelsets " + currentDataLayer.id + " doesn't fit that bill");
+        }
+        ChannelSet cs = (ChannelSet) currentDataLayer;
+
+        //.. retrieve the hovered over classifier, and bitch if somethings wrong
+        ArrayList<ClassificationAlgorithm> classifiers = dDAO.getClassifiers();
+        if (classifiers.size() > 1) 
+            throw new Exception("It is ambiguous which classifier you want to use");
+        
+        if (classifiers.isEmpty()) 
+            throw new Exception("You must connect the dataset with a trained classifier");
+        
+
+        WekaClassifier classifier = (WekaClassifier) classifiers.get(0);
+
+        //..Classify the  
+         Prediction p = classifier.getLastPrediction(cs );
+         return p.toString();
+    }
+    
     public String fnirs(String [] parameters) throws Exception{
         float lowpass =0;
         float highpass=0;
@@ -860,7 +993,7 @@ public class DataManipulationParser extends Parser{
         ArrayList<ChannelSet> chanSets = getChanSets();
         String retString = "";
         for (ChannelSet cs : chanSets) {
-            ChannelSet filteredSet = cs.calcOxy(true, null, null); //.. we want a copy
+            ChannelSet filteredSet = cs.calcOxy(true, null, null); //.. we want a copy;
             retString += "Applied CalcOxy, so that 0->7 : Probe A. 8->15" +
 "                + \" ProbeB:: 0->3&8->12 : HbO::... 0,4,8,12: closest;; 3,7,11,15 : farthest\";::";
             if(lowpass ==0){ 
@@ -906,6 +1039,61 @@ public class DataManipulationParser extends Parser{
             
             retString += " Creating : " + e.getId() + " with " + e.matrixes.size() + " instances::" +
                     super.getColorsMessage(e);
+        }
+        return retString;
+    }
+    
+    public String wireless(String[] parameters) throws Exception {
+        float lowpass = 0;
+        float highpass = 0;
+        if (parameters.length > 1) {
+            lowpass = Float.parseFloat(parameters[0]);
+            highpass = Float.parseFloat(parameters[1]);
+        } else if (parameters.length > 0) {
+            lowpass = Float.parseFloat(parameters[0]);
+        }
+        ArrayList<ChannelSet> chanSets = getChanSets();
+        String retString = "";
+        for (ChannelSet cs : chanSets) {
+            
+            ChannelSet filteredSet = cs.zScore(true);
+            if (lowpass == 0) {
+                filteredSet = filteredSet.movingAverage(10, false);
+                retString += "Applied MovingAverage, 10 readings back::";
+            }
+
+            if (lowpass > 0 && highpass == 0) {
+                filteredSet = filteredSet.lowpass(lowpass, false);
+                retString += "Applied Lowpass; Removed frequencies oscillating at above " + lowpass + "hz ::";
+            } else if (highpass > 0 && lowpass == 0) {
+                filteredSet = filteredSet.highpass(highpass, false);
+                retString += "Applied Highpass; Removed frequencies oscillating below " + highpass + "hz ::";
+            } else if (lowpass > 0 && highpass > 0) {
+                filteredSet = filteredSet.lowpass(lowpass, false);
+                filteredSet = filteredSet.highpass(highpass, false);
+                retString += "Applied Bandpass; kept frequencies oscillating between " + lowpass + " and " + highpass + "hz ::";
+            }
+
+            retString += "Z scored the data, so that each value is replaced by the difference between "
+                    + " it and the channel's corresponding mean, divided by the standard deviation::";
+ 
+            Experiment e = filteredSet.splitByLabel("Condition");
+            ArrayList<String> toKeep = new ArrayList();
+            toKeep.add("meditation");
+            toKeep.add("multiplication");
+            e = e.removeAllClassesBut(toKeep);
+
+            e = e.anchorToZero(false);
+            e.setParent(cs.getId()); //.. set parent to what we derived it from
+
+            e.setId(e.id + "-l" + lowpass + "-h" + highpass);
+            //.. make a new data access object, and add it to our stream
+            TriDAO pDAO = new TriDAO(e);
+
+            ctx.dataLayersDAO.addStream(e.id, pDAO);
+
+            retString += " Creating : " + e.getId() + " with " + e.matrixes.size() + " instances::"
+                    + super.getColorsMessage(e);
         }
         return retString;
     }

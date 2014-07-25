@@ -181,6 +181,7 @@ public class TSTuftsFileReader {
         //.. Having built a channel structure and label structure, label the channel
         //... structure according to the label structure
         for (Labels l : allLabels) {
+            l.channelLabels.add(new Label(l.labelName, "end", -1));
             Markers markers = new Markers(l);
             channelSet.addMarkers(markers);
         }

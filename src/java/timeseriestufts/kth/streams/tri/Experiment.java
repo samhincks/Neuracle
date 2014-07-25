@@ -394,11 +394,17 @@ public class Experiment extends TridimensionalLayer<Instance>{
         //.. get instances from my instance objects, with all attributes extracted
         weka.core.Instances instances = getWekaInstances(true); //.. try to extract attribtues if specified
         double [] attrs = instances.attributeToDoubleArray(0);
+        
         //.. retrieve classifier and train it
-        WekaClassifier myClassifier = (WekaClassifier) ts.getClassifier();
-        myClassifier.buildClassifier(instances);
+        WekaClassifier wc = (WekaClassifier) ts.getClassifier();
+        wc.buildClassifier(instances);
+        wc.lastInstanceLength = this.getFirstInstance().getNumPointsAtZero();
+        wc.lastTrainedClassification = this.classification;
+        wc.lastTechniqueTested = ts;
+        wc.timesTrained++;
+        
         //.. return it, trained
-        return myClassifier;
+        return wc;
     }
     
     /**Return this datalayer structured as weka Instances. 

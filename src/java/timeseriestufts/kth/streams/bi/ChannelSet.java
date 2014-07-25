@@ -327,7 +327,6 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         labelName = labelName.toLowerCase();
         Markers relevantMarkers = getMarkersWithName(labelName);
         Experiment experiment = new Experiment(this.id, relevantMarkers.getClassification(),this.readingsPerSecond);
-
         //.. Build a new Channel with new points for each trial
         for (Trial t : relevantMarkers.trials) {
             Instance instance = new Instance(t.name, t.start, t.end);
