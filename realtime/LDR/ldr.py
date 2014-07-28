@@ -18,6 +18,10 @@ Put black dongle onto battery pack
 Plug receiver into USB
 Start program
 Attach sensor to transmitter
+
+-Figure out what port is being used: ls /dev/tty.* 
+-Change PORT = to that address
+-then run with command python ldr.py --port=def
 """
 
 import sys
@@ -31,7 +35,8 @@ from collections import deque
 import matplotlib.pyplot as plt 
 import matplotlib.animation as animation
 
-PORT = '/dev/tty.uart-79FF427A4D083033'
+PORT ='/dev/tty.uart-B7FF5D7F0B161D0D'
+#PORT = '/dev/tty.uart-79FF427A4D083033'
 MYSQL = True
 
 X_MIN = 0

@@ -29,12 +29,15 @@ public abstract class RealtimeTask  implements Runnable{
     static final String CNAME = "condition";
     static String WCNAME; //.. THIS IS SET IN CODE
     static String EXPNAME = DBNAME + CNAME;
-    static final String keep = "easy,hard";
+    static final String keep = "easy,medium";
     
-    static final int REFRESHRATE = 1000; //.. how often should we synchronize with the database
+    static final int TRIALS =2;
+    static final int REFRESHRATE = 100; //.. how often should we synchronize with the database
     static final int CLASSIFICATIONDELAY = 3000; //.. how often do we want a classification
     static final int MOVINGWINDOW =2000; //.. how many readings back do we want to CLASSIFY FOR
+    static final int REST =3000;
     
+    public static int trainingDuration;
     
     public ThisActionBeanContext ctx;
     public InputParser ip;
@@ -51,38 +54,67 @@ public abstract class RealtimeTask  implements Runnable{
             //.. Initialize the components of the server, a hack, emulating hte interface
             ThisActionBeanContext ctx = new ThisActionBeanContext(true);
             InputParser ip = new InputParser();
+            trainingDuration = (NBackTask.duration +7000)*TRIALS;
             
-            //.. Synchronize with the database, labeling all the existing parts junk
-            String command = "synchronize("+DBNAME+")"; 
-            String resp = ip.parseInput(command, ctx).getString("content");
-            System.out.println(resp);
-            
-            //.. As new data is streamed in, assign a meaningful label to it
+            stream(ctx, ip);
+            labelServer(ctx,ip);
+            nBack(ctx, ip);
             TrainingTask rt = new TrainingTask(ctx, ip);
-            Thread.sleep(REFRESHRATE);
-            while(rt.ticks < 4){
-                Thread t = new Thread(rt);
-                t.run();
-                Thread.sleep(REFRESHRATE);
-            }
-            
-            //.. TRAIN a classifier, setting its identity in the context to WCNAME
             rt.train();
-            
-            //.. Set label of subsequent values to 'to-be-classified' or unknown
-            command = "label("+DBNAME+","+CNAME+",unknown)";
-            resp =  ip.parseInput(command, ctx).getString("content");
-            
-            //.. With a trained classsifier, classify data as it comes in
-            ClassifyingTask ct = new ClassifyingTask(ctx, ip);
-            while (ct.ticks < 5) {
-                Thread t = new Thread(ct);
-                t.run();
-                Thread.sleep(CLASSIFICATIONDELAY);
-            }
+            classify(ctx, ip);
         }
         catch(Exception e) {
             e.printStackTrace();
+        }
+    }
+    
+    public static void stream(ThisActionBeanContext ctx, InputParser ip) throws Exception{
+        //.. Synchronize with the database, labeling all the existing parts junk
+        String command = "synchronize(" + DBNAME + ")";
+        String resp = ip.parseInput(command, ctx).getString("content");
+        System.out.println(resp);
+
+        //.. As new data is streamed in, assign a meaningful label to it
+        TrainingTask rt = new TrainingTask(ctx, ip);
+        Thread t  =new Thread(rt);
+        t.start();
+        
+        //.. TRAIN a classifier, setting its identity in the context to WCNAME
+       // rt.train();
+
+       
+    }
+    
+    public static void nBack(ThisActionBeanContext ctx, InputParser ip) throws Exception{
+        NBackTask lt = new NBackTask(ctx,ip);
+        while(lt.ticks<TRIALS) {
+            Thread t = new Thread(lt);
+            t.start();
+            lt.back = lt.ticks%2;
+            Thread.sleep(lt.duration*1000);
+            Thread.sleep(REST);
+        }
+    }
+    public static void labelServer(ThisActionBeanContext ctx, InputParser ip) throws Exception{
+        String command = "synchronize(" + DBNAME + ")";
+        ip.parseInput(command, ctx);
+        
+        //.. Set label of subsequent values to 'to-be-classified' or unknown
+        command = "label(" + DBNAME + "," + CNAME + ",unknown)";
+        ip.parseInput(command, ctx);
+        
+        LabelingTask lt = new LabelingTask(ctx,ip);
+        Thread t  = new Thread(lt);
+        t.start();
+    }
+    
+    public static void classify(ThisActionBeanContext ctx, InputParser ip)throws Exception {
+        //.. With a trained classsifier, classify data as it comes in
+        ClassifyingTask ct = new ClassifyingTask(ctx, ip);
+        while (ct.ticks < 5) {
+            Thread t = new Thread(ct);
+            t.start();
+            Thread.sleep(CLASSIFICATIONDELAY);
         }
     }
     
@@ -94,17 +126,21 @@ public abstract class RealtimeTask  implements Runnable{
         @Override
         public void run() {
             try{
-                //.. Synchronize the last datapoints, and alter how the next ones will get labeled
-                String command = "synchronize("+DBNAME+")";
-                String resp = ip.parseInput(command, ctx).getString("content");
-                System.out.println(resp);
+                int iterations = trainingDuration / REFRESHRATE;
+                while (ticks < iterations) {
+                    //.. Synchronize the last datapoints, and alter how the next ones will get labeled
+                    String command = "synchronize(" + DBNAME + ")";
+                    String resp = ip.parseInput(command, ctx).getString("content");
+                    System.out.println(resp);
+                    Thread.sleep(REFRESHRATE);
+                    ticks++;
+                }
                 
                 //.. For now, just alternate labels everyother, eventually listen to another program
-                String con = conditions[ticks %conditions.length];
+               /* String con = conditions[ticks %conditions.length];
                 command = "label("+DBNAME+","+CNAME+","+con+")";
                 resp =  ip.parseInput(command, ctx).getString("content");
-                System.out.println(resp);
-                ticks++;
+                System.out.println(resp);*/ 
             }
             catch(Exception e) {
                 e.printStackTrace();
@@ -179,6 +215,49 @@ public abstract class RealtimeTask  implements Runnable{
                 e.printStackTrace();
             }
         }
+    }
+    
+    public static class NBackTask extends RealtimeTask {
+        public static int duration = 7;
+        public int back = 0;
+
+        
+        public NBackTask(ThisActionBeanContext ctx, InputParser ip) {
+            super(ctx, ip);
+        }
+
+        @Override
+        public void run() {
+            try {
+                String command = "nback( " + back +"," + duration+ "," + LabelInterceptorTask.LABELPORT+")";
+                JSONObject resp = ip.parseInput(command, ctx);
+                System.out.println(resp.getString("content"));
+                ticks++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+    }
+    public static class LabelingTask extends RealtimeTask {
+
+        public LabelingTask(ThisActionBeanContext ctx, InputParser ip) {
+            super(ctx, ip);
+        }
+
+        @Override
+        public void run() {
+            try {
+                String command = "interceptlabel("+DBNAME+","+CNAME +","+LabelInterceptorTask.LABELPORT;
+                JSONObject resp = ip.parseInput(command, ctx);
+                System.out.println(resp.getString("content"));
+
+                ticks++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
    
 }

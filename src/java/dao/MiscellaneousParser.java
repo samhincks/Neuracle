@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.UUID;
 import org.json.JSONObject;
+import realtime.AudioNBack;
+import realtime.Client;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.evaluation.experiment.Classification;
 import timeseriestufts.kth.streams.DataLayer;
@@ -61,7 +63,6 @@ public class MiscellaneousParser extends Parser{
         command.parameters = "1. username, 2. email, 3.password";
         commands.put(command.id, command);
         
-        
         //-- LOGIN
         command = new Command("login");
         command.documentation = "Logs the user into the system";
@@ -75,10 +76,17 @@ public class MiscellaneousParser extends Parser{
         command.debug = "Unclear why there is not a proper error message when there are no labels";
         commands.put(command.id, command);
         
-        //-- GETLABELS
+        //-- Get Commands
         command = new Command("getCommands");
         command.documentation = "Returns all implemented commands";
         commands.put(command.id, command);
+        
+        //-- Start N-Back
+        command = new Command("nback");
+        command.documentation = "Starts an audio n-back trial, and broadcasts the condition to specified port";
+        command.parameters = "1. k-back. 2. durationInSeconds, 3. Port-num (optional)";
+        commands.put(command.id, command);
+        
     }
     
     public JSONObject execute(String command, String [] parameters, ThisActionBeanContext ctx, 
@@ -125,6 +133,12 @@ public class MiscellaneousParser extends Parser{
         else if (command.startsWith("getcommands")) {
             c = commands.get("getcommands");
             c.retMessage = this.getCommands();
+        }
+        
+        //.. eventually we want to split it with a while loop that evaluates each datalayer of the split
+        else if (command.startsWith("nback")) {
+            c = commands.get("nback");
+            c.retMessage = this.nBack(parameters);
         }
         
         if (c ==null) return null;
@@ -304,6 +318,35 @@ public class MiscellaneousParser extends Parser{
                + " and evaluating it on unseen instances ::";
 
 
+        return retString;
+        
+    }
+    
+    /** Run a background n-back, and broadcast labels to specified port
+     **/
+    private String nBack(String [] parameters) throws Exception{
+        if (parameters.length <2) return "nBack takes 2 or3 parameters: n, duration, port";
+        int n = Integer.parseInt(parameters[0]);
+        if (n >2 || n <0) throw new Exception("Supported n-backs are 0,1,2");
+        int seconds = Integer.parseInt(parameters[1]);
+        int duration = seconds * 1000 - 7000; //.. since it takes 3000 to introduce it
+        if (duration < 0) throw new Exception("Too short duration to play audio");
+        int port =0;
+        AudioNBack nBack;
+        if (parameters.length ==3) {
+            port = Integer.parseInt(parameters[2]);
+            nBack = new AudioNBack(n, duration, new Client(port));
+        }
+        else
+            nBack = new AudioNBack(n, duration);
+        
+        //.. Initialize nBack and run it for specified duration. It will complain if theres not a server running
+        Thread t = new Thread(nBack);
+        t.start();
+        
+        String retString = "Initialized " + n +"-back for " + seconds + "s";
+        if(parameters.length ==3) retString += ". Broadcasting condition to " + port;
+        
         return retString;
         
     }

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import org.json.JSONObject;
+import realtime.LabelInterceptorTask;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
@@ -51,6 +52,12 @@ public class TransformationParser extends Parser{
                 + " 3. labelValue = the value of the label";
         commands.put(command.id, command);
         
+        command = new Command("interceptlabel");
+        command.documentation = "Opens a server at specified port, so that when a label is pushed"
+                + " to this location, future data pushed into specified database is labeled accordingly";
+        command.parameters = "1. Dataset, 2. Labelname, 3. PortNum";
+        commands.put(command.id, command);
+        
         //-- KEEP
         command = new Command("keep");
         command.documentation = "With a split dataset selected, remove all datapoints except those "
@@ -83,6 +90,11 @@ public class TransformationParser extends Parser{
         else if (command.startsWith("label")) {
             c = commands.get("label");
             c.retMessage = this.label(parameters);
+        }
+        
+        else if (command.startsWith("interceptlabel")) {
+            c = commands.get("interceptlabel");
+            c.retMessage = this.interceptLabel(parameters);
         }
         
         //... Makes a new experiment with only these instances
@@ -138,7 +150,7 @@ public class TransformationParser extends Parser{
      * below method, typically called by a callback, but a user could also
      * trigger it. Makes so that data coming in receives the input label*
      */
-    private String label(String [] parameters) throws Exception {
+    public String label(String [] parameters) throws Exception {
         if (parameters.length < 3) throw new Exception("Command requires three parameters. filename, curLabelName, curLabelValue");
         //.. In this new way of doing things, we are going to need to have created a Markers object,
         //.. which would always have a Markers object that was set equal to the number of datapoints
@@ -170,6 +182,25 @@ public class TransformationParser extends Parser{
         } else {
             throw new Exception("Could not find " + filename);
         }
+    }
+    
+    private String interceptLabel(String[] parameters) throws Exception {
+        if (parameters.length < 3) 
+            throw new Exception("Command requires three parameters. databasename, labelName, portnum");
+        String dbName = parameters[0];
+        String labelName = parameters[1];
+        int port = Integer.parseInt(parameters[2]);
+        
+        int pingDelay =1000;
+
+        LabelInterceptorTask lt = new LabelInterceptorTask(port, dbName, labelName, this,pingDelay );
+
+        Thread t = new Thread(lt);
+        t.start();
+
+        return "Initialized label interception at port " + port + " . " +dbName + "'s " + labelName + " will "
+                + " potentially alter label based on the message every " + pingDelay + " ms. It will "
+                + " shut down if it receives end";
     }
     
      /**

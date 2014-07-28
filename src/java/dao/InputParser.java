@@ -42,7 +42,7 @@ import timeseriestufts.kth.streams.uni.Channel;
  *
  * @author samhincks
  */
-public class InputParser {
+public  class InputParser {
     public ArrayList<String> oldInput = new ArrayList();
     private DataLayer currentDataLayer;
     private Technique currentTechnique;

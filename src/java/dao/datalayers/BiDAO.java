@@ -380,7 +380,7 @@ public class BiDAO extends DataLayerDAO {
                     datalayerData.previous();
                 }
                 datalayerData.last();
-
+                
                 //.. only for the first column, add any labels if any exist
                 if (i==1 && curLabels != null && labels != null) {
                     for (Labels l : labels) {
@@ -465,6 +465,7 @@ public class BiDAO extends DataLayerDAO {
     /**Set the current label of data streamed in, so that any fresh data
      receives that label**/
     public void setStreamedLabel(String labelName, String labelValue) {
+        System.out.println("        Current label is " + labelValue + " of " + labelName);
         if(this.curLabels == null) this.curLabels = new Hashtable();
         this.curLabels.put(labelName, labelValue);
     }
