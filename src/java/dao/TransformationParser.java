@@ -190,9 +190,10 @@ public class TransformationParser extends Parser{
         String dbName = parameters[0];
         String labelName = parameters[1];
         int port = Integer.parseInt(parameters[2]);
+        if (!(Parser.available(port))) throw new Exception("Port " + port + " is not available");
         
         int pingDelay =1000;
-
+        label(new String []{dbName, labelName, "junk"});
         LabelInterceptorTask lt = new LabelInterceptorTask(port, dbName, labelName, this,pingDelay );
 
         Thread t = new Thread(lt);

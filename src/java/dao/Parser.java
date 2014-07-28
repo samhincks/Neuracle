@@ -8,6 +8,8 @@ package dao;
 
 import dao.datalayers.TriDAO;
 import dao.techniques.TechniqueDAO;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import org.json.JSONObject;
@@ -127,4 +129,11 @@ public abstract class Parser {
         return retString;
     }
     
+    public static boolean available(int port) {
+        try (Socket ignored = new Socket("localhost", port)) {
+            return false;
+        } catch (IOException ignored) {
+            return true;
+    }
+}
 }

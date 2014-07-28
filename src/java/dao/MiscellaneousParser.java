@@ -332,6 +332,8 @@ public class MiscellaneousParser extends Parser{
         int duration = seconds * 1000 - 7000; //.. since it takes 3000 to introduce it
         if (duration < 0) throw new Exception("Too short duration to play audio");
         int port =0;
+        if (!(Parser.available(port))) throw new Exception("Port " + port + " is not available");
+
         AudioNBack nBack;
         if (parameters.length ==3) {
             port = Integer.parseInt(parameters[2]);
@@ -340,6 +342,8 @@ public class MiscellaneousParser extends Parser{
         else
             nBack = new AudioNBack(n, duration);
         
+        nBack.directory = ctx.getServletContext().getRealPath("WEB-INF/audio/") +"/";
+
         //.. Initialize nBack and run it for specified duration. It will complain if theres not a server running
         Thread t = new Thread(nBack);
         t.start();

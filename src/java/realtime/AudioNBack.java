@@ -14,9 +14,9 @@ import javax.sound.sampled.*;
  * @author samhincks
  */
 public class AudioNBack implements Runnable{
-    private static String directory = "audio/"; 
+    public String directory = "audio/"; 
 
-    private static String [] files =  {directory+"rbnbacka.wav", directory+"rbnbackb.wav", directory+"rbnbackc.wav",directory+"rbnbackd.wav"};
+    private  String [] files; 
     private Clip clip;
     private int kBack;
     private int length; //.. length to play in milliseconds
@@ -39,6 +39,8 @@ public class AudioNBack implements Runnable{
     
     @Override
     public void run() {
+        files = new String[] {directory + "rbnbacka.wav", directory + "rbnbackb.wav", directory + "rbnbackc.wav",directory + "rbnbackd.wav" };
+
         if (kBack ==0) {
             playIntro(directory + "0back.wav");
         } else if (kBack ==1){

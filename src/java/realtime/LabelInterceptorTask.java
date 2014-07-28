@@ -54,7 +54,7 @@ public class LabelInterceptorTask implements Runnable{
             getMessage();
         }
         catch(Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); 
         }
 
     }

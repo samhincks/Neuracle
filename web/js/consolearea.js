@@ -13,6 +13,7 @@ function ConsoleArea() {
     *secondaryClass = redLine, greenLine, orangeLine*/
    this.displayMessage = function(message, primaryClass, secondaryClass) {
         if (arguments.length ==1) {primaryClass = "systemmess"; secondaryClass = "blueline";}
+        if (message ==null)return;
         ///.. ;; denotes splitting into new message
         var splitByNewMessage = message.split(";;");
         for (var i = 0; i < splitByNewMessage.length; i++) {
@@ -78,7 +79,19 @@ function ConsoleArea() {
              return false;
          }
          
-         if (userText.startsWith("stream(")) {
+         if (userText.startsWith("streamsynch(")) {
+             var mes = userText.split("(");
+             var file = mes[1].split(")")[0];
+             
+             //.. callback that periodically issues a request to update; until what;
+             setInterval(function() {
+                $("#consoleInput").val("synchronize("+file+",none");
+                javaInterface.postToConsole();
+            }, 300);
+            return false;
+         }
+         
+        else if (userText.startsWith("stream(")) {
              //.. callback that periodically issues a request to update; until what;
              setInterval(function() {
                 $("#consoleInput").val(userText);

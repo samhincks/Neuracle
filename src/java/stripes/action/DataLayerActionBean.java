@@ -52,7 +52,7 @@ public class DataLayerActionBean extends BaseActionBean{
      * Specifially, in ctx.dataLayersDAO. 
      */
     public Resolution registerFile() {
-        System.out.println("REGISTER");
+        System.out.println(newAttachment.getFileName() + " , " + newAttachment.toString());
         BiDAO mDAO = new BiDAO(); 
         try {
             mDAO.make(newAttachment, ctx.getFileReadSampling());

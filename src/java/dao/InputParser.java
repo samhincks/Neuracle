@@ -16,6 +16,9 @@ import dao.datalayers.UserDAO;
 import filereader.Label;
 import filereader.Labels;
 import filereader.Markers;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.StringReader; 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -79,10 +82,8 @@ public  class InputParser {
             DataLayerDAO dl = ctx.getCurrentDataLayer();
             if (dl != null) {
                 currentDataLayer = dl.dataLayer;
-            } else {
-                if (!ctx.test)System.err.println("No loaded datalayers");
-            }
-
+            } 
+ 
             //.. retreive the techinique that's currently selected
             TechniqueDAO techDAO = ctx.getCurrentTechnique();
             if (techDAO != null) {
@@ -136,6 +137,17 @@ public  class InputParser {
         else if (command.startsWith("exdebug")) {
              c = new Command("debug2");
              throw new Exception("Here is the message that should be displayed in red");
+        }
+        else if(command.startsWith("rthelp")){
+            c = new Command("rthelp");
+            c.retMessage =" Do the following in order::" 
+                    + "1. synchstream(dbname)::"
+                    + "2. interceptlabel(dbname, condition, port)::"
+                    + "3. nback(n, duration, port) *however many, but dont overlap!::" 
+                    +" 4 split(condition). getlabels() + keep(x,y,z)"
+                    + "5. train(dbname) with techniques intersected::"
+                    + "6. classifylast() with db selected";
+            
         }
 
         if (c == null) {

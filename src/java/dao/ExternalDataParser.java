@@ -169,6 +169,7 @@ public class ExternalDataParser extends Parser{
         if (ctx.dataLayersDAO.streams.containsKey(filename)) {
             bDAO = (BiDAO) ctx.dataLayersDAO.get(filename);
             int added = bDAO.synchronizeWithDatabase(filename);
+            if(parameters.length>1) return null; //.. 2nd parameter means now output
             return "Updated " + filename + " with " + added + " changes to each column";
         } else {
             ChannelSet cs = new ChannelSet();
@@ -188,8 +189,9 @@ public class ExternalDataParser extends Parser{
      * herself. *
      */
     public JSONObject stream(String [] parameters) throws Exception {
-        String filename = currentDataLayer.id;
-
+        if (currentDataLayer.id == null) throw new Exception("Must select a datalayer");
+        String filename = currentDataLayer.id; 
+ 
         if (ctx.dataLayersDAO.streams.containsKey(filename)) {
             BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(filename);
             bDAO.synchronizeWithDatabase(filename);
