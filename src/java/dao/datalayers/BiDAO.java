@@ -335,6 +335,8 @@ public class BiDAO extends DataLayerDAO {
         this.id = databaseName;
         this.addedInLastSynchronization =0;
         this.numSynchronizations++;
+        boolean refreshMarkers = false; //.. set to true if there are new markers to synchronize with db
+
 
         MySqlDAO mydao=new MySqlDAO();
         mydao.connSQL();
@@ -387,10 +389,16 @@ public class BiDAO extends DataLayerDAO {
                         for (int j = 0; j < addedInLastSynchronization; j++) {
                             String val = curLabels.get(l.labelName);
                             l.addLabel(new Label(l.labelName, val, l.channelLabels.size()));
+                            refreshMarkers =true;
                         }
                     }
                 }
             }
+        }
+        if (refreshMarkers) { 
+            for (Labels l : labels) {
+                cs.addOrReplaceMarkers(new Markers(l)); 
+            } 
         }
         mydao.deconnSQL();
         return addedInLastSynchronization;

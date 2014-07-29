@@ -7,6 +7,7 @@ package timeseriestufts.kth.streams.bi;
 import filereader.Labels;
 import filereader.Markers;
 import filereader.Markers.Trial;
+import filereader.experiments.Beste;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -307,6 +308,35 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         markers.add(m);
     }
     
+    public void addOrReplaceMarkers(Markers m) {
+        if (hasMarkersWithName(m.name)) {
+            removeMarkerWithName(m.name);
+            addMarkers(m);
+        }
+        else {
+            addMarkers(m);
+        }
+    }
+    
+    public void removeMarkerWithName(String name) {
+        for(int i=0; i < markers.size(); i++) {
+            Markers m = markers.get(i);
+            if (m.name.equals(name)) {
+                markers.remove(i);
+            }
+        }
+    }
+    
+    public boolean hasMarkersWithName(String name) {
+        if (markers == null) return false;
+        for (Markers m : markers) {
+            if (m.name.equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public Markers getMarkersWithName(String name) throws Exception{
         for (Markers m : markers) {
             if (m.name.equals(name)) return m;
@@ -575,12 +605,17 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
      * @param writeEvery : compress the file by making this larger
      **/
     public void writeToFile(String filename, int writeEvery, boolean labelToInt) throws Exception{
-        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filename)));
+        File f = new File(filename);
+        BufferedWriter bw = new BufferedWriter(new FileWriter(f));
         int numPoints = this.getMinPoints();
+        
+        //.. Write out the column ids
         for (int i =0; i < streams.size(); i++) {
             bw.write(streams.get(i).id);
             if (i != streams.size()-1) bw.write(",");
         }
+        
+        //.. and then the marker ids
         if (!(markers.isEmpty())) bw.write(",");
         for (int j = 0; j < markers.size(); j += writeEvery) {
             Markers m = markers.get(j);
@@ -591,27 +626,38 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         }
         bw.write("\n");
         
+        //.. Write out each point, but omit points if specified
         for(int i=0; i< numPoints; i+=writeEvery) {
+            
+           //.. write out each column
            for (int j =0; j < streams.size(); j++) {
                bw.write(String.valueOf(streams.get(j).getPoint(i)));
-               if (i != streams.size() - 1) {
+               if (j != streams.size() - 1 || (markers != null)) {
                    bw.write(",");
                }
-           }
+           } 
            
-           //.. get label
+           //.. write out the label
            for (int j =0; j < markers.size(); j+=writeEvery) {
                Markers m = markers.get(j);
-               Labels l =m.saveLabels;
+               Labels l =m.saveLabels; 
+               
+               //.. a fixable error that occurs if we generate markers through generate
+               if (m.saveLabels == null ) throw new Exception("The way markers were instantiated does not permit writing file currently");
+               if (l.channelLabels.size() != numPoints) throw new Exception ("NumPoints = " + numPoints + 
+                       " Labels = " + l.channelLabels.size() + " . They are misaligned");
+               
+               //.. write out the actual label value
                if (!(labelToInt))
                    bw.write(l.channelLabels.get(i).value);
+               
+               //.. write out a numeric representation, sometimes convenient for visualization
                else {
                    String conName = l.channelLabels.get(i).value;
                    String index = String.valueOf(m.getClassification().getIndex(conName));
-                   //System.out.println(conName +" = "+ index);
                    bw.write(index);
-               }
-               if (i != markers.size() - 1) {
+               } 
+               if (j != markers.size() - 1) {
                    bw.write(",");
                }
            }
@@ -622,13 +668,13 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     
     public static void main(String [] args) {
         try{
-            int numChannels = 16;
-            int numReadings =40;
+            int numChannels = 2;
+            int numReadings =30;
             ChannelSet cs = ChannelSet.generate(numChannels,numReadings);
-            Markers markers = Markers.generate(5, 8);
+            Markers markers = Markers.generate(3, 10);
             cs.addMarkers(markers);
 
-            int TEST = 4;
+            int TEST = 6;
             
             if (TEST ==0){
                 Experiment e = cs.splitByLabel(markers.name);
@@ -663,9 +709,19 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             
             //.. TEST CALCULATING OXY
             if (TEST ==4) {
-                ChannelSet cs2 = cs.calcOxy(true, null, null);
+                //ChannelSet cs2 = cs.calcOxy(true, null, null);
                 //cs2.printStream();
-              //  cs2.writeToFile("output/oxy.csv", 1, false);
+                cs.writeToFile("output/oxy.csv", 1, false);
+            }
+            if (TEST ==5) {
+                cs = Beste.getChannelSet();
+                cs.writeToFile("output/test.csv", 30, true);
+            }
+            if (TEST == 6) {
+                markers = Markers.generate(3, 10);
+                cs.addOrReplaceMarkers(markers);
+                Experiment e = cs.splitByLabel("name");
+                e.printInfo();
             }
         }
         catch(Exception e) {e.printStackTrace();}
@@ -680,6 +736,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             System.out.println("    Majority condition on " + first.name + " is " + majority.x + " with " + majority.y);
         }
     }
+
 
  
     

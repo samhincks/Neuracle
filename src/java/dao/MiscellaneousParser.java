@@ -288,7 +288,6 @@ public class MiscellaneousParser extends Parser{
         return content;
     }
     
-    
     private String getCommands() {
         String retString = "";
         
@@ -325,6 +324,7 @@ public class MiscellaneousParser extends Parser{
     /** Run a background n-back, and broadcast labels to specified port
      **/
     private String nBack(String [] parameters) throws Exception{
+        if (AudioNBack.nbackRunning) throw new Exception("There is already an nback running");
         if (parameters.length <2) return "nBack takes 2 or3 parameters: n, duration, port";
         int n = Integer.parseInt(parameters[0]);
         if (n >2 || n <0) throw new Exception("Supported n-backs are 0,1,2");
@@ -342,7 +342,7 @@ public class MiscellaneousParser extends Parser{
         else
             nBack = new AudioNBack(n, duration);
         
-        nBack.directory = ctx.getServletContext().getRealPath("WEB-INF/audio/") +"/";
+        if (!ctx.test) nBack.directory = ctx.getServletContext().getRealPath("WEB-INF/audio/") +"/";
 
         //.. Initialize nBack and run it for specified duration. It will complain if theres not a server running
         Thread t = new Thread(nBack);
@@ -352,8 +352,9 @@ public class MiscellaneousParser extends Parser{
         if(parameters.length ==3) retString += ". Broadcasting condition to " + port;
         
         return retString;
-        
     }
+    
+    
     
     
 }

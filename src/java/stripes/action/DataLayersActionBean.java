@@ -27,13 +27,11 @@ public class DataLayersActionBean extends BaseActionBean{
         try{
             JSONObject jsonObj = new JSONObject();
             JSONArray jsonArray = new JSONArray();
-            System.out.println("Trying to retrieve " + ctx.dataLayersDAO.getDataLayers().size());
             //.. Add each datalayer to the arry
             super.setUserName((String)ctx.getRequest().getSession().getAttribute("userName"));
             super.setPassword((String)ctx.getRequest().getSession().getAttribute("password"));
             ctx.dataLayersDAO.addDataByDB(ctx);
             for (DataLayer dl :ctx.dataLayersDAO.getDataLayers()){
-                System.out.println("thats  " + dl.id);
                JSONObject obj = new JSONObject();   
                obj.put("id", dl.getId());
                obj.put("parent", dl.getParent()); //.. get the name of the layer it was derived from

@@ -137,17 +137,43 @@ public  class InputParser {
         else if (command.startsWith("exdebug")) {
              c = new Command("debug2");
              throw new Exception("Here is the message that should be displayed in red");
-        }
+        }    
         else if(command.startsWith("rthelp")){
             c = new Command("rthelp");
             c.retMessage =" Do the following in order::" 
-                    + "1. synchstream(dbname)::"
+                    + "1. streamsynch(dbname)::"
                     + "2. interceptlabel(dbname, condition, port)::"
                     + "3. nback(n, duration, port) *however many, but dont overlap!::" 
                     +" 4 split(condition). getlabels() + keep(x,y,z)"
                     + "5. train(dbname) with techniques intersected::"
                     + "6. classifylast() with db selected";
-            
+        }
+        else if (command.startsWith("cmd") || command.startsWith("help")) {
+            c = new Command("cmd");
+            if (parameters.length >0) {
+                String param = parameters[0];
+                
+                if(param.startsWith("misc"))
+                     c.retMessage =miscParser.getDocumentation(null);
+                else if (param.startsWith("trans"))
+                    c.retMessage = transformationParser.getDocumentation(null);
+                else if(param.startsWith("data"))
+                    c.retMessage = dataParser.getDocumentation(null);
+                else if (param.startsWith("ml"))
+                    c.retMessage = mlParser.getDocumentation(null);
+                else /*A regular expression for a command*/ {
+                    c.retMessage = miscParser.getDocumentation(param);
+                    c.retMessage += transformationParser.getDocumentation(param);
+                    c.retMessage += dataParser.getDocumentation(param);
+                    c.retMessage += mlParser.getDocumentation(param);
+                }
+            }
+            else {
+                c.retMessage = miscParser.getDocumentation(null);
+                c.retMessage += transformationParser.getDocumentation(null);
+                c.retMessage += dataParser.getDocumentation(null);
+                c.retMessage += mlParser.getDocumentation(null);
+            }
         }
 
         if (c == null) {
@@ -181,11 +207,6 @@ public  class InputParser {
     }
     
   
-    
-    
-    
-    
-    
     /***Eventually I should write test classes but it is looking difficult to simulate the session
      context without stripes dispatchment**/
     public static void main(String[] args) {

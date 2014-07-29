@@ -51,7 +51,7 @@ public class ExternalDataParser extends Parser{
         command.parameters = "1. tablename = the name of the remote database table";
         command.debug = "Works, but a new feature, so not entirely sure";
         commands.put(command.id, command);
-        
+         
         //-- STREAM
         command = new Command("stream");
         command.documentation = "Stream, in realtime, data from a database being updated and "
@@ -60,6 +60,11 @@ public class ExternalDataParser extends Parser{
         command.debug = "Works, but with high refresh rates, all breaks. ";
         commands.put(command.id, command);
         
+        //-- WRITE
+        command = new Command("write");
+        command.documentation = "Write the selected dataset to a file with the same name as its id";
+        command.parameters = "1. suffix, 2. readEvery (write only every kth reading). 3. Make condition an integer";
+        commands.put(command.id, command);
     }
 
     public JSONObject execute(String command, String[] parameters, ThisActionBeanContext ctx,
@@ -82,6 +87,11 @@ public class ExternalDataParser extends Parser{
             c = commands.get("stream");
             c.data = this.stream(parameters);
         } 
+        
+        else if (command.startsWith("write")) {
+            c = commands.get("write");
+            c.retMessage = this.write(parameters);
+        }
 
         if (c == null) {
             return null;
@@ -93,7 +103,6 @@ public class ExternalDataParser extends Parser{
      public String save(String[] parameters) throws Exception {
         if (ctx.dataLayersDAO.getDataLayers().size() > 0) {
             for (DataLayer dl : ctx.dataLayersDAO.getDataLayers()) {
-                System.out.println("thats  " + dl.id);
                 JSONObject obj = new JSONObject();
                 String filename = dl.getId();
                 DataLayerDAO dlGiver = ctx.dataLayersDAO.get(filename);
@@ -199,7 +208,24 @@ public class ExternalDataParser extends Parser{
         } else {
             throw new Exception("Context does not contain datalayer " + filename);
         }
+    }
+    
+    public String write(String [] parameters) throws Exception {
+       String suffix = "";
+       int readEvery =1;
+       boolean conToInt = false;
+       if(parameters.length> 0) suffix = parameters[0];
+       if(parameters.length >1) readEvery = Integer.parseInt(parameters[1]);
+       if(parameters.length >2) conToInt = true;
 
+       String file ="";  
+       ArrayList<ChannelSet> chanSets = getChanSets();
+       for (ChannelSet cs : chanSets) {
+            file = ctx.getServletContext().getRealPath("output/"+cs.id + suffix+".csv");
+           cs.writeToFile(file, readEvery, conToInt);
+       }
+       
+       return "Successfully wrote " + chanSets.size() + " file(s) to " + file;
     }
     
 

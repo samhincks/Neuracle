@@ -23,7 +23,7 @@ import timeseriestufts.kth.streams.DataLayer;
  * @author samhincks
  */
 public class LabelInterceptorTask implements Runnable{
-    public static final int LABELPORT = 13237;
+    public static final int LABELPORT = 1327;
     
     private int port;
     private ServerSocket socket;

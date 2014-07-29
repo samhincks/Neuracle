@@ -48,7 +48,7 @@ public abstract class RealtimeTask  implements Runnable{
         this.ctx = ctx;
         this.ip = ip;
     }  
-    
+     
     public static void main(String [] args) {
         try{
             //.. Initialize the components of the server, a hack, emulating hte interface
@@ -59,9 +59,14 @@ public abstract class RealtimeTask  implements Runnable{
             stream(ctx, ip);
             labelServer(ctx,ip);
             nBack(ctx, ip);
-            TrainingTask rt = new TrainingTask(ctx, ip);
-            rt.train();
-            classify(ctx, ip);
+            
+            ctx.setCurrentName(DBNAME);
+            BiDAO b =  (BiDAO) ctx.getCurrentDataLayer();
+            ChannelSet cs = (ChannelSet)b.dataLayer;
+            cs.writeToFile(cs.id, 1, false);
+            //TrainingTask rt = new TrainingTask(ctx, ip);
+            //rt.train();
+            //classify(ctx, ip);
         }
         catch(Exception e) {
             e.printStackTrace();

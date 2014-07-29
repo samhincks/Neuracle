@@ -172,7 +172,7 @@ public class TransformationParser extends Parser{
                 labels = new Labels(labelName);
 
                 //.. bring it up to date with junk values 
-                for (int i = 0; i < bDAO.getNumReadings(); i++) {
+                for (int i = 0; i < bDAO.getNumReadings()-1; i++) {
                     labels.addLabel(new Label(labelName, "junk", i));
                 }
                 bDAO.addLabels(labels);

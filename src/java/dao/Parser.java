@@ -134,6 +134,22 @@ public abstract class Parser {
             return false;
         } catch (IOException ignored) {
             return true;
+        }
     }
-}
+    
+    public String getDocumentation(String param) {
+        String retString ="";
+        for (Command c : commands.values()){
+            if (param == null || c.id.startsWith(param)){
+                retString += c.id +"::";
+                retString += "     " + c.documentation +"::";
+                if(c.parameters !=null)
+                    retString += "     " + c.parameters+"";
+                if (c.debug != null)
+                    retString += "::     " + c.debug;
+                retString += ";;";
+            }
+        }
+        return retString;
+    }
 }

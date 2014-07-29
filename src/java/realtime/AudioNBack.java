@@ -14,8 +14,8 @@ import javax.sound.sampled.*;
  * @author samhincks
  */
 public class AudioNBack implements Runnable{
-    public String directory = "audio/"; 
-
+    public String directory = "web/WEB-INF/audio/"; 
+    public static boolean nbackRunning = false;
     private  String [] files; 
     private Clip clip;
     private int kBack;
@@ -70,6 +70,7 @@ public class AudioNBack implements Runnable{
     }
     private void play(String filename) {
         try {
+            nbackRunning = true;
             int ticks =0;
             clip = AudioSystem.getClip();
             clip.open(AudioSystem.getAudioInputStream(new File(filename)));
@@ -84,6 +85,7 @@ public class AudioNBack implements Runnable{
                     clip.close();
                     client.sendMessage("next");
                     client.disconnect();
+                    nbackRunning = false;
                     return;
                 }
                 
