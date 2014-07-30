@@ -29,6 +29,7 @@ import serial #https://learn.adafruit.com/arduino-lesson-17-email-sending-moveme
 import argparse
 import numpy as np
 import pymysql
+import glob
 from time import sleep
 from collections import deque
 
@@ -37,6 +38,7 @@ import matplotlib.animation as animation
 
 PORT ='/dev/tty.uart-B7FF5D7F0B161D0D'
 #PORT = '/dev/tty.uart-79FF427A4D083033'
+PORT = glob.glob('/dev/tty.uart-*')[0]
 MYSQL = True
 
 X_MIN = 0
@@ -79,8 +81,8 @@ class AnalogPlot:
                 v1 = line[1:5]
                 v2 = line[6:10]
 
-                print "Line=", line
-                print "Bits=", v1, v2
+                print "Frame= ", frameNum
+                print "Line=  ", line
                 data = [float(int(v1)),float(int(v2))]
 
                 if MYSQL:
@@ -115,6 +117,7 @@ class AnalogPlot:
 # main() function
 def main():
 
+    # Set up mysql table, drop existing table if it exists
     if MYSQL:
         # Set up mysql database
         conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='fnirs196', db='newttt')
@@ -132,7 +135,8 @@ def main():
     # parse args
     args = parser.parse_args()
 
-    if args.port == 'def':
+    if args.port == None or args.port == "def":
+        print "yay"
         strPort = PORT
     else:
         strPort = args.port
