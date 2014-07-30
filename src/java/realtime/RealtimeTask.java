@@ -31,7 +31,7 @@ public abstract class RealtimeTask  implements Runnable{
     static String EXPNAME = DBNAME + CNAME;
     static final String keep = "easy,medium";
     
-    static final int TRIALS =2;
+    static final int TRIALS =1;
     static final int REFRESHRATE = 100; //.. how often should we synchronize with the database
     static final int CLASSIFICATIONDELAY = 3000; //.. how often do we want a classification
     static final int MOVINGWINDOW =2000; //.. how many readings back do we want to CLASSIFY FOR
@@ -47,10 +47,11 @@ public abstract class RealtimeTask  implements Runnable{
     public RealtimeTask(ThisActionBeanContext ctx, InputParser ip) {
         this.ctx = ctx;
         this.ip = ip;
-    }  
+    }      
      
     public static void main(String [] args) {
         try{
+            
             //.. Initialize the components of the server, a hack, emulating hte interface
             ThisActionBeanContext ctx = new ThisActionBeanContext(true);
             InputParser ip = new InputParser();
@@ -62,8 +63,10 @@ public abstract class RealtimeTask  implements Runnable{
             
             ctx.setCurrentName(DBNAME);
             BiDAO b =  (BiDAO) ctx.getCurrentDataLayer();
-            ChannelSet cs = (ChannelSet)b.dataLayer;
-            cs.writeToFile(cs.id, 1, false);
+            JSONObject obj = ip.parseInput("getlabels", ctx);
+            System.out.println(obj.get("content"));
+            //ChannelSet cs = (ChannelSet)b.dataLayer;
+            //cs.writeToFile(cs.id, 1, false);
             //TrainingTask rt = new TrainingTask(ctx, ip);
             //rt.train();
             //classify(ctx, ip);

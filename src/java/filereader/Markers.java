@@ -27,6 +27,10 @@ public class Markers {
         Label firstLabel = labels.channelLabels.get(0);
         this.name = firstLabel.name;
         
+        //... NOTE THE LAST ONE IS NOT ADDED AS A DISCRETE TRIAL UNLESS THERE IS SOME MARKER SAYING END!
+        //.. SO EVERY TIME YOU USE THIS, MAKE SURE THE LAST LABEL SAYS END! AND EMPLOY THIS HACK
+        labels.channelLabels.add(new Label(this.name, "end", -1));
+
         //.. make a trial for each consecutive block of common condition-values
         Trial currentTrial = new Trial(firstLabel.value, 0);
         for (int i=1; i < labels.channelLabels.size(); i++) {
@@ -39,6 +43,9 @@ public class Markers {
                 currentTrial = new Trial(thisLabel.value,i);
             }
         }
+        
+        //.. REMOVE THIS MARKER
+        labels.channelLabels.remove(labels.channelLabels.size()-1);
     }
     
     public Markers(String name, ArrayList<Trial> trials) {

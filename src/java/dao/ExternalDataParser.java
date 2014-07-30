@@ -83,10 +83,10 @@ public class ExternalDataParser extends Parser{
             c.retMessage = this.synchronize(parameters);
         }
         
-        else if (command.startsWith("stream")) {
+        else if (command.startsWith("stream(")) {
             c = commands.get("stream");
             c.data = this.stream(parameters);
-        } 
+        }  
         
         else if (command.startsWith("write")) {
             c = commands.get("write");

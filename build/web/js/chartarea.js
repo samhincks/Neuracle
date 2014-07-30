@@ -87,12 +87,16 @@ function ChartArea(id, descArea) {
                     }
                 }
             }
-            
         }
         
         else if(JSONobj.type == "channelset") {
             d3.selectAll('.line-graph').remove(); //.. remove if it exists already
             data = JSONobj.data; 
+            console.log(JSONobj);
+            var actualMaxPoints = JSONobj.actualNumPoints;
+            var readingsPerSec = JSONobj.readingsPerSec;
+            var maxInSeconds = (actualMaxPoints / readingsPerSec);
+            data["maxTime"] = maxInSeconds;
             streamChart = new LineGraph({containerId: 'topRight', data: data});
         }
 

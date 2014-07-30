@@ -22,6 +22,7 @@ public class BaseActionBean implements ActionBean{
     @Override
     public ThisActionBeanContext getContext() { return ctx;}
     
+   
     /**
      * @return the userName
      */

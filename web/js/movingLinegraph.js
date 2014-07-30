@@ -136,6 +136,7 @@ function LineGraph(argsMap) {
 		$(container).trigger('LineGraph:dataModification')
 	}
 
+
 	
 	this.switchToPowerScale = function() {
 		yScale = 'pow';
@@ -203,6 +204,11 @@ function LineGraph(argsMap) {
 	// by analyzing various element class names to see if they are visible or not
 	var userCurrentlyInteracting = false;
 	var currentUserPositionX = -1;
+        
+        /**SAM***/
+        var d3Colors = d3.scale.category10();
+
+        /*****/
 		
 	/* *************************************************************** */
 	/* initialization and validation */
@@ -220,14 +226,13 @@ function LineGraph(argsMap) {
 		
 		// assign instance vars from dataMap
 		data = processDataMap(getRequiredVar(argsMap, 'data'));
-		
 		/* set the default scale */
 		yScale = data.scale;
 
 		// do this after processing margins and executing processDataMap above
 		initDimensions();
 		
-		createGraph()
+		createGraph();
 		//debug("Initialization successful for container: " + containerId)	
 		
 		// window resize listener
@@ -260,6 +265,7 @@ function LineGraph(argsMap) {
 		var step = getRequiredVar(dataMap, 'step', "The data object must contain a 'step' value with the time in milliseconds between each data value.")		
 		var names = getRequiredVar(dataMap, 'names', "The data object must contain a 'names' array with the same length as 'values' with a name for each data value array.")		
 		var displayNames = getOptionalVar(dataMap, 'displayNames', names);
+                var maxTime = getRequiredVar(dataMap, "maxTime", "The data must contain the maximum referenced time in seconds");
 		var numAxisLabelsPowerScale = getOptionalVar(dataMap, 'numAxisLabelsPowerScale', 6); 
 		var numAxisLabelsLinearScale = getOptionalVar(dataMap, 'numAxisLabelsLinearScale', 6); 
 		
@@ -294,6 +300,7 @@ function LineGraph(argsMap) {
 		}
 		
 		var maxValues = [];
+                var minValues = [];
 		var rounding = getOptionalVar(dataMap, 'rounding', []);
 		// default rounding values
 		if(rounding.length == 0) {
@@ -307,16 +314,16 @@ function LineGraph(argsMap) {
 		var newDataValues = [];
 		dataValues.forEach(function (v, i) {
 			newDataValues[i] = v.slice(0);
-			maxValues[i] = d3.max(newDataValues[i])
+			maxValues[i] = d3.max(newDataValues[i]);
+                        minValues[i] = d3.min(newDataValues[i]);
 		})
-
-		
 
 		
 		return {
 			"values" : newDataValues,
 			"startTime" : startTime,
 			"endTime" : endTime,
+                        "maxTime" : maxTime, //.. samvariable
 			"step" : step,
 			"names" : names,
 			"displayNames": displayNames,
@@ -324,6 +331,7 @@ function LineGraph(argsMap) {
 			"colors": colors,
 			"scale" : getOptionalVar(dataMap, 'scale', yScale),
 			"maxValues" : maxValues,
+                        "minValues" : minValues,
 			"rounding" : rounding,
 			"numAxisLabelsLinearScale": numAxisLabelsLinearScale,
 			"numAxisLabelsPowerScale": numAxisLabelsPowerScale
@@ -406,18 +414,19 @@ function LineGraph(argsMap) {
 	}
 	
 	var initYleft = function() {
-		var maxYscaleLeft = calculateMaxY(data, 'left')
+		var maxYscaleLeft = calculateMaxY(data, 'left');
+                var minYscaleLeft = calculateMinY(data, 'left');
 		//debug("initY => maxYscale: " + maxYscaleLeft);
 		var numAxisLabels = 6;
 		if(yScale == 'pow') {
-			yLeft = d3.scale.pow().exponent(0.3).domain([0, maxYscaleLeft]).range([h, 0]).nice();	
+			yLeft = d3.scale.pow().exponent(0.3).domain([minYscaleLeft, maxYscaleLeft]).range([h, 0]).nice();	
 			numAxisLabels = data.numAxisLabelsPowerScale;
 		} else if(yScale == 'log') {
 			// we can't have 0 so will represent 0 with a very small number
 			// 0.1 works to represent 0, 0.01 breaks the tickFormatter
 			yLeft = d3.scale.log().domain([0.1, maxYscaleLeft]).range([h, 0]).nice();	
 		} else if(yScale == 'linear') {
-			yLeft = d3.scale.linear().domain([0, maxYscaleLeft]).range([h, 0]).nice();
+			yLeft = d3.scale.linear().domain([minYscaleLeft, maxYscaleLeft]).range([h, 0]).nice();
 			numAxisLabels = data.numAxisLabelsLinearScale;
 		}
 
@@ -467,6 +476,23 @@ function LineGraph(argsMap) {
 		// we now have the max values for the axis we're interested in so get the max of them
 		return d3.max(maxValuesForAxis);
 	}
+        
+        var calculateMinY = function(data, whichAxis) {
+        // Y scale will fit values from 0-10 within pixels h-0 (Note the inverted domain for the y-scale: bigger is up!)
+        // we get the max of the max of values for the given index since we expect an array of arrays
+
+        // we can shortcut to using data.maxValues since we've already calculated the max of each series in processDataMap
+
+        var minValuesForAxis = [];
+        data.minValues.forEach(function(v, i) {
+            if (data.axis[i] == whichAxis) {
+                minValuesForAxis.push(v);
+            }
+        })
+
+        // we now have the max values for the axis we're interested in so get the max of them
+        return d3.min(minValuesForAxis);
+    }
 	
 	/*
 	 * Allow re-initializing the x function at any time.
@@ -474,9 +500,13 @@ function LineGraph(argsMap) {
 	var initX = function() {
 		// X scale starts at epoch time 1335035400000, ends at 1335294600000 with 300s increments
 		x = d3.time.scale().domain([data.startTime, data.endTime]).range([0, w]);
-		
+		var x2;
+                if (data.maxTime <0) x2=x;
+                else x2 = d3.scale.linear()
+                .domain([0, data.maxTime])
+                .range([0 , w]);
 		// create yAxis (with ticks)
-		xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(1);
+		xAxis = d3.svg.axis().scale(x2).tickSize(-h).tickSubdivide(1);
 			// without ticks
 			//xAxis = d3.svg.axis().scale(x);
 	}
@@ -533,7 +563,7 @@ function LineGraph(argsMap) {
  				 * We also reach out to the persisted 'data' object for time
  				 * since the 'd' passed in here is one of the children, not the parent object
 				 */
-				var _x = x(data.startTime.getTime() + (data.step*i)); 
+				var _x = x(i*data.step);//x(data.startTime.getTime() + (data.step*i)); 
 				
 				// verbose logging to show what's actually being done
 				//debug("Line X => index: " + i + " scale: " + _x)
@@ -573,17 +603,16 @@ function LineGraph(argsMap) {
 				} else {
 					_y = yLeft(d); 
 				}
-
 				// verbose logging to show what's actually being done
 				//debug("Line Y => data: " + d + " scale: " + _y)
 				// return the Y coordinate where we want to plot this datapoint
 				return _y;
-			})
+			});/*
 			.defined(function(d) {
 				// handle missing data gracefully
 				// feature added in https://github.com/mbostock/d3/pull/594
 				return d >= 0;
-			});
+			});*/ 
 
 		// append a group to contain all lines
 		lines = graph.append("svg:g")
@@ -618,7 +647,7 @@ function LineGraph(argsMap) {
 				})
 				.attr("fill", "none")
 				.attr("stroke", function(d, i) {
-					return data.colors[i];
+					return d3Colors(i);
 				})
 				.attr("d", lineFunction) // use the 'lineFunction' to create the data points in the correct x,y axis
 				.on('mouseover', function(d, i) {

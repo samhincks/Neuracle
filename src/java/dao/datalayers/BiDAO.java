@@ -123,6 +123,11 @@ public class BiDAO extends DataLayerDAO {
             JSONObject data = new JSONObject();
             jsonObj.put("data", data);
             
+            //.. data for properly aligning x axis
+            int mostPoints = channelSet.getMaxPoints();
+            jsonObj.put("actualNumPoints", mostPoints);
+            jsonObj.put("readingsPerSec", channelSet.readingsPerSecond);
+            
             //.. default variables
             data.put("start", 1);
             
@@ -143,14 +148,17 @@ public class BiDAO extends DataLayerDAO {
             if (numChannels> MAXCHANNELS)
                 chanInc = numChannels / MAXCHANNELS;
             
+            //.. Condense the data, setting maximum points to stream
+            int MAXPOINTS = 300;
+            int numPoints;
+            //.. Create each channel
             for (int i=0; i< numChannels; i+= chanInc) {
                 UnidimensionalLayer channel = channelSet.getChannel(i);
                
                 //.. Add each point in data to JSONArray
                 //... BUT DO NOT ADD MORE THAN MAX POINTS
-                int MAXPOINTS = 300;
-                int numPoints = channel.numPoints;
                 int pointsInc = 1;
+                numPoints = channel.numPoints;
                 if (numPoints > MAXPOINTS)
                     pointsInc = numPoints / MAXPOINTS;
                 data.put("step", pointsInc);
@@ -158,20 +166,40 @@ public class BiDAO extends DataLayerDAO {
 
                 JSONArray channelData = new JSONArray();
                 
-                /**JUST FOR PLAYING AROUND**/
-                data.put("step", pointsInc);
-                data.put("start", 1);
-                data.put("end", numPoints);
-                /*****DELETE AFTER***/
-                
                 //.. add points at specified increments
                 for (int j=0;j < numPoints; j+=pointsInc) { //. 0, numPoints, change later
                     float p = channel.getPointOrNull(j);
                     channelData.put(p);
                 }
                 values.put(channelData);
-
             }
+
+            //... Add numerically visualizable markers
+            for (int i=0; i< channelSet.markers.size(); i++ ) {
+                JSONArray channelData = new JSONArray();
+                Markers m = channelSet.markers.get(i);
+
+                //.. Add each point in data to JSONArray
+                //... BUT DO NOT ADD MORE THAN MAX POINTS
+                int pointsInc = 1;
+                numPoints = m.saveLabels.channelLabels.size();
+                if (numPoints > MAXPOINTS) {
+                    pointsInc = numPoints / MAXPOINTS; 
+                }
+                data.put("step", pointsInc);
+                data.put("end", numPoints);
+
+                //.. add points at specified increments
+                for (int j = 0; j < numPoints; j += pointsInc) { //. 0, numPoints, change later
+                    String conName = m.saveLabels.channelLabels.get(j).value;
+                    int index = m.getClassification().getIndex(conName);
+                    channelData.put(index);
+                }
+                values.put(channelData);   
+            }
+            
+            
+            
             //.. save this array
             data.put("values", values);
 
@@ -381,7 +409,7 @@ public class BiDAO extends DataLayerDAO {
                     cs.appendToStream(i-1, Float.parseFloat(datalayerData.getString(i)));
                     datalayerData.previous();
                 }
-                datalayerData.last();
+                datalayerData.last();  
                 
                 //.. only for the first column, add any labels if any exist
                 if (i==1 && curLabels != null && labels != null) {
@@ -395,9 +423,10 @@ public class BiDAO extends DataLayerDAO {
                 }
             }
         }
-        if (refreshMarkers) { 
-            for (Labels l : labels) {
-                cs.addOrReplaceMarkers(new Markers(l)); 
+        if (refreshMarkers) {    
+            for (Labels l : labels) { 
+                Markers m = new Markers(l);
+                cs.addOrReplaceMarkers(m); 
             } 
         }
         mydao.deconnSQL();
@@ -431,13 +460,7 @@ public class BiDAO extends DataLayerDAO {
                            
     }
     
-    /** If markers have been added to the channelset, but not synched with the database,
-     * add them to the database
-     **/
-    public void synchronizeMarkers(){
-        
-    }
-    
+  
     public static void main(String[] args) {
         try {
             int TEST =1;
