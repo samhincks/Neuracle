@@ -36,9 +36,13 @@ from collections import deque
 import matplotlib.pyplot as plt 
 import matplotlib.animation as animation
 
-PORT ='/dev/tty.uart-B7FF5D7F0B161D0D'
+#PORT ='/dev/tty.uart-B7FF5D7F0B161D0D'
 #PORT = '/dev/tty.uart-79FF427A4D083033'
-PORT = glob.glob('/dev/tty.uart-*')[0]
+try:
+    PORT = glob.glob('/dev/tty.uart-*')[0]
+except:
+    print("Error: No uart port available.  Check connection to fnirs device.")
+    sys.exit(1)
 MYSQL = True
 
 X_MIN = 0
@@ -51,7 +55,10 @@ class AnalogPlot:
     # constr
     def __init__(self, strPort, maxLen):
         # open serial port
-        self.ser = serial.Serial(strPort, 9600)
+        self.ser = serial.Serial(
+                port=strPort,\
+                baudrate=9600,\
+                timeout=0.2)
 
         self.ax = deque([0.0]*maxLen)
         self.ay = deque([0.0]*maxLen)
@@ -136,7 +143,6 @@ def main():
     args = parser.parse_args()
 
     if args.port == None or args.port == "def":
-        print "yay"
         strPort = PORT
     else:
         strPort = args.port
