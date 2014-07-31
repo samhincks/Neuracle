@@ -25,6 +25,7 @@ import serial #https://learn.adafruit.com/arduino-lesson-17-email-sending-moveme
 import argparse
 import numpy as np
 import pymysql
+import random
 from time import sleep
 from collections import deque
 
@@ -72,8 +73,8 @@ class AnalogPlot:
             print(line)
             if line[0] == '$':
 
-                v1 = -2
-                v2 =1.5
+                v1 = random.randint(-10,-5)
+                v2 = random.randint(0, 5)
                 if MYSQL:
                     conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='fnirs196', db='newttt')
                     cur=conn.cursor()   

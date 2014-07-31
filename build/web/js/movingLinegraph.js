@@ -505,7 +505,7 @@ function LineGraph(argsMap) {
 		var x2;
                 if (data.maxTime <0) x2=x;
                 else x2 = d3.scale.linear()
-                .domain([0, data.maxTime])
+                .domain([data.startTime, data.maxTime])
                 .range([0 , w]);
 		// create yAxis (with ticks)
 		xAxis = d3.svg.axis().scale(x2).tickSize(-h).tickSubdivide(1);

@@ -21,9 +21,10 @@ function ChartArea(id, descArea) {
     *       an object with a collection of channels, time, and condition. channels indexed by index.
     */
    this.displayChart = function (JSONobj) {
-        $(selection).children().remove();
         lastGraph = JSONobj.type;
         if(JSONobj.type == "experiment"){
+            $(selection).children().remove();
+
             var channels = JSONobj.instances[0][0].channels;
             var actualMaxPoints = JSONobj.actualNumPoints;
             var readingsPerSec = JSONobj.readingsPerSec;
@@ -90,6 +91,7 @@ function ChartArea(id, descArea) {
         }
         
         else if(JSONobj.type == "channelset") {
+            $(selection).children().remove();
             d3.selectAll('.line-graph').remove(); //.. remove if it exists already
             data = JSONobj.data; 
             console.log(JSONobj);
@@ -102,7 +104,7 @@ function ChartArea(id, descArea) {
 
        //TODO: NICK: Make new file, not modifying chartarea.js
         else if (JSONobj.id == "csrefresh") {
-             //sc.displayChart(JSONobj, streamChart, data);
+             sc.displayChart(JSONobj, streamChart, data);
         }
         this.displayedDL = JSONobj.id;
         descriptionArea.displayedDL = this.displayedDL;
@@ -115,7 +117,7 @@ function ChartArea(id, descArea) {
      **/
     this.displayDescription = function (JSONobj) {
         //.. remove existing selection and append
-        $(selection).children().remove();
+        //$(selection).children().remove();
         $(selection).append("<div id = descriptionBox class = infoBox> </div>" );
         var description = $("#descriptionBox");
         

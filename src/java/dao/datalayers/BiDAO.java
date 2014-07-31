@@ -253,10 +253,10 @@ public class BiDAO extends DataLayerDAO {
                     UnidimensionalLayer channel = channelSet.getChannel(i);
                     float p = channel.getPoint(j);
                     JSONArray arr = new JSONArray();
-                    arr.put(p);
+                    arr.put(p);      
                     timeData.put(arr);
                 }
-                values.put(timeData);
+                values.put(timeData);  
             }
                 
             int mostPoints = channelSet.getMaxPoints();
