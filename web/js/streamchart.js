@@ -5,7 +5,7 @@
  */
 
 var StreamChart = function (){
-    var added=0;
+     this.added=1;
     this.displayChart = function(JSONobj, chart, data){
        /** What it wants:
         *  - An object with the following:
@@ -16,14 +16,15 @@ var StreamChart = function (){
          */
         var channelVals = JSONobj.data.data; //.. the data contained now should be what's added
         for (var i=0; i < channelVals.values.length; i++) {
-            var updateData;
+            var updateData = [];
             updateData.values = channelVals.values[i];
             updateData.maxTime = channelVals.maxTime;
-            updateData.start = added;
-            updateData.end = channelVals.end + added;
-            console.log(updateData);
+            updateData.start = this.added;
+            updateData.end = channelVals.end + this.added;
+            updateData.step =1;
+            updateData.names = channelVals.names;
             chart.slideData(updateData);
-            added++;
+            this.added++;
         }
     }
    /* else {

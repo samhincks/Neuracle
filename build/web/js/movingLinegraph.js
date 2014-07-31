@@ -260,14 +260,15 @@ function LineGraph(argsMap) {
 	 *	 {"start": 1335035400000, "end": 1335294600000, "step": 300000, "values": [[28,22,45,65,34], [45,23,23,45,65]]}
 	 */
 	var processDataMap = function(dataMap) {
+                console.log(dataMap);
 		// assign data values to plot over time
 		var dataValues = getRequiredVar(dataMap, 'values', "The data object must contain a 'values' value with a data array.")
-		var startTime = getRequiredVar(dataMap, 'start', "The data object must contain a 'start' value with the start time in milliseconds since epoch.")
-		var endTime = getRequiredVar(dataMap, 'end', "The data object must contain an 'end' value with the end time in milliseconds since epoch.")
+                 var maxTime = getRequiredVar(dataMap, "maxTime", "The data must contain the maximum referenced time in seconds");
+                var endTime = getRequiredVar(dataMap, 'end', "The data object must contain an 'end' value with the end time in milliseconds since epoch.")
+                var startTime = getRequiredVar(dataMap, 'start', "The data object must contain a 'start' value with the start time in milliseconds since epoch.")
 		var step = getRequiredVar(dataMap, 'step', "The data object must contain a 'step' value with the time in milliseconds between each data value.")		
 		var names = getRequiredVar(dataMap, 'names', "The data object must contain a 'names' array with the same length as 'values' with a name for each data value array.")		
 		var displayNames = getOptionalVar(dataMap, 'displayNames', names);
-                var maxTime = getRequiredVar(dataMap, "maxTime", "The data must contain the maximum referenced time in seconds");
 		var numAxisLabelsPowerScale = getOptionalVar(dataMap, 'numAxisLabelsPowerScale', 6); 
 		var numAxisLabelsLinearScale = getOptionalVar(dataMap, 'numAxisLabelsLinearScale', 6); 
 		
