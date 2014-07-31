@@ -88,7 +88,7 @@ function ConsoleArea() {
                 $("#consoleInput").val("synchronize("+file+",none");
                 javaInterface.postToConsole();
             }, 300);
-            return false;
+            return true;
          }
          
         else if (userText.startsWith("stream(")) {
@@ -96,7 +96,7 @@ function ConsoleArea() {
              setInterval(function() {
                 $("#consoleInput").val(userText);
                 javaInterface.postToConsole();
-            }, 1000);
+            }, 5000);
          }
          
          //.. For periodically updating what the current label is of a synchronized

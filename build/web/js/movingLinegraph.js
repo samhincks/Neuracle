@@ -58,8 +58,10 @@ function LineGraph(argsMap) {
 	 * - lines will be transitioned through horizontoal slide to show progression over time
 	 */
 	this.slideData = function(newData) {
+            	var tempData = processDataMap(newData);
+
 		// validate data
-		var tempData = processDataMap(newData);
+                console.log(newData.start);
 		console.log("Existing startTime: " + data.startTime + "  endTime: " + data.endTime);
 		console.log("New startTime: " + tempData.startTime + "  endTime: " + tempData.endTime);
 		
@@ -86,7 +88,7 @@ function LineGraph(argsMap) {
 		
 		// shift domain by number of data elements we just added
 		// == numElements * step
-		data.startTime = new Date(data.startTime.getTime() + (data.step * numSteps));
+		data.startTime = data.startTime + (data.step * numSteps);
 		data.endTime = tempData.endTime;
 		debug("Updated startTime: " + data.startTime + "  endTime: " + data.endTime);
 				
@@ -104,7 +106,7 @@ function LineGraph(argsMap) {
 			
 	    // slide the lines left
 	    graph.selectAll("g .lines path")
-	        .attr("transform", "translate(-" + x(numSteps*data.step) + ")");
+	        .attr("transform", "translate(" + x(numSteps*data.step) + ")");
 		 
 		handleDataUpdate();
 		
@@ -260,8 +262,8 @@ function LineGraph(argsMap) {
 	var processDataMap = function(dataMap) {
 		// assign data values to plot over time
 		var dataValues = getRequiredVar(dataMap, 'values', "The data object must contain a 'values' value with a data array.")
-		var startTime = new Date(getRequiredVar(dataMap, 'start', "The data object must contain a 'start' value with the start time in milliseconds since epoch."))
-		var endTime = new Date(getRequiredVar(dataMap, 'end', "The data object must contain an 'end' value with the end time in milliseconds since epoch."))
+		var startTime = getRequiredVar(dataMap, 'start', "The data object must contain a 'start' value with the start time in milliseconds since epoch.")
+		var endTime = getRequiredVar(dataMap, 'end', "The data object must contain an 'end' value with the end time in milliseconds since epoch.")
 		var step = getRequiredVar(dataMap, 'step', "The data object must contain a 'step' value with the time in milliseconds between each data value.")		
 		var names = getRequiredVar(dataMap, 'names', "The data object must contain a 'names' array with the same length as 'values' with a name for each data value array.")		
 		var displayNames = getOptionalVar(dataMap, 'displayNames', names);
@@ -982,7 +984,7 @@ function LineGraph(argsMap) {
 		
 
 		// show the date
-		graph.select('text.date-label').text(dateToShow.toDateString() + " " + dateToShow.toLocaleTimeString())
+		graph.select('text.date-label').text(dateToShow)
 
 		// move the group of labels to the right side
 		if(animate) {
@@ -1028,13 +1030,12 @@ function LineGraph(argsMap) {
 		index = Math.round(index);
 
 		// bucketDate is the date rounded to the correct 'step' instead of interpolated
-		var bucketDate = new Date(data.startTime.getTime() + data.step * (index+1)); // index+1 as it is 0 based but we need 1-based for this math
 				
 		var v = d[index];
 
 		var roundToNumDecimals = data.rounding[dataSeriesIndex];
 
-		return {value: roundNumber(v, roundToNumDecimals), date: bucketDate /**shincks index/*/};
+		return {value: roundNumber(v, roundToNumDecimals), date: index};
 	}
 
 	

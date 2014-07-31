@@ -5,34 +5,21 @@
  */
 
 var StreamChart = function (){
-    var added;
+    var added=0;
     this.displayChart = function(JSONobj, chart, data){
-        console.log(JSONobj);
+        /**What I'm telling it to do;
+         * - let the new data be just the data that was last added
+         * - set start to be the end - points + the amount added last time
+         * - set end to be the the end + amount added
+         * - then for next time, remember how many we added
+         */
         dataA = JSONobj.data.data; //.. the data contained now should be what's added
-        dataA.start = data.start + added;
-        dataA.end = data.end + added;
-        added += dataA.values[0].length;//dataA.data.length;
-
-        console.log(dataA.start + " , " + dataA.end + " , " + added);
-
-       // for each data series ...
-        var newData = [];
-        data.values.forEach(function(dataSeries, index) {
-            // take the first value and move it to the end
-            // and capture the value we're moving so we can send it to the graph as an update
-            var v = dataSeries.shift();
-            dataSeries.push(v);
-            // put this value in newData as an array with 1 value
-            newData[index] = [v];
-        })
-
-        // we will reuse dataA each time
-        //dataA.values = newData;
-        // increment time 1 step
-       // dataA.start = dataA.start + dataA.step;
-      //  dataA.end = dataA.end + dataA.step;
-
-        chart.slideData(dataA);
+        for (var i=0; i < dataA.values[0].length; i++) {
+            dataA.start = dataA.start + added;
+            dataA.end = dataA.end + added;
+            added += dataA.values[0].length;//dataA.data.length;
+            chart.slideData(dataA);
+        }
     }
    /* else {
         chart.drawLinePlot(JSONobj);

@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="4">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="9">
+        <file>
+            <url>web/js/FreqBarChart.js</url>
+            <bookmark id="4">
+                <name/>
+                <line>281</line>
+                <key/>
+            </bookmark>
+        </file>
         <file>
             <url>src/java/dao/InputParser.java</url>
             <bookmark id="3">
@@ -20,17 +28,26 @@
             </bookmark>
         </file>
         <file>
-            <url>web/js/FreqBarChart.js</url>
-            <bookmark id="4">
+            <url>src/java/dao/datalayers/BiDAO.java</url>
+            <bookmark id="9">
                 <name/>
-                <line>281</line>
+                <line>194</line>
+                <key/>
+            </bookmark>
+            <bookmark id="8">
+                <name/>
+                <line>428</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/InputParser.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/consolearea.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/movingLinegraph.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/streamchart.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/chartarea.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/datalayers/BiDAO.java</file>
         </group>
     </open-files>
 </project-private>

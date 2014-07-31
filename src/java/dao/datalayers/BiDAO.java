@@ -221,10 +221,7 @@ public class BiDAO extends DataLayerDAO {
         ChannelSet channelSet = (ChannelSet) dataLayer;
       
         try {
-            jsonObj.put("id", getId());
             JSONObject data = new JSONObject();
-            jsonObj.put("data", data);
-
 
             //.. add id of each column as label, then add to the data obj
             JSONArray names = new JSONArray();
@@ -243,26 +240,20 @@ public class BiDAO extends DataLayerDAO {
             if (numChannels > MAXCHANNELS) {
                 chanInc = numChannels / MAXCHANNELS;
             }
-
+            int startingPoint =0;
+            int numPoints =0;
+            int pointsInc =1;
             for (int i = 0; i < numChannels; i += chanInc) {
                 UnidimensionalLayer channel = channelSet.getChannel(i); 
 
                 //.. Add each point in data to JSONArray
                 //... BUT DO NOT ADD MORE THAN MAX POINTS
                 int MAXPOINTS = 30;
-                int numPoints = channel.numPoints;
-                int pointsInc = 1;
+                 numPoints = channel.numPoints;
                 if (this.addedInLastSynchronization > MAXPOINTS) {
                     pointsInc = this.addedInLastSynchronization / MAXPOINTS;
                 }
-                System.out.println(pointsInc);
-                /***REVERT*/
-                int startingPoint = numPoints - this.addedInLastSynchronization;
-                
-                data.put("step", 1); //.. unclear how this should be set, and the next
-                data.put("end", numPoints); //..DONT MATTER
-                data.put("start", startingPoint); //.. dont maktter
-
+                 startingPoint = numPoints - this.addedInLastSynchronization;
 
                 JSONArray channelData = new JSONArray();
                 //.. add points at specified increments
@@ -271,11 +262,20 @@ public class BiDAO extends DataLayerDAO {
                     channelData.put(p);
                 }
                 values.put(channelData);
-
+                
             }
-            //.. save this array
+            
+            int mostPoints = channelSet.getMaxPoints();
+            float maxTime = (mostPoints / channelSet.readingsPerSecond);
+            data.put("maxTime", maxTime);
+            data.put("start", startingPoint);   
+            data.put("end", numPoints);
+            data.put("step", pointsInc);
             data.put("values", values);
-
+            
+            //.. save this array
+            jsonObj.put("id", getId());
+            jsonObj.put("data", data);
             jsonObj.put("type", "csrefresh");
         } catch (JSONException e) {
             e.printStackTrace();
