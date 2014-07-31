@@ -239,7 +239,7 @@ public class BiDAO extends DataLayerDAO {
             //.. Add each point in data to JSONArray
             //... BUT DO NOT ADD MORE THAN MAX POINTS
             int MAXPOINTS = 30;
-            int numPoints = channelSet.getFirstChannel().numPoints;
+            int numPoints = channelSet.getMinPoints();
             if (this.addedInLastSynchronization > MAXPOINTS) {
                 pointsInc = this.addedInLastSynchronization / MAXPOINTS;
             }
@@ -251,7 +251,7 @@ public class BiDAO extends DataLayerDAO {
 
                 for (int i = 0; i < channelSet.getChannelCount(); i++) {
                     UnidimensionalLayer channel = channelSet.getChannel(i);
-                    if (channel.numPoints != numPoints) throw new Exception("Misaligned channels. First has " + numPoints + " . " +i + " has " + channel.numPoints);
+                    //if (channel.numPoints != numPoints) throw new Exception("Misaligned channels. First has " + numPoints + " . " +i + " has " + channel.numPoints);
                     float p = channel.getPoint(j);
                     JSONArray arr = new JSONArray();
                     arr.put(p);      
