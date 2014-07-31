@@ -14,12 +14,13 @@ var StreamChart = function (){
          * - then for next time, remember how many we added
          */
         dataA = JSONobj.data.data; //.. the data contained now should be what's added
-        for (var i=0; i < dataA.values[0].length; i++) {
+       /* for (var i=0; i < dataA.values[0].length; i++) {
             dataA.start = dataA.start + added;
             dataA.end = dataA.end + added;
             added += dataA.values[0].length;//dataA.data.length;
             chart.slideData(dataA);
-        }
+        }*/
+        console.log("s "+ JSONobj);
     }
    /* else {
         chart.drawLinePlot(JSONobj);

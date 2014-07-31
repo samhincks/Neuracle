@@ -58,13 +58,19 @@ public abstract class RealtimeTask  implements Runnable{
             trainingDuration = (NBackTask.duration +7000)*TRIALS;
             
             stream(ctx, ip);
-            labelServer(ctx,ip);
-            nBack(ctx, ip);
-            
             ctx.setCurrentName(DBNAME);
             BiDAO b =  (BiDAO) ctx.getCurrentDataLayer();
-            JSONObject obj = ip.parseInput("getlabels", ctx);
-            System.out.println(obj.get("content"));
+            ChannelSet cs = (ChannelSet) b.dataLayer;
+            System.out.println(cs.streams.get(0).numPoints);
+            System.out.println(cs.streams.get(1).numPoints);
+
+           // labelServer(ctx,ip);
+           // nBack(ctx, ip);
+            
+            //ctx.setCurrentName(DBNAME);
+            //BiDAO b =  (BiDAO) ctx.getCurrentDataLayer();
+            //JSONObject obj = ip.parseInput("getlabels", ctx);
+            //System.out.println(obj.get("content"));
             //ChannelSet cs = (ChannelSet)b.dataLayer;
             //cs.writeToFile(cs.id, 1, false);
             //TrainingTask rt = new TrainingTask(ctx, ip);
@@ -85,7 +91,7 @@ public abstract class RealtimeTask  implements Runnable{
         //.. As new data is streamed in, assign a meaningful label to it
         TrainingTask rt = new TrainingTask(ctx, ip);
         Thread t  =new Thread(rt);
-        t.start();
+       // t.start();
         
         //.. TRAIN a classifier, setting its identity in the context to WCNAME
        // rt.train();

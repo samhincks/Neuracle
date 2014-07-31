@@ -230,41 +230,35 @@ public class BiDAO extends DataLayerDAO {
             }
             data.put("names", names);
 
+            /*Values should be an an array of arrays, the inner values are
+             timestamp at each channel and the outer values are the timestamps
+             */
             JSONArray values = new JSONArray();
-
-            //.. only show some channels if we have absurdly many, and only 
-            //... show so many points if we have absurdly many
-            int MAXCHANNELS = 7;
-            int numChannels = channelSet.getChannelCount();
-            int chanInc = 1;
-            if (numChannels > MAXCHANNELS) {
-                chanInc = numChannels / MAXCHANNELS;
-            }
-            int startingPoint =0;
-            int numPoints =0;
             int pointsInc =1;
-            for (int i = 0; i < numChannels; i += chanInc) {
-                UnidimensionalLayer channel = channelSet.getChannel(i); 
-
-                //.. Add each point in data to JSONArray
-                //... BUT DO NOT ADD MORE THAN MAX POINTS
-                int MAXPOINTS = 30;
-                 numPoints = channel.numPoints;
-                if (this.addedInLastSynchronization > MAXPOINTS) {
-                    pointsInc = this.addedInLastSynchronization / MAXPOINTS;
-                }
-                 startingPoint = numPoints - this.addedInLastSynchronization;
-
-                JSONArray channelData = new JSONArray();
-                //.. add points at specified increments
-                for (int j = startingPoint; j < numPoints; j += pointsInc) {
-                    float p = channel.getPointOrNull(j);
-                    channelData.put(p);
-                }
-                values.put(channelData);
-                
-            }
             
+            //.. Add each point in data to JSONArray
+            //... BUT DO NOT ADD MORE THAN MAX POINTS
+            int MAXPOINTS = 30;
+            int numPoints = channelSet.getFirstChannel().numPoints;
+            if (this.addedInLastSynchronization > MAXPOINTS) {
+                pointsInc = this.addedInLastSynchronization / MAXPOINTS;
+            }
+            int startingPoint = numPoints - this.addedInLastSynchronization;
+             
+            //.. add points at specified increments
+            for (int j = startingPoint; j < numPoints; j += pointsInc) {
+                JSONArray timeData = new JSONArray(); //.. each channel's value at the timestamp
+
+                for (int i = 0; i < channelSet.getChannelCount(); i++) {
+                    UnidimensionalLayer channel = channelSet.getChannel(i);
+                    System.out.println(i + " " + channel.numPoints);
+                    if (j >= channel.numPoints) throw new Exception(" Channel has " + channel.numPoints + " but we " +j);
+                    float p = channel.getPoint(j);
+                    timeData.put(p);
+                }
+                values.put(timeData);
+            }
+                
             int mostPoints = channelSet.getMaxPoints();
             float maxTime = (mostPoints / channelSet.readingsPerSecond);
             data.put("maxTime", maxTime);
@@ -383,7 +377,7 @@ public class BiDAO extends DataLayerDAO {
                 while (datalayerData.next()) {
                     data.add(Float.parseFloat(datalayerData.getString(i)));
                 }
-                
+                System.out.println("added "+ data.size());
                 Channel c = new Channel(1, data); //. framesize is technically wrong
                 c.id = meta.getColumnLabel(i);
                 cs.addStream(c);
