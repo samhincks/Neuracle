@@ -96,7 +96,7 @@ function ConsoleArea() {
              setInterval(function() {
                 $("#consoleInput").val(userText);
                 javaInterface.postToConsole();
-            }, 10);
+            }, 50); //.. less than 50 and there are errors
          }
          
          //.. For periodically updating what the current label is of a synchronized

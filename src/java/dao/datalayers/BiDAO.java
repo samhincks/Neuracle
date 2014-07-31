@@ -251,13 +251,14 @@ public class BiDAO extends DataLayerDAO {
 
                 for (int i = 0; i < channelSet.getChannelCount(); i++) {
                     UnidimensionalLayer channel = channelSet.getChannel(i);
+                    if (channel.numPoints != numPoints) throw new Exception("Misaligned channels. First has " + numPoints + " . " +i + " has " + channel.numPoints);
                     float p = channel.getPoint(j);
                     JSONArray arr = new JSONArray();
                     arr.put(p);      
                     timeData.put(arr);
                 }
-                values.put(timeData);  
-            }
+                values.put(timeData);        
+            }          
                 
             int mostPoints = channelSet.getMaxPoints();
             float maxTime = (mostPoints / channelSet.readingsPerSecond);
