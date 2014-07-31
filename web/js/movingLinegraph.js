@@ -59,7 +59,6 @@ function LineGraph(argsMap) {
 	 */
 	this.slideData = function(newData) {
             	var tempData = processDataMap(newData);
-
 		// validate data
                 console.log(newData.start);
 		console.log("Existing startTime: " + data.startTime + "  endTime: " + data.endTime);
@@ -90,7 +89,7 @@ function LineGraph(argsMap) {
 		// == numElements * step
 		data.startTime = data.startTime + (data.step * numSteps);
 		data.endTime = tempData.endTime;
-		debug("Updated startTime: " + data.startTime + "  endTime: " + data.endTime);
+		//debug("Updated startTime: " + data.startTime + "  endTime: " + data.endTime);
 				
 		/*
 		* The following transition implementation was learned from examples at http://bost.ocks.org/mike/path/
@@ -103,10 +102,9 @@ function LineGraph(argsMap) {
 			// The quick-steps look cleaner, and keep the axis/line in-sync instead of jittering
 		redrawAxes(false);	
 		redrawLines(false);
-			
-	    // slide the lines left
-	    graph.selectAll("g .lines path")
-	        .attr("transform", "translate(" + x(numSteps*data.step) + ")");
+                // slide the lines left
+                graph.selectAll("g .lines path")
+                    .attr("transform", "translate(" + x(numSteps*data.step) + ")");
 		 
 		handleDataUpdate();
 		
@@ -305,7 +303,8 @@ function LineGraph(argsMap) {
 		var maxValues = [];
                 var minValues = [];
 		var rounding = getOptionalVar(dataMap, 'rounding', []);
-		// default rounding values
+		
+                // default rounding values
 		if(rounding.length == 0) {
 			displayNames.forEach(function (v, i) {
 				// set the default to 0 decimals

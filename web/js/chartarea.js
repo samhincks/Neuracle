@@ -102,7 +102,7 @@ function ChartArea(id, descArea) {
 
        //TODO: NICK: Make new file, not modifying chartarea.js
         else if (JSONobj.id == "csrefresh") {
-            sc.displayChart(JSONobj, streamChart, data);
+             //sc.displayChart(JSONobj, streamChart, data);
         }
         this.displayedDL = JSONobj.id;
         descriptionArea.displayedDL = this.displayedDL;
