@@ -7,20 +7,24 @@
 var StreamChart = function (){
     var added=0;
     this.displayChart = function(JSONobj, chart, data){
-        /**What I'm telling it to do;
-         * - let the new data be just the data that was last added
-         * - set start to be the end - points + the amount added last time
-         * - set end to be the the end + amount added
-         * - then for next time, remember how many we added
+       /** What it wants:
+        *  - An object with the following:
+        *  .values = each channels value at this timestamp
+        *  .start = the first index to displayed on
+        *  .end = the last index shown
+        *  .maxTime = the last index shown adjusted for seconds
          */
-        dataA = JSONobj.data.data; //.. the data contained now should be what's added
-       /* for (var i=0; i < dataA.values[0].length; i++) {
-            dataA.start = dataA.start + added;
-            dataA.end = dataA.end + added;
-            added += dataA.values[0].length;//dataA.data.length;
-            chart.slideData(dataA);
-        }*/
-        console.log("s "+ JSONobj);
+        var channelVals = JSONobj.data.data; //.. the data contained now should be what's added
+        for (var i=0; i < channelVals.values.length; i++) {
+            var updateData;
+            updateData.values = channelVals.values[i];
+            updateData.maxTime = channelVals.maxTime;
+            updateData.start = added;
+            updateData.end = channelVals.end + added;
+            console.log(updateData);
+            chart.slideData(updateData);
+            added++;
+        }
     }
    /* else {
         chart.drawLinePlot(JSONobj);

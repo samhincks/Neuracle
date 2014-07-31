@@ -61,9 +61,7 @@ public abstract class RealtimeTask  implements Runnable{
             ctx.setCurrentName(DBNAME);
             BiDAO b =  (BiDAO) ctx.getCurrentDataLayer();
             ChannelSet cs = (ChannelSet) b.dataLayer;
-            System.out.println(cs.streams.get(0).numPoints);
-            System.out.println(cs.streams.get(1).numPoints);
-
+            
            // labelServer(ctx,ip);
            // nBack(ctx, ip);
             

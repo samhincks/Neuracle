@@ -251,8 +251,6 @@ public class BiDAO extends DataLayerDAO {
 
                 for (int i = 0; i < channelSet.getChannelCount(); i++) {
                     UnidimensionalLayer channel = channelSet.getChannel(i);
-                    System.out.println(i + " " + channel.numPoints);
-                    if (j >= channel.numPoints) throw new Exception(" Channel has " + channel.numPoints + " but we " +j);
                     float p = channel.getPoint(j);
                     timeData.put(p);
                 }
@@ -371,13 +369,13 @@ public class BiDAO extends DataLayerDAO {
         if (cs.streams.isEmpty()) {
             //.. for each column in the database
             for (int i =1; i < meta.getColumnCount()+1; i++) { //..  first is just row#
-               
+                datalayerData.first();
                 ArrayList<Float>  data = new ArrayList();
                 //.. add the data from every row to a corresponding buffer
                 while (datalayerData.next()) {
-                    data.add(Float.parseFloat(datalayerData.getString(i)));
+                    float val =Float.parseFloat(datalayerData.getString(i));
+                    data.add(val);
                 }
-                System.out.println("added "+ data.size());
                 Channel c = new Channel(1, data); //. framesize is technically wrong
                 c.id = meta.getColumnLabel(i);
                 cs.addStream(c);
