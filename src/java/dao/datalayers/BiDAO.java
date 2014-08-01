@@ -10,7 +10,7 @@ import filereader.Labels;
 import filereader.Markers;
 import filereader.TSTuftsFileReader;
 import java.awt.Point;
-import java.sql.ResultSet;
+import java.sql.ResultSet;  
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -252,10 +252,12 @@ public class BiDAO extends DataLayerDAO {
                 for (int i = 0; i < channelSet.getChannelCount(); i++) {
                     UnidimensionalLayer channel = channelSet.getChannel(i);
                     //if (channel.numPoints != numPoints) throw new Exception("Misaligned channels. First has " + numPoints + " . " +i + " has " + channel.numPoints);
-                    float p = channel.getPoint(j);
-                    JSONArray arr = new JSONArray();
-                    arr.put(p);      
-                    timeData.put(arr);
+                    Float p = channel.getPointOrNull(j);     
+                    if (p!= null){
+                        JSONArray arr = new JSONArray();
+                        arr.put(p);      
+                        timeData.put(arr);
+                    }
                 }
                 values.put(timeData);        
             }          

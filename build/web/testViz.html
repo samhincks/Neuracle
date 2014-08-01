@@ -78,9 +78,9 @@
 		 data3["axis"] = ["left", "right"];
 		 data3["colors"] = ["#2863bc","#c8801c"];
 		 data3["rounding"] = [2, 0];
-                 data["maxTime"] = 100;
-                 data2["maxTime"] = 100;
-                 data3["maxTime"] = 100;
+                 data["maxTime"] = data.values.length;
+                 data2["maxTime"] = data2.values.length;
+                 data3["maxTime"] = data3.values.length;
 
 
 
@@ -111,10 +111,10 @@
                     // increment time 1 step
                     dataA.start = dataA.start + dataA.step;
                     dataA.end = dataA.end + dataA.step; 
-                    dataA.maxTime = 100;			
+                    dataA.maxTime = dataA.end
                     l1.slideData(dataA);
                 }
-	}, 10);
+	}, 100);
 
 		
 	</script>

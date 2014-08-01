@@ -18,24 +18,20 @@ var StreamChart = function (){
          */
         var channelVals = JSONobj.data.data; //.. the data contained now should be what's added
         for (var i=0; i < channelVals.values.length; i++) {
-             
-            data.values.forEach(function(dataSeries, index) {
-                // take the first value and move it to the end
-                // and capture the value we're moving so we can send it to the graph as an update
-                var v = dataSeries.shift();
-                dataSeries.push(v);
-            })
             
+            //.. remove first element of existing data
+           // data.values.shift();
+            console.log(data);
             var updateData = [];
             updateData.values = channelVals.values[i];
-            updateData.maxTime = channelVals.maxTime;
+            updateData.maxTime = channelVals.end + this.added;//channelVals.maxTime;
             updateData.start = this.added;
             updateData.end = channelVals.end + this.added;
             updateData.step =1;
             updateData.names = channelVals.names;
             chart.slideData(updateData);
             this.added++;
-           
+           break;
         }
     }
    /* else {

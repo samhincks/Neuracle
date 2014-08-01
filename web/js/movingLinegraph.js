@@ -258,7 +258,6 @@ function LineGraph(argsMap) {
 	 *	 {"start": 1335035400000, "end": 1335294600000, "step": 300000, "values": [[28,22,45,65,34], [45,23,23,45,65]]}
 	 */
 	var processDataMap = function(dataMap) {
-                console.log(dataMap);
 		// assign data values to plot over time
 		var dataValues = getRequiredVar(dataMap, 'values', "The data object must contain a 'values' value with a data array.")
                  var maxTime = getRequiredVar(dataMap, "maxTime", "The data must contain the maximum referenced time in seconds");
@@ -553,7 +552,7 @@ function LineGraph(argsMap) {
 				.attr("transform", "translate(" + (w+10) + ",0)")
 				.call(yAxisRight);
 		}
-				
+                console.log(data);
 		// create line function used to plot our data
 		lineFunction = d3.svg.line()
 			// assign the X function to plot our line as we wish
