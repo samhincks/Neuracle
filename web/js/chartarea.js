@@ -4,7 +4,7 @@
  */
 function ChartArea(id, descArea) {
    var selection = id;
-   var chart = new Chart();
+   //var chart = new Chart();
    var descriptionArea = descArea;
    var streamChart; 
    this.displayedDL=""; //.. set to currently displayed datalayer

@@ -91,13 +91,13 @@ function ConsoleArea() {
             return true;
          }
          
-        /*else if (userText.startsWith("stream(")) {
+        else if (userText.startsWith("stream(")) {
              //.. callback that periodically issues a request to update; until what;
              setInterval(function() {
                 $("#consoleInput").val(userText);
                 javaInterface.postToConsole();
             }, 50); //.. less than 50 and there are errors
-         }*/ 
+         }
          
          //.. For periodically updating what the current label is of a synchronized
          //... dataset

@@ -149,8 +149,8 @@ public class BiDAO extends DataLayerDAO {
                 chanInc = numChannels / MAXCHANNELS;
             
             //.. Condense the data, setting maximum points to stream
-            int MAXPOINTS = 300;
-            int numPoints;
+            int MAXPOINTS = 300;     
+            int numPoints;           
             //.. Create each channel
             for (int i=0; i< numChannels; i+= chanInc) {
                 UnidimensionalLayer channel = channelSet.getChannel(i);
@@ -252,7 +252,7 @@ public class BiDAO extends DataLayerDAO {
                 for (int i = 0; i < channelSet.getChannelCount(); i++) {
                     UnidimensionalLayer channel = channelSet.getChannel(i);
                     //if (channel.numPoints != numPoints) throw new Exception("Misaligned channels. First has " + numPoints + " . " +i + " has " + channel.numPoints);
-                    Float p = channel.getPointOrNull(j);     
+                    Float p = channel.getPointOrNull(j);          
                     if (p!= null){
                         JSONArray arr = new JSONArray();
                         arr.put(p);      

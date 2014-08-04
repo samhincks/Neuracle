@@ -103,14 +103,16 @@
         <script type="text/javascript" src="js/lib/jquery.min.js"></script> 
         <script type="text/javascript" src="js/lib/jquery-ui-1.8.22.custom.min.js"></script>  
         <script type="text/javascript" src="js/lib/jquery.jsPlumb-1.3.3-all.js"></script> 
-        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-         <script type="text/javascript" src="js/lib/jquery.pep.js"></script>  
+       <!-- <script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
+         <script type="text/javascript" src="js/lib/jquery.pep.js"></script> 
+         <script type="text/javascript" src="js/lib/d3.min.js"></script>  
 
-        <script src="http://d3js.org/d3.v3.min.js"></script>
+
+        <!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
         <script type="text/javascript" src="js/TSChart.js"></script> 
         <script type="text/javascript" src="js/BarChart.js"></script> 
         <script type="text/javascript" src="js/FreqBarChart.js"></script> 
-        <script type="text/javascript" src="js/chart.js"></script>
+        <!--<script type="text/javascript" src="js/chart.js"></script> -->
         <script type="text/javascript" src="js/descriptionarea.js"></script>
         <script type="text/javascript" src="js/streamchart.js"></script> 
         <script type="text/javascript" src="js/chartarea.js"></script>

@@ -60,9 +60,9 @@ function LineGraph(argsMap) {
 	this.slideData = function(newData) {
             	var tempData = processDataMap(newData);
 		// validate data
-                console.log(newData.start);
-		console.log("Existing startTime: " + data.startTime + "  endTime: " + data.endTime);
-		console.log("New startTime: " + tempData.startTime + "  endTime: " + tempData.endTime);
+//                console.log(newData.start);
+//		console.log("Existing startTime: " + data.startTime + "  endTime: " + data.endTime);
+//		console.log("New startTime: " + tempData.startTime + "  endTime: " + tempData.endTime);
 		
 		// validate step is the same on each
 		if(tempData.step != newData.step) {
@@ -74,23 +74,21 @@ function LineGraph(argsMap) {
 		}
 		
 		var numSteps = tempData.values[0].length;
-		tempData.values.forEach(function(dataArrays, i) {
-			var existingDataArrayForIndex = data.values[i];
-			dataArrays.forEach(function(v) {
-				console.log("slide => add new value: " + v);
-				// push each new value onto the existing data array
-				existingDataArrayForIndex.push(v);
-				// shift the front value off to compensate for what we just added
-				existingDataArrayForIndex.shift();
-			})
-		})
+               
 		
-		// shift domain by number of data elements we just added
-		// == numElements * step
-		data.startTime = data.startTime + (data.step * numSteps);
-		data.endTime = tempData.endTime;
+                for (var i =0; i < data.values.length; i++) {
+                    for (var j =0; j < tempData.values[i].length; j++) {
+                        data.values[i].push(tempData.values[i][j]);
+                        var s =data.values[i].shift();
+                    }
+                }
+                  
+                /**These few lines of code appear cursed
+                 * **/
+		//data.startTime = tempData.startTime;
+		//data.endTime = tempData.endTime;
 		//debug("Updated startTime: " + data.startTime + "  endTime: " + data.endTime);
-				
+		data.maxTime = tempData.maxTime;
 		/*
 		* The following transition implementation was learned from examples at http://bost.ocks.org/mike/path/
 		* In particular, view the HTML source for the last example on the page inside the tick() function.
@@ -506,7 +504,6 @@ function LineGraph(argsMap) {
                 else x2 = d3.scale.linear()
                 .domain([data.startTime, data.maxTime])
                 .range([0 , w]);
-		// create yAxis (with ticks)
 		xAxis = d3.svg.axis().scale(x2).tickSize(-h).tickSubdivide(1);
 			// without ticks
 			//xAxis = d3.svg.axis().scale(x);
@@ -552,8 +549,8 @@ function LineGraph(argsMap) {
 				.attr("transform", "translate(" + (w+10) + ",0)")
 				.call(yAxisRight);
 		}
-                console.log(data);
-		// create line function used to plot our data
+		
+              // create line function used to plot our data
 		lineFunction = d3.svg.line()
 			// assign the X function to plot our line as we wish
 			.x(function(d,i) { 

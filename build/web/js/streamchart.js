@@ -17,11 +17,8 @@ var StreamChart = function (){
         *  .maxTime = the last index shown adjusted for seconds
          */
         var channelVals = JSONobj.data.data; //.. the data contained now should be what's added
-        for (var i=0; i < channelVals.values.length; i++) {
-            
-            //.. remove first element of existing data
-           // data.values.shift();
-            console.log(data);
+        var numUpdates = channelVals.values.length
+        for (var i=0; i < numUpdates; i++) {
             var updateData = [];
             updateData.values = channelVals.values[i];
             updateData.maxTime = channelVals.end + this.added;//channelVals.maxTime;
@@ -31,7 +28,7 @@ var StreamChart = function (){
             updateData.names = channelVals.names;
             chart.slideData(updateData);
             this.added++;
-           break;
+            
         }
     }
    /* else {
