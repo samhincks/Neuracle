@@ -7,7 +7,8 @@
  **/
 
 function ConsoleArea() {
-   
+   this.streaming = false;   //.. set to true if we are streaming
+   this.streamInterval; 
    /**Display a message to the user;
     *primaryClass = system versus userMessage
     *secondaryClass = redLine, greenLine, orangeLine*/
@@ -43,7 +44,7 @@ function ConsoleArea() {
     this.parseUserMessage = function(userText) {
         this.displayMessage("> " +userText, "usermessage", "");
         
-        if(!this.parseLocally(userText)) {         
+        if(!this.parseLocally(userText)) {   
             //.. save the text to the imaginary form for Stripes purposes
             $("#consoleInput").val(userText);
 
@@ -63,7 +64,7 @@ function ConsoleArea() {
         userText = userText.trim();
          if(userText.startsWith("view.")){
             this.parseViewMessage(userText);
-            return true;
+            return true; //.. parse it locally only
          }
          
          //.. if this is an evaluation command first save the connections to the context
@@ -80,11 +81,16 @@ function ConsoleArea() {
          }
          
          if (userText.startsWith("streamsynch(")) {
+             if (this.streaming) {
+                this.displayMessage("A streaming procedure is already being run; terminate it with clearstream()", "systemmes", "redline");
+                return true;
+            }
              var mes = userText.split("(");
              var file = mes[1].split(")")[0];
              
              //.. callback that periodically issues a request to update; until what;
-             setInterval(function() {
+             this.streamInterval = setInterval(function() {
+                this.streaming = true;
                 $("#consoleInput").val("synchronize("+file+",none");
                 javaInterface.postToConsole();
             }, 300);
@@ -92,16 +98,29 @@ function ConsoleArea() {
          }
          
         else if (userText.startsWith("stream(")) {
+            if (this.streaming){
+                this.displayMessage("A streaming procedure is already being run; terminate it with clearstream()", "systemmes", "redline");
+                return true;
+            }
+
              //.. callback that periodically issues a request to update; until what;
-             setInterval(function() {
+            this.streamInterval= setInterval(function() {
+                this.streaming = true;
+                console.log("streaming");
                 $("#consoleInput").val(userText);
                 javaInterface.postToConsole();
             }, 50); //.. less than 50 and there are errors
+            return false;
          }
          
          //.. For periodically updating what the current label is of a synchronized
          //... dataset
-         if(userText.startsWith("streamLabel(")) {
+         else if(userText.startsWith("streamlabel(")) {
+            if (!this.streaming){
+                consoleArea.displayMessage("Must first apply a procedure for synchronizing the database using stream(dbname)", "systemmes", "redline");
+                return true;
+            }
+             
             var mes = userText.split("("); //.. will be parameters (100,200)
             var params = mes[1].split(",");
             
@@ -121,6 +140,12 @@ function ConsoleArea() {
             console.log(timing + "," + trialLength + "," + trialsOfEach + "," +restLength);
             labeler.initiateLabeling(filename,conditionName,conditions,trialLength,trialsOfEach,restLength); 
             return false;
+         }
+         
+         else if(userText.startsWith("clearstream")){
+             this.streaming = false;
+             clearInterval(this.streamInterval); 
+             return true;
          }
          
          return false;

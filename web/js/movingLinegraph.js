@@ -59,10 +59,6 @@ function LineGraph(argsMap) {
 	 */
 	this.slideData = function(newData) {
             	var tempData = processDataMap(newData);
-		// validate data
-//                console.log(newData.start);
-//		console.log("Existing startTime: " + data.startTime + "  endTime: " + data.endTime);
-//		console.log("New startTime: " + tempData.startTime + "  endTime: " + tempData.endTime);
 		
 		// validate step is the same on each
 		if(tempData.step != newData.step) {
@@ -89,7 +85,7 @@ function LineGraph(argsMap) {
 		//data.endTime = tempData.endTime;
 		//debug("Updated startTime: " + data.startTime + "  endTime: " + data.endTime);
 		data.maxTime = tempData.maxTime;
-		/*
+	        /*
 		* The following transition implementation was learned from examples at http://bost.ocks.org/mike/path/
 		* In particular, view the HTML source for the last example on the page inside the tick() function.
 		*/
@@ -1005,6 +1001,7 @@ function LineGraph(argsMap) {
 	/**
 	* Convert back from an X position on the graph to a data value from the given array (one of the lines)
 	* Return {value: value, date, date}
+        * DONT USE THIS / shincks
 	*/
 	var getValueForPositionXFromData = function(xPosition, dataSeriesIndex) {
 		var d = data.values[dataSeriesIndex]

@@ -13,8 +13,8 @@ import java.awt.Point;
 import java.sql.ResultSet;  
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Map.Entry;
+import java.util.Hashtable;   
+import java.util.Map.Entry;   
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +56,7 @@ public class BiDAO extends DataLayerDAO {
         this.id = dl.id;
         dataLayer.setStatsMap();
     }
-    public BiDAO(){}
+    public BiDAO(){}      
     
     public BiDAO(String id) {this.id = id;}
     
@@ -253,8 +253,8 @@ public class BiDAO extends DataLayerDAO {
                     UnidimensionalLayer channel = channelSet.getChannel(i);
                     //if (channel.numPoints != numPoints) throw new Exception("Misaligned channels. First has " + numPoints + " . " +i + " has " + channel.numPoints);
                     Float p = channel.getPointOrNull(j);          
-                    if (p!= null){
-                        JSONArray arr = new JSONArray();
+                    if (p!= null){   
+                        JSONArray arr = new JSONArray();   
                         arr.put(p);      
                         timeData.put(arr);
                     }
