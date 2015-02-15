@@ -942,15 +942,17 @@ public class DataManipulationParser extends Parser{
         if (classifiers.size() >1) throw new Exception("It is ambiguous which classifier you want to use");
         if (classifiers.isEmpty()) throw new Exception("You must connect the dataset with a trained classifier");
 
-       WekaClassifier classifier = (WekaClassifier) classifiers.get(0);
+        WekaClassifier classifier = (WekaClassifier) classifiers.get(0);
          
-        System.out.println(classifier.lastInstanceLength + " , " + classifier.lastTechniqueTested.getClassifier().getId() + " , "
+       System.out.println(classifier.lastInstanceLength + " , " + classifier.lastTechniqueTested.getClassifier().getId() + " , "
                 + classifier.lastTrainedClassification.wekaString);
        //..Classify the  
        Predictions p = classifier.testRealStream(classifier.lastTrainedClassification,
                classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), performances), cs, classifier.lastInstanceLength, readEvery, null);
        
-       return "Successfully classified this dataset, and made " + p.predictions.size() + " predictions";
+       p.setId(dDAO.getId());//.. this is an exception, since here we actualyl do want to set the id
+       performances.addNewPredictionsSet(p); 
+       return "Successfully classified this dataset, and made " + p.predictions.size() + " predictions, saved in" + performances.getPredictionSet(dDAO.getId()).getId();
     }
     
     /**Predicts the last K readings of the dataset, and returns confidence and value if possible.

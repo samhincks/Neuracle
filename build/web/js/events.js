@@ -104,9 +104,12 @@ function reinit() {
         javaInterface.getDataLayerStats();
     });
     
+    
+    
     //.. if a channel set is dbl-clicked
     $(".dropChannel").dblclick(function (e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
+        console.log(curKey)
         if (curKey==18)
             javaInterface.postToDataLayer("frequency");
         else

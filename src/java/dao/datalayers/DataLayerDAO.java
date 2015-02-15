@@ -14,6 +14,7 @@ import timeseriestufts.evaluatable.Dataset;
 import timeseriestufts.evaluatable.FeatureSet;
 import timeseriestufts.evaluatable.performances.FoldPerformance;
 import timeseriestufts.evaluatable.performances.Performances;
+import timeseriestufts.evaluatable.performances.Prediction;
 import timeseriestufts.evaluatable.performances.Predictions;
 import timeseriestufts.kth.streams.DataLayer;
 
@@ -88,7 +89,7 @@ public abstract class DataLayerDAO {
     public JSONObject getPerformanceJSON(Performances p) throws Exception{
          JSONObject jsonObj = new JSONObject(); 
          Dataset d = p.getDataSet(this.getId());
-         
+         Predictions pred = p.getPredictionSet(this.getId());
          //.. no matter what, return a basic description of the data layer even if it hasnt been evaluated
          JSONObject descObj = new JSONObject();
          descObj.put("id", dataLayer.id);
@@ -99,7 +100,7 @@ public abstract class DataLayerDAO {
          jsonObj.put("description", descObj);
         
          //.. there is performance stats for this datalayer
-         if (d!= null) {
+         if (d!= null && p==null) { //. p == null is a little hack so that if its 2d set we look there
            JSONObject pObj = new JSONObject();
            pObj.put("label", d.getId());
 
@@ -124,6 +125,24 @@ public abstract class DataLayerDAO {
                 pObj.put("subValues", subVals);
             
             jsonObj.put("performance", pObj);
+         }
+         
+         //.. THIS SHould only be true for a 2d channelset, where we have applied classify()
+         if (pred != null) { 
+             System.out.println("WE HAVE PERFORMANCES");
+              JSONArray predictions = new JSONArray();
+        
+          
+              for (Prediction pr : pred.predictions) {
+                  JSONObject prediction = new JSONObject();
+                  
+                  prediction.put("guess",pr.prediction);
+                  prediction.put("answer", pr.answer);
+                  prediction.put("confidence", pr.confidence);
+                  predictions.put(prediction);
+              }
+                 
+              jsonObj.put("predictions", predictions);
          }
          return jsonObj;
     }

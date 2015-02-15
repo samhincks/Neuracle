@@ -96,6 +96,7 @@ public class Predictions {
     }
     
     public String getId() {return this.id;}
+    public void setId(String id) {this.id = id;}
     
     /**Fuse another set of predictions with this one. NOTE may be an error if another set of 
      * predictions is evaluated over different classification?

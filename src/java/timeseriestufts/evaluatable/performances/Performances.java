@@ -19,6 +19,7 @@ import timeseriestufts.evaluation.experiment.Classification;
 public class Performances {
     public HashMap<String, Dataset>  dataSets = new HashMap(); //.. make this hashmap since values is so convenient
     public HashMap<String, TechniqueSet> techniqueSets = new HashMap();
+    public HashMap<String, Predictions> predictionSets = new HashMap();
     
     public void addNewDataset(Dataset ds) throws Exception{
         if (dataSets.containsValue(ds)) 
@@ -32,6 +33,11 @@ public class Performances {
               throw new Exception("Trying to add new TechniqueSet " + ts.getId() + ", but it already  exists");
         
         techniqueSets.put(ts.getId(), ts);
+    }
+    
+    public void addNewPredictionsSet(Predictions ps) throws Exception{
+        System.out.println("ADDING PS TO " + ps.getId());
+        predictionSets.put(ps.getId(), ps); //.. IN THIS CASE WE WANT TO DELETE IF IT ALREADY EXISTS
     }
     
     public String getDatasetStats(String id) {
@@ -61,8 +67,12 @@ public class Performances {
     }
     
     public Dataset getDataSet(String id) {
-        if (!dataSets.containsKey(id)) return null;
         return dataSets.get(id);
+    }
+    
+    public Predictions getPredictionSet(String id) {
+        if (!predictionSets.containsKey(id)) return null;
+        return predictionSets.get(id);
     }
     
     
@@ -195,4 +205,5 @@ public class Performances {
         
         catch(Exception e) {e.printStackTrace();}
     }
+
 }

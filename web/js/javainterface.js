@@ -158,6 +158,7 @@ function JavaInterface() {
         
         else if (JSONobj.description != null) {
              //chartArea.displayDescription(JSONobj.description);
+             console.log("We have a description");
              descriptionArea.displayDescription(JSONobj.description);
 
         }
@@ -165,6 +166,10 @@ function JavaInterface() {
        //.. otherwise no error, so we display the graph
         if (JSONobj.performance != null) {
             chartArea.displayPerformance(JSONobj.performance);
+        }
+        
+        if (JSONobj.predictions != null) {
+            console.log("GREAT NEWS WE HAVE PREDICTIONS!!");
         }
         
         if (JSONobj.frequency != null) {

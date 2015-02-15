@@ -1020,7 +1020,7 @@ function LineGraph(argsMap) {
 		var index = (xValue.getTime() - data.startTime) / data.step;
 
 
-		if(index >= d.length) {
+		if(d.length != null &&index >= d.length) {
 			index = d.length-1;
 		}
 		// The date we're given is interpolated so we have to round off to get the nearest

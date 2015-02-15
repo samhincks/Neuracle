@@ -16,6 +16,8 @@ public class Prediction {
     public int instanceIndex;
     public double conditionPercentage =1; //.. what percent of the majority condition is this instance
     
+    //.. SHOULDNT THERE BE A PREDICTION THAT DOESNT HAVE A CONFIDENCE OR AN ANSWER??
+    
     public Prediction(String prediction, String answer, double confidence, double pctHigher, int instanceIndex) {
         this.prediction = prediction;
         this.answer = answer;

@@ -31,7 +31,7 @@ import timeseriestufts.kth.streams.tri.TridimensionalLayer;
 public class TransformationParser extends Parser{
     
     public TransformationParser(){
-        commands = new Hashtable();
+        commands = new Hashtable();  
         /**
          * -- Every command this Parser handles should be added to commands with
          * a corresponding function for execution in the execute function--*
