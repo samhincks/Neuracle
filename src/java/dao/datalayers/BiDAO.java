@@ -11,9 +11,9 @@ import filereader.Markers;
 import filereader.TSTuftsFileReader;
 import java.awt.Point;
 import java.sql.ResultSet;  
-import java.sql.ResultSetMetaData;
+import java.sql.ResultSetMetaData;   
 import java.util.ArrayList;
-import java.util.Hashtable;   
+import java.util.Hashtable;                 
 import java.util.Map.Entry;   
 import java.util.UUID;
 import java.util.logging.Level;
@@ -248,7 +248,7 @@ public class BiDAO extends DataLayerDAO {
             //.. add points at specified increments
             for (int j = startingPoint; j < numPoints; j += pointsInc) {
                 JSONArray timeData = new JSONArray(); //.. each channel's value at the timestamp
-
+             //   if (channelSet.getChannelCount()!= 2) System.out.println("not 2 : " +channelSet.getChannelCount());
                 for (int i = 0; i < channelSet.getChannelCount(); i++) {
                     UnidimensionalLayer channel = channelSet.getChannel(i);
                     //if (channel.numPoints != numPoints) throw new Exception("Misaligned channels. First has " + numPoints + " . " +i + " has " + channel.numPoints);
@@ -394,6 +394,8 @@ public class BiDAO extends DataLayerDAO {
         //... advance rs cursor to point of length of column, then add whatever else is there
         else {
             int curPoints = cs.getNumPointsAtZero();
+            if(meta.getColumnCount() != 2) System.out.println("NOT 2 .. :" + meta.getColumnCount());
+
             //.. for each column in the database
             for (int i =1; i < meta.getColumnCount()+1; i++) { //..  first is just row#
                 datalayerData.last();
@@ -407,7 +409,6 @@ public class BiDAO extends DataLayerDAO {
                     datalayerData.previous();
                 }
                 datalayerData.last();  
-                
                 //.. only for the first column, add any labels if any exist
                 if (i==1 && curLabels != null && labels != null) {
                     for (Labels l : labels) {

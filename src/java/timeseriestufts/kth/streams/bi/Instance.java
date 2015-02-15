@@ -258,4 +258,36 @@ public class Instance extends ChannelSet{
         }
     }
     
+    
+    public static void main(String[] args) {
+        int as =0;
+        int us =0;
+        int gs =0;
+        int cs =0;
+        for(int j =0; j <10; j++) {
+            for (int i=0; i< 10; i++) {
+                double r  = Math.random();
+                if ( r > .5) {
+                    System.out.print("A");
+                    as++;
+                }
+                else if (r > 0.25) {
+                    System.out.print("U");
+                    us++;
+                }
+                else if (r > .125){
+                    System.out.print("G");
+                    gs++;
+                }
+                else {
+                    System.out.print("C");
+                    cs++;
+                }
+
+            }
+            System.out.println("");
+        }
+        System.out.println(as+","+us+","+gs+","+cs);
+    }
+    
 }

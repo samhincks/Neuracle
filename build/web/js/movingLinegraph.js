@@ -65,13 +65,19 @@ function LineGraph(argsMap) {
 			throw new Error("The step size on appended data must be the same as the existing data => " + data.step + " != " + tempData.step);
 		}
 
-		if(tempData.values[0].length == 0) {
-			throw new Error("There is no data to append.");
-		}
+		if(tempData.values == null ||  tempData.values[0] == null || tempData.values[0].length == 0) {
+                    console.log("There is no data to append");
+                    return;
+                }
 		
+                if (tempData.values.length != data.values.length){
+                    console.log("There is a mismatch between the length of received data and existing data");
+                    return;
+                }
+                
 		var numSteps = tempData.values[0].length;
                
-		
+		console.log(tempData);
                 for (var i =0; i < data.values.length; i++) {
                     for (var j =0; j < tempData.values[i].length; j++) {
                         data.values[i].push(tempData.values[i][j]);

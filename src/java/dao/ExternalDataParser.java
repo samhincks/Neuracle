@@ -57,7 +57,7 @@ public class ExternalDataParser extends Parser{
         command.documentation = "Stream, in realtime, data from a database being updated and "
                 + " return that data into a visualization";
         command.action = "csrefresh";
-        command.debug = "Works, but with high refresh rates, all breaks. ";
+        command.debug = "Works, but axes are off. ";
         commands.put(command.id, command);
         
         //-- WRITE
@@ -83,7 +83,7 @@ public class ExternalDataParser extends Parser{
             c.retMessage = this.synchronize(parameters);
         }
         
-        else if (command.startsWith("stream(")) {
+        else if (command.startsWith("stream(") || command.equals("stream")) {
             c = commands.get("stream");
             c.data = this.stream(parameters);
         }  

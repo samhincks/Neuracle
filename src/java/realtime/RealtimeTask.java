@@ -89,7 +89,7 @@ public abstract class RealtimeTask  implements Runnable{
         //.. As new data is streamed in, assign a meaningful label to it
         TrainingTask rt = new TrainingTask(ctx, ip);
         Thread t  =new Thread(rt);
-       // t.start();
+        t.start();
         
         //.. TRAIN a classifier, setting its identity in the context to WCNAME
        // rt.train();
@@ -136,14 +136,15 @@ public abstract class RealtimeTask  implements Runnable{
             super(ctx, ip);
         }
         @Override
-        public void run() {
+        public void run() {  
             try{
                 int iterations = trainingDuration / REFRESHRATE;
+                iterations = 2500;
                 while (ticks < iterations) {
                     //.. Synchronize the last datapoints, and alter how the next ones will get labeled
-                    String command = "synchronize(" + DBNAME + ")";
+                    String command = "stream(" + DBNAME + ")";
                     String resp = ip.parseInput(command, ctx).getString("content");
-                    System.out.println(resp);
+                    //System.out.println(resp);  
                     Thread.sleep(REFRESHRATE);
                     ticks++;
                 }

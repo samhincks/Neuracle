@@ -9,12 +9,12 @@ import weka.attributeSelection.GreedyStepwise;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.core.Instances;
-import weka.filters.Filter;
-
-/**
- *
+import weka.filters.Filter;      
+            
+/**   
+ *  
  * @author samhincks
- */
+ */  
 public class AttributeSelection extends Technique{
     public int numAttributes =-1;//.. how many attribtues to leave
     public float percentToKeep = -1;
@@ -101,5 +101,6 @@ public class AttributeSelection extends Technique{
     public weka.filters.supervised.attribute.AttributeSelection getMostRecentInfoFilter() throws Exception{
         if (infoFilter == null) throw new Exception("AS algo has not yet been applied");
         return infoFilter;
-    }
+    }      
 }
+      

@@ -97,7 +97,7 @@ function ConsoleArea() {
             return true;
          }
          
-        else if (userText.startsWith("stream(")) {
+        else if (userText.startsWith("stream(") || userText == "stream") {
             if (this.streaming){
                 this.displayMessage("A streaming procedure is already being run; terminate it with clearstream()", "systemmes", "redline");
                 return true;
@@ -106,7 +106,6 @@ function ConsoleArea() {
              //.. callback that periodically issues a request to update; until what;
             this.streamInterval= setInterval(function() {
                 this.streaming = true;
-                console.log("streaming");
                 $("#consoleInput").val(userText);
                 javaInterface.postToConsole();
             }, 50); //.. less than 50 and there are errors

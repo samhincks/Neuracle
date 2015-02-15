@@ -188,7 +188,7 @@ public class DataManipulationParser extends Parser{
             c.action = "reload";
         }
         
-        
+          
         //.. addFeatures(*,*,*)
         else if (command.startsWith("addfeatures")) {
             c = commands.get("addfeatures");
@@ -829,7 +829,7 @@ public class DataManipulationParser extends Parser{
     
     
     /**
-     * Handle evaluate(), when the selected element is an Experiment.
+     * Handle train(), when the selected element is an Experiment.
      * evaluate(5) for evaluation across 5 folds Assume Techniques have been
      * populated via the interface.
      *

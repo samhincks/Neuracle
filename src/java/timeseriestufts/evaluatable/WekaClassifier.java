@@ -446,6 +446,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
     
     private void buildAdaBoost() throws Exception {
         adaboost = new AdaBoostM1();
+        System.out.println(adaboost.toString());
         adaboost.buildClassifier(data);
     }
 
@@ -494,8 +495,13 @@ public class WekaClassifier  extends ClassificationAlgorithm{
             TechniqueSet ts = TechniqueSet.generate();
             Dataset ds = Dataset.generate();
             
-            int TEST =2;
-            
+            int TEST =12;
+            if (TEST == 12) {
+                AdaBoostM1 ab = new AdaBoostM1();
+                System.out.println(ab.getTechnicalInformation().getID());
+                System.out.println(ab.toString());
+
+            }
             if (TEST ==0 ) {
                  e.evaluate(ts, ds, TEST);
                  ds.printPredictions();

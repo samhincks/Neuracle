@@ -15,6 +15,7 @@ import timeseriestufts.kth.streams.uni.*;
 import timeseriestufts.kth.streams.uni.UnidimensionalLayer;
 import timeseriestufts.kth.streams.uni.Channel;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import timeseriestufts.evaluatable.PassFilter;
@@ -750,4 +751,5 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             this.y = y;
         }
     }
+    
  }
