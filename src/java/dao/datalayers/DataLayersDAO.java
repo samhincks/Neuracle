@@ -4,14 +4,14 @@
  */
 package dao.datalayers;
 
-import filereader.Labels;
+import filereader.Labels; 
 import filereader.Label;
 import filereader.Markers;
 import java.sql.ResultSet;
-import java.util.ArrayList;
+import java.util.ArrayList;  
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashMap;   
+import java.util.Iterator;  
 import java.util.List;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.kth.streams.DataLayer;

@@ -107,6 +107,12 @@ function JavaInterface() {
         else { //.. no error
             chartArea.displayChart(JSONobj);
         }
+        
+        
+        /**TEMP**/
+        
+        //chartArea.displayPredictions(1,2);
+        /**8END***/
     }
     
     /**Given the state of our technique connections as known by plumb, 
@@ -157,8 +163,6 @@ function JavaInterface() {
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
         
         else if (JSONobj.description != null) {
-             //chartArea.displayDescription(JSONobj.description);
-             console.log("We have a description");
              descriptionArea.displayDescription(JSONobj.description);
 
         }
@@ -170,6 +174,7 @@ function JavaInterface() {
         
         if (JSONobj.predictions != null) {
             console.log("GREAT NEWS WE HAVE PREDICTIONS!!");
+            chartArea.displayPredictions(JSONobj.predictions, JSONobj.classes);
         }
         
         if (JSONobj.frequency != null) {

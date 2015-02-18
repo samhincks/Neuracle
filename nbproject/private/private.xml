@@ -2,10 +2,23 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="13">
         <file>
-            <url>web/js/FreqBarChart.js</url>
-            <bookmark id="4">
+            <url>web/js/movingLinegraph.js</url>
+            <bookmark id="10">
                 <name/>
-                <line>281</line>
+                <line>61</line>
+                <key/>
+            </bookmark>
+            <bookmark id="13">
+                <name/>
+                <line>502</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/streamchart.js</url>
+            <bookmark id="11">
+                <name/>
+                <line>18</line>
                 <key/>
             </bookmark>
         </file>
@@ -28,6 +41,14 @@
             </bookmark>
         </file>
         <file>
+            <url>web/js/FreqBarChart.js</url>
+            <bookmark id="4">
+                <name/>
+                <line>281</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>src/java/dao/datalayers/BiDAO.java</url>
             <bookmark id="9">
                 <name/>
@@ -45,35 +66,11 @@
                 <key/>
             </bookmark>
         </file>
-        <file>
-            <url>web/js/movingLinegraph.js</url>
-            <bookmark id="10">
-                <name/>
-                <line>61</line>
-                <key/>
-            </bookmark>
-            <bookmark id="13">
-                <name/>
-                <line>502</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/js/streamchart.js</url>
-            <bookmark id="11">
-                <name/>
-                <line>18</line>
-                <key/>
-            </bookmark>
-        </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/evaluatable/WekaClassifier.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/evaluatable/AttributeSelection.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/kth/streams/bi/Instance.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/bluetooth/WirelessDevice.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/javainterface.js</file>
         </group>
     </open-files>
 </project-private>

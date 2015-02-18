@@ -471,7 +471,7 @@ function LineChart() {
 
 //.. Test
 //test();
-//test();
+test();
 function test() {
     var chart = LineChart();
     var menu = d3.select("#menu select")
@@ -482,7 +482,7 @@ function test() {
     });
    
     var selection = d3.select("#topRight").append("svg:svg");
-    console.log(selection);
+
     for (var i=0;i <20; i++) {
         chart.addRow(getRandomRow2(i,"low"),0);
     }
@@ -537,6 +537,7 @@ function test() {
     for (var i=0;i <20; i++) {
         chart.addRow(getRandomRow2(i, "high"),13);
     }
+
     chart.key(0).channels(function(d){return d.channels;}).width(900).height(400)(selection).transition();
     setTimeout(function() {chart.transitionToAverage(30000)},1000);
     

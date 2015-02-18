@@ -24,7 +24,7 @@ function ChartArea(id, descArea) {
         lastGraph = JSONobj.type;
         if(JSONobj.type == "experiment"){
             $(selection).children().remove();
-
+            
             var channels = JSONobj.instances[0][0].channels;
             var actualMaxPoints = JSONobj.actualNumPoints;
             var readingsPerSec = JSONobj.readingsPerSec;
@@ -111,6 +111,61 @@ function ChartArea(id, descArea) {
     }
     
     
+    
+    this.displayPredictions =function(JSONarr, classes){
+         //console.log(classes + " , " +JSONobj[0].answer + " , " + JSONobj[0].guess + " , " + JSONobj[0].confidence);
+         console.log("bajs")
+         $(selection).children().remove();
+         
+         /*
+         var p1 = {answer:"easy", guess:"hard", confidence:"0.9"};
+         var p2 = {answer:"easy", guess:"hard", confidence:"0.5"};
+         var p3 = {answer:"easy", guess:"easy", confidence:"0.6"};
+
+         var JSONarr =  [p1,p2,p3,p1,p2,p3,p1,p2,p3,p1,p3,p2,p1]; */ 
+           
+         //.. add a menu for selecting channel 
+         $("#channelSelection").remove();
+         $(selection).append("<select id = channelSelection> </select>" );
+            
+          //.. add each channel as a value to the select menu
+         for (var i =0; i < 2; i++) { //.. 1 for each condition. And they are inverses
+             $('#channelSelection')
+                 .append($('<option>', { value : i })
+                 .text(i)); 
+         }
+            
+         var d3Chart = LineChart();
+         var self = this;
+           
+         //.. add event listener for this menu
+         var menu = d3.select("#channelSelection")
+                  .on("change", function() {
+                  var channel = menu.property("value");
+                  d3Chart.key(channel);
+                  d3Chart(selection);
+                     
+         });
+         
+         for(var i =0 ; i < JSONarr.length; i++) {
+             var prediction = JSONarr[i];
+             var row = new Object();
+             row.time =i;
+             row.channels = [prediction.confidence]//, Math.random()*2];
+             row.condition = prediction.guess;
+             d3Chart.addRow(row, 0);
+         }
+         
+         
+         //.. build the line chart with default width and height and key
+         var width = $(selection).width() - border;
+         var height = $(selection).height() - border;
+         d3Chart.key(0).channels(function(d){return d.channels;}).width(width).height(height)(selection).transition();
+
+
+         
+    }
+    
     /** A lightweight stream of a datalayer. Inside a little information box, display a table
      * describing the channel.
      * Object must have .id , .channels , and .points
@@ -190,5 +245,6 @@ function ChartArea(id, descArea) {
             }, 1000)
         }, 1000); 
     }
+    
 }
 

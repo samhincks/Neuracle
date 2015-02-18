@@ -129,7 +129,6 @@ public abstract class DataLayerDAO {
          
          //.. THIS SHould only be true for a 2d channelset, where we have applied classify()
          if (pred != null) { 
-             System.out.println("WE HAVE PERFORMANCES");
               JSONArray predictions = new JSONArray();
         
           
@@ -143,6 +142,7 @@ public abstract class DataLayerDAO {
               }
                  
               jsonObj.put("predictions", predictions);
+              jsonObj.put("classes", pred.classification.wekaString);
          }
          return jsonObj;
     }
