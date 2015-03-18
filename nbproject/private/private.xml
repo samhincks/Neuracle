@@ -2,45 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="13">
         <file>
-            <url>web/js/movingLinegraph.js</url>
-            <bookmark id="10">
-                <name/>
-                <line>61</line>
-                <key/>
-            </bookmark>
-            <bookmark id="13">
-                <name/>
-                <line>502</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/js/streamchart.js</url>
-            <bookmark id="11">
-                <name/>
-                <line>18</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/dao/InputParser.java</url>
-            <bookmark id="3">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-            <bookmark id="2">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-            <bookmark id="1">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>web/js/FreqBarChart.js</url>
             <bookmark id="4">
                 <name/>
@@ -66,11 +27,52 @@
                 <key/>
             </bookmark>
         </file>
+        <file>
+            <url>src/java/dao/InputParser.java</url>
+            <bookmark id="3">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+            <bookmark id="2">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+            <bookmark id="1">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/movingLinegraph.js</url>
+            <bookmark id="10">
+                <name/>
+                <line>61</line>
+                <key/>
+            </bookmark>
+            <bookmark id="13">
+                <name/>
+                <line>502</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/streamchart.js</url>
+            <bookmark id="11">
+                <name/>
+                <line>18</line>
+                <key/>
+            </bookmark>
+        </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/evaluatable/WekaClassifier.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/javainterface.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/css/consoleStyle.css</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/events.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/index.jsp</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/css/style.css</file>
         </group>
     </open-files>
 </project-private>

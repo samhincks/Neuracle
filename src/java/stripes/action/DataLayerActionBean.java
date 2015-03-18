@@ -56,7 +56,6 @@ public class DataLayerActionBean extends BaseActionBean{
         BiDAO mDAO = new BiDAO(); 
         try {
             mDAO.make(newAttachment, ctx.getFileReadSampling());
-            
             //.. if this is as yet uninitizliaed
             if (ctx.dataLayersDAO == null) {
                 ctx.dataLayersDAO = new DataLayersDAO();
@@ -115,13 +114,16 @@ public class DataLayerActionBean extends BaseActionBean{
     public Resolution getJSON() throws JSONException{    
         try {
             ctx.setCurrentName(giver);
+            System.err.println(giver);
             DataLayerDAO dlGiver = ctx.dataLayersDAO.get(giver);         
             JSONObject jsonObj;
-            
+
             //.. if we want to see data
             if (!stats && !frequency){ 
                jsonObj  = dlGiver.getJSON();
+               
             }
+            
             
             else if(frequency) {
                 if (!(dlGiver instanceof TriDAO)) throw new Exception(); //.. fail silently

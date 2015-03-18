@@ -117,12 +117,6 @@ function ChartArea(id, descArea) {
          console.log("bajs")
          $(selection).children().remove();
          
-         /*
-         var p1 = {answer:"easy", guess:"hard", confidence:"0.9"};
-         var p2 = {answer:"easy", guess:"hard", confidence:"0.5"};
-         var p3 = {answer:"easy", guess:"easy", confidence:"0.6"};
-
-         var JSONarr =  [p1,p2,p3,p1,p2,p3,p1,p2,p3,p1,p3,p2,p1]; */ 
            
          //.. add a menu for selecting channel 
          $("#channelSelection").remove();

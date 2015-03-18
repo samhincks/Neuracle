@@ -6,6 +6,7 @@
 
 package dao;
 
+import dao.datalayers.BiDAO;
 import dao.datalayers.DataLayerDAO;
 import dao.datalayers.DataLayersDAO;
 import dao.datalayers.MySqlDAO;
@@ -13,6 +14,7 @@ import dao.techniques.TechniqueDAO;
 import filereader.Label;
 import filereader.Labels;
 import filereader.Markers;
+import filereader.TSTuftsFileReader;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -87,6 +89,11 @@ public class MiscellaneousParser extends Parser{
         command.parameters = "1. k-back. 2. durationInSeconds, 3. Port-num (optional)";
         commands.put(command.id, command);
         
+        command = new Command("tutorial");
+        command.documentation = "Loads a sample file, and executes basic instructions on it";   
+        command.action = "reload";
+        commands.put(command.id, command);
+        
     }
     
     public JSONObject execute(String command, String [] parameters, ThisActionBeanContext ctx, 
@@ -139,6 +146,11 @@ public class MiscellaneousParser extends Parser{
         else if (command.startsWith("nback")) {
             c = commands.get("nback");
             c.retMessage = this.nBack(parameters);
+        }
+        
+        else if (command.startsWith("tutorial")) {
+            c = commands.get("tutorial");
+            c.retMessage = this.tutorial();
         }
         
         if (c ==null) return null;
@@ -354,6 +366,30 @@ public class MiscellaneousParser extends Parser{
         return retString;
     }
     
+    private String tutorial() throws Exception {
+        String retString;
+        retString = "Running tutorial. There is an error here. It sets stats to true for some reason"
+                + " that is in DataLayerActionBean. Even though in the form we deliberately set it to false"
+                + " Probably related to how we initialize the datalayer. But dont have time to fix this now. ";
+        //.. read
+        TSTuftsFileReader f = new TSTuftsFileReader();
+        f.readEvery = 1;
+        f.FRAMESIZE = 0.09;
+        ChannelSet cs = ChannelSet.generate(2, 100);
+        cs.id = "Sample";
+        cs.addMarkers(Markers.generate(10, 10));
+        BiDAO mDAO = new BiDAO(cs);
+
+        //.. if this is as yet uninitizliaed
+        if (ctx.dataLayersDAO == null) {
+            ctx.dataLayersDAO = new DataLayersDAO();
+        }
+        //.. Add to the persistent context, and save by id 
+        ctx.dataLayersDAO.addStream(mDAO.getId(), mDAO);
+        ctx.setCurrentName(mDAO.getId());
+        return retString;
+        
+    }
     
     
     
