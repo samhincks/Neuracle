@@ -14,7 +14,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;   
 import java.util.ArrayList;
 import java.util.Hashtable;                 
+import java.util.Iterator;
 import java.util.Map.Entry;   
+import java.util.PriorityQueue;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,7 +47,6 @@ public class BiDAO extends DataLayerDAO {
     public int curPos = 0; //.. DELETE THIS LATER
     public Hashtable<String,String> curLabels = null; //.. when data is streamed in
     public ArrayList<Labels> labels = null; //.. a collection of labels describing condition of corresponding points
-    
     public BiDAO(ArrayList<DataLayer> channels) {
         this.channels = channels;
     }
@@ -475,6 +476,8 @@ public class BiDAO extends DataLayerDAO {
                 cs.printStream();
                 
             }
+            
+            
         
         } catch (Exception ex) {
             ex.printStackTrace();

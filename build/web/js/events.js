@@ -12,7 +12,7 @@ var channelSurface = new ChannelSurface();
 var plumb = new Plumb();
 var datalayerArea = new DatalayerArea("#content");
 var plumbTechniques = new PlumbTechniques();
-var address = "http://localhost:8080/SensorMining/";// "http://sensormining.herokuapp.com/"; //.. the address of the back-end
+var address = "http://localhost:8080/SensorMining/"; // "http://sensormining.herokuapp.com/"; //.. the address of the back-end
 
 /* When document is loaded, do init, ie set listeners etc. 
  */

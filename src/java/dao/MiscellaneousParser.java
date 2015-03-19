@@ -367,10 +367,14 @@ public class MiscellaneousParser extends Parser{
     }
     
     private String tutorial() throws Exception {
-        String retString;
-        retString = "Running tutorial. There is an error here. It sets stats to true for some reason"
-                + " that is in DataLayerActionBean. Even though in the form we deliberately set it to false"
-                + " Probably related to how we initialize the datalayer. But dont have time to fix this now. ";
+        String retString = "In the topleft corner, you can see that we have created a sample random"
+                + " dataset for you. To upload your own, click chose file, and then select a valid"
+                + " CSV,value. The first row should contain comma-separated names; then subsequent rows"
+                + " should contain time-ordered values that pertain to that column. The last k>1 columns should"
+                + " be text -- a name for the trial. Subsequent rows with the same name belong to the same trial;; Now, "
+                + " double click on the object to view the raw, unprocessed data. Then type split(condition) in order"
+                + " to group the data by trials that pertain to the same condition ";
+       
         //.. read
         TSTuftsFileReader f = new TSTuftsFileReader();
         f.readEvery = 1;
@@ -379,6 +383,7 @@ public class MiscellaneousParser extends Parser{
         cs.id = "Sample";
         cs.addMarkers(Markers.generate(10, 10));
         BiDAO mDAO = new BiDAO(cs);
+        cs.test = true;
 
         //.. if this is as yet uninitizliaed
         if (ctx.dataLayersDAO == null) {

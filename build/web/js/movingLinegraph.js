@@ -860,7 +860,7 @@ function LineGraph(argsMap) {
 			// set position of hoverLine
 			hoverLine.attr("x1", mouseX).attr("x2", mouseX)
 			
-			displayValueLabelsForPositionX(mouseX)
+			//displayValueLabelsForPositionX(mouseX)
 			
 			// user is interacting
 			userCurrentlyInteracting = true;
@@ -912,7 +912,7 @@ function LineGraph(argsMap) {
 		if(userCurrentlyInteracting) {
 			// user is interacting, so let's update values to wherever the mouse/finger is on the updated data
 			if(currentUserPositionX > -1) {
-				displayValueLabelsForPositionX(currentUserPositionX)
+				//displayValueLabelsForPositionX(currentUserPositionX)
 			}
 		} else {
 			// the user is not interacting with the graph, so we'll update the labels to the latest
@@ -922,8 +922,9 @@ function LineGraph(argsMap) {
 	
 	/**
 	* Display the data values at position X in the legend value labels.
+        * Dont use!
 	*/
-	var displayValueLabelsForPositionX = function(xPosition, withTransition) {
+	var displayValueLabelsForPositionX2 = function(xPosition, withTransition) {
 		var animate = false;
 		if(withTransition != undefined) {
 			if(withTransition) {
@@ -970,7 +971,7 @@ function LineGraph(argsMap) {
 				.attr("font-size", legendFontSize);
 			
 			// recursively call until we get ourselves fitting
-			displayValueLabelsForPositionX(xPosition);
+			//displayValueLabelsForPositionX(xPosition);
 			return;
 		}
 
@@ -1001,7 +1002,7 @@ function LineGraph(argsMap) {
 	* Set the value labels to whatever the latest data point is.
 	*/
 	var setValueLabelsToLatest = function(withTransition) {
-		displayValueLabelsForPositionX(w, withTransition);
+	//	displayValueLabelsForPositionX(w, withTransition);
 	}
 	
 	/**
@@ -1010,7 +1011,8 @@ function LineGraph(argsMap) {
         * DONT USE THIS / shincks
 	*/
 	var getValueForPositionXFromData = function(xPosition, dataSeriesIndex) {
-		var d = data.values[dataSeriesIndex]
+                if (d == null ) return;
+		var d = data.values[dataSeriesIndex];
 		
 		// get the date on x-axis for the current location
 		var xValue = x.invert(xPosition);
@@ -1020,7 +1022,7 @@ function LineGraph(argsMap) {
 		var index = (xValue.getTime() - data.startTime) / data.step;
 
 
-		if(d.length != null &&index >= d.length) {
+		if(d.length !== null &&index >= d.length) {
 			index = d.length-1;
 		}
 		// The date we're given is interpolated so we have to round off to get the nearest

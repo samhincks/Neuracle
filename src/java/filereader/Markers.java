@@ -51,6 +51,14 @@ public class Markers {
     public Markers(String name, ArrayList<Trial> trials) {
         this.name = name;
         this.trials = trials;
+        this.saveLabels = new Labels(name);
+        int index =0;
+        for (Trial t : trials) {
+            for (int i=0 ;i <t.getLength(); i++) {
+                this.saveLabels.addLabel(new Label(this.name, t.name, index));
+                index++;
+            }
+        }
     }
     
     /** Return a class+values pairing by examining each trial
@@ -88,7 +96,7 @@ public class Markers {
             trials.add(t);
         }
         
-        return new Markers("name", trials);
+        return new Markers("condition", trials);
     }
 
     /** Return the majority condition between start and end, and what percentage

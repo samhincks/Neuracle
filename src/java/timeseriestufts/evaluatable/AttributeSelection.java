@@ -23,7 +23,7 @@ public class AttributeSelection extends Technique{
     private weka.filters.supervised.attribute.AttributeSelection cfsFilter; //.. set when applied to training
 
     
-    public static enum ASType {cfs, info, None};
+    public static enum ASType {cfs, info, none};
     public ASType asType;
     
     /**(cfs,-1) -> Only CFS_Subset (very computationally expensive)
@@ -47,7 +47,7 @@ public class AttributeSelection extends Technique{
         this.numAttributes = 0;//.. set this later
         this.asType =asType;
     }
-    public boolean doInfoGain() { return (!(asType == ASType.None) && numAttributes != -1); }; 
+    public boolean doInfoGain() { return (!(asType == ASType.none) && numAttributes != -1); }; 
     public boolean doCFSSubset() {return asType == ASType.cfs; };
     
     

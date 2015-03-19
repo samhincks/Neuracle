@@ -525,7 +525,7 @@ public class DataManipulationParser extends Parser{
      */
     private String addFeatures(String [] parameters) throws Exception {
         if (!(currentTechnique instanceof FeatureSet)) {
-            throw new Exception("The selected technique must be a feature set");
+            throw new Exception("The selected technique must be a feature set " );
         }
 
         FeatureSet fs = (FeatureSet) currentTechnique;
@@ -570,7 +570,7 @@ public class DataManipulationParser extends Parser{
         //. MAKE Attribute Selection - Handle
         else if (input.startsWith("makeas(") || input.startsWith("newattributeselection(")) {
             if (parameters.length < 2 && (!(parameters[0].startsWith("none")))) {
-                throw new Exception("Must specify how many attribtues to keep as second parameter");
+                throw new Exception("Must specify how many attributes to keep as second parameter");
             }
             String numAtts = "?"; //.. default if this is no attribute selection
             if (parameters.length > 1) {
@@ -666,6 +666,11 @@ public class DataManipulationParser extends Parser{
                 total += t.getMostRecentAverage();
             }
             retString += "::Across all, %CORR: " + (total / techniquesToEvaluate.size());
+            if (experiment.test) retString += ":: The percentage above reflects the average classification accuracy"
+                    + " when the classifier was trained on all but one instance, which it used as a testing case, repeating"
+                    + " this procedure once for each instance. The likely poor score reflects the fact that this data is in fact random"
+                    + " ;;  "
+                    + "You're on your own now!  Type help to get all the implemented commands.  "; 
 
             return retString;
         } else if (currentDataLayer instanceof MultiExperiment) {
@@ -1011,7 +1016,7 @@ public class DataManipulationParser extends Parser{
             else if(highpass >0 && lowpass ==0) {
                 filteredSet = filteredSet.highpass(highpass, false);
                 retString += "Applied Highpass; Removed frequencies oscillating below " + highpass + "hz ::";
-            }
+            } 
             
             else if(lowpass >0 && highpass >0) {
                 filteredSet = filteredSet.bandpass(lowpass,highpass, false);

@@ -185,11 +185,10 @@ function ConsoleArea() {
       
       /**Standard introductory message*/
      this.introduce = function() {
-        var message = "This is an interface for evaluating trial-based timeseries datasets.  "
-         + " First load a file in the proper .csv format, where the first row is a set of names separated by commas; " 
-         + " subsequent rows are the values at each of these columns for every timestamp; "
-         + " numeric values pertain to the actual data and nominal values pertain to classes "
-        +  " - what is to be predicted";
+        var message = "Welcome - This is an interface for evaluating trial-based timeseries datasets, and for training "
+        + " machine learning algorithms to broadcast meaningful classifications across a port in realtime;; "
+        + " If you have no idea how to begin and no data to work with, simply type tutorial";
+         
         this.displayMessage(message, "systemmess", "secondline");
     };
     

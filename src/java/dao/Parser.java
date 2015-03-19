@@ -95,7 +95,7 @@ public abstract class Parser {
         Experiment e = cs.splitByLabel(labelName);
         e.setId(cs.getId() + labelName);
         e.setParent(cs.getId()); //.. set parent to what we derived it from
-
+        e.test = cs.test;
         //.. make a new data access object, and add it to our stream
         TriDAO pDAO = new TriDAO(e);
         ctx.dataLayersDAO.addStream(e.id, pDAO);

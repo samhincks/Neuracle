@@ -35,6 +35,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     public Integer realEnd; //.. its position in a former layer. 
     public Integer realStart;//... If we're setting these its derived from another layer
     public float readingsPerSecond;
+    public boolean test = false;//.. set to true if we fabricated this as a sample -- will change display message
+
     /**Initialize Unidimensional Array and unidimensional stat representation. 
      */
     public ChannelSet() {

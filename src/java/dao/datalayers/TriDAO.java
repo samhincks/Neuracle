@@ -46,7 +46,6 @@ public class TriDAO extends DataLayerDAO {
       */
      public JSONObject getJSON() throws Exception {
         jsonObj = new JSONObject();
-        
         if ( dataLayer instanceof Experiment) { 
             Experiment exp = (Experiment) dataLayer;
 
@@ -82,10 +81,10 @@ public class TriDAO extends DataLayerDAO {
                         //.. add the value at each channel
                         for (UnidimensionalLayer channel : instance.streams){
                             Float val =null;
-                            
                             //.. get it if we can; if we can't, no problem just put in null
                             try{
                                  val = channel.getPointOrNull(i);
+
                             }catch(Exception e) {}
                             channels.put(val); //.. it might be missing
                         }

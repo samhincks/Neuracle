@@ -45,6 +45,8 @@ public class Experiment extends TridimensionalLayer<Instance>{
     //.. The class and class-values this particular experiment will be looking at
     public Classification classification;
     
+    public boolean test = false; //.. If this is tutorial mode, we display extra information when this is ture
+    
     //.. Dataset is another storehouse for the collection of performances, indexed by experiment
     private Dataset dataset; //.. Just a collection of stats
     

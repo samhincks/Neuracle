@@ -31,7 +31,7 @@ function LineChart() {
     //... otherwise it is the min and max in the raw data
     var setHeightByAreaChart = false; 
     
-    var key = "ch1"; //.. the set of elements in view. If its an array it's acceptable to use index position
+    var key = 0; //.. the set of elements in view. If its an array it's acceptable to use index position
     var channels = function(d) {return d;}; //.. function for retrieving the numeric data from input-data, by default we want row.ch1, row.ch2. But maybe we want to store data in an array
     var selection;// = d3.select("body").append("svg:svg");
     var color = d3.scale.category10(); // to generate a different color for each line
@@ -91,13 +91,11 @@ function LineChart() {
         if (typeof(svg) == "object") {
             d3.select(".chart").remove();
         }
-
         //.. make our chart... does it make sense to reinstantiate chart each time? can we still do transition
         svg = selection
             .attr("class","chart")
             .attr("width",width)
             .attr("height", height);
-       
         //.. Add a path element to our visualization. USe D3's line'
         line = d3.svg.line()
             .interpolate("basis") //.. makes jagged smooth
@@ -107,10 +105,11 @@ function LineChart() {
             .y(function(d) {
                 return y(channels(d)[key]);
             });
-        
+
         //... now I want to create a collection of path elements using datum hack
+        //.. ERROR BENEATH
         for (var i=0; i < data.length; i++ ) {
-            svg.append("path")
+             svg.append("path")
                 .datum(data[i]) //.. by doing datum we reserve the right to alternate which dimension of data is shown
                 .attr("class", "d3line")
                 .attr("d", line)
@@ -119,7 +118,7 @@ function LineChart() {
                     return color(d[0].condition); //.. assume all have same condition
                  });
         }
-       
+
        //.. the tick of the x axis, only set it if we max time has been set
         var x2;
         if (maxTime <0) x2=x;
@@ -142,7 +141,7 @@ function LineChart() {
             .attr("x", width)
             .attr("y", height - 6)
             .text("Time");
-            
+
        //.. Add a y axis
        yAxis = d3.svg.axis()
            .scale(y)

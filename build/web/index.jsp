@@ -86,7 +86,7 @@
                           <span class = "cursor"> </span> 
                           <input id = "userinput" ></input> 
                   </div> 
-                    <A HREF="realtime.jsp"><b> Realtime Data</b>
+                   <!-- <A HREF="realtime.jsp"><b> Realtime Data</b> -->
                 </div>  
                  <s:form beanclass ="stripes.action.ConsoleActionBean" id = "consoleForm" class ="unselectable"> 
                        <!--A message to the console--> 
@@ -109,7 +109,7 @@
 
 
         <!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
-        <script type="text/javascript" src="js/TSChart.js"></script> 
+        <script type="text/javascript" src="js/LineChart.js"></script> 
         <script type="text/javascript" src="js/BarChart.js"></script> 
         <script type="text/javascript" src="js/FreqBarChart.js"></script> 
         <!--<script type="text/javascript" src="js/chart.js"></script> -->

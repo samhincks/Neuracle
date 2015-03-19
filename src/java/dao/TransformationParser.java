@@ -226,6 +226,12 @@ public class TransformationParser extends Parser{
             //.. Generate a console message which includes num instance, num of each condition
             retString = "Created --" + e.getId() + "-- with " + e.matrixes.size() + " instances:: "
                     + " " + super.getColorsMessage(e); 
+            
+            if (exp.test) retString+= ":: Again, you can try to see if your naked eye"
+                    + " can distinguish meaningful differences in any of the trial-averaged channels of"
+                    + " this random dataset. You can also use machine learning to evaluate any differences. ;; "
+                    + " Drag the red, blue, and green circles so that they intersect the most recently created "
+                    + " instance-grouped dataset. Then type evaluate .";
         }
         return retString;
     }
@@ -259,6 +265,14 @@ public class TransformationParser extends Parser{
             
             //.. make the triplet layer
             retString += makeExperiment(cs, labelName);
+            if (cs.test) {
+                retString += ";;  Your former dataset has inherited a child with three groups of instances. "
+                        + " If you double click this dataset, you'll see each trial organized as a trial, colored by its"
+                        + " condition. Press shift to average these trials together to visualize any condition-dependent trends;; "
+                        + " Once you've done this - try limiting your analysis to the conditions a and b, by typing keep(a,b). ";
+                        
+            }
+            
         }
 
         return retString;

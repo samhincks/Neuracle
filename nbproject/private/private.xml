@@ -69,9 +69,14 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/MiscellaneousParser.java</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/web/css/consoleStyle.css</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/events.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/stripes/action/DataLayerActionBean.java</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/web/index.jsp</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/javainterface.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/datalayers/BiDAO.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/InputParser.java</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/web/css/style.css</file>
         </group>
     </open-files>

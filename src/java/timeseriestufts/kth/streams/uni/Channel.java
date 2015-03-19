@@ -17,6 +17,7 @@ import filereader.TSTuftsFileReader;
 import filereader.experiments.AJExperiment;
 import filereader.experiments.Beste;
 import java.util.ArrayList;
+import java.util.Random;
 import org.JMathStudio.DataStructure.Vector.Vector;
 import org.JMathStudio.SignalToolkit.FilterTools.IIRFilter;
 import org.JMathStudio.SignalToolkit.FilterTools.IIRFilterMaker;
@@ -621,6 +622,10 @@ public class Channel extends UnidimensionalLayer  {
     }
     
      public static Channel generate(int numReadings) {
+         Random r = new Random();
+        int Low = 1;
+        int High = 100000;
+        int id = r.nextInt(High-Low) + Low;
          
          if (numReadings == -1) {
              Channel c = new Channel(1, 128);
@@ -634,6 +639,7 @@ public class Channel extends UnidimensionalLayer  {
                   c.addPoint(point);
                   //if (i %255 ==0)System.out.println(c.getPointOrNull(i));
              }
+             c.id = id +"";
              return c;
          }
          
@@ -646,7 +652,7 @@ public class Channel extends UnidimensionalLayer  {
              c.addPoint(4);c.addPoint(3);c.addPoint(2);c.addPoint(1);c.addPoint(0);
              c.addPoint(1);c.addPoint(2);c.addPoint(3);c.addPoint(4);c.addPoint(5);
              c.addPoint(4);c.addPoint(3);c.addPoint(2);c.addPoint(1);c.addPoint(0);
-             
+             c.id = id +"";
              return c;
          }
          
@@ -655,6 +661,7 @@ public class Channel extends UnidimensionalLayer  {
         for(int i=0; i< numReadings; i++) {
              c.addPoint((float)Math.random()*10);
         }
+        c.id = id +"";
         return c;
     }
     /** Return a new channel where each point is the difference it and the previous

@@ -127,6 +127,7 @@ public class Instance extends ChannelSet{
         
         for (int i =0; i< numChannels; i++) {
             Channel ic = Channel.generate(numReadings);
+            ic.id = "random" +i;
             instance.addStream(ic);
         }
         return instance;

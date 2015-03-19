@@ -83,7 +83,7 @@ public  class InputParser {
             if (dl != null) {
                 currentDataLayer = dl.dataLayer;
             } 
- 
+   
             //.. retreive the techinique that's currently selected
             TechniqueDAO techDAO = ctx.getCurrentTechnique();
             if (techDAO != null) {
