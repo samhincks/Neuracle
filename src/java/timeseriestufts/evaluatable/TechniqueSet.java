@@ -30,7 +30,7 @@ public class TechniqueSet extends Technique{
         fs.addFeaturesFromConsole("slope^mean", "*", "*");
 
         ts.addTechnique(fs);
-        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.None, 180));
+        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 180));
         ts.addTechnique(new PassFilter());
         ts.addTechnique(new Transformation(Transformation.TransformationType.None));
 

@@ -132,7 +132,7 @@ public class MarkExperiment {
 
         //fs.addFeaturesFromConsole("slope", "*", "*");
         ts.addTechnique(fs);
-        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.None, 150));
+        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 150));
         ts.addTechnique(new PassFilter(PassFilter.FilterType.LowPass,0.1));
         ts.addTechnique(new Transformation(Transformation.TransformationType.ZScore));
         

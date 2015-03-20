@@ -172,7 +172,7 @@ public class BesteExperiment {
         fs.addFeaturesFromConsole("slope^mean^absmean^largest^smallest^sax-cmkfd^sax-lcbom", "*", "*");
 
         ts.addTechnique(fs);
-        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.None, 150));
+        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 150));
         ts.addTechnique(new Transformation(Transformation.TransformationType.None));
         ts.addTechnique(new PassFilter());
 
@@ -207,7 +207,7 @@ public class BesteExperiment {
 
         fs.addFeaturesFromConsole("mean", "*", "*");
         ts.addTechnique(fs);
-        ts.addTechnique(new AttributeSelection(ASType.None, 150));
+        ts.addTechnique(new AttributeSelection(ASType.none, 150));
         ts.addTechnique(new PassFilter(PassFilter.FilterType.LowPass, 1));
         ts.addTechnique(new Transformation(Transformation.TransformationType.None));
         

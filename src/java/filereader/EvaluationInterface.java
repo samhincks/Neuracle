@@ -188,7 +188,7 @@ public class EvaluationInterface {
         fs.addFeaturesFromConsole(features, "*", "*");*/
 
         ts.addTechnique(fs);
-        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.None, 0.8f));
+        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 0.8f));
         ts.addTechnique(new Transformation(Transformation.TransformationType.CalcOxy));
         ts.addTechnique(new PassFilter());//PassFilter.FilterType.LowPass, 0.35));
 
