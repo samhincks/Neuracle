@@ -103,6 +103,37 @@ public class BiDAO extends DataLayerDAO {
         dataLayer.setId(name );
         //dataLayer.setStatsMap();
     }
+    
+    /**
+     Return a correlation matrix between each pairwise channel . 
+     * Either SAX correlation 
+    **/
+    public JSONObject getCorrelationJSON() throws Exception {
+        jsonObj = new JSONObject();
+        ChannelSet channelSet = (ChannelSet)dataLayer;
+        System.out.println("CORRELEATION");
+        try {
+            jsonObj.put("id", getId());
+            JSONArray data = new JSONArray();
+            jsonObj.put("data", data); //.. data is array of arrays, index corresponds to order we see channel
+             for (Channel a  : channelSet.streams) { 
+                 JSONArray correlations = new JSONArray();
+                 data.put(correlations); // each channel has correlations to all other channels   
+                 for (Channel b : channelSet.streams) {
+                     int diff = b.getSAXDistanceTo(a, 5, 5); //.. MAGIC PARAMETER! 750 takes super long but what ive been doing
+                     correlations.put(diff);
+                     System.out.println(a.id + " " + b.id + " : " + diff);
+                 }
+             }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        jsonObj.put("type","correlation");
+        return jsonObj;
+
+    }
+    
      
     /**Return JavaScriptObject Notation of the datalayer
      * --Notation for movingLinegraph-- 

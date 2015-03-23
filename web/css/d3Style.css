@@ -35,6 +35,9 @@
     .chart rect {
        stroke: white;
     }
+    .corSquare {
+        fill: rgb(0, 12, 136);
+    }
 
     .x.axis {
       fill: none;
@@ -46,7 +49,7 @@
       stroke: #000;
       shape-rendering: crispEdges;
     }
-/*            path {
+/*  path {
         stroke: steelblue;
         stroke-width: 2;
         fill: none;

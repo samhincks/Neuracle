@@ -102,6 +102,10 @@ public class DataLayerActionBean extends BaseActionBean{
     public boolean getFrequency() { return frequency;}
     public void setFrequency(boolean frequency) {this.frequency = frequency;}
     
+    private static boolean correlation =false;
+    public boolean getCorrelation() { return correlation;}
+    public void setCorrelation(boolean correlation) {this.correlation = correlation;}
+    
     
     private boolean merge = false; //.. hacky, but set this to true if the channels should be merged
     public void setMerge(boolean merge) {this.merge = merge;} //.. set to false when its done
@@ -114,28 +118,38 @@ public class DataLayerActionBean extends BaseActionBean{
     public Resolution getJSON() throws JSONException{    
         try {
             ctx.setCurrentName(giver);
-            System.err.println(giver);
             DataLayerDAO dlGiver = ctx.dataLayersDAO.get(giver);         
             JSONObject jsonObj;
 
             //.. if we want to see data
-            if (!stats && !frequency){ 
-               jsonObj  = dlGiver.getJSON();
-               
+            if (!stats && !frequency && !correlation){ 
+                System.out.println("2d view");
+                 jsonObj  = dlGiver.getJSON();
+            }
+            else if (correlation) {
+                 System.out.println("Corr view");
+                if (!(dlGiver instanceof BiDAO)) {
+                    throw new Exception(); //.. fail silently
+                } else {
+                    BiDAO bDAO = (BiDAO) dlGiver;
+                    jsonObj = bDAO.getCorrelationJSON();
+                }
             }
             
-            
+            //.. return a streaming view of the frequencies present in the data
             else if(frequency) {
+                System.out.println("freq view");
                 if (!(dlGiver instanceof TriDAO)) throw new Exception(); //.. fail silently
                 else{
                     TriDAO tDAO = (TriDAO) dlGiver;
                     jsonObj = tDAO.getFreqDomainJSON();
                 }
-                
             } 
+          
             
             //.. if we want to see a stats representation of performance. 
             else {
+                System.out.println("perf view");
                 Performances p = ctx.getPerformances();
                 
                 //.. this won't work on anythign but an experiment that has been evaluated

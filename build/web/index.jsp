@@ -38,6 +38,8 @@
                    <s:text name = "receiver" id = "receiver" style ="visibility:hidden"/>     
                    <s:text name = "stats" id = "stats" style ="visibility:hidden"/> 
                    <s:text name = "frequency" id = "frequency" style ="visibility:hidden"/> 
+                   <s:text name = "correlation" id = "correlation" style ="visibility:hidden"/> 
+
 
                 </s:form>
                 
@@ -103,31 +105,34 @@
         <script type="text/javascript" src="js/lib/jquery.min.js"></script> 
         <script type="text/javascript" src="js/lib/jquery-ui-1.8.22.custom.min.js"></script>  
         <script type="text/javascript" src="js/lib/jquery.jsPlumb-1.3.3-all.js"></script> 
-       <!-- <script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
          <script type="text/javascript" src="js/lib/jquery.pep.js"></script> 
          <script type="text/javascript" src="js/lib/d3.min.js"></script>  
 
 
-        <!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
-        <script type="text/javascript" src="js/LineChart.js"></script> 
-        <script type="text/javascript" src="js/BarChart.js"></script> 
-        <script type="text/javascript" src="js/FreqBarChart.js"></script> 
-        <!--<script type="text/javascript" src="js/chart.js"></script> -->
-        <script type="text/javascript" src="js/descriptionarea.js"></script>
-        <script type="text/javascript" src="js/streamchart.js"></script> 
-        <script type="text/javascript" src="js/chartarea.js"></script>
-        <script type="text/javascript" src="js/datalayerarea.js"></script> 
-        <script type="text/javascript" src="js/plumb.js"></script> 
-        <script type="text/javascript" src="js/plumbtechniques.js"></script> 
-        <script type="text/javascript" src="js/datalayers.js"></script> 
-        <script type="text/javascript" src="js/techniques.js"></script> 
-        <script type="text/javascript" src="js/consolearea.js"></script> 
+        <!--VISUALIZATIONS-->
+        <script type="text/javascript" src="js/visualization/LineChart.js"></script> 
+        <script type="text/javascript" src="js/visualization/BarChart.js"></script> 
+        <script type="text/javascript" src="js/visualization/FreqBarChart.js"></script> 
+        <script type="text/javascript" src="js/visualization/movingLinegraph.js"></script> 
+        <script type="text/javascript" src="js/visualization/streamchart.js"></script> 
+        <script type="text/javascript" src="js/visualization/CorrelationMatrix.js"></script> 
+
+
+        <!--AREAS-->
+        <script type="text/javascript" src="js/area/descriptionarea.js"></script>
+        <script type="text/javascript" src="js/area/chartarea.js"></script>
+        <script type="text/javascript" src="js/area/datalayerarea.js"></script> 
+        <script type="text/javascript" src="js/area/objects/plumb.js"></script> 
+        <script type="text/javascript" src="js/area/objects/plumbtechniques.js"></script> 
+        <script type="text/javascript" src="js/area/objects/datalayers.js"></script> 
+        <script type="text/javascript" src="js/area/objects/techniques.js"></script> 
+        <script type="text/javascript" src="js/area/consolearea.js"></script> 
+        <script type="text/javascript" src="js/area/objects/labeler.js"></script> 
+        
+        <!--INTERFACE -->
         <script type="text/javascript" src="js/javainterface.js"></script> 
         <script type="text/javascript" src="js/events.js"></script> 
-        <script type="text/javascript" src="js/labeler.js"></script> 
         
-        <script type="text/javascript" src="js/sample_data.js"></script> 
-        <script type="text/javascript" src="js/movingLinegraph.js"></script> 
 
          
     </body>

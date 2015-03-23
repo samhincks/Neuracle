@@ -12,7 +12,7 @@ var channelSurface = new ChannelSurface();
 var plumb = new Plumb();
 var datalayerArea = new DatalayerArea("#content");
 var plumbTechniques = new PlumbTechniques();
-var address = "http://localhost:8080/SensorMining/"; // "http://sensormining.herokuapp.com/"; //.. the address of the back-end
+var address = "http://localhost:8080/SensorMining/";/*"http://sensormining.herokuapp.com/";*/ //.. the address of the back-end
 
 /* When document is loaded, do init, ie set listeners etc. 
  */
@@ -110,8 +110,11 @@ function reinit() {
     $(".dropChannel").dblclick(function (e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         console.log(e.currentTarget.id);
+        console.log(curKey);
         if (curKey==18)
             javaInterface.postToDataLayer("frequency");
+        else if (curKey ==91)
+            javaInterface.postToDataLayer("correlation");
         else
             javaInterface.postToDataLayer();
     });

@@ -83,11 +83,20 @@ function JavaInterface() {
     /**Having selected an element, get a stream of its data to display it. */
     this.postToDataLayer = function(message) {
         if (arguments.length) {
-            if (message == "frequency")
+            if (message == "frequency"){
                 $('#frequency').val(true);
+                $('#correlation').val(false);
+            
+            }
+            else if (message =="correlation") {
+                $('#correlation').val(true);
+                $('#frequency').val(false);
+
+            }
         }
         else {
             $('#frequency').val(false);
+            $('#corr').val(false);
         }
         $('#merge').val(false); //.. so that we don't call a method that merges datalayers'
         $('#stats').val(false); 
