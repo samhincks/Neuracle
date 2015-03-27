@@ -55,6 +55,9 @@ public class Instance extends ChannelSet{
     /**Prepare a set of attributes according to a description; then extract these attributes.
      If they've already been preset don't redo*/
     public void extractAttributes(FeatureSet fs) throws Exception{ 
+        if (attributes != null) {
+           // System.err.println("Already extracted attributes. Proceeding to do it again");
+        }
         if (super.minPoints() < 2) throw new Exception("Unable to extract attributes. "
                 + " There needs to be at least 2 readings in every channel " + super.getParent() + 
                 " violates this. Condition is " + this.condition);

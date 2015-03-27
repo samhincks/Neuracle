@@ -365,13 +365,35 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             Instance instance = new Instance(t.name, t.start, t.end);
 
             for (Channel c : streams) {
-                Channel subChannel = c.getSample(t.start, t.end);
+                Channel subChannel = c.getSample(t.start, t.end,false);
                 instance.addStream(subChannel);
             }
             experiment.addMatrix(instance);
         }
         
         return experiment;
+    }
+    
+    public ArrayList<ChannelSet> partitionByLabel(String labelName) throws Exception {
+        if (markers == null) {
+            throw new Exception("Must have markers to know where to split");
+        }
+        labelName = labelName.toLowerCase();
+        Markers relevantMarkers = getMarkersWithName(labelName);
+        ArrayList<ChannelSet> retSets = new ArrayList();
+        //.. Build a new Channel with new points for each trial
+        for (Trial t : relevantMarkers.trials) {
+            ChannelSet cs = new ChannelSet(t.start, t.end);
+
+            for (Channel c : streams) {
+                Channel subChannel = c.getSample(t.start, t.end,false);
+                cs.addStream(subChannel);
+            }
+            retSets.add(cs);
+        }
+
+        return retSets;
+        
     }
   
     /**Return two-part array, first is Experiment second is ChannelSet, the idea
@@ -394,7 +416,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         ChannelSet cs = this.getCopy(start, end);
         
         for (Channel c : this.streams) {
-            cs.addStream(c.getSample(start, end));
+            cs.addStream(c.getSample(start, end,false));
         }
         return cs;
     }
@@ -732,6 +754,9 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
 
     public void printInfo() {
         System.out.println("There are " + this.getChannelCount() + " channels with at most " + this.maxPoints());
+        String chanString ="";
+        for (Channel c : streams)  {chanString += c.id +", ";}
+        System.out.println(chanString);    
         if (markers!= null && markers.size()>0) {
             Markers first = markers.get(0);
             System.out.println("    Found " + markers.size() + " markers with realStart at " + getRealStart() + " and end at " + getRealEnd());

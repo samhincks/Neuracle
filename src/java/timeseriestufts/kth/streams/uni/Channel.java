@@ -21,13 +21,17 @@ import java.util.Random;
 import org.JMathStudio.DataStructure.Vector.Vector;
 import org.JMathStudio.SignalToolkit.FilterTools.IIRFilter;
 import org.JMathStudio.SignalToolkit.FilterTools.IIRFilterMaker;
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.distribution.FDistribution;
+import org.apache.commons.math.distribution.FDistributionImpl;
+import org.apache.commons.math.linear.SingularMatrixException;
+import org.apache.commons.math.stat.regression.OLSMultipleLinearRegression;
 import org.apache.commons.math.stat.regression.SimpleRegression;
+import org.apache.commons.math.util.MathUtils;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
-
 import org.apache.commons.math3.transform.TransformType;
-import org.apache.commons.math.util.MathUtils;
 import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.tri.Experiment;
 
@@ -99,7 +103,7 @@ public class Channel extends UnidimensionalLayer  {
      * @param after -- number of points after X
      * @return SynchedChannel
      */
-    public Channel getSample(int start, int end) throws Exception { 
+    public Channel getSample(int start, int end, boolean stampinname) throws Exception { 
         if (start > end || end > numPoints) throw new Exception("Illegal arguments" + start + "  > " + end + " or " + end + " > " + numPoints);
         //.. extract total and firstTimestamp
         int total = end - start; //.. +1 since we include the middle frame
@@ -114,7 +118,10 @@ public class Channel extends UnidimensionalLayer  {
         }
 
         Channel sample = new Channel(framesize, samplePoints);
-        sample.setId(id + "-" + start + "to" + end);
+        if(stampinname)
+            sample.setId(id + "-" + start + "to" + end);
+        else
+            sample.setId(id);
 
         return sample;
     }
@@ -643,6 +650,7 @@ public class Channel extends UnidimensionalLayer  {
              return c;
          }
          
+         
          ///. if 0, then generate actual readings
          if (numReadings ==0) {
              Channel c = new Channel(1, 30); 
@@ -697,38 +705,43 @@ public class Channel extends UnidimensionalLayer  {
         }
         return peaks;
     }
-    
-    /** Return an estimate of the pulse in the time domain. Across all channels,
-     * this method is not as effective as the fourier transform, but it works very
-     * well for channesl 12,13,14,15, which are probe B 830. 
-     **/
+    /**
+     * Return an estimate of the pulse in the time domain. Across all channels,
+     * this method is not as effective as the fourier transform, but it works
+     * very well for channesl 12,13,14,15, which are probe B 830. 
+     *
+     */
     public int getPulse() throws Exception {
         Channel c = this.movingAverage(2, true);
         c = c.highpass(0.6f, true); //.. optimal for quick test
         c = c.lowpass(2, true);
         ArrayList<Integer> peaks = c.getPeaks(true);
-        int peaksPerMin = (int) (peaks.size() / (c.numPoints/ this.sampleRate)*60);
+        int peaksPerMin = (int) (peaks.size() / (c.numPoints / this.sampleRate) * 60);
         return peaksPerMin;
     }
-    
-    /** Return the heart-rate variability, the standard deviation of RR intervals.
-     **/
+
+    /**
+     * Return the heart-rate variability, the standard deviation of RR
+     * intervals.
+     *
+     */
     public float getHRVariability() throws Exception {
         Channel c = this.movingAverage(2, true);
         c = c.highpass(0.6f, true); //.. optimal for quick test
         c = c.lowpass(2, true);
         ArrayList<Integer> peaks = c.getPeaks(true);
-         c = new Channel(this.framesize, peaks.size());
-        for (int i =1; i < peaks.size();i++) {
-            int distance = peaks.get(i) - peaks.get(i-1);
-            float milliseconds = distance *(1/sampleRate) *1000;
+        c = new Channel(this.framesize, peaks.size());
+        for (int i = 1; i < peaks.size(); i++) {
+            int distance = peaks.get(i) - peaks.get(i - 1);
+            float milliseconds = distance * (1 / sampleRate) * 1000;
             c.addPoint(milliseconds);
         }
         return (float) c.getMean();
     }
-    public static void testPulse() throws Exception {
-        
-        try{
+
+    private static void testPulse() throws Exception {
+
+        try {
             String[] fnirsFiles = AJExperiment.getFiles(true);
             String[] hrFiles = AJExperiment.getFiles(false);
             float avgDif = 0;
@@ -740,7 +753,7 @@ public class Channel extends UnidimensionalLayer  {
                 ChannelSet cs = f.readData(",", fnirsFiles[k]);
                 f = new TSTuftsFileReader();
                 ChannelSet cs2 = f.readData(",", hrFiles[k]);
-                    //System.out.println("xxxxxxxxxxzxzxxxxxxxxxxxx");
+                //System.out.println("xxxxxxxxxxzxzxxxxxxxxxxxx");
                 //System.out.println("Now: " +fnirsFiles[k]);
                 Experiment e = cs.splitByLabel("condition");
                 Channel test = new Channel(16);
@@ -760,20 +773,130 @@ public class Channel extends UnidimensionalLayer  {
             System.out.println((avgDif / 16.0));
             System.out.println((avgDif2 / 16.0));
 
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-            catch(Exception e){e.printStackTrace();}
+
+    }
+
+
+    
+    /* Search for the best  */
+    public int grangerLagSearch(Channel predictor, int [] lags) {
+        double minP =1;
+        int minIndex = -1;
+        
+        for (int i = 0; i < lags.length; i++) {
+            int curLag = lags[i];
+            double curP = granger(predictor, curLag);
+            if (curP < minP){
+                minP = curP;
+                minIndex =i;
+            }
+        }
+       
+        return (minIndex == -1) ? -1 : lags[minIndex];
+        
         
     }
     
-     
+    
+    /***** GRANGER CAUSALITY TEST *********/
+    /**
+     * Returns p-value for Granger causality test.
+     *
+     * @param y - predictable variable
+     * @param x - predictor
+     * @param L - lag, should be 1 or greater.
+     * @return p-value of Granger causality
+     * 
+     * NOTE: a lag of 1 can often result in uninvertible matrix error
+     * Curiously, only some lags work. 
+     * Good ones include: 155, 80, 100
+     */
+    public double granger(Channel predictor, int L){
+        OLSMultipleLinearRegression h0 = new OLSMultipleLinearRegression();
+        OLSMultipleLinearRegression h1 = new OLSMultipleLinearRegression();
+
+        double[][] laggedY = createLaggedSide(L, data);
+
+        double[][] laggedXY = createLaggedSide(L, predictor.data, data);
+        
+        int n = laggedY.length;
+
+        h0.newSampleData(strip(L, data), laggedY);
+        h1.newSampleData(strip(L, data), laggedXY);
+
+        try{ 
+            double rs0[] = h0.estimateResiduals();
+            double rs1[] = h1.estimateResiduals();
+
+
+            double RSS0 = sqrSum(rs0);
+            double RSS1 = sqrSum(rs1);
+
+            double ftest = ((RSS0 - RSS1)/L) / (RSS1 / ( n - 2*L - 1));
+            // return ftest;
+            
+            FDistribution fDist = new FDistributionImpl(L, n-2*L-1);
+            try {
+                double pValue = 1.0 - fDist.cumulativeProbability(ftest);
+                return  pValue;
+            } catch (MathException e) {
+                return 1;
+            } 
+        }
+        catch(SingularMatrixException e) {
+            return 1;
+        }
+
+    }
+
+
+    private  double[][] createLaggedSide(int L, float[]... a) {
+        int n = a[0].length - L;
+        double[][] res = new double[n][L*a.length+1];
+        for(int i=0; i<a.length; i++){
+            float[] ai = a[i];
+            for(int l=0; l<L; l++){
+                for(int j=0; j<n; j++){
+                    res[j][i*L+l] = ai[l+j];
+                }
+            }
+        }
+        for(int i=0; i<n; i++){
+            res[i][L*a.length] = 1;
+        }
+        return res;
+    }
+
+    private  double sqrSum(double[] a){
+        double res = 0;
+        for(double v : a){
+            res+=v*v;
+        }
+        return res;
+    }
+
+
+     private  double[] strip(int l, float[] a){
+        double [] a2 = new double[a.length];
+         for (int i = 0; i < a.length; i++) {
+             a2[i] = (double)a[i];
+         }
+        double[] res = new double[a2.length-l];
+        System.arraycopy(a2, l, res, 0, res.length);
+        return res;
+    }    
+ 
     public static void main(String [] args) {
         try{ 
-            int numPoints = -1;
+            int numPoints = 100;
             Channel c = generate(numPoints);
-            Channel b = generate(87);
+            Channel b = generate(numPoints);
             
             int TEST =-1; //.. we have our datalayer, now set what we want to test
-            String test = "pulseThorough";
+            String test = "granger";
             
             if (test.equals("rrintervalPerfSinusoid")) {
                 ArrayList<Integer> peaks = c.getPeaks(true);
@@ -829,7 +952,7 @@ public class Channel extends UnidimensionalLayer  {
             }
             
             if (TEST ==4) {
-                Channel fc = c.getSample(2,9);
+                Channel fc = c.getSample(2,9, false);
                 fc.data[0] = 222.4f;
                 fc.printStream();
                 c.printStream();
@@ -944,6 +1067,12 @@ public class Channel extends UnidimensionalLayer  {
                 c.printStream();
                 System.out.println("STD: "+ c.getStdDev());
             }
+            
+            if (test.equals("granger"))  {
+                double pred = c.granger(b, 3);
+                System.out.println(pred);
+            }
+            
         }
         catch (Exception e) {e.printStackTrace();} 
         

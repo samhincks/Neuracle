@@ -119,8 +119,8 @@ public class BiDAO extends DataLayerDAO {
              for (Channel a  : channelSet.streams) { 
                  JSONArray correlations = new JSONArray();
                  data.put(correlations); // each channel has correlations to all other channels   
-                 for (Channel b : channelSet.streams) {
-                     int diff = b.getSAXDistanceTo(a, 5, 5); //.. MAGIC PARAMETER! 750 takes super long but what ive been doing
+                 for (Channel b : channelSet.streams) {  
+                     int diff = b.getSAXDistanceTo(a,50, 5); //.. MAGIC PARAMETER! 750 takes super long but what ive been doing
                      correlations.put(diff);
                      System.out.println(a.id + " " + b.id + " : " + diff);
                  }

@@ -195,6 +195,25 @@ public class EvaluationInterface {
         return ts;
     }
     
+    public static TechniqueSet getTechniqueSetID() throws Exception {
+        TechniqueSet ts = new TechniqueSet("Default");
+
+        //.. add ML, featureSet
+        ts.addTechnique(new WekaClassifier(WekaClassifier.MLType.smo));
+        FeatureSet fs = new FeatureSet("fs");
+        fs.addFeaturesFromConsole("*", "*", "*"); //.. -> 57.5 with 10%, 65% with 50
+        //fs.addFeaturesFromConsole("saxpair-200-5", "*", "WHOLE"); //. 57.5% with 10%
+
+       // fs.addFeaturesFromConsole("saxpair-5-5", "1:-1", "WHOLE"); //.. note adding channels doesnt work
+
+        ts.addTechnique(fs);
+        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.info, 0.35f));
+        ts.addTechnique(new Transformation(Transformation.TransformationType.None));
+        ts.addTechnique(new PassFilter());//PassFilter.FilterType.LowPass, 0.35));
+        return ts;
+
+    }
+    
       public static ArrayList<TechniqueSet> getTechniqueSetsByML() throws Exception {
         ArrayList<TechniqueSet> ts = new ArrayList();
         

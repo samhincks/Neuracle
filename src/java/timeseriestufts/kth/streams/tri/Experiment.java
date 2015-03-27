@@ -61,6 +61,8 @@ public class Experiment extends TridimensionalLayer<Instance>{
     //.. the number of readings per second in this experiment
     public float readingsPerSec;
     
+    //.. whether or not we've extracted the attributes already
+    public boolean extracted = false; 
     /**Note Experiment not properly constructed after initialization. Must call makeInstances()*/
     /**Use this constructor if its the first time we evaluate this experiment*/
     public Experiment(String filename, Classification c, float readingsPerSec) throws Exception{
@@ -83,6 +85,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
             super.addMatrix(i);
         }
     }
+     
     
     
     /** Evaluate the data according to the parameters specified in the techniqueset. 
@@ -104,7 +107,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
             this.numFolds = this.matrixes.size();
         else
             this.numFolds = numFolds;
-        
+
         runCrossValidation();
     }
     
@@ -115,10 +118,12 @@ public class Experiment extends TridimensionalLayer<Instance>{
     
     /**Extract the attribtues of every instance.**/
     public void extractAttributes(FeatureSet fs) throws Exception{
+
         for (int i=0; i < matrixes.size(); i++) {
             Instance inst = (Instance)matrixes.get(i);
             inst.extractAttributes(fs);
         }
+        extracted = true;
     }
     
     
@@ -180,11 +185,12 @@ public class Experiment extends TridimensionalLayer<Instance>{
         //.. Do the rest of the work -- feature extraction - > machine learning within each fold
         for (int j =0; j < folds.length; j++) {
              Fold fold = folds[j];
+             fold.training.extracted = extracted;
              WekaClassifier wc = fold.training.train(this.getTechniqueSet());
              
-             wc.test(fold.testing,this.getTechniqueSet(), predictions, fold.training.asAlgosApplied);
-            // fold.buildClassifier(this.getTechniqueSet());
-            // fold.testClassifier(this.predictions); 
+             wc.test(fold.testing,this.getTechniqueSet(), predictions, fold.training.asAlgosApplied); 
+             System.out.println("Experiment.runCrossValidation() completed " +j);
+
         }
          
         //.. save the stats, then forget about them in the experiment
@@ -391,7 +397,9 @@ public class Experiment extends TridimensionalLayer<Instance>{
         this.techniqueSet = ts;
         
         //.. extract features
-        this.extractAttributes(ts.getFeatureSet());
+        if(!extracted) {
+            this.extractAttributes(ts.getFeatureSet());
+        }
         
         //.. get instances from my instance objects, with all attributes extracted
         weka.core.Instances instances = getWekaInstances(true); //.. try to extract attribtues if specified
@@ -404,7 +412,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
         wc.lastTrainedClassification = this.classification;
         wc.lastTechniqueTested = ts;
         wc.timesTrained++;
-        
+
         //.. return it, trained
         return wc;
     }
@@ -573,6 +581,23 @@ public class Experiment extends TridimensionalLayer<Instance>{
         return css;
     }
     
+    /** Change classification and the value of all instances in the Experiment
+     **/
+    public void changeClassificationToAll(Classification c, String val) throws Exception {
+        if (!(c.hasCondition(val))) throw new Exception(c.name + " doesnt support " + val);
+        this.classification = c;
+        for (Instance ins: this.matrixes) {
+            ins.condition= val;
+        }
+    }
+    
+    public void addExperiment(Experiment e) throws Exception{
+        if (e.classification != this.classification) throw new Exception("Experiments must have the same classifications");
+        for (Instance ins : e.matrixes) {
+            this.addMatrix(ins);
+        }
+    }
+    
     
     public static void main(String [] args) {
         try{
@@ -596,6 +621,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
         }
         catch(Exception e) {e.printStackTrace();}
     }
+
 
     
 }

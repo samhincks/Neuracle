@@ -41,15 +41,23 @@ public class FeatureDescription extends Technique{
     public static class Statistic extends Technique {
 
         public boolean isNumeric() {
-            return (!(stat == Stat.sax));
+            return (!(stat == Stat.sax || stat == Stat.granger));
+        }
+        
+        public boolean isPair() {
+            return (stat == Stat.saxpair || stat == Stat.granger);
         }
 
         
-        public static enum Stat {mean, smallest, largest, fwhm, slope, absslope, stddev, secondder, t2p, absmean, sax, saxdist, bestfit, bfintercept, freq};
+        public static enum Stat {mean, smallest, largest, fwhm, slope, absslope, 
+            stddev, secondder, t2p, absmean, sax, saxdist, bestfit, bfintercept, freq,
+            granger, saxpair};
+        
         public Stat stat;
         private int alphabetLength; //.. only for Nominal SAX
         private int numLetters; //.. only for Nominal SAX
         private int freqInt; //. only for frequency domain
+        private int lag; //.. only for granger
         private String saxString;
         
         /*regular stat*/
@@ -57,14 +65,19 @@ public class FeatureDescription extends Technique{
             this.stat = type;
             this.id = type.toString();
         }
-        public Statistic(Stat type, int freq) throws Exception{
-            if (type != Stat.freq ) throw new Exception ("Must be Freq");
+        public Statistic(Stat type, int intParam) throws Exception{
+            if (type == Stat.freq ) 
+                this.freqInt = intParam;
+            else if (type == Stat.granger ) 
+                this.lag = intParam;
+            else throw new Exception ("Must be Freq or Granger");
             stat = type; //.. No choice here!
-            this.freqInt = freq;
+
         }
         /**PARSE: SAX-2-3 for nominal feature with a class for each possible string of alpha 2 and numletters 3*/
         public Statistic(Stat type, int alphabetLength, int numLetters) throws Exception{
-            if (type != Stat.sax ) throw new Exception ("Must be SAX or SAXDist");
+            System.out.println(type);
+            if (type != Stat.sax && type != Stat.saxpair) throw new Exception ("Must be SAX or SAXDist");
             stat = type; //.. No choice here!
             this.alphabetLength = alphabetLength;
             this.numLetters = numLetters;
@@ -86,13 +99,19 @@ public class FeatureDescription extends Technique{
             return this.freqInt;
         }
         
+        public int getLag() throws Exception {
+            if (!(stat == Stat.granger)) 
+                throw new Exception("lag only applies to granger");
+            return this.lag;
+        }
+
         public int getAlphaLength() throws Exception {
-            if (!(stat == Stat.sax || stat == Stat.saxdist)) throw new Exception("Alphalength only applies to SAX");
+            if (!(stat == Stat.sax || stat == Stat.saxdist || stat == Stat.saxpair)) throw new Exception("Alphalength only applies to SAX");
             return this.alphabetLength;
         }
         
         public int getNumLetters() throws Exception {
-            if (!(stat == Stat.sax || stat == Stat.saxdist)) throw new Exception("NumLetters only applies to SAX");
+            if (!(stat == Stat.sax || stat == Stat.saxdist || stat == Stat.saxpair)) throw new Exception("NumLetters only applies to SAX");
             return this.numLetters;
         }
         
@@ -115,20 +134,31 @@ public class FeatureDescription extends Technique{
                    if( parts.length ==3) {
                        int alpha = Integer.parseInt(parts[1]);
                        int numLetters = Integer.parseInt(parts[2]);
-                       retStat = new Statistic(Stat.sax, alpha, numLetters);
+                       if(stat.startsWith("saxpair")) 
+                           retStat = new Statistic(Stat.saxpair, alpha, numLetters);
+                       else
+                           retStat = new Statistic(Stat.sax, alpha, numLetters);
                    }
                    
-                   else {//if(parts.length==2) {
+                   else if(parts.length==2) {
                        String saxString = parts[1];
                        int numLetters = saxString.length();
                        int alpha = SAXAttribute.getLatestLetter(saxString);
                        retStat = new Statistic(Stat.saxdist, alpha, numLetters, saxString);
                    }
+                   else
+                       throw new Exception("Wrong number of parameters for sax stat: " + stat);
                }
                else if (stat.startsWith("freq")) {
                    String [] parts =stat.split("-");
                    int index = Integer.parseInt(parts[1]);
                    retStat = new Statistic(Stat.freq, index);
+               }
+               
+               else if(stat.startsWith("granger")) {
+                   String[] parts = stat.split("-");
+                   int index = Integer.parseInt(parts[1]);
+                   retStat = new Statistic(Stat.granger, index);
                }
                else{
                   retStat = new Statistic(Stat.valueOf(stat)); //.. make more advanced
@@ -235,7 +265,7 @@ public class FeatureDescription extends Technique{
     /**  A little messy, but this bridge structure is necessary
      for dynamic feature creation that does not know the underlying datalayer**/
     public static class FSDataLayer extends Technique{
-       public static enum Type {ALL, MERGED, SINGLETON, SEVERAL}
+       public static enum Type {ALL, MERGED, SINGLETON, PAIR}
        public Type type;
        public String channel; 
        public String endChannel;
@@ -249,10 +279,11 @@ public class FeatureDescription extends Technique{
            }
        }
        
-       public FSDataLayer(String start, String end){
+       /**Use for range of channels as well as pair of channels**/
+       public FSDataLayer(String start, String end, Type type){
            this.channel = start;
            this.endChannel = end;
-           this.type = Type.SEVERAL;
+           this.type = type;
            this.id += start+"-"+end;
        }
        

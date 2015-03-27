@@ -86,15 +86,26 @@ function reinit() {
     $("body").keydown(function (e) { 
         if (e.which == 16)
             shiftPressed =true;
+        if (e.which == 18)
+            freqKey = true;
+        if (e.which == 91)
+            corKey = true;
+        
     });  
     
     //.. and set it back up if we are releasing the key
     $("body").keyup(function (e) { 
         if (e.which == 16)
             shiftPressed =false;
+        if (e.which == 18)
+            freqKey = false;
+        if (e.which == 91)
+            corKey = false;
+            
     });  
     var shiftPressed = false; //.. for multi-selection
-    
+    var freqKey = false;
+    var corKey = false;
      //.. if a channel set is clicked
     $(".dropChannel").mousedown(function(e){
         if(!shiftPressed)
@@ -111,9 +122,9 @@ function reinit() {
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         console.log(e.currentTarget.id);
         console.log(curKey);
-        if (curKey==18)
+        if (freqKey)
             javaInterface.postToDataLayer("frequency");
-        else if (curKey ==91)
+        else if (corKey)
             javaInterface.postToDataLayer("correlation");
         else
             javaInterface.postToDataLayer();

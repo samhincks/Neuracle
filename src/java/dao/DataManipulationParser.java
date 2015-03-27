@@ -14,6 +14,7 @@ import dao.techniques.TechniqueDAO;
 import dao.techniques.TechniquesDAO;
 import java.util.ArrayList;
 import java.util.Hashtable; 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.evaluatable.AttributeSelection;
@@ -148,6 +149,12 @@ public class DataManipulationParser extends Parser{
                 + " ultimate putting it into the best visualizable form";
         commands.put(command.id, command);
         
+        //-- granger 
+        command = new Command("granger");
+        command.documentation = "Estimates causality between all pairwise voxels, returning a visualization ";
+        command.parameters = "LAG = distance to estimate causation between channels";
+        commands.put(command.id, command);
+        
         
     }
 
@@ -236,6 +243,12 @@ public class DataManipulationParser extends Parser{
             c.retMessage = wireless(parameters);
             c.action = "reload";
         }
+        
+        else if (command.startsWith("granger")) {
+            c = commands.get("granger");
+            c.action = "cmatrix";
+            c.data = granger(parameters);
+        }
 
 
         if (c == null) {
@@ -244,6 +257,36 @@ public class DataManipulationParser extends Parser{
         return c.getJSONObject();
     }
 
+    /**
+     * Granger : return a JSONObject showing correlation between channels *
+     */
+    public JSONObject granger(String[] parameters) throws Exception{
+        int LAG =155;
+        if (parameters.length >0) LAG = Integer.parseInt(parameters[0]);
+        
+        if (!(currentDataLayer instanceof ChannelSet)) throw new Exception("Selected layer must be a 2D Channelset");
+        
+        ChannelSet channelSet = (ChannelSet)currentDataLayer;
+        
+        JSONObject jsonObj = new JSONObject();        
+        jsonObj.put("id", channelSet.getId());
+        JSONArray data = new JSONArray();
+        jsonObj.put("data", data); //.. data is array of arrays, index corresponds to order we see channel
+       
+        //.. get granger correlation between all channels 
+        for (Channel a : channelSet.streams) {
+            JSONArray correlations = new JSONArray();
+            data.put(correlations); // each channel has correlations to all other channels   
+            for (Channel b : channelSet.streams) {
+                double diff = a.granger(b, LAG); 
+                correlations.put(diff);
+            }
+        }
+       
+        jsonObj.put("type", "correlation");
+        return jsonObj;
+        
+    }
     private String getHRV(String [] parameters) throws Exception {
         int channel = 0;
         String retString = "";
@@ -1104,4 +1147,5 @@ public class DataManipulationParser extends Parser{
         }
         return retString;
     }
+    
 }

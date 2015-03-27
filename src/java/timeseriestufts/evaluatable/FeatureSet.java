@@ -172,7 +172,7 @@ public class FeatureSet extends Technique{
              if (values.length!=2) 
                  throw new Exception("Found more than 2 values referenced between : when interpreting "
                          + " the datalayer parameter");
-             FSDataLayer fsDataLayer = new FSDataLayer(values[0], values[1]);
+             FSDataLayer fsDataLayer = new FSDataLayer(values[0], values[1],FSDataLayer.Type.PAIR);
              layers.add(fsDataLayer);
          }
          
@@ -211,13 +211,17 @@ public class FeatureSet extends Technique{
         if(stat.equals("*")) {
             for (Statistic.Stat t : Statistic.Stat.values()) {
                 Statistic statistic;
-                System.out.println(t);
+                System.out.println("FeatureSet.parseStatString(): " +t);
                 
                 //.. exclude the stats that cannot be simply instantiated
                 if((t == Statistic.Stat.sax  ))
                      statistic = new Statistic(t,2,3);
                 else if (t ==Statistic.Stat.saxdist)
                     statistic = new Statistic(t, 20, 3, "ata");
+                else if (t ==Statistic.Stat.granger)
+                    statistic = new Statistic(t, 5);
+                else if (t == Statistic.Stat.saxpair)
+                    statistic = new Statistic(t, 2,3);
                 else
                     statistic = new Statistic(t); //.. default = alpha 3, length =2
                if (!(t == Statistic.Stat.freq))

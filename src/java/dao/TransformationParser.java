@@ -71,6 +71,13 @@ public class TransformationParser extends Parser{
         command.documentation = "With a raw channel set selected, split it, to transform it into "
                 + " '3D' dataset organized in terms labels and channels";
         command.parameters = "conditionName = the condition to split by";
+        command.action = "reload"; 
+        
+        //-- PARTITION
+        command = new Command("partition");
+        command.documentation = "With a raw channel set selected, partition it into "
+                + "a new channelset for each trial";
+        command.parameters = "conditionName = the condition to partition on";
         command.action = "reload";
         commands.put(command.id, command);
         
@@ -110,6 +117,12 @@ public class TransformationParser extends Parser{
             c.retMessage = this.split(parameters);
         }
 
+        //.. split(label2) transform a Channel Set to an Experiment by dividing
+        else if (command.startsWith("partition")) {
+            c = commands.get("partition");
+            c.retMessage = this.partition(parameters);
+        }
+        
         if (c == null) {
             return null;
         }
@@ -233,6 +246,37 @@ public class TransformationParser extends Parser{
                     + " Drag the red, blue, and green circles so that they intersect the most recently created "
                     + " instance-grouped dataset. Then type evaluate .";
         }
+        return retString;
+    }
+    
+    private String partition(String [] parameters) throws Exception {
+        String labelName = parameters[0];
+        labelName = labelName.replace(")", ""); //.. remove )
+        labelName = labelName.replace("\"", "");
+        
+        //.. get all chansets
+        ArrayList<ChannelSet> chanSets = getChanSets();
+        String retString = "";
+        for (ChannelSet cs : chanSets) {
+            //.. In case there is a channelset which has labels, but not markers, add markers
+            //... the labels would be saved in the biDOA and this would only be used in conjunction with a DB
+            BiDAO biDAO = (BiDAO) ctx.getDataLayers().get(cs.id);
+            if (biDAO.labels != null) {
+                for (Labels l : biDAO.labels) {
+                    Markers m = new Markers(l);
+
+                    //.. INVARIANT: # of markers should equal number of rows in each col
+                    biDAO.addMarkers(m);
+                }
+            }
+
+            //.. make the ChannelSets layer
+            retString += makeChannelSets(cs, labelName);
+            
+            
+
+        }
+
         return retString;
     }
     

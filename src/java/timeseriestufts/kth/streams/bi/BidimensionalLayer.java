@@ -39,6 +39,16 @@ public abstract class BidimensionalLayer<T extends UnidimensionalLayer> extends 
         return streams.get(this.getChannelIndexById(channel));
     }
     
+    public T getChannelByIdOrIndex(String channel)  throws Exception{
+        try {
+            return getChannelById(channel);
+        }
+        catch(Exception e) {
+            Integer chan = Integer.parseInt(channel);
+            return streams.get(chan); //.. if we've exhausted both options, then throw an exception!       
+        }
+    }
+    
     /**General stream adding method (overridable in subclasses)
      * @param stream 
      */

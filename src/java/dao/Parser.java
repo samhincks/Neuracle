@@ -6,6 +6,7 @@
 
 package dao;
 
+import dao.datalayers.BiDAO;
 import dao.datalayers.TriDAO;
 import dao.techniques.TechniqueDAO;
 import java.io.IOException;
@@ -105,6 +106,25 @@ public abstract class Parser {
                 + "::" + getColorsMessage(e);
         return retString;
         
+    }
+    
+    protected String makeChannelSets(ChannelSet cs, String labelName) throws Exception {
+        ArrayList<ChannelSet> channelSets  = cs.partitionByLabel(labelName);
+        String retString ="";
+        int index =0;
+        for (ChannelSet c : channelSets ){ 
+            c.setId(cs.getId() + labelName + index);
+            c.setParent(cs.getId()); //.. set parent to what we derived it from
+            c.test = cs.test;
+            //.. make a new data access object, and add it to our stream
+            BiDAO bDAO = new BiDAO(c);
+            ctx.dataLayersDAO.addStream(c.id, bDAO);
+
+            //.. Generate a console message which includes num instance, num of each condition, and color
+            retString += "Created : " + c.getId();
+            index++;
+        }
+        return retString;
     }
     
     protected String getColorsMessage(Experiment e) {

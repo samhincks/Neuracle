@@ -37,6 +37,10 @@ function JavaInterface() {
              if(JSONobj.action.id == "csrefresh") {
                  chartArea.displayChart(JSONobj.action);
              }
+             if (JSONobj.action.id == "cmatrix") {
+                 console.log(JSONobj.action.data);
+                 chartArea.displayChart(JSONobj.action.data);
+             }
         }
     }
     
@@ -96,7 +100,7 @@ function JavaInterface() {
         }
         else {
             $('#frequency').val(false);
-            $('#corr').val(false);
+            $('#correlation').val(false);
         }
         $('#merge').val(false); //.. so that we don't call a method that merges datalayers'
         $('#stats').val(false); 

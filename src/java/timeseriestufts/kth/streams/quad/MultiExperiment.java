@@ -26,13 +26,6 @@ public class MultiExperiment extends QuaddimensionalLayer{
     
     /**Add an experiment. The experiment must have the same classifications **/
     public void addExperiment(Experiment e) throws Exception{
-        //.. make sure this does not conflict with the first experiment added if it exists
-        if(!(piles.isEmpty())) {
-            Experiment first = (Experiment) piles.get(0);
-  //          if (!(first.classification.isEqual(e.classification))) 
-//                throw new Exception(first.id + " and " + e.id + " cannot be treated identically since their conditions differ");
-        } 
-        
         //.. if it passed the test, add it
         piles.add(e);
     }
