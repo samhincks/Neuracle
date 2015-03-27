@@ -72,6 +72,7 @@ public class TransformationParser extends Parser{
                 + " '3D' dataset organized in terms labels and channels";
         command.parameters = "conditionName = the condition to split by";
         command.action = "reload"; 
+        commands.put(command.id, command);
         
         //-- PARTITION
         command = new Command("partition");
@@ -87,6 +88,7 @@ public class TransformationParser extends Parser{
 
     public JSONObject execute(String command, String[] parameters, ThisActionBeanContext ctx, 
             DataLayer currentDataLayer,TechniqueDAO currentTechnique) throws Exception {
+        System.out.println("pm " + parameters.length);
         this.ctx = ctx;
         this.currentDataLayer = currentDataLayer;
         Command c = null;
@@ -96,6 +98,7 @@ public class TransformationParser extends Parser{
             c.retMessage = this.randomlyLabel(parameters);
         }
 
+      
         else if (command.startsWith("label")) {
             c = commands.get("label");
             c.retMessage = this.label(parameters);
@@ -114,6 +117,7 @@ public class TransformationParser extends Parser{
         //.. split(label2) transform a Channel Set to an Experiment by dividing
         else if (command.startsWith("split")) {
             c = commands.get("split");
+            c.retMessage = "hora";
             c.retMessage = this.split(parameters);
         }
 
@@ -134,6 +138,7 @@ public class TransformationParser extends Parser{
      * is how long each trial should be
      */
     private String randomlyLabel(String [] parameters) throws Exception {
+        System.out.println("pm " + parameters.length);
         String filename = currentDataLayer.id;
         int trialLength = 10;
         if (parameters.length > 0) {
@@ -318,7 +323,6 @@ public class TransformationParser extends Parser{
             }
             
         }
-
         return retString;
     }
     

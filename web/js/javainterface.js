@@ -17,7 +17,9 @@ function JavaInterface() {
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
         else if(JSONobj.content != "")
             consoleArea.displayMessage(JSONobj.content, "systemmess", "blueline");
-          
+        
+        console.log("returning from console ");
+        console.log(JSONobj);
         //.. is there some action to complete here? A new dataset to reload
         if(JSONobj.action != null) {
              if (JSONobj.action.id == "reload") {

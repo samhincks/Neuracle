@@ -181,6 +181,7 @@ public class IDExperiment extends EvaluationInterface{
     }
      public static ArrayList<String> getFiles() {
          ArrayList<String> files = new ArrayList(); 
+        
          String folder = "input/IDOXY/";
          String filename = "ID-OXY-";
          int NUMFILES = 52;
@@ -198,6 +199,7 @@ public class IDExperiment extends EvaluationInterface{
          ArrayList<String> files = new ArrayList();
          String folder = "input/IDOXY/";
          String filename = "ID-OXY-";
+         files.add(folder+"Participant4.csv");
          for (int i = 0; i < requested.length ; i++) {
             String name = folder + filename + requested[i] + ".csv";
             files.add(name);

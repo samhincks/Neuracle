@@ -26,9 +26,11 @@ public class TSTuftsFileReader {
         
     private BufferedReader dataIn;
     private String filename;
+    private String  delimeter;
     public int readingErrors =0;
     public int readEvery=1;
     public double FRAMESIZE =1;
+    
     
     
     /** Read data: by default do ColumnWise Ch1,Ch2,Ch3\n 1,2,3 , but if this fails
@@ -37,13 +39,16 @@ public class TSTuftsFileReader {
      */
     public ChannelSet readData(String delimeter, String dataFile) throws Exception{
         filename = dataFile;
+        System.out.println("trying to read" + filename);
         dataIn = new BufferedReader(new java.io.FileReader(dataFile));
-        return readDataRowWise(delimeter);
+        this.delimeter= delimeter;
+        return readDataRowWise();
     }
      public ChannelSet readData(String delimeter, FileBean dataFile) throws Exception{
          filename = dataFile.getFileName();
          dataIn = new BufferedReader(dataFile.getReader());
-         return readDataRowWise(delimeter);
+         this.delimeter = delimeter;
+         return readDataRowWise();
 
     }
     /**Reads input file where columns hold channels and labels.
@@ -58,21 +63,21 @@ public class TSTuftsFileReader {
      * D will be treated as nominal
      * 
      */
-    public ChannelSet readDataRowWise(String delimeter) throws Exception {
+    public ChannelSet readDataRowWise() throws Exception {
         String line;
         
         ArrayList<ArrayList<Float>> rawValues = new ArrayList(); //.. which we will read into proper structure
         ArrayList<String> channelNames = new ArrayList();
         ArrayList<Labels> allLabels = new ArrayList();
        
-        //.. read first row, which should be labels
-        line = dataIn.readLine();
-        String [] columnNames = line.split(delimeter);
+        //.. read first row, which should be labels. But if they aren't fabricate labels
+        
+        String [] columnNames = getFirstOrFabricated();
         
         //.. throw exception if split return just one value
         if(columnNames.length ==0) throw new Exception("Must have at least one column. Found 0 with delimeter "+delimeter);
         
-        //.. peak at first line, and determine whether the column refers to a number or a string
+        //.. peak at first line, and determine whether each column refers to a number or a string
         //.. if column name starts with mark then we treat as nominal regardless
         line = dataIn.readLine();
         String [] firstValues = line.split(delimeter);
@@ -187,6 +192,39 @@ public class TSTuftsFileReader {
         }
         
         return channelSet;
+    }
+
+    /** Returns an array of column names in all cases.
+     * If the first line is an array of column names, then that is returned.
+     * If it isn't, it checks to see if it seems like an array of validly delimeted values, and returns that.
+     * Otherwise it chews until it sees a delimited line. DOESNT WORK IF FIRST LINES HAVE THAT DELIMETER
+     **/
+    private String[] getFirstOrFabricated() throws Exception{
+        String line = dataIn.readLine();
+        String[] firstLine = line.split(delimeter);
+        //.. Valid nominal line
+        if(isNominal(firstLine)) return firstLine;
+        //.. Crap we should chew away
+        if (firstLine.length < 2) return getFirstOrFabricated(); //.. recursively chew away
+        //. Fabricate columns, but we also need to save what we read
+        String [] fabricated = new String[firstLine.length];
+        for (int i = 0; i < fabricated.length; i++) {
+            fabricated[i] = "ch"+i;
+        }
+        return fabricated;
+        
+    }
+    
+    public boolean isNominal(String [] line) {
+        if (line.length< 2) return false; //.. ugh
+        try{
+            float f = Float.parseFloat(line[0]);
+            return false;
+        }
+        catch(Exception e) {
+            return true;
+        }
+                
     }
   
    
