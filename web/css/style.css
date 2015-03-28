@@ -53,11 +53,14 @@
         z-index:1;
     }
 
-    
+    #submitForm {
+        border-style:dashed;
+    }
     #bottomLeft {
         top: 65%;
         left:2%;
         width: 15%;
+        border-style: none;
     }
     
     #bottomRight {

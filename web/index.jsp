@@ -39,8 +39,6 @@
                    <s:text name = "stats" id = "stats" style ="visibility:hidden"/> 
                    <s:text name = "frequency" id = "frequency" style ="visibility:hidden"/> 
                    <s:text name = "correlation" id = "correlation" style ="visibility:hidden"/> 
-
-
                 </s:form>
                 
                <s:form beanclass ="stripes.action.TechniqueActionBean" id = "techniques" class ="unselectable"> 
