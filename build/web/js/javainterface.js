@@ -27,7 +27,6 @@ function JavaInterface() {
              }
              
              if(JSONobj.action.id == "reloadT") {
-                 console.log("reloading techniques");
                  javaInterface.postToTechniques();
              }
 
@@ -40,8 +39,11 @@ function JavaInterface() {
                  chartArea.displayChart(JSONobj.action);
              }
              if (JSONobj.action.id == "cmatrix") {
-                 console.log(JSONobj.action.data);
                  chartArea.displayChart(JSONobj.action.data);
+             }
+             
+             if (JSONobj.action.id == "setcommands") {
+                consoleArea.setCommands(JSONobj.action.data);
              }
         }
     }

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.kth.streams.DataLayer;
@@ -155,6 +156,15 @@ public abstract class Parser {
         } catch (IOException ignored) {
             return true;
         }
+    }
+    
+    public ArrayList<JSONObject> getCommands() throws Exception{
+        ArrayList<JSONObject> rObj = new ArrayList(); 
+       
+        for (Command c : commands.values()) {
+            rObj.add(c.getJSONObject());
+        }
+        return rObj;
     }
     
     public String getDocumentation(String param) {

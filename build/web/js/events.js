@@ -27,6 +27,10 @@ function init() {
     //.. Retrieve any data layers that might still be loaded in the system
     javaInterface.postToDataLayers();
     
+    //.. get commands
+    $("#consoleInput").val("getcommands");
+    javaInterface.postToConsole();
+    
     //.. Initialize our somewhat broken plumb library (this is what we used before d3 to draw lines)
     plumb.loadPlumb();
 
@@ -36,8 +40,21 @@ function init() {
             var userText = $("#userinput").val();
             consoleArea.parseUserMessage(userText);
         } 
+       
+      
     });
     
+    //..Wow, that was really challening figuring out that reinit kinda spawns two threads... 
+    //... Be careful with that Sam. I think its the reason why double clicking calls the server twice
+    $("body").keydown(function(e) { 
+          //.. tab means search in console
+        if (e.which == 9) {
+            var target = consoleArea.search($("#userinput").val());
+            if (target.length != null) {
+                $("#userinput").val(target);
+            }
+        }
+    });
     //.. Add startswith operation to String
     if (typeof String.prototype.startsWith != 'function') {
         // see below for better implementation!
@@ -82,14 +99,17 @@ function reinit() {
          $("#technique").val(e.currentTarget.id);
      });
      
+    
      //.. for multi-selection: set shiftpressed to true
     $("body").keydown(function (e) { 
+      
         if (e.which == 16)
             shiftPressed =true;
         if (e.which == 18)
             freqKey = true;
         if (e.which == 91)
             corKey = true;
+        
         
     });  
     
@@ -101,12 +121,13 @@ function reinit() {
             freqKey = false;
         if (e.which == 91)
             corKey = false;
-            
-    });  
+    });
+    
     var shiftPressed = false; //.. for multi-selection
     var freqKey = false;
     var corKey = false;
-     //.. if a channel set is clicked
+    
+    //.. if a channel set is clicked
     $(".dropChannel").mousedown(function(e){
         if(!shiftPressed)
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
@@ -114,8 +135,6 @@ function reinit() {
             datalayerArea.datalayers.multiSelectLayer(e.currentTarget.id)
         javaInterface.getDataLayerStats();
     });
-    
-    
     
     //.. if a channel set is dbl-clicked
     $(".dropChannel").dblclick(function (e) { //.. change to .experiment
@@ -137,9 +156,9 @@ function reinit() {
     });
     
     var curKey;
-   $(document).keydown(function (e) {
+    $(document).keydown(function (e) {
        curKey = e.which;
-   });
+    });
     $(document).keyup(function(e) {
         curKey = 0;
     });

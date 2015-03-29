@@ -28,7 +28,11 @@
     }
 
     .redline {     
-        color: crimson; 
+       // color: crimson; 
+        color: #ED2E2E;
+    }
+    .greyline {
+        color: rgb(135, 173, 187)
     }
     .orangeline {
         color: #F80 

@@ -4,15 +4,15 @@
  */
 package dao;
 
-import dao.techniques.TechniquesDAO;
-import dao.techniques.TechniqueDAO;
-import dao.datalayers.TriDAO; 
 import dao.datalayers.BiDAO;
 import dao.datalayers.DataLayerDAO;
 import dao.datalayers.DataLayersDAO;
 import dao.datalayers.MySqlDAO;
 import dao.datalayers.QuadDAO;    
+import dao.datalayers.TriDAO;
 import dao.datalayers.UserDAO;
+import dao.techniques.TechniqueDAO;
+import dao.techniques.TechniquesDAO;
 import filereader.Label;
 import filereader.Labels;
 import filereader.Markers;
@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.UUID;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.StreamingResolution;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import realtimereceiver.Client;
@@ -148,33 +149,24 @@ public  class InputParser {
                     + "5. train(dbname) with techniques intersected::"
                     + "6. classifylast() with db selected";
         }
-        else if (command.startsWith("cmd") || command.startsWith("help")) {
-            c = new Command("cmd");
-            if (parameters.length >0) {
-                String param = parameters[0];
-                
-                if(param.startsWith("misc"))
-                     c.retMessage =miscParser.getDocumentation(null);
-                else if (param.startsWith("trans"))
-                    c.retMessage = transformationParser.getDocumentation(null);
-                else if(param.startsWith("data"))
-                    c.retMessage = dataParser.getDocumentation(null);
-                else if (param.startsWith("ml"))
-                    c.retMessage = mlParser.getDocumentation(null);
-                else /*A regular expression for a command*/ {
-                    c.retMessage = miscParser.getDocumentation(param);
-                    c.retMessage += transformationParser.getDocumentation(param);
-                    c.retMessage += dataParser.getDocumentation(param);
-                    c.retMessage += mlParser.getDocumentation(param);
-                }
-            }
-            else {
-                c.retMessage = miscParser.getDocumentation(null);
-                c.retMessage += transformationParser.getDocumentation(null);
-                c.retMessage += dataParser.getDocumentation(null);
-                c.retMessage += mlParser.getDocumentation(null);
-            }
+        
+        else if (command.startsWith("getcommands") || command.startsWith("help")) {
+            c = new Command("getcommands");
+            c.action = "setcommands";
+            c.data = new JSONObject();
+            JSONArray commands = new JSONArray();
+            c.data.put("commands", commands);
+            
+            //.. add each command 
+            for (JSONObject com : miscParser.getCommands()){commands.put(com);}
+            for (JSONObject com : transformationParser.getCommands()){commands.put(com);}
+            for (JSONObject com : dataParser.getCommands()){commands.put(com);}
+            for (JSONObject com : mlParser.getCommands()){commands.put(com);}
+            return c.getJSONObject();
+
+            
         }
+        
 
         if (c == null) {
             return null;

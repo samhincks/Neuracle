@@ -9,6 +9,11 @@
 function ConsoleArea() {
    this.streaming = false;   //.. set to true if we are streaming
    this.streamInterval; 
+   
+   this.messageStack = []; //.. save all the users old messages. Retrieve with arrows. Delete if erroneous
+   this.commands; //.. initialize this when we start. In other words, ping server
+   
+   
    /**Display a message to the user;
     *primaryClass = system versus userMessage
     *secondaryClass = redLine, greenLine, orangeLine*/
@@ -47,7 +52,7 @@ function ConsoleArea() {
         if(!this.parseLocally(userText)) {   
             //.. save the text to the imaginary form for Stripes purposes
             $("#consoleInput").val(userText);
-
+            
             //.. now get the server's response'
             javaInterface.postToConsole();
          }
@@ -192,7 +197,94 @@ function ConsoleArea() {
         this.displayMessage(message, "systemmess", "secondline");
     };
     
+    this.setCommands = function(commands) {
+       var div = $("<div></div>");
+       var cmdArray = commands.commands;
+       this.commands = cmdArray;
+
+       for (var i =0; i < cmdArray.length; i++) {
+           var d = this.addCommand(cmdArray[i]);
+            div.append(d)
+       }
+        div.addClass("systemmess");
+        $("#pastmessages").append(div);
+
+    }
     
+    this.addCommand = function(command) {
+        var d = $("<div></div>");
+        //.. 1 ID
+        var bdo = this.getWord(command.id+":", "redline");
+        d.append(bdo);
+        
+        //.. 2. Description
+        bdo = this.getWord(command.documentation,"");
+        d.append(bdo);
+        
+        //.. 3. Parameters, if any
+        if(command.parameters){
+            d.append("</br>");
+            bdo = this.getWord(command.parameters, "greyline");
+            d.append(bdo);
+        }
+
+        d.append("</br></br>");
+        return d;
+    }
+   
+    /** Returns a bdo tag of the word int the specified color (a class"**/
+    this.getWord = function(word, colorClass) {
+        var bdo = $("<bdo></bdo>").text(" ");
+        bdo.addClass(colorClass);
+        bdo.append(word);
+        return bdo;
+    }
+    /**Return a fat, manipulable div, packed with bdos that have an id set, to location + id**/
+    this.getCharacters = function(message, strikeThrough) {
+        var d = $("<div></div>");
+
+        if(!strikeThrough)
+            bdo = $("<bdo></bdo>").text(" ");
+        else
+            bdo = $("<del></del>").text(" ");
+
+        bdo.append(message);
+        //.. Iterate through the characters of message
+        for (var i =0; i <message.length; i++) {
+            var ch = message[i];
+            var bdo2; 
+            if(!strikeThrough)
+                bdo2 = $("<bdo></bdo>").text(ch);
+            else
+                bdo2 = $("<del></del>").text(ch);
+
+           // bdo2.addClass(id +"-"+index+"-"+i+strikeThrough);
+            bdo.append(bdo2);
+        }
+
+        //var lineId = id+"-"+index+"-"+strikeThrough;
+        //d.addClass(lineId);
+        d.append(bdo);
+        return d;
+    }
+    //.. MAKE SO THAT UP ARROW GETS THA LAST ONE
+    this.search = function(text) {
+        var found = null;
+        var div = $("<div></div");
+        for (var i =0; i < this.commands.length; i++) {
+            var cmd = this.commands[i]; 
+            if(cmd.id.startsWith(text)){
+                found = cmd.id;
+                div.append(this.addCommand(cmd));
+                div.append("</br>");
+            }
+        }
+        div.addClass("systemmess");
+        if (found) 
+            $("#pastmessages").append(div);
+
+        return found;
+    }
     
      /* ------------------
       * NO LONGER IN USE! **/

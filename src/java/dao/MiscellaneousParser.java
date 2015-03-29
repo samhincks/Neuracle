@@ -135,12 +135,12 @@ public class MiscellaneousParser extends Parser{
             c = commands.get("getlabels") ;
             c.retMessage = this.getLabels(parameters);
         }
-        
+        /*
         //.. eventually we want to split it with a while loop that evaluates each datalayer of the split
         else if (command.startsWith("getcommands")) {
             c = commands.get("getcommands");
             c.retMessage = this.getCommands();
-        }
+        }*/
         
         //.. eventually we want to split it with a while loop that evaluates each datalayer of the split
         else if (command.startsWith("nback")) {
@@ -299,7 +299,7 @@ public class MiscellaneousParser extends Parser{
 
         return content;
     }
-    
+    /*
     private String getCommands() {
         String retString = "";
         
@@ -331,7 +331,7 @@ public class MiscellaneousParser extends Parser{
 
         return retString;
         
-    }
+    } */ 
     
     /** Run a background n-back, and broadcast labels to specified port
      **/
