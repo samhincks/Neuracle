@@ -152,7 +152,7 @@ public  class InputParser {
         
         else if (command.startsWith("getcommands") || command.startsWith("help")) {
             c = new Command("getcommands");
-            c.action = "setcommands";
+            c.action = command;
             c.data = new JSONObject();
             JSONArray commands = new JSONArray();
             c.data.put("commands", commands);

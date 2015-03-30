@@ -19,7 +19,7 @@ var address = "http://localhost:8080/SensorMining/";/*"http://sensormining.herok
 $( init );
 function init() { 
     //.. Focus on input, so that it is the default location for cursor
-    $("input").focus();
+//    $("input").focus();
     
     //.. Tell consoleArea to display a welcome message. load a file 
     consoleArea.introduce();
@@ -28,7 +28,7 @@ function init() {
     javaInterface.postToDataLayers();
     
     //.. get commands
-    $("#consoleInput").val("getcommands");
+    $("#consoleInput").val("getcommandsnodisplay");
     javaInterface.postToConsole();
     
     //.. Initialize our somewhat broken plumb library (this is what we used before d3 to draw lines)
@@ -36,6 +36,7 @@ function init() {
 
     //.. When we press enter send a message back to the server
     $(document).keypress(function(e) {
+        console.log(e.which);
         if(e.which == 13) {
             var userText = $("#userinput").val();
             consoleArea.parseUserMessage(userText);
@@ -49,10 +50,23 @@ function init() {
     $("body").keydown(function(e) { 
           //.. tab means search in console
         if (e.which == 9) {
+            e.preventDefault();
             var target = consoleArea.search($("#userinput").val());
-            if (target.length != null) {
+            if (target != null) 
+                $("#userinput").val(target);           
+        }
+        
+        if (e.which == 38) {
+            e.preventDefault();
+            var target = consoleArea.getLastUp();
+            if (target != null)
                 $("#userinput").val(target);
-            }
+        }
+        if (e.which == 40) {
+            e.preventDefault();
+            var target = consoleArea.getLastDown();
+            if (target != null)
+                $("#userinput").val(target);
         }
     });
     //.. Add startswith operation to String
@@ -97,9 +111,22 @@ function reinit() {
     $('.technique').mousedown(function(e) {
          datalayerArea.techniques.selectTechnique(e.currentTarget.id);
          $("#technique").val(e.currentTarget.id);
-     });
-     
+    });
     
+    var trZoomed = false;
+    $("#topRight").dblclick(function(e) {
+        if (!(trZoomed)){
+            $("#topRight").removeClass("trunzoomed");
+            $("#topRight").addClass("trzoomed");
+            trZoomed=true;
+        }
+        else{
+            $("#topRight").addClass("trunzoomed");
+            $("#topRight").removeClass("trzoomed");
+            trZoomed=false;
+        }
+        chartArea.displayChart(chartArea.lastJSON);
+    });
      //.. for multi-selection: set shiftpressed to true
     $("body").keydown(function (e) { 
       

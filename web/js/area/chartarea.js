@@ -13,6 +13,7 @@ function ChartArea(id, descArea) {
    this.singleTransition; //.. total transition / each line
    var added =0;
    var lastGraph = "none";
+   this.lastJSON; //.. we might wnat to redraw the graph, for instance if we resize the graph
    var border =20;
    var sc = new StreamChart();
    
@@ -21,6 +22,7 @@ function ChartArea(id, descArea) {
     *       an object with a collection of channels, time, and condition. channels indexed by index.
     */
    this.displayChart = function (JSONobj) {
+       this.lastJSON = JSONobj;
         lastGraph = JSONobj.type;
         if(JSONobj.type == "experiment"){
             $(selection).children().remove();

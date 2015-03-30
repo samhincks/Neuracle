@@ -13,8 +13,10 @@ function JavaInterface() {
     /**Having parsed the input and considered a response, post it to console*/
     this.returnFromConsole = function(xhr) {
         var JSONobj = eval('('+ xhr +')'); 
-        if (JSONobj.error != null)
+        if (JSONobj.error != null){
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
+            consoleArea.messageStack.pop();//.. remove since it was erroneous
+        }
         else if(JSONobj.content != "")
             consoleArea.displayMessage(JSONobj.content, "systemmess", "blueline");
         
@@ -42,8 +44,11 @@ function JavaInterface() {
                  chartArea.displayChart(JSONobj.action.data);
              }
              
-             if (JSONobj.action.id == "setcommands") {
-                consoleArea.setCommands(JSONobj.action.data);
+             if (JSONobj.action.id == "getcommands") {
+                consoleArea.setCommands(JSONobj.action.data,true);
+             }
+             else if (JSONobj.action.id == "getcommandsnodisplay") {
+                 consoleArea.setCommands(JSONobj.action.data, false);
              }
         }
     }

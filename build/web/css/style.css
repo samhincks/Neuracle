@@ -45,12 +45,21 @@
         z-index: 1;
     }
      #topRight {
+        background:ghostwhite;
+    }
+    .trunzoomed {
         width:49.5%;
         height:59%;
-        opacity: 0.8;
         left:50%;
-        background:ghostwhite;
+        opacity: 0.8;
         z-index:1;
+    }
+    .trzoomed {
+        width: 81.5%;
+        height: 75%;
+        left: 10%;
+        opacity:1;
+        z-index: 108;
     }
 
     #submitForm {

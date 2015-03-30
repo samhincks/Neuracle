@@ -56,7 +56,8 @@ function ConsoleArea() {
             //.. now get the server's response'
             javaInterface.postToConsole();
          }
-      
+       if (this.messageStack[this.messageStack.length-1] != userText)
+           this.messageStack.push(userText);
        //.. remove the text
        $("#userinput").val("");   
        this.scrollToBottom();
@@ -186,6 +187,8 @@ function ConsoleArea() {
             var scrollHeight = Math.max(this.scrollHeight, this.clientHeight);
             this.scrollTop = scrollHeight - this.clientHeight;
         }); 
+        $("input").focus();
+
     };
       
       /**Standard introductory message*/
@@ -197,17 +200,18 @@ function ConsoleArea() {
         this.displayMessage(message, "systemmess", "secondline");
     };
     
-    this.setCommands = function(commands) {
+    this.setCommands = function(commands, display) {
        var div = $("<div></div>");
        var cmdArray = commands.commands;
        this.commands = cmdArray;
-
-       for (var i =0; i < cmdArray.length; i++) {
-           var d = this.addCommand(cmdArray[i]);
-            div.append(d)
-       }
-        div.addClass("systemmess");
-        $("#pastmessages").append(div);
+       if(display) {
+            for (var i =0; i < cmdArray.length; i++) {
+                var d = this.addCommand(cmdArray[i]);
+                div.append(d);
+            }
+            div.addClass("systemmess");
+             $("#pastmessages").append(div);
+         }
 
     }
     
@@ -267,21 +271,38 @@ function ConsoleArea() {
         d.append(bdo);
         return d;
     }
-    //.. MAKE SO THAT UP ARROW GETS THA LAST ONE
+    
+    this.upped = 0;
+    this.getLastUp = function() {
+        if (this.upped < this.messageStack.length)
+            this.upped++;
+        return this.messageStack[this.messageStack.length-this.upped];
+    }
+    
+    this.getLastDown = function() {
+        this.upped--;
+        return this.messageStack[this.messageStack.length - this.upped];
+    }
+
+    /**Return command that matches, print it too, giving info**/
     this.search = function(text) {
         var found = null;
         var div = $("<div></div");
-        for (var i =0; i < this.commands.length; i++) {
+        var added =0;
+        for (var i =this.commands.length-1; i >=0; i--) {
             var cmd = this.commands[i]; 
             if(cmd.id.startsWith(text)){
+                if(added !=0) div.append("</br>");
                 found = cmd.id;
                 div.append(this.addCommand(cmd));
-                div.append("</br>");
+                added++;
             }
         }
         div.addClass("systemmess");
-        if (found) 
+        if (found) {
             $("#pastmessages").append(div);
+            this.scrollToBottom();
+        }
 
         return found;
     }

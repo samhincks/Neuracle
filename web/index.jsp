@@ -48,7 +48,7 @@
              </div>
 
             <!--Where we place our Chart-->
-            <div id ="topRight" class ="component">         
+            <div id ="topRight" class ="component trunzoomed">         
                
             </div>
             
