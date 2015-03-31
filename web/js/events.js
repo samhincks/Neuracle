@@ -36,7 +36,6 @@ function init() {
 
     //.. When we press enter send a message back to the server
     $(document).keypress(function(e) {
-        console.log(e.which);
         if(e.which == 13) {
             var userText = $("#userinput").val();
             consoleArea.parseUserMessage(userText);
@@ -44,6 +43,8 @@ function init() {
        
       
     });
+    
+  
     
     //..Wow, that was really challening figuring out that reinit kinda spawns two threads... 
     //... Be careful with that Sam. I think its the reason why double clicking calls the server twice
@@ -97,6 +98,7 @@ function init() {
 /*Functions that must be loaded at start but also
  *reinitalized when we reload datalayers*/
 function reinit() {
+    console.log("reinit");
   /** dropchannel: this is the class for datalayers. As soon as our mouse enters
     *it, we want to change "givers" val (again an old name that no longer makes sense)
     * so that the backend knows what is currently being pressed
@@ -106,12 +108,7 @@ function reinit() {
         
      });
 
-    /** Similarly when we press a technique, we need to know the name of what is being prssed
-     ***/
-    $('.technique').mousedown(function(e) {
-         datalayerArea.techniques.selectTechnique(e.currentTarget.id);
-         $("#technique").val(e.currentTarget.id);
-    });
+    
     
     var trZoomed = false;
     $("#topRight").dblclick(function(e) {
@@ -175,12 +172,7 @@ function reinit() {
         else
             javaInterface.postToDataLayer();
     });
-    
-    //.. if a technique is click (do essentially same as if channel is
-    $(".technique").mousedown(function (e) {
-        datalayerArea.techniques.selectTechnique(e.currentTarget.id);
-        javaInterface.getTechniqueStats();
-    });
+  
     
     var curKey;
     $(document).keydown(function (e) {
@@ -189,7 +181,21 @@ function reinit() {
     $(document).keyup(function(e) {
         curKey = 0;
     });
+}
 
+
+function techniqueInit() { 
+    //.. if a technique is click (do essentially same as if channel is
+    $(".technique").dblclick(function(e) {
+        javaInterface.getTechniqueStats();
+    });
+
+
+    //.. if a technique is click (do essentially same as if channel is
+    $(".technique").mousedown(function(e) {
+        datalayerArea.techniques.selectTechnique(e.currentTarget.id);
+        $("#technique").val(e.currentTarget.id);
+    });
     
 }
 /**THIS USED TO BE IN REINIT() but it was too broken so we have to exclude it*/

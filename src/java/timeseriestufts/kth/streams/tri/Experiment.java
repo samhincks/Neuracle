@@ -603,7 +603,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
         try{
             Experiment e = Experiment.generate(2,4,6);
             
-            int TEST =1;
+            int TEST =2;
             if (TEST ==0){
                 e.printStream();
                 System.out.println("xxxxxxxxxx");
@@ -616,6 +616,10 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 //e.printStream();
                 ChannelSetSet css = e.getAveragedFourier(false);
                 css.printStream();
+            }
+            if (TEST ==2) {
+                e =  Experiment.generate(2,4,6);
+                e.evaluate(TechniqueSet.generate(), Dataset.generate(), -1);
             }
 
         }

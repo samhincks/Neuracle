@@ -220,6 +220,8 @@ function ChartArea(id, descArea) {
          setTimeout(function() {d3Chart.transition(function (d) {return d.value}, 1000)},1000);  
     }
     
+   
+    
     this.displayFrequency = function(JSONobj, JSONdescription) {
         //.. remove any existing charts
         d3.select(".chart").remove();

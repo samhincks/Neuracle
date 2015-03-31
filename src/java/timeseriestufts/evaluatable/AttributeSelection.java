@@ -4,11 +4,14 @@
  */
 package timeseriestufts.evaluatable;
 
+import java.util.HashMap;
+import timeseriestufts.kth.streams.tri.Experiment;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.GreedyStepwise;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
-import weka.core.Instances;
+import weka.core.Attribute;      
+import weka.core.Instances;      
 import weka.filters.Filter;      
             
 /**   
@@ -22,7 +25,10 @@ public class AttributeSelection extends Technique{
     private weka.filters.supervised.attribute.AttributeSelection infoFilter; //.. set when applied to training
     private weka.filters.supervised.attribute.AttributeSelection cfsFilter; //.. set when applied to training
 
-    
+    public static AttributeSelection generate() {
+        AttributeSelection as = new AttributeSelection(ASType.info, 2);
+        return as;
+    }
     public static enum ASType {cfs, info, none};
     public ASType asType;
     
@@ -70,6 +76,23 @@ public class AttributeSelection extends Technique{
         return instances;
     }
     
+    /** Build a hashmap scoring the information gain of all the attribtues on the specified dataset**/
+    public  static HashMap<Attribute, Double> infoGainRanker(weka.core.Instances instances) throws Exception{
+        InfoGainAttributeEval evaluation = new InfoGainAttributeEval();
+        evaluation.buildEvaluator(instances);
+        HashMap<Attribute, Double> infogainscores = new HashMap<Attribute, Double>();
+        
+       //.. compute infogain for each attribute
+        for (int i = 0; i < instances.numAttributes()-1; i++) {
+            Attribute t_attr = instances.attribute(i);
+            double infogain  = evaluation.evaluateAttribute(i);
+            infogainscores.put(t_attr, infogain);
+            System.out.println(t_attr.name());
+        }
+        return infogainscores;
+        
+    }
+    
     /**Apply a more computationally expensive algorithm which returns the subset of attribtues
      with most predictive value and least redundancy**/
     public weka.core.Instances cfsSubset(weka.core.Instances instances) throws Exception {
@@ -102,5 +125,27 @@ public class AttributeSelection extends Technique{
         if (infoFilter == null) throw new Exception("AS algo has not yet been applied");
         return infoFilter;
     }      
+    
+    public static void main(String[] args) {
+        try{
+            Experiment e = Experiment.generate(4,1,100);
+            Experiment e2 = Experiment.generate(42,21,100);
+            TechniqueSet ts = TechniqueSet.generate();
+            e.extractAttributes(ts.getFeatureSet());
+            e2.extractAttributes(ts.getFeatureSet());
+            weka.core.Instances wi = e.getWekaInstances(false);
+            
+            FeatureSet fs = ts.getFeatureSet();
+            fs.addExperimentToInfogain(wi);
+            fs.printInfoGain();
+            fs.addExperimentToInfogain(e2.getWekaInstances(false));
+            fs.printInfoGain();
+
+            
+            
+        }
+        catch (Exception e) {e.printStackTrace();}
+
+    }
 }
       

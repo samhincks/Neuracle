@@ -131,8 +131,8 @@ function FreqBarChart() {
         
        //.. zoom up to actual values
        chart.transition(key, transitionLength);
-       console.log(frequencies);
-       // ------ X AXIS--------- 
+
+        // ------ X AXIS--------- 
         var xAxis = d3.svg.axis()
             .scale(x) //.. use same scaling function as for x
             .orient("bottom")
@@ -163,7 +163,6 @@ function FreqBarChart() {
         //.. draw lines where 
         if(expectedKey(data[0]) != null) //.. if data has the expceted key 
             chart.drawLines(expectedKey); 
-
     }
   
     
@@ -207,9 +206,7 @@ function FreqBarChart() {
                .text(function(d) {return Math.round(key(d)*1000)/1000;}) //.. round to 3 decimal plcces
                .attr("x" , function (d, i) {return computeX(i, barWidth) + (barWidth /1.8) }) //.. place in middle
                .attr("y", function(d) { return computeY(d);})
-               .attr("class", "percentageLabel");
-
-               
+               .attr("class", "percentageLabel");               
     }
     
      /* On mouseaway, return to original color */
@@ -414,7 +411,7 @@ function test() {
     chart.minY(0).width(400).height(400).maxY(1).key(function(d) {return d.expected;});
     //chart("#topRight");
     
-    chart("body");
+    chart("body");      
     setTimeout(function() {chart.transition(function (d) {return d.value}, 1000)},1000);
 
 }

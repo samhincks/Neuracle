@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import stripes.ext.ThisActionBeanContext;
+import timeseriestufts.evaluatable.FeatureSet;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.BidimensionalLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
@@ -97,10 +98,27 @@ public abstract class Parser {
         Experiment e = cs.splitByLabel(labelName);
         e.setId(cs.getId() + labelName);
         e.setParent(cs.getId()); //.. set parent to what we derived it from
-        e.test = cs.test;
+        e.test = cs.test; //.. part of the tutorial
+        
         //.. make a new data access object, and add it to our stream
         TriDAO pDAO = new TriDAO(e);
         ctx.dataLayersDAO.addStream(e.id, pDAO);
+        
+        //.. EVERYTIME WE ADD AN EXPERIMENT, WE WANT TO UPDATE THE FEATURESET (nice idea thinking this should be in a different thread, but orka do thread safety
+        for (TechniqueDAO td  : ctx.getTechniques().getTechniques()) {
+            if (td.technique instanceof FeatureSet) {
+                FeatureSet fs = (FeatureSet) td.technique;
+                e.extractAttributes(fs);
+                try{
+                    fs.addExperimentToInfogain(e.getWekaInstances(false));
+                }
+                catch (Exception ex){
+                    //.. This is fine. A valiant effort to add more information to the featureset
+                    //.. if the extra datalayer pertained to the same experiment as the first..
+                        
+                 }
+            }
+        }
        
         //.. Generate a console message which includes num instance, num of each condition, and color
         String retString = "Created : " + e.getId() + " with " + e.matrixes.size() + " instances"

@@ -200,6 +200,41 @@ function ConsoleArea() {
         this.displayMessage(message, "systemmess", "secondline");
     };
     
+    this.displayAttributes = function(attributes) {
+        var div = $("<div></div>");
+        
+        attributes.sort(function (a,b){;return b.value - a.value;});
+        var addedUpTo = attributes.length -1;
+        for (var i =0; i < attributes.length; i++) {
+            var attr = attributes[i];
+            if (attr.value >0) {
+                var bdo = this.getWord(attr.label, "greenline");
+                div.append(bdo);
+                bdo = this.getWord(attr.value, "");
+                div.append(bdo);
+                div.append("</br></br>");
+            }
+            else{
+                addedUpTo = i;
+                break;
+            }
+        }
+        if (addedUpTo < attributes.length-1){
+            var rest ="";
+            for (var i =addedUpTo; i< attributes.length;i++) {
+                var attr = attributes[i];
+                rest = rest + attr.label +", ";
+            }
+            var bdo = this.getWord(rest, "greenline");
+            div.append(bdo);
+            bdo = this.getWord(0, "");
+            div.append(bdo);
+            div.append("</br></br>");
+        }
+        div.addClass("systemmess");
+        $("#pastmessages").append(div);
+    }
+    
     this.setCommands = function(commands, display) {
        var div = $("<div></div>");
        var cmdArray = commands.commands;

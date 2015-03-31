@@ -23,7 +23,7 @@ import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.quad.MultiExperiment;
 import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.tri.TridimensionalLayer;
-
+  
 /**
  *
  * @author samhincks
@@ -117,7 +117,6 @@ public class TransformationParser extends Parser{
         //.. split(label2) transform a Channel Set to an Experiment by dividing
         else if (command.startsWith("split")) {
             c = commands.get("split");
-            c.retMessage = "hora";
             c.retMessage = this.split(parameters);
         }
 
@@ -295,7 +294,6 @@ public class TransformationParser extends Parser{
         labelName = labelName.replace(")", ""); //.. remove )
         labelName = labelName.replace("\"", "");
         
-        
         //.. get all chansets
         ArrayList<ChannelSet> chanSets = getChanSets();
         String retString = "";
@@ -318,8 +316,7 @@ public class TransformationParser extends Parser{
                 retString += ";;  Your former dataset has inherited a child with three groups of instances. "
                         + " If you double click this dataset, you'll see each trial organized as a trial, colored by its"
                         + " condition. Press shift to average these trials together to visualize any condition-dependent trends;; "
-                        + " Once you've done this - try limiting your analysis to the conditions a and b, by typing keep(a,b). ";
-                        
+                        + " Once you've done this - try limiting your analysis to the conditions a and b, by typing keep(a,b). ";                       
             }
             
         }

@@ -6,7 +6,11 @@ package timeseriestufts.evaluatable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.math3.util.Pair;
 import timeseriestufts.evaluatable.FeatureDescription.FSDataLayer;
 import timeseriestufts.evaluatable.FeatureDescription.FSTimeWindow;
 import timeseriestufts.evaluatable.FeatureDescription.Statistic;
@@ -20,12 +24,49 @@ import timeseriestufts.kth.streams.tri.Experiment;
  */
 public class FeatureSet extends Technique{
     public HashMap<String, FeatureDescription> featureDescriptions;
-   
+    public HashMap<String, Double> infogain; //.. info gain of all attributes
+    public int infogainsAdded = 0; //.. increment each time we add new
     private String consoleString = null;
+    
     //.. DEFAULT, presume we add everything 
     public FeatureSet(String id)  {       
         this.id = id;
     }
+    
+    /**Add the instances in another experiment to this infogain. If it already exists,
+     then average with existing.  **/
+    public void addExperimentToInfogain(weka.core.Instances instances) throws Exception {
+        HashMap<String, Double> infogaintemp = new HashMap();
+        
+        for (Map.Entry<weka.core.Attribute, Double> m : AttributeSelection.infoGainRanker(instances).entrySet()) {
+            weka.core.Attribute attr = m.getKey();
+            infogaintemp.put(attr.name(), m.getValue());
+        }
+        
+        if (infogain ==null) infogain = infogaintemp;
+        else {
+            for (Map.Entry<String, Double> m : infogaintemp.entrySet()) {
+                String id = m.getKey();
+                
+                //.. MAKE SURE THIS ATTRIBUTE ALREADY EXISTS OTHERWISE ITS AN ERROR
+                if (!(infogain.containsKey(id))) throw new Exception ("Attemping to merge infogains, "
+                        + "but attribute names don't match up." + id + " doesn't exist");
+                
+                infogain.put(id, (m.getValue() + infogain.get(id))); //.. replace with average 
+            }
+        }
+        infogainsAdded++;
+    }
+    
+
+    public void printInfoGain() {
+        for (Map.Entry<String, Double> m : infogain.entrySet()) {
+            String id = m.getKey();
+            Double val = m.getValue();
+            System.out.println(id + " : " + val);
+        }
+    }
+   
     
     /**Given an array of statistics, datalayer-pointer and window-directives,
      * produce every single attribute. 
@@ -258,6 +299,8 @@ public class FeatureSet extends Technique{
         }
         catch(Exception e) {e.printStackTrace();}
     }
+
+    
     
   
     

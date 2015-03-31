@@ -21,7 +21,6 @@ function JavaInterface() {
             consoleArea.displayMessage(JSONobj.content, "systemmess", "blueline");
         
         console.log("returning from console ");
-        console.log(JSONobj);
         //.. is there some action to complete here? A new dataset to reload
         if(JSONobj.action != null) {
              if (JSONobj.action.id == "reload") {
@@ -72,6 +71,7 @@ function JavaInterface() {
         else {
             datalayerArea.addDatalayers(JSONobj.datalayers);
             reinit(); //.. relaod the drag/drop properties
+            techniqueInit();
         }
     }
      /**Retrieve all techniques and their names*/
@@ -88,9 +88,10 @@ function JavaInterface() {
         //.. no error, then render the object datalayers
         else {
             datalayerArea.addTechniques(JSONobj.techniques);
-            reinit();
-
+            techniqueinit();
         }
+        console.log(JSONobj);
+
     }
     
     /**Having selected an element, get a stream of its data to display it. */
@@ -222,6 +223,9 @@ function JavaInterface() {
          
          if(JSONobj.performance != null)
             chartArea.displayPerformance(JSONobj.performance);
+        
+         if (JSONobj.attributes != null)
+             consoleArea.displayAttributes(JSONobj.attributes);
          
     }
     

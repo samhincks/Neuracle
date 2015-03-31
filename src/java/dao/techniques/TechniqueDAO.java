@@ -4,6 +4,8 @@
  */
 package dao.techniques;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import timeseriestufts.evaluatable.FeatureSet;
@@ -33,8 +35,7 @@ public class TechniqueDAO {
     }
     
     /** A representation of statistics of this technique
-     * v
-     */
+    */
     public JSONObject getJSON()  throws Exception{
         JSONObject jsonObj = new JSONObject();
         
@@ -51,12 +52,28 @@ public class TechniqueDAO {
          }
          
          else if (technique instanceof FeatureSet) {
+             
              FeatureSet fs = (FeatureSet) technique;
              descObj.put("value", fs.getFeatureDescriptionString());
+             
+             //.. arrange featureset infogain calculation as jsonobj if it exists
+             if (fs.infogainsAdded >0){
+                 HashMap<String, Double> info = fs.infogain;
+                 JSONArray attrs = new JSONArray();
+                 for (Map.Entry<String, Double> m : info.entrySet()) {
+                     JSONObject attr = new JSONObject();
+                     attr.put("label", m.getKey());
+                     attr.put("expected", 100); //.. change this
+                     attr.put("value", m.getValue() / fs.infogainsAdded);
+                     attrs.put(attr);
+                 }
+                 
+                 jsonObj.put("attributes", attrs);
+             }
          }
          
-         //.. what more - maybe available layers? then we might have to know what type of layer it is
-         jsonObj.put("description", descObj);
+        //.. what more - maybe available layers? then we might have to know what type of layer it is
+        jsonObj.put("description", descObj);
         if (technique.predictions != null) {
             JSONObject pObj = new JSONObject();
 
