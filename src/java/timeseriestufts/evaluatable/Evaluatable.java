@@ -169,5 +169,8 @@ public abstract class Evaluatable {
         return new Tuple((correct/total),total);
     }
 
+    public void printInfo() {
+        System.out.println("ID: " + id + " . ");
+    }
 }
 

@@ -44,6 +44,7 @@ import weka.core.SelectedTag;
 import weka.core.TechnicalInformation;
 import weka.core.Utils;
 import weka.filters.Filter;
+import weka.filters.supervised.attribute.AttributeSelection;
 import wlsvm.WLSVM;
 
 /* Build Classifiers from machine learning toolkit Weka
@@ -65,10 +66,8 @@ public class WekaClassifier  extends ClassificationAlgorithm{
     public Classification lastTrainedClassification;
     public int lastInstanceLength;
     //---------------------------
+    public ArrayList<AttributeSelection> lastAsAlgosUsed;
 
-            
-            
-    
 
     public static enum MLType {jrip, j48, lmt, nb, tnn, smo, simple, logistic,adaboost, libsvm, multilayer, cvsmo, gridsmo};
     public MLType mlAlgorithm;
@@ -99,6 +98,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
         
     }
     
+    
     /**Test a trained weka classifier on input experiment. Place predictions 
      * in parameter predictions. Apply the attribute selection algorithms append in
      asAlgosApplied**/
@@ -107,8 +107,8 @@ public class WekaClassifier  extends ClassificationAlgorithm{
        
         //.. extract attributes
         testing.extractAttributes(ts.getFeatureSet());
-        weka.core.Instances wInstances = testing.getWekaInstances(false); //.. dont apply specified as filters 
-        
+        weka.core.Instances wInstances = testing.getWekaInstances(false); //.. dont apply specified filters , since we're using old ones
+
         //.. reapply any attribtue selection algorithms applied during training
         if (asAlgosApplied != null) {
             for (weka.filters.supervised.attribute.AttributeSelection as : asAlgosApplied) {
@@ -123,10 +123,10 @@ public class WekaClassifier  extends ClassificationAlgorithm{
             //.. my version for knowing condition and its percentage; weka's for classification
             weka.core.Instance wInstance = (weka.core.Instance) wEnumeration.nextElement();
             Instance myInstance = testing.matrixes.get(index);
-
             //.. only classify if we have this condition
             if (testing.classification.hasCondition(myInstance.condition)) {
                 Classifier classifier = getClassifier();
+                
                 int guess = (int) classifier.classifyInstance(wInstance);
                 double[] distribution = classifier.distributionForInstance(wInstance);
 
@@ -155,7 +155,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
         
         //.. make Predictions object to save stats
         Predictions retPredictions = new Predictions(ds, ts, c);
-        
+
         //.. Retrieve our instance-packed version of the stream and get weka version of it
         Experiment streamingExperiment = stream.getMovingExperiment(c, instanceLength, everyK);
         streamingExperiment.setTechniqueSet(ts);
@@ -165,11 +165,9 @@ public class WekaClassifier  extends ClassificationAlgorithm{
    
     /** Classify the last k datapoints of specified channel
      **/
-   public Prediction getLastPrediction(ChannelSet cs) throws Exception {
-       
+   public Prediction getLastPrediction(ChannelSet cs) throws Exception {  
        int end =  cs.getFirstChannel().numPoints-1;
        int start = cs.getFirstChannel().numPoints - lastInstanceLength-1;
-       System.out.println(start + " , " + end + " " + lastInstanceLength);
  
        Instance instance = cs.getInstance(lastTrainedClassification.name,start,end);
        ArrayList<Instance> instances = new ArrayList();
@@ -405,7 +403,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
         //libsvm.addCVParameter("G 0.001 1 100");
         libsvm.buildClassifier(data);
         System.setOut(out);
-    }
+    }  
     
     /*SMO Parameters: 
      * -C the complexity constant. 
@@ -490,12 +488,12 @@ public class WekaClassifier  extends ClassificationAlgorithm{
             Markers markers = Markers.generate(10, 10);
             cs.addMarkers(markers);
             
-            Experiment e = cs.splitByLabel(markers.name);
-            e.printInfo();
+            Experiment e = Experiment.generate(10,10,100);//..cs.splitByLabel(markers.name);
+            //e.printInfo();
             TechniqueSet ts = TechniqueSet.generate();
             Dataset ds = Dataset.generate();
             
-            int TEST =12;
+            int TEST =1;
             if (TEST == 12) {
                 AdaBoostM1 ab = new AdaBoostM1();
                 System.out.println(ab.getTechnicalInformation().getID());
@@ -512,11 +510,9 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                 pair.y.printInfo();
                 System.out.println("------");
                 pair.x.printInfo();
-
+                
                 WekaClassifier wc = pair.x.train(ts);
-
                 Predictions p  = wc.testRealStream(markers.getClassification(), ts, ds, pair.y, 10, 1, null);
-
                 p.printPredictions();
             }
             else if (TEST ==2) {

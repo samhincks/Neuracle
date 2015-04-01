@@ -131,10 +131,10 @@ function JavaInterface() {
             chartArea.displayChart(JSONobj);
         }
         
-        
+       // console.log(JSONobj);
         /**TEMP**/
         
-        //chartArea.displayPredictions(1,2);
+       // chartArea.displayPredictions(1,2);
         /**8END***/
     }
     
@@ -157,7 +157,6 @@ function JavaInterface() {
         for (var i in overlaps){
             var ol = overlaps[i];
             var conn = ol.sourceId +":"+ol.targetId;
-            console.log(conn);
             postArray.push(conn);
         }
         

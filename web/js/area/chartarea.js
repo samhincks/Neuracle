@@ -123,10 +123,8 @@ function ChartArea(id, descArea) {
     
     this.displayPredictions =function(JSONarr, classes){
          //console.log(classes + " , " +JSONobj[0].answer + " , " + JSONobj[0].guess + " , " + JSONobj[0].confidence);
-         console.log("bajs")
          $(selection).children().remove();
-         
-           
+          
          //.. add a menu for selecting channel 
          $("#channelSelection").remove();
          $(selection).append("<select id = channelSelection> </select>" );
@@ -145,10 +143,9 @@ function ChartArea(id, descArea) {
          var menu = d3.select("#channelSelection")
                   .on("change", function() {
                   var channel = menu.property("value");
-                  d3Chart.key(channel);
-                  d3Chart(selection);
-                     
-         });
+          
+        d3Chart.key(channel);
+        d3Chart(selection);});
          
          for(var i =0 ; i < JSONarr.length; i++) {
              var prediction = JSONarr[i];

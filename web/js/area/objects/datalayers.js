@@ -81,7 +81,6 @@ function DataLayer(jsonDL) {
     this.numChannels = jsonDL.numchannels;
     this.type = jsonDL.type;
     this.elementTag = '<div id = "'+this.id+'" class = "dropChannel surfaceElement" > </div>';
-   
    //..  Draw lines inside it as art, and lines connecting
    //... it to elements it may have been derived from
    //. Errors will occur if it has not been appended to the canvas

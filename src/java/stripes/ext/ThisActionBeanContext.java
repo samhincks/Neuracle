@@ -36,6 +36,14 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public static Performances performances = new Performances();
     private static int fileReadSampling =1; //.. set to two and we read every other row from file
     
+    
+    public void printState() throws Exception{
+        System.out.println("\t Datalayer " + currentDataLayer);
+        System.out.println("\t Technique " + currentTechnique);
+        getCurrentTechnique().technique.printInfo();
+        getCurrentDataLayer().dataLayer.printStream();
+        System.out.println("xxxxxxxxxxxxxxx");
+    }
     /**Set current name of the data layer, which is the one currently being visualized
      * @param name 
      */

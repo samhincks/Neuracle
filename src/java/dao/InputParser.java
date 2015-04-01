@@ -208,11 +208,12 @@ public  class InputParser {
         ThisActionBeanContext ctx = new ThisActionBeanContext(true);
 
         try{
-            //.. put experiment in tridao
+            //.. 1. Fabricate fake data with 1 channel and 200 readings
             ChannelSet b = ChannelSet.generate(1, 200);
             ChannelSet c = ChannelSet.generate(1, 200);
             
-            Markers m = Markers.generate(10, 20);
+            //.. 2. Associate correct number of markers with that data
+            Markers m = Markers.generate(10, 20); // 10 * 20 = 200
             b.addMarkers(m);
             b.id = "b";
             c.id = "c";
@@ -220,20 +221,30 @@ public  class InputParser {
             BiDAO bDAO = new BiDAO(b);
             BiDAO cDAO = new BiDAO(c);
 
-            //.. set the ctx's current dao. 
+            //.. 3. Add these to the session context
             ctx.addDataLayer("b", bDAO);
             ctx.addDataLayer("c", cDAO);
 
+            //.. 4. Initialize a technique, select the channelset b, and make it an experimetn
+            TechniqueSet ts = TechniqueSet.generate();
+            ctx.setCurrentName("b");
+            JSONObject response = ip.parseInput("split(condition)", ctx);
+            ctx.setCurrentName("bcondition");
+            TriDAO tDAO = (TriDAO) ctx.getCurrentDataLayer();
             
-            JSONObject response = new JSONObject();
-            int TEST =5;
+            //.. 5. associate technique with experiment
+            TechniqueDAO wc = new TechniqueDAO(ts.getClassifier());
+            tDAO.addConnection(wc);
+            tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
+            tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
+            
+            int TEST =4;
             if (TEST ==0) 
                  response= ip.parseInput("removeallbut(a,b)", ctx);
             
             if (TEST ==1) {
                 response = ip.parseInput("intercept(bestemusic07.csv, bajs, bajs)", ctx);
             }
-            
             
             if (TEST ==2) {
                 response = ip.parseInput("save(", ctx);
@@ -243,22 +254,11 @@ public  class InputParser {
                 response = ip.parseInput("label(", ctx);
             }
             if (TEST ==4) {
-                TechniqueSet ts = TechniqueSet.generate();
-                ctx.setCurrentName("b");
-                response = ip.parseInput("split(name)",ctx);
-                ctx.setCurrentName("bname");
-                TriDAO tDAO = (TriDAO) ctx.getCurrentDataLayer();
-                
-                TechniqueDAO wc = new TechniqueDAO(ts.getClassifier());
-                tDAO.addConnection(wc);
-                tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
-                tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
-                
-                response = ip.parseInput("train", ctx);
-                System.out.println(response);
+                response = ip.parseInput("train", ctx); //.. After this, the associated weka classifier is trained
+                //System.out.println(response);
                 
                 //.. Having trained, now test
-                ctx.setCurrentName("c");
+                ctx.setCurrentName("b");
                 bDAO = (BiDAO) ctx.getCurrentDataLayer();
                 bDAO.addConnection(wc);
                  
@@ -268,8 +268,8 @@ public  class InputParser {
            
             
             System.out.println(response.get("content"));
-            System.out.println(response.get("action"));
-            System.out.println(response.get("error"));
+           // System.out.println(response.get("action"));
+           // System.out.println(response.get("error"));
 
         }
         catch (Exception ex) {

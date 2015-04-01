@@ -985,18 +985,21 @@ public class DataManipulationParser extends Parser{
                 + "applies to 2D Channelsets " + currentDataLayer.id + " doesn't fit that bill");
         ChannelSet cs = (ChannelSet) currentDataLayer;
         
-        //.. retrieve the hovered over classifier, and bitch if somethings wrong
+        if(cs.getMinPoints() < readEvery) throw new Exception("There is not enough space to create even one instance. Testing must be larger");
+        
+//.. retrieve the hovered over classifier, and bitch if somethings wrong
         ArrayList<ClassificationAlgorithm> classifiers =  dDAO.getClassifiers();
         if (classifiers.size() >1) throw new Exception("It is ambiguous which classifier you want to use");
         if (classifiers.isEmpty()) throw new Exception("You must connect the dataset with a trained classifier");
 
         WekaClassifier classifier = (WekaClassifier) classifiers.get(0);
          
-       System.out.println(classifier.lastInstanceLength + " , " + classifier.lastTechniqueTested.getClassifier().getId() + " , "
-                + classifier.lastTrainedClassification.wekaString);
        //..Classify the  
        Predictions p = classifier.testRealStream(classifier.lastTrainedClassification,
-               classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), performances), cs, classifier.lastInstanceLength, readEvery, null);
+               classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), 
+                       performances), cs, classifier.lastInstanceLength, readEvery, classifier.lastAsAlgosUsed); 
+        //.. Some time a very long time ago, I thought it would be OK to set this to null, and not 
+       //.. remind myself that this would fuck up attribute selection. Today I paid the hard price for that. 
        
        p.setId(dDAO.getId());//.. this is an exception, since here we actualyl do want to set the id
        performances.addNewPredictionsSet(p); 

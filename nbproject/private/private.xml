@@ -69,10 +69,10 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/area/descriptionarea.js</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/events.js</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/javainterface.js</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/visualization/FreqBarChart.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/evaluatable/WekaClassifier.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/evaluatable/TechniqueSet.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/InputParser.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/DataManipulationParser.java</file>
         </group>
     </open-files>
 </project-private>

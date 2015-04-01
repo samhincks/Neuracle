@@ -25,12 +25,12 @@ public class TechniqueSet extends Technique{
     public static TechniqueSet generate() throws Exception {
         TechniqueSet ts = new TechniqueSet("Test");
         //.. add ML, featureSet
-        ts.addTechnique(new WekaClassifier(WekaClassifier.MLType.smo)); 
+        ts.addTechnique(new WekaClassifier(WekaClassifier.MLType.lmt)); 
         FeatureSet fs = new FeatureSet("fs");
         fs.addFeaturesFromConsole("slope^mean", "*", "*");
 
         ts.addTechnique(fs);
-        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 180));
+        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 3));
         ts.addTechnique(new PassFilter());
         ts.addTechnique(new Transformation(Transformation.TransformationType.None));
 
