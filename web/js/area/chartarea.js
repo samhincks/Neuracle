@@ -120,50 +120,24 @@ function ChartArea(id, descArea) {
     }
     
     
-    
-    this.displayPredictions =function(JSONarr, classes){
-         //console.log(classes + " , " +JSONobj[0].answer + " , " + JSONobj[0].guess + " , " + JSONobj[0].confidence);
-         $(selection).children().remove();
-          
-         //.. add a menu for selecting channel 
-         $("#channelSelection").remove();
-         $(selection).append("<select id = channelSelection> </select>" );
-            
-          //.. add each channel as a value to the select menu
-         for (var i =0; i < 2; i++) { //.. 1 for each condition. And they are inverses
-             $('#channelSelection')
-                 .append($('<option>', { value : i })
-                 .text(i)); 
-         }
-            
-         var d3Chart = LineChart();
-         var self = this;
-           
-         //.. add event listener for this menu
-         var menu = d3.select("#channelSelection")
-                  .on("change", function() {
-                  var channel = menu.property("value");
-          
-        d3Chart.key(channel);
-        d3Chart(selection);});
-         
-         for(var i =0 ; i < JSONarr.length; i++) {
-             var prediction = JSONarr[i];
-             var row = new Object();
-             row.time =i;
-             row.channels = [prediction.confidence]//, Math.random()*2];
-             row.condition = prediction.guess;
-             d3Chart.addRow(row, 0);
-         }
-         
-         
-         //.. build the line chart with default width and height and key
-         var width = $(selection).width() - border;
-         var height = $(selection).height() - border;
-         d3Chart.key(0).channels(function(d){return d.channels;}).width(width).height(height)(selection).transition();
 
+    /*This cant be plain old line, becaues then it wont work for multiple classes. But we could
+     * alter the opacity. We could draw little dots that were color based on prediction. They would
+     * be green dark if confident and correct. And light red if confident and wrong. Hovering over
+     * them would reveal the actual confidence. You would receive, at a glance, how often predictions
+     * were made, then perhaps you could hover over to see how far back that prediction applied*/
+    this.displayPredictions =function(JSONobj){
+        
+        var chart = PredictionChart();
+        var everyK = JSONobj.every;
+        var length = JSONobj.length;
+        var data = JSONobj.predictions;
+        var classes = JSONobj.classes.values;
+        
+        //.. add chart
+        var selection = "#topRight";
 
-         
+        chart.data(data).instance(everyK, length).classes(classes)(selection);
     }
     
     /** A lightweight stream of a datalayer. Inside a little information box, display a table

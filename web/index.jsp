@@ -114,6 +114,8 @@
         <script type="text/javascript" src="js/visualization/movingLinegraph.js"></script> 
         <script type="text/javascript" src="js/visualization/streamchart.js"></script> 
         <script type="text/javascript" src="js/visualization/CorrelationMatrix.js"></script> 
+        <script type="text/javascript" src="js/visualization/PredictionChart.js"></script> 
+
 
 
         <!--AREAS-->

@@ -88,10 +88,8 @@ function JavaInterface() {
         //.. no error, then render the object datalayers
         else {
             datalayerArea.addTechniques(JSONobj.techniques);
-            techniqueinit();
+            techniqueInit();
         }
-        console.log(JSONobj);
-
     }
     
     /**Having selected an element, get a stream of its data to display it. */
@@ -100,8 +98,8 @@ function JavaInterface() {
             if (message == "frequency"){
                 $('#frequency').val(true);
                 $('#correlation').val(false);
-            
             }
+            
             else if (message =="correlation") {
                 $('#correlation').val(true);
                 $('#frequency').val(false);
@@ -186,7 +184,6 @@ function JavaInterface() {
         
         else if (JSONobj.description != null) {
              descriptionArea.displayDescription(JSONobj.description);
-
         }
        
        //.. otherwise no error, so we display the graph
@@ -195,8 +192,8 @@ function JavaInterface() {
         }
         
         if (JSONobj.predictions != null) {
-            console.log("GREAT NEWS WE HAVE PREDICTIONS!!");
-            chartArea.displayPredictions(JSONobj.predictions, JSONobj.classes);
+            console.log("preds"); console.log(JSONobj);
+            chartArea.displayPredictions(JSONobj.predictions);
         }
         
         if (JSONobj.frequency != null) {

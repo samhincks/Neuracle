@@ -25,11 +25,20 @@
       background-color: ghostwhite;
       text-align: right;
       padding: 3px;
-      margin: 1px;
       color: white;
       position:absolute; /*if relative positioning, then charts will display one after another*/
       width: 94%;
       height: 94%;
+    }
+    .predChart {
+        background-color: ghostwhite;
+        text-align: right;
+        padding: 3px;
+        margin: 30px;
+        color: white;
+        position:absolute; /*if relative positioning, then charts will display one after another*/
+        width: 94%;
+        height: 94%;
     }
 
     .chart rect {
@@ -48,6 +57,9 @@
       fill: none;
       stroke: #000;
       shape-rendering: crispEdges;
+    }
+    .y.axis.pred{
+        font: 30px sans-serif;
     }
 /*  path {
         stroke: steelblue;

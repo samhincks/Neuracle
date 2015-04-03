@@ -34,6 +34,7 @@ import realtimereceiver.Client;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.evaluatable.*;
 import timeseriestufts.evaluatable.performances.Performances;
+import timeseriestufts.evaluatable.performances.Predictions;
 import timeseriestufts.evaluation.experiment.Classification;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.BidimensionalLayer;
@@ -255,7 +256,6 @@ public  class InputParser {
             }
             if (TEST ==4) {
                 response = ip.parseInput("train", ctx); //.. After this, the associated weka classifier is trained
-                //System.out.println(response);
                 
                 //.. Having trained, now test
                 ctx.setCurrentName("b");
@@ -263,10 +263,13 @@ public  class InputParser {
                 bDAO.addConnection(wc);
                  
                 response = ip.parseInput("classify", ctx);
-                System.out.println(response);
+                Predictions p = ctx.getPerformances().predictionSets.get("b");
+                System.out.println(p.getPctCorrect());
+                JSONObject jo = bDAO.getPerformanceJSON(ctx.getPerformances());
+                System.out.println(jo.get("predictions"));
+                System.out.println(jo.get("classes"));
             }
            
-            
             System.out.println(response.get("content"));
            // System.out.println(response.get("action"));
            // System.out.println(response.get("error"));

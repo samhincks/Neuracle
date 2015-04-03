@@ -36,7 +36,6 @@ public class Performances {
     }
     
     public void addNewPredictionsSet(Predictions ps) throws Exception{
-        System.out.println("ADDING PS TO " + ps.getId());
         predictionSets.put(ps.getId(), ps); //.. IN THIS CASE WE WANT TO DELETE IF IT ALREADY EXISTS
     }
     
@@ -98,8 +97,6 @@ public class Performances {
             tsTitle += "Filter: " + ts.getFilter().getId();
             tsTitle += "Transformation: " + ts.getTransformation().getId();
 
-
-            
             System.out.print(tsTitle + " , " + ts.getAverage());
             bw.write(tsTitle + " , " + ts.getAverage() + ",");
             for (Dataset ds : dataSets.values()) {

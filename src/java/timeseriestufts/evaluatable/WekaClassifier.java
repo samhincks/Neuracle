@@ -154,7 +154,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
         if(everyK <1) throw new Exception("New-Instance-Sampling-rate cannot be less 1" );
         
         //.. make Predictions object to save stats
-        Predictions retPredictions = new Predictions(ds, ts, c);
+        Predictions retPredictions = new Predictions(ds, ts, c, instanceLength,everyK);
 
         //.. Retrieve our instance-packed version of the stream and get weka version of it
         Experiment streamingExperiment = stream.getMovingExperiment(c, instanceLength, everyK);

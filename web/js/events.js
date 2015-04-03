@@ -98,17 +98,13 @@ function init() {
 /*Functions that must be loaded at start but also
  *reinitalized when we reload datalayers*/
 function reinit() {
-    console.log("reinit");
   /** dropchannel: this is the class for datalayers. As soon as our mouse enters
     *it, we want to change "givers" val (again an old name that no longer makes sense)
     * so that the backend knows what is currently being pressed
     **/
     $('.dropChannel').mouseenter(function(e) {
         $('#giver').val(e.currentTarget.id); //.. e.target.id gives you a bug sometimes 
-        
      });
-
-    
     
     var trZoomed = false;
     $("#topRight").dblclick(function(e) {
@@ -124,17 +120,19 @@ function reinit() {
         }
         chartArea.displayChart(chartArea.lastJSON);
     });
+    
      //.. for multi-selection: set shiftpressed to true
     $("body").keydown(function (e) { 
-      
         if (e.which == 16)
             shiftPressed =true;
-        if (e.which == 18)
+        if (e.which == 18) //.. alt
             freqKey = true;
-        if (e.which == 91)
-            corKey = true;
-        
-        
+        if (e.which == 91) //.. This not the best idea since I don't think it exists on windows
+            corKey = true;   
+        if (e.which ==17) { //.. ctrl
+            e.preventDefault();
+            ctrlKey = true;
+        }
     });  
     
     //.. and set it back up if we are releasing the key
@@ -145,11 +143,14 @@ function reinit() {
             freqKey = false;
         if (e.which == 91)
             corKey = false;
+        if (e.which == 17)
+            ctrlKey = false;
     });
     
     var shiftPressed = false; //.. for multi-selection
     var freqKey = false;
     var corKey = false;
+    var ctrlKey = false;
     
     //.. if a channel set is clicked
     $(".dropChannel").mousedown(function(e){
@@ -163,8 +164,7 @@ function reinit() {
     //.. if a channel set is dbl-clicked
     $(".dropChannel").dblclick(function (e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
-        console.log(e.currentTarget.id);
-        console.log(curKey);
+        
         if (freqKey)
             javaInterface.postToDataLayer("frequency");
         else if (corKey)
@@ -189,7 +189,6 @@ function techniqueInit() {
     $(".technique").dblclick(function(e) {
         javaInterface.getTechniqueStats();
     });
-
 
     //.. if a technique is click (do essentially same as if channel is
     $(".technique").mousedown(function(e) {

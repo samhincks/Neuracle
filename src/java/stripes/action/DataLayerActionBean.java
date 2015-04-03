@@ -149,13 +149,7 @@ public class DataLayerActionBean extends BaseActionBean{
             
             //.. if we want to see a stats representation of performance. 
             else {
-                System.out.println("perf view");
                 Performances p = ctx.getPerformances();
-                
-                //.. this won't work on anythign but an experiment that has been evaluated
-                //.. really, though, I want it to work on every datalayer
-                //.. If a datalayer hasn't been evaluated but all its children
-                //... have been evaluated I want to see thsoe stats
                 jsonObj = dlGiver.getPerformanceJSON(p);
             }
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));

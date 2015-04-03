@@ -189,7 +189,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
              WekaClassifier wc = fold.training.train(this.getTechniqueSet());
              
              wc.test(fold.testing,this.getTechniqueSet(), predictions, fold.training.asAlgosApplied); 
-             System.out.println("Experiment.runCrossValidation() completed " +j);
+             //System.out.println("Experiment.runCrossValidation() completed " +j);
 
         }
          

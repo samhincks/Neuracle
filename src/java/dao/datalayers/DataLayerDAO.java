@@ -90,6 +90,7 @@ public abstract class DataLayerDAO {
          JSONObject jsonObj = new JSONObject(); 
          Dataset d = p.getDataSet(this.getId());
          Predictions pred = p.getPredictionSet(this.getId());
+        
          //.. no matter what, return a basic description of the data layer even if it hasnt been evaluated
          JSONObject descObj = new JSONObject();
          descObj.put("id", dataLayer.id);
@@ -128,21 +129,25 @@ public abstract class DataLayerDAO {
          }
          
          //.. THIS SHould only be true for a 2d channelset, where we have applied classify()
+         //.. [{"guess":"a","answer":"a","confidence":0.3333333333333333}
          if (pred != null) { 
-              JSONArray predictions = new JSONArray();
-        
-          
+              JSONArray predictions = new JSONArray();      
+              JSONObject predObj = new JSONObject();
+              predObj.put("classes", pred.classification.getJSON());
+              predObj.put("length", pred.instanceLenth);
+              predObj.put("every", pred.everyK);
               for (Prediction pr : pred.predictions) {
                   JSONObject prediction = new JSONObject();
                   
                   prediction.put("guess",pr.prediction);
                   prediction.put("answer", pr.answer);
                   prediction.put("confidence", pr.confidence);
+                  prediction.put("percentage", pr.conditionPercentage);
                   predictions.put(prediction);
               }
                  
-              jsonObj.put("predictions", predictions);
-              jsonObj.put("classes", pred.classification.wekaString);
+              predObj.put("predictions", predictions);
+              jsonObj.put("predictions", predObj);
          }
          return jsonObj;
     }

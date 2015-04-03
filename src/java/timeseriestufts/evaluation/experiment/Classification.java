@@ -7,6 +7,8 @@ package timeseriestufts.evaluation.experiment;
 import filereader.Labels;
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import weka.core.Attribute;
 import weka.core.FastVector;
 
@@ -146,6 +148,18 @@ public class Classification {
                 
         return new weka.core.Attribute(name, fv);
 
+    }
+
+    public JSONObject getJSON() throws Exception{
+        JSONObject ret = new JSONObject();
+        JSONArray arr = new JSONArray();
+        for (String s : values) {
+            arr.put(s);
+        }
+        ret.put("name", name);
+        ret.put("values", arr);
+        return ret;
+    
     }
 
 }

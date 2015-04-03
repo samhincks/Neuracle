@@ -20,6 +20,7 @@ public class Predictions {
     public TechniqueSet techniqueSet;
     public Classification classification;
     public ArrayList<Prediction> predictions;
+    public int instanceLenth, everyK;
     private String id;
     
     public Predictions(Dataset dataset, TechniqueSet ts, Classification c) throws Exception{
@@ -27,6 +28,15 @@ public class Predictions {
         this.dataset =dataset;
         this.techniqueSet = ts;
         this.classification = c;
+        predictions = new ArrayList();
+    }
+    public Predictions(Dataset dataset, TechniqueSet ts, Classification c, int instanceLength, int everyK) throws Exception{
+        this.id =dataset.getId() + ts.getId() + c.id;
+        this.dataset =dataset;
+        this.techniqueSet = ts;
+        this.classification = c;
+        this.instanceLenth = instanceLength;
+        this.everyK = everyK;
         predictions = new ArrayList();
     }
     
