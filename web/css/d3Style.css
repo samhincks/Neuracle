@@ -21,7 +21,7 @@
     }
 
    .chart {
-      font: 10px sans-serif;
+      font: 10px monospace;
       background-color: ghostwhite;
       text-align: right;
       padding: 3px;
@@ -31,14 +31,15 @@
       height: 94%;
     }
     .predChart {
+        font: 10px monospace;
         background-color: ghostwhite;
         text-align: right;
-        padding: 3px;
-        margin: 30px;
+        padding: 50px;
         color: white;
         position:absolute; /*if relative positioning, then charts will display one after another*/
         width: 94%;
         height: 94%;
+        z-index: 1000;
     }
 
     .chart rect {
@@ -59,7 +60,7 @@
       shape-rendering: crispEdges;
     }
     .y.axis.pred{
-        font: 30px sans-serif;
+        font: 12px monospace;
     }
 /*  path {
         stroke: steelblue;
@@ -79,12 +80,41 @@
             opacity: 0.7;
             stroke: black;
      }
-     .percentageLabbel {
+    .percentageLabbel {
          z-index: 60;
          opacity: 1;
      }
- 
+    /** D3 TIP 
+     **/
+    .d3-tip {
+         line-height: 1;
+         font-weight: bold;
+         padding: 12px;
+         background: rgba(0, 0, 0, 0.8);
+         color: #fff;
+         border-radius: 2px;
+     }
 
+     /* Creates a small triangle extender for the tooltip */
+     .d3-tip:after {
+         box-sizing: border-box;
+         display: inline;
+         font-size: 10px;
+         width: 100%;
+         line-height: 1;
+         color: rgba(0, 0, 0, 0.8);
+         content: "\25BC";
+         position: absolute;
+         text-align: center;
+     }
+
+     /* Style northward tooltips differently */
+     .d3-tip.n:after {
+         margin: -1px 0 0 0;
+         top: 100%;
+         left: 0;
+     }
+     
     /*
     * The CSS below is intended for the "global" styles of svg.line-graph, not specifics per graph such as color of lines
     * which is expected to come from the data itself (even though it can be done via CSS as well if wanted)

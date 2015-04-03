@@ -97,7 +97,6 @@ function ChartArea(id, descArea) {
             $(selection).children().remove();
             d3.selectAll('.line-graph').remove(); //.. remove if it exists already
             data = JSONobj.data; 
-            console.log(JSONobj);
             var actualMaxPoints = JSONobj.actualNumPoints;
             var readingsPerSec = JSONobj.readingsPerSec;
             var maxInSeconds = (actualMaxPoints / readingsPerSec);

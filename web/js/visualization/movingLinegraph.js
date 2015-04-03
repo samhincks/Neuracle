@@ -265,7 +265,7 @@ function LineGraph(argsMap) {
                 var startTime = getRequiredVar(dataMap, 'start', "The data object must contain a 'start' value with the start time in milliseconds since epoch.")
 		var step = getRequiredVar(dataMap, 'step', "The data object must contain a 'step' value with the time in milliseconds between each data value.")		
 		var names = getRequiredVar(dataMap, 'names', "The data object must contain a 'names' array with the same length as 'values' with a name for each data value array.")		
-		var displayNames = getOptionalVar(dataMap, 'displayNames', names);
+                var displayNames = getOptionalVar(dataMap, 'displayNames', names);
 		var numAxisLabelsPowerScale = getOptionalVar(dataMap, 'numAxisLabelsPowerScale', 6); 
 		var numAxisLabelsLinearScale = getOptionalVar(dataMap, 'numAxisLabelsLinearScale', 6); 
 		
@@ -678,7 +678,6 @@ function LineGraph(argsMap) {
 		hoverLine.classed("hide", true);
 			
 		createScaleButtons();
-		createDateLabel();
 		createLegend();		
 		setValueLabelsToLatest();
 	}
@@ -688,7 +687,6 @@ function LineGraph(argsMap) {
 	 * and allows for showing the current value when doing a mouseOver
 	 */
 	var createLegend = function() {
-		
 		// append a group to contain all lines
 		var legendLabelGroup = graph.append("svg:g")
 				.attr("class", "legend-group")
@@ -703,12 +701,15 @@ function LineGraph(argsMap) {
 					return d;
 				})
 				.attr("font-size", legendFontSize)
-				.attr("fill", function(d, i) {
+				.style("fill", function(d, i) {
 					// return the color for this row
-					return data.colors[i];
+					return d3Colors(i);
 				})
 				.attr("y", function(d, i) {
 					return h+28;
+				})
+                                .attr("x", function(d, i) {
+					return 40*i;
 				})
 
 				
@@ -816,23 +817,7 @@ function LineGraph(argsMap) {
 		
 	}
 	
-	/**
-	 * Create a data label
-	 */
-	var createDateLabel = function() {
-		var date = new Date(); // placeholder just so we can calculate a valid width
-		// create the date label to the left of the scaleButtons group
-		var buttonGroup = graph.append("svg:g")
-				.attr("class", "date-label-group")
-			.append("svg:text")
-				.attr("class", "date-label")
-				.attr("text-anchor", "end") // set at end so we can position at far right edge and add text from right to left
-				.attr("font-size", "10") 
-				.attr("y", -4)
-				.attr("x", w)
-				.text(date.toDateString() + " " + date.toLocaleTimeString())
-				
-	}
+	
 
 	
 	/**
@@ -909,15 +894,15 @@ function LineGraph(argsMap) {
 	* Handler for when data is updated.
 	*/
 	var handleDataUpdate = function() {
-		if(userCurrentlyInteracting) {
-			// user is interacting, so let's update values to wherever the mouse/finger is on the updated data
-			if(currentUserPositionX > -1) {
-				//displayValueLabelsForPositionX(currentUserPositionX)
-			}
-		} else {
-			// the user is not interacting with the graph, so we'll update the labels to the latest
-			setValueLabelsToLatest();
-		}
+            if(userCurrentlyInteracting) {
+                    // user is interacting, so let's update values to wherever the mouse/finger is on the updated data
+                    if(currentUserPositionX > -1) {
+                        //displayValueLabelsForPositionX(currentUserPositionX)
+                    }
+            } else {
+                // the user is not interacting with the graph, so we'll update the labels to the latest
+                setValueLabelsToLatest();
+            }
 	}
 	
 	/**
@@ -981,9 +966,6 @@ function LineGraph(argsMap) {
 			return labelNameEnd[i];
 		})
 		
-
-		// show the date
-		graph.select('text.date-label').text(dateToShow)
 
 		// move the group of labels to the right side
 		if(animate) {
@@ -1071,12 +1053,7 @@ function LineGraph(argsMap) {
 		graph.selectAll("text.legend.value")
 			.attr("font-size", legendFontSize);
 
-		// move date label
-		graph.select('text.date-label')
-			.transition()
-			.duration(transitionDuration)
-			.ease("linear")
-			.attr("x", w)
+		
 
 		// redraw the graph with new dimensions
 		redrawAxes(true);

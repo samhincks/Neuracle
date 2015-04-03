@@ -192,7 +192,6 @@ function JavaInterface() {
         }
         
         if (JSONobj.predictions != null) {
-            console.log("preds"); console.log(JSONobj);
             chartArea.displayPredictions(JSONobj.predictions);
         }
         

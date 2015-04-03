@@ -108,6 +108,7 @@
 
 
         <!--VISUALIZATIONS-->
+        <script type="text/javascript" src="js/visualization/d3tip.js"></script> 
         <script type="text/javascript" src="js/visualization/LineChart.js"></script> 
         <script type="text/javascript" src="js/visualization/BarChart.js"></script> 
         <script type="text/javascript" src="js/visualization/FreqBarChart.js"></script> 

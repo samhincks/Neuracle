@@ -169,12 +169,8 @@ public class BiDAO extends DataLayerDAO {
             //.. default variables
             data.put("start", 1);
             
-            //.. add id of each column as label, then add to the data obj
-            JSONArray names = new JSONArray();
             for (String s : channelSet.getColumnNames()) {
-                names.put(s);
             }
-            data.put("names", names);
             
             JSONArray values = new JSONArray();
             
@@ -188,11 +184,16 @@ public class BiDAO extends DataLayerDAO {
             
             //.. Condense the data, setting maximum points to stream
             int MAXPOINTS = 300;     
-            int numPoints;           
+            int numPoints;    
+            
+            //.. add id of each column as label, then add to the data obj
+            JSONArray names = new JSONArray();
+            
             //.. Create each channel
             for (int i=0; i< numChannels; i+= chanInc) {
                 UnidimensionalLayer channel = channelSet.getChannel(i);
-               
+                names.put(channel.id);
+
                 //.. Add each point in data to JSONArray
                 //... BUT DO NOT ADD MORE THAN MAX POINTS
                 int pointsInc = 1;
@@ -233,10 +234,11 @@ public class BiDAO extends DataLayerDAO {
                     int index = m.getClassification().getIndex(conName);
                     channelData.put(index);
                 }
-                values.put(channelData);   
+                values.put(channelData);  
+                names.put(m.name);
             }
             
-            
+            data.put("names", names);
             
             //.. save this array
             data.put("values", values);

@@ -21,6 +21,9 @@ function PredictionChart() {
     var everyK;
     var length;
     var classes;
+    var recClass = "predRect";
+    var calcY;
+    var x; //.. same logic as calcY but I suck at programming
    
     function chart(s) {
         //.. if there is an optional parameter of selection
@@ -38,7 +41,7 @@ function PredictionChart() {
                 .attr("height", height);
         
         var lastX = data.length * everyK;
-        var x = d3.scale.linear()
+        x = d3.scale.linear()
                 .domain([0, lastX])
                 .range([0, width ]); //... margin is weirdly broken??
         
@@ -59,16 +62,16 @@ function PredictionChart() {
 
         svg.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + (height - margin.bottom) + ")") //.. 0,0 refers to 0,height
+                .attr("transform", "translate(0," + (height - margin.bottom*2) + ")") //.. 0,0 refers to 0,height
                 .call(xAxis);
         
         //.. Add a y axis
         var yAxis = d3.svg.axis()
                 .scale(y)
-                .orient("right")
+                .orient("left")
                 .ticks(data.length);
 
-        var calcY = function(d,i) {
+        calcY = function(d,i) {
             if (classes.length >2)
                 return (y(d.guess) + ((i % 3 == 0) ? 0 : ((i % 3 == 1) ? 10 : - 10)));
             return ((d.guess == classes[0]) ? y2(d.confidence) : y2(1-d.confidence)); //.. invert prediction if its not first class
@@ -76,6 +79,14 @@ function PredictionChart() {
         svg.append("g")
                 .attr("class", "y axis pred")
                 .call(yAxis);
+        
+        var tip = d3.tip()
+                .attr('class', 'd3-tip')
+                .offset([-10, 0])
+                .html(function(d) {
+                    return "<strong> " + d.guess+"</strong> <span style='color:lightcrimson'> : " + d.confidence + "</span>";
+                })
+        svg.call(tip);
         
         var rect = svg.selectAll("rect");  
         rect.data(data).enter().append("rect")
@@ -85,7 +96,10 @@ function PredictionChart() {
            .attr("height", function(d) {return 10})
            .attr("class", "corSquare")
            .style("fill", function(d) { return ((d.guess == d.answer) ? "green" : "red")})
-           .attr("opacity", function(d) {return (d.confidence)});
+           .attr("opacity", function(d) {return (d.confidence)})
+           .attr("id", function(d,i) {return recClass +i})
+           .on("mouseover",  tip.show)
+           .on("mouseout", tip.hide);
     }
     
     chart.data = function(arr) {
@@ -105,11 +119,10 @@ function PredictionChart() {
         classes = arr;
         return chart; //.. for chaining
     }
-    
     return chart;
 }
 
-//testCM();
+testCM();
 function testCM() { 
     var chart = PredictionChart();
     var everyK =3;
@@ -128,7 +141,7 @@ function testCM() {
     } 
     
     for (var i = 0; i < 10; i++) {
-        d.push({guess: "b", answer: "b", confidence: 0.93});
+        d.push({guess: "c", answer: "b", confidence: 0.93});
     } 
     chart.data(d).instance(everyK,length).classes(classes)(selection);
    
