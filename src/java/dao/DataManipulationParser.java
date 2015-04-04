@@ -978,14 +978,11 @@ public class DataManipulationParser extends Parser{
     }
     
     private String classify(String [] parameters, DataLayerDAO dDAO, Performances performances) throws Exception{
-        int readEvery =25;
-        if (parameters.length>0) readEvery = Integer.parseInt(parameters[0]);
         
         if(!(currentDataLayer instanceof ChannelSet)) throw new Exception("The command classify only "
                 + "applies to 2D Channelsets " + currentDataLayer.id + " doesn't fit that bill");
         ChannelSet cs = (ChannelSet) currentDataLayer;
         
-        if(cs.getMinPoints() < readEvery) throw new Exception("There is not enough space to create even one instance. Testing must be larger");
         
         //.. retrieve the hovered over classifier, and bitch if somethings wrong
         ArrayList<ClassificationAlgorithm> classifiers =  dDAO.getClassifiers();
@@ -993,7 +990,12 @@ public class DataManipulationParser extends Parser{
         if (classifiers.isEmpty()) throw new Exception("You must connect the dataset with a trained classifier");
 
         WekaClassifier classifier = (WekaClassifier) classifiers.get(0);
-         
+        
+        //.. By default, read every shuold be as long as there are instnces
+        int readEvery = classifier.lastInstanceLength;
+        if (parameters.length>0) readEvery = Integer.parseInt(parameters[0]);
+        if(cs.getMinPoints() < readEvery) throw new Exception("There is not enough space to create even one instance. Testing must be larger");
+
        //..Classify the  
        Predictions p = classifier.testRealStream(classifier.lastTrainedClassification,
                classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), 

@@ -114,15 +114,45 @@ function PredictionChart() {
         length = instanceLength;
         return chart; //.. for chaining   
     }
+    chart.width = function(w) {
+        width = w;
+        return chart;
+    }
+    chart.height = function(h) {
+        height =h;
+        return chart;
+    }
     
     chart.classes = function(arr) {
         classes = arr;
         return chart; //.. for chaining
     }
+    
+    /*Return an object that matches what actual data might look like*/
+    chart.getTestData = function() {
+        var JSONobj = new Object();
+        JSONobj.every =3;
+        JSONobj.length =3;
+        JSONobj.classes = new Object(); JSONobj.classes.values = ["a","b","c"];
+        var d = new Array();
+        for (var i = 0; i < 10; i++) {
+            d.push({guess: "a", answer: "b", confidence: 0.99});
+        }
+        for (var i = 0; i < 10; i++) {
+            d.push({guess: "b", answer: "b", confidence: 0.55});
+        }
+
+        for (var i = 0; i < 10; i++) {
+            d.push({guess: "c", answer: "b", confidence: 0.93});
+        } 
+        JSONobj.predictions = d;
+        return JSONobj;
+    }
     return chart;
+
 }
 
-testCM();
+//testCM();
 function testCM() { 
     var chart = PredictionChart();
     var everyK =3;
@@ -143,6 +173,7 @@ function testCM() {
     for (var i = 0; i < 10; i++) {
         d.push({guess: "c", answer: "b", confidence: 0.93});
     } 
-    chart.data(d).instance(everyK,length).classes(classes)(selection);
+    var obj = chart.getTestData();
+    chart.data(obj.predictions).instance(obj.every,obj.length).classes(obj.classes.values)(selection);
    
 }

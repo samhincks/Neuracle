@@ -22,93 +22,23 @@ function ChartArea(id, descArea) {
     *       an object with a collection of channels, time, and condition. channels indexed by index.
     */
    this.displayChart = function (JSONobj) {
-       this.lastJSON = JSONobj;
+        this.lastJSON = JSONobj; //.. remember what is written for zoom
         lastGraph = JSONobj.type;
+        
+        if (JSONobj.predictions != null) {
+            this.displayPredictions(JSONobj);
+        }
+        
         if(JSONobj.type == "experiment"){
-            $(selection).children().remove();
-            var channels = JSONobj.instances[0][0].channels;
-
-            var actualMaxPoints = JSONobj.actualNumPoints;
-            var readingsPerSec = JSONobj.readingsPerSec;
-            var maxInSeconds = (actualMaxPoints / readingsPerSec)
-            console.log(actualMaxPoints + " , " + readingsPerSec + " , " + maxInSeconds);
- 
-           //.. add a menu for selecting channel 
-            $("#channelSelection").remove();
-            $(selection).append("<select id = channelSelection> </select>" );
-            
-            //.. add each channel as a value to the select menu
-            for (var i =0; i < channels.length; i++) {
-                $('#channelSelection')
-                    .append($('<option>', { value : i })
-                    .text(i)); 
-            }
-            var d3Chart = LineChart();
-            var self = this;
-           
-           //.. add event listener for this menu
-            var menu = d3.select("#channelSelection")
-                  .on("change", function() {
-                      var channel = menu.property("value");
-                      d3Chart.key(channel);
-                      d3Chart(selection);
-                     
-            });
-            
-            //.. build the line chart with default width and height and key
-            var width = $(selection).width() - border;
-            var height = $(selection).height() - border;
-            d3Chart.channels(function(d){return d.channels;}).key(0).width(width).height(height).maxTime(maxInSeconds); //.. so we show the first channel
-
-            //.. the total duration of the area chart swallowing a line, scale to number of instances
-            this.singleTransition = this.transitionLength / JSONobj.instances.length;
-            d3Chart.singleTransitionLength(this.singleTransition);//..set transition length
-            d3Chart.transitionLength(this.transitionLength);
-
-            //.. for each instnace (which all begin at 0)
-            for (var i=0; i<JSONobj.instances.length; i++) {
-                var instance = JSONobj.instances[i]; //.. each instance is an array of rows at diff timestamps
-
-                //.. for each row
-                for(var k =0; k < instance.length; k++) {
-                    //.. for now show just one channel
-                    d3Chart.addRow(instance[k],i);
-                }
-            }
-
-            //.. instantiate chart, then make it automatically transition to average
-            d3Chart(selection);
-            
-            //.. when user clicks space the chart transitions
-            window.onkeyup = function(e) {
-                var key = e.keyCode ? e.keyCode : e.which;
-                if (lastGraph == "experiment") {
-                    if (key ==16) {
-                        if (!(d3Chart.hasTransitioned)) {
-                            d3Chart.transitionToAverage();
-                            setTimeout(function() {d3Chart.transitionScale()}, (self.timeToTransition+self.transitionLength));
-                        }
-                    }
-                }
-            }
+            this.displayExperiment(JSONobj);
         }
         
         else if(JSONobj.type == "channelset") {
-            $(selection).children().remove();
-            d3.selectAll('.line-graph').remove(); //.. remove if it exists already
-            data = JSONobj.data; 
-            var actualMaxPoints = JSONobj.actualNumPoints;
-            var readingsPerSec = JSONobj.readingsPerSec;
-            var maxInSeconds = (actualMaxPoints / readingsPerSec);
-            data["maxTime"] = maxInSeconds;
-            streamChart = new LineGraph({containerId: 'topRight', data: data});
+            this.displayChannelSet(JSONobj);
         }
         
         else if(JSONobj.type == "correlation") {
-            $(selection).children().remove();
-            var corChart = CorrelationMatrix();
-            corChart.data(JSONobj.data)(selection);
-            var self = this;
+            this.displayCorrelation(JSONobj);
         }
 
         else if (JSONobj.id == "csrefresh") {
@@ -117,7 +47,95 @@ function ChartArea(id, descArea) {
         this.displayedDL = JSONobj.id;
         descriptionArea.displayedDL = this.displayedDL;
     }
+    this.displayCorrelation = function(JSONobj) {
+        $(selection).children().remove();
+        var corChart = CorrelationMatrix();
+        corChart.data(JSONobj.data)(selection);
+        var self = this;
+    }
     
+    this.displayChannelSet = function(JSONobj) {
+        $(selection).children().remove();
+        d3.selectAll('.line-graph').remove(); //.. remove if it exists already
+        data = JSONobj.data;
+        var actualMaxPoints = JSONobj.actualNumPoints;
+        var readingsPerSec = JSONobj.readingsPerSec;
+        var maxInSeconds = (actualMaxPoints / readingsPerSec);
+        data["maxTime"] = maxInSeconds;
+        streamChart = new LineGraph({containerId: 'topRight', data: data});
+    }
+    this.displayExperiment = function(JSONobj) {
+        $(selection).children().remove();
+        var channels = JSONobj.instances[0][0].channels;
+
+        var actualMaxPoints = JSONobj.actualNumPoints;
+        var readingsPerSec = JSONobj.readingsPerSec;
+        var maxInSeconds = (actualMaxPoints / readingsPerSec)
+        console.log(actualMaxPoints + " , " + readingsPerSec + " , " + maxInSeconds);
+
+        //.. add a menu for selecting channel 
+        $("#channelSelection").remove();
+        $(selection).append("<select id = channelSelection> </select>");
+
+        //.. add each channel as a value to the select menu
+        for (var i = 0; i < channels.length; i++) {
+            $('#channelSelection')
+                    .append($('<option>', {value: i})
+                            .text(i));
+        }
+        var d3Chart = LineChart();
+        var self = this;
+
+        //.. add event listener for this menu
+        var menu = d3.select("#channelSelection")
+                .on("change", function() {
+                    var channel = menu.property("value");
+                    d3Chart.key(channel);
+                    d3Chart(selection);
+
+                });
+
+        //.. build the line chart with default width and height and key
+        var width = $(selection).width() - border;
+        var height = $(selection).height() - border;
+        d3Chart.channels(function(d) {
+            return d.channels;
+        }).key(0).width(width).height(height).maxTime(maxInSeconds); //.. so we show the first channel
+
+        //.. the total duration of the area chart swallowing a line, scale to number of instances
+        this.singleTransition = this.transitionLength / JSONobj.instances.length;
+        d3Chart.singleTransitionLength(this.singleTransition);//..set transition length
+        d3Chart.transitionLength(this.transitionLength);
+
+        //.. for each instnace (which all begin at 0)
+        for (var i = 0; i < JSONobj.instances.length; i++) {
+            var instance = JSONobj.instances[i]; //.. each instance is an array of rows at diff timestamps
+
+            //.. for each row
+            for (var k = 0; k < instance.length; k++) {
+                //.. for now show just one channel
+                d3Chart.addRow(instance[k], i);
+            }
+        }
+
+        //.. instantiate chart, then make it automatically transition to average
+        d3Chart(selection);
+
+        //.. when user clicks space the chart transitions
+        window.onkeyup = function(e) {
+            var key = e.keyCode ? e.keyCode : e.which;
+            if (lastGraph == "experiment") {
+                if (key == 16) {
+                    if (!(d3Chart.hasTransitioned)) {
+                        d3Chart.transitionToAverage();
+                        setTimeout(function() {
+                            d3Chart.transitionScale()
+                        }, (self.timeToTransition + self.transitionLength));
+                    }
+                }
+            }
+        }
+    }
     
 
     /*This cant be plain old line, becaues then it wont work for multiple classes. But we could
@@ -126,17 +144,15 @@ function ChartArea(id, descArea) {
      * them would reveal the actual confidence. You would receive, at a glance, how often predictions
      * were made, then perhaps you could hover over to see how far back that prediction applied*/
     this.displayPredictions =function(JSONobj){
-        
+        $(selection).children().remove();
+        var width = $(selection).width() - border;
+        var height = $(selection).height() - border;
         var chart = PredictionChart();
         var everyK = JSONobj.every;
         var length = JSONobj.length;
         var data = JSONobj.predictions;
         var classes = JSONobj.classes.values;
-        
-        //.. add chart
-        var selection = "#topRight";
-
-        chart.data(data).instance(everyK, length).classes(classes)(selection);
+        chart.data(data).width(width).height(height).instance(everyK, length).classes(classes)(selection);
     }
     
     /** A lightweight stream of a datalayer. Inside a little information box, display a table
@@ -220,6 +236,18 @@ function ChartArea(id, descArea) {
             }, 1000)
         }, 1000); 
     }
+    
+     this.testCharts = function() {
+        var test = "prediction";
+        if (test == "prediction") {
+            var chart = PredictionChart();
+            var obj = chart.getTestData();
+            this.displayChart(obj);
+        }
+            
+    }
+    this.testCharts();
+
     
 }
 

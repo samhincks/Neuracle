@@ -11,7 +11,7 @@ package timeseriestufts.evaluatable.performances;
 public class Prediction {
     public String prediction; 
     public String answer; 
-    public double confidence;
+    public float confidence;
     public double pctHigher=0;//.. how many pct greater than the second prediction
     public int instanceIndex;
     public double conditionPercentage =1; //.. what percent of the majority condition is this instance
@@ -20,7 +20,7 @@ public class Prediction {
     public Prediction(String prediction, String answer, double confidence, double pctHigher, int instanceIndex) {
         this.prediction = prediction;
         this.answer = answer;
-        this.confidence = confidence;
+        this.confidence = (float) confidence;
         this.pctHigher = pctHigher;
         this.instanceIndex = instanceIndex;
     }
@@ -29,7 +29,7 @@ public class Prediction {
     public Prediction(String prediction, String answer, double conditionPercentage, double confidence, double pctHigher, int instanceIndex) {
         this.prediction = prediction;
         this.answer = answer;
-        this.confidence = confidence;
+        this.confidence = (float) confidence;
         this.pctHigher = pctHigher;
         this.instanceIndex = instanceIndex;
         this.conditionPercentage = conditionPercentage;

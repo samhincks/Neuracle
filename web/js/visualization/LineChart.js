@@ -145,7 +145,7 @@ function LineChart() {
        //.. Add a y axis
        yAxis = d3.svg.axis()
            .scale(y)
-           .orient("left");
+           .orient("right");
        
        svg.append("g")
            .attr("class", "y axis")

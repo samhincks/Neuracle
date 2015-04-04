@@ -30,7 +30,6 @@ function JavaInterface() {
              if(JSONobj.action.id == "reloadT") {
                  javaInterface.postToTechniques();
              }
-
              //.. NO longer in use??
              //.. if this was a highlighting command that required back-end computation 
              if(JSONobj.action.id == "sax") { 
@@ -192,7 +191,7 @@ function JavaInterface() {
         }
         
         if (JSONobj.predictions != null) {
-            chartArea.displayPredictions(JSONobj.predictions);
+            chartArea.displayChart(JSONobj.predictions);
         }
         
         if (JSONobj.frequency != null) {
