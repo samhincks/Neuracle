@@ -11,9 +11,9 @@ import org.json.JSONObject;
 /**
  *
  * @author samhincks
- */  
+ */                    
 public class Command {
-    public String id;
+    public String id;  
     public String parameters =""; 
     public String debug ="";
     public String retMessage =""; //.. populated when the command is executed
@@ -24,7 +24,7 @@ public class Command {
     public Command(String id) {
         this.id = id;
     }
-    
+      
     public JSONObject getJSONObject() throws Exception{
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("content", retMessage);

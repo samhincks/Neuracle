@@ -80,12 +80,12 @@ function DataLayer(jsonDL) {
     this.parent =jsonDL.parent;
     this.numChannels = jsonDL.numchannels;
     this.type = jsonDL.type;
-    this.elementTag = '<div id = "'+this.id+'" class = "dropChannel surfaceElement" > </div>';
+    this.elementTag = '<div id = "'+this.id+'" class = " dropChannel surfaceElement" > </div>';
    //..  Draw lines inside it as art, and lines connecting
    //... it to elements it may have been derived from
    //. Errors will occur if it has not been appended to the canvas
     this.drawArt = function() {
-        //.. draw out the lines inside it
+      /*  //.. draw out the lines inside it
         if (jsonDL.type =="2D") {
            plumb.draw2DLinesWithinBox(this.id, this.numChannels);
         }
@@ -97,8 +97,22 @@ function DataLayer(jsonDL) {
            //.. add an additional class "experiment"
            $("#"+this.id).addClass("experiment");
            //plumbTechniques.setExperimentEPs();
+        }*/ 
+        if (jsonDL.type == "2D")
+            if(this.numChannels <17)
+                $("#" + this.id).addClass("chanset");
+            else
+                $("#" + this.id).addClass("chanset2");
+        else { //.. 3D
+            if (jsonDL.numlabels ==1) $("#"+this.id).addClass("experiment1");
+            if (jsonDL.numlabels ==2) $("#"+this.id).addClass("experiment2");
+            if (jsonDL.numlabels ==3) $("#"+this.id).addClass("experiment3");
+            if (jsonDL.numlabels ==4) $("#"+this.id).addClass("experiment4");
+            
+            $("#" + this.id).addClass("experiment2");
+
         }
-        
+
         //.. if this datalayer was derived from another layer, draw a line between them 
         if (this.parent != null && this.parent != "Motherless") {
             plumb.setDerivedConnection(this.id, this.parent);

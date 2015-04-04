@@ -39,9 +39,7 @@ function init() {
         if(e.which == 13) {
             var userText = $("#userinput").val();
             consoleArea.parseUserMessage(userText);
-        } 
-       
-      
+        }       
     });
     
   
@@ -56,7 +54,6 @@ function init() {
             if (target != null) 
                 $("#userinput").val(target);           
         }
-        
         if (e.which == 38) {
             e.preventDefault();
             var target = consoleArea.getLastUp();
@@ -124,37 +121,26 @@ function reinit() {
      //.. for multi-selection: set shiftpressed to true
     $("body").keydown(function (e) { 
         if (e.which == 16)
-            shiftPressed =true;
+            shiftKey =true;
         if (e.which == 18) //.. alt
-            freqKey = true;
-        if (e.which == 91) //.. This not the best idea since I don't think it exists on windows
-            corKey = true;   
-        if (e.which ==17) { //.. ctrl
-            e.preventDefault();
-            ctrlKey = true;
-        }
+            altKey = true;
+       
     });  
     
     //.. and set it back up if we are releasing the key
     $("body").keyup(function (e) { 
         if (e.which == 16)
-            shiftPressed =false;
+            shiftKey =false;
         if (e.which == 18)
-            freqKey = false;
-        if (e.which == 91)
-            corKey = false;
-        if (e.which == 17)
-            ctrlKey = false;
+            altKey = false;
     });
     
-    var shiftPressed = false; //.. for multi-selection
-    var freqKey = false;
-    var corKey = false;
-    var ctrlKey = false;
+    var shiftKey = false; //.. for multi-selection
+    var altKey = false;
     
     //.. if a channel set is clicked
     $(".dropChannel").mousedown(function(e){
-        if(!shiftPressed)
+        if(!shiftKey)
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         else
             datalayerArea.datalayers.multiSelectLayer(e.currentTarget.id)
@@ -164,23 +150,16 @@ function reinit() {
     //.. if a channel set is dbl-clicked
     $(".dropChannel").dblclick(function (e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
-        
-        if (freqKey)
+        if (altKey)
             javaInterface.postToDataLayer("frequency");
-        else if (corKey)
+        else if (altKey)
             javaInterface.postToDataLayer("correlation");
         else
             javaInterface.postToDataLayer();
     });
   
     
-    var curKey;
-    $(document).keydown(function (e) {
-       curKey = e.which;
-    });
-    $(document).keyup(function(e) {
-        curKey = 0;
-    });
+  
 }
 
 

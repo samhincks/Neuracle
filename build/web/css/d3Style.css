@@ -22,7 +22,7 @@
 
    .chart {
       font: 10px monospace;
-      background-color: ghostwhite;
+      background-color:  #EEEEEE;// ghostwhite;
       text-align: right;
       padding: 3px;
       color: white;
