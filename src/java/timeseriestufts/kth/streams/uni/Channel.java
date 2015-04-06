@@ -422,6 +422,21 @@ public class Channel extends UnidimensionalLayer  {
                 super.setPoint(i, (thisPoint + otherPoint) / 2);
         }
     }
+    
+    /**Append the other channels values to the end of this one**/
+    public void append(Channel b) {
+        float [] tempdata  = new float[b.numPoints +this.numPoints];
+        for (int i = 0; i < data.length; i++) {
+            tempdata[i] = data[i];
+        }
+        int index =0;
+        for (int i =data.length; i < tempdata.length; i++) {
+            tempdata[i] = b.data[index]; index++;
+        }
+        this.data = tempdata;
+        this.numPoints = this.data.length;
+    }
+
       /**Set the first point in the timeseries to 0 and all other relative to this new value,
      * so the original series 8, 10, 12 would be translated to 0, 2, 4. 
      * True = Returns a copy with new points.
@@ -622,6 +637,7 @@ public class Channel extends UnidimensionalLayer  {
     /**Return a deep copy of this channel**/
     public Channel getCopy() {
         Channel channel = new Channel(this.framesize, this.numPoints);
+        channel.id = id;
         for (int i = 0; i < numPoints; i++) {
             channel.addPoint(this.getPointOrNull(i));
         }

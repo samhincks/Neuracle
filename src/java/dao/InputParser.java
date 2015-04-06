@@ -210,11 +210,11 @@ public  class InputParser {
 
         try{
             //.. 1. Fabricate fake data with 1 channel and 200 readings
-            ChannelSet b = ChannelSet.generate(1, 200);
-            ChannelSet c = ChannelSet.generate(1, 200);
+            ChannelSet b = ChannelSet.generate(2, 10);
+            ChannelSet c = ChannelSet.generate(2, 10);
             
             //.. 2. Associate correct number of markers with that data
-            Markers m = Markers.generate(10, 20); // 10 * 20 = 200
+            Markers m = Markers.generate(1, 10); // 10 * 20 = 200
             b.addMarkers(m);
             b.id = "b";
             c.id = "c";
@@ -239,7 +239,7 @@ public  class InputParser {
             tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
             tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
             
-            int TEST =4;
+            int TEST =5;
             if (TEST ==0) 
                  response= ip.parseInput("removeallbut(a,b)", ctx);
             
@@ -268,6 +268,24 @@ public  class InputParser {
                 JSONObject jo = bDAO.getPerformanceJSON(ctx.getPerformances());
                 System.out.println(jo.get("predictions"));
                 System.out.println(jo.get("classes"));
+            }
+            if (TEST ==5) { //.. Test multilayer appending
+                //.. First select all layers
+                ctx.setCurrentName("b");
+                bDAO = (BiDAO) ctx.getCurrentDataLayer();
+              //  bDAO.dataLayer.printStream();
+                
+                ctx.setCurrentName("c");
+                bDAO = (BiDAO) ctx.getCurrentDataLayer();
+               // bDAO.dataLayer.printStream();
+                
+                ctx.setCurrentName("b:c");
+                response = ip.parseInput("append", ctx);
+                System.out.println(response.get("content"));
+                ctx.setCurrentName("mergedb-c");
+                bDAO = (BiDAO) ctx.getCurrentDataLayer();
+                bDAO.dataLayer.printStream();
+
             }
            
             System.out.println(response.get("content"));

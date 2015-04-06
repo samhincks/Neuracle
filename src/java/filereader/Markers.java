@@ -136,6 +136,11 @@ public class Markers {
         //.. return the lpercentage the largest had plus
         return new Tuple(largestCondition, (double)largest / (double)total);
     }
+
+    public Markers getCopy() {
+        Markers m = new Markers(this.saveLabels.getCopy());
+        return m;
+    }
     
     public static class Trial { //.. wait, why is this static? just so I can access it form Generate?
         public String name;

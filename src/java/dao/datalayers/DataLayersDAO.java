@@ -43,7 +43,7 @@ public class DataLayersDAO {
             return streams.get(key);
         
         //.. If its a set of 2D datalayers, merge them all together under one synched pile
-        //... we  recreate theis datalayer if it has already been merged in the past. We don' add it to our context
+        //... we  recreate this datalayer if it has already been merged in the past. We don' add it to our context
         else if(key.contains(":")) {
             //.. We don't yet know whether this multi-selection consists of multiple channel sets or Experiments
             //.. Peak at first key and let that decide

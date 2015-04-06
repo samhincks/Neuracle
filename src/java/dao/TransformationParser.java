@@ -82,6 +82,12 @@ public class TransformationParser extends Parser{
         command.action = "reload";
         commands.put(command.id, command);
         
+        // -- MERGE
+        command = new Command("append");
+        command.documentation = "With multiple channels selected, append into a single datalayer";
+        command.action = "reload";
+        commands.put(command.id, command);
+
         
         
     }
@@ -126,12 +132,41 @@ public class TransformationParser extends Parser{
             c.retMessage = this.partition(parameters);
         }
         
+        //.. split(label2) transform a Channel Set to an Experiment by dividing
+        else if (command.startsWith("partition")) {
+            c = commands.get("partition");
+            c.retMessage = this.partition(parameters);
+        }
+        
+        //.. split(label2) transform a Channel Set to an Experiment by dividing
+        else if (command.startsWith("append")) {
+            c = commands.get("append");
+            c.retMessage = this.append();
+        }
+        
         if (c == null) {
             return null;
         }
         return c.getJSONObject();
     }
     
+    /**Merge a set of selected channels into one**/
+    private String append() throws Exception {
+        //.. Select all channels
+        //.. get all chansets
+        ArrayList<ChannelSet> chanSets = getChanSets();
+        ChannelSet cs = chanSets.get(0).getCopy();
+        cs.id = "Merged" + chanSets.get(0).id;
+        for (int i = 1; i < chanSets.size(); i++) {
+            ChannelSet cs2 = chanSets.get(i);
+            cs.appendChanSet(cs2);
+            cs.id +=  "-"+cs2.id;
+        }
+        //.. make a new data access object, and add it to our stream
+        BiDAO bDAO = new BiDAO(cs);
+        ctx.dataLayersDAO.addStream(cs.id, bDAO);
+        return "Appended channelsets into" + cs.id;
+    }
      /**
      * Label the specified dataset at random. If specified, the second parameter
      * is how long each trial should be
@@ -322,6 +357,7 @@ public class TransformationParser extends Parser{
         }
         return retString;
     }
+
     
    
 

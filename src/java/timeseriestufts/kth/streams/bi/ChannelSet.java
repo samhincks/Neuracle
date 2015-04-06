@@ -691,6 +691,40 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         bw.close();
     }
     
+    /****/
+    public void appendChanSet(ChannelSet cs2) throws Exception{
+        if (cs2.streams.size()!= this.streams.size()) throw new Exception("Both channels must have as many channels");
+        for (int i =0; i < this.streams.size(); i++) {
+            Channel a = this.streams.get(i);
+            Channel b = cs2.streams.get(i);
+            a.append(b);
+        }
+        if (this.markers.size() != cs2.markers.size()) throw new Exception ("Both channelsets must have as many markers");
+        for (int i =0; i< this.markers.size();i++) {
+            Labels l1 = this.markers.get(i).saveLabels;
+            Labels l2 = cs2.markers.get(i).saveLabels;
+            l1.append(l2);
+            Markers m = new Markers(l1);
+            this.markers.set(i, m); //.. replace old markers with new ones
+        }
+
+    }
+
+    
+    public ChannelSet getCopy() { 
+        ChannelSet cs = new ChannelSet();
+        for (Channel c : streams) {
+            cs.addStream(c.getCopy());
+        }
+        ArrayList<Markers> m2 = new ArrayList();
+        for (Markers m : markers) {
+            Markers mc = m.getCopy();
+            m2.add(mc);
+        }
+        cs.markers = m2;
+        return cs;
+    }
+    
     public static void main(String [] args) {
         try{
             int numChannels = 2;

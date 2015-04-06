@@ -22,6 +22,21 @@ public class Labels {
         this.labelName = this.labelName.toLowerCase();
     }
     
+    public void append(Labels l2) throws Exception {
+        for(Label l : l2.channelLabels) {
+            this.addLabel(l);
+        }
+    }
+    
+    public Labels getCopy() {
+        Labels labels = new Labels(this.labelName);
+        for (Label l : channelLabels) {
+            labels.addLabel(l);
+        }
+        return labels;
+    }
+
+    
     /**Iterate through all the labels and discover the unique label
      */
     public ArrayList<String> getAvailableLabels() {
@@ -55,5 +70,5 @@ public class Labels {
     public void addLabel(Label label) {
         channelLabels.add(label);
     }
-    
+
 }
