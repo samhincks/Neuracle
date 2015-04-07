@@ -540,7 +540,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
           if (removed > 0) 
               System.err.println("Removed " + removed + " instances ");
           
-          return new Experiment(filename, classification, newInstances,this.readingsPerSec);
+          return new Experiment(filename+"cleaned", classification, newInstances,this.readingsPerSec);
 
         
     }

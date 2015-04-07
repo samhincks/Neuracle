@@ -87,6 +87,12 @@ public class TransformationParser extends Parser{
         command.documentation = "With multiple channels selected, append into a single datalayer";
         command.action = "reload";
         commands.put(command.id, command);
+        
+        // -- MERGE
+        command = new Command("clean");
+        command.documentation = "With an experiment selected, remove any instances which are longer than the mode";
+        command.action = "reload";
+        commands.put(command.id, command);
 
         
         
@@ -138,10 +144,14 @@ public class TransformationParser extends Parser{
             c.retMessage = this.partition(parameters);
         }
         
-        //.. split(label2) transform a Channel Set to an Experiment by dividing
         else if (command.startsWith("append")) {
             c = commands.get("append");
             c.retMessage = this.append();
+        }
+        
+        else if (command.startsWith("clean")) {
+            c = commands.get("clean");
+            c.retMessage = this.clean();
         }
         
         if (c == null) {
@@ -150,6 +160,18 @@ public class TransformationParser extends Parser{
         return c.getJSONObject();
     }
     
+    private String clean() throws Exception {
+        String retString = "";
+        ArrayList<Experiment> experiments = getExperiments();
+        for (Experiment e : experiments) {
+            Experiment e2 =  e.removeUnfitInstances(e.getMostCommonInstanceLength(), 0.1);
+            ctx.addDataLayer(e2.id, new TriDAO(e2));
+            e2.setParent(e.id);
+            retString += "Cleaned " + e.id + ", transforming from " + e.matrixes.size() + " to " + e2.matrixes.size();
+        }
+        return retString;
+    }
+     
     /**Merge a set of selected channels into one**/
     private String append() throws Exception {
         //.. Select all channels
