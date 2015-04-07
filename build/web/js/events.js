@@ -74,6 +74,22 @@ function init() {
             return this.indexOf(str) == 0;
         };
     }
+    
+    var trZoomed = false;
+
+    $("#topRight").dblclick(function(e) {
+        if (!(trZoomed)) {
+            $("#topRight").removeClass("trunzoomed");
+            $("#topRight").addClass("trzoomed");
+            trZoomed = true;
+        }
+        else {
+            $("#topRight").addClass("trunzoomed");
+            $("#topRight").removeClass("trzoomed");
+            trZoomed = false;
+        }
+        chartArea.displayChart(chartArea.lastJSON);
+    });
   
   /*
    document.getElementById('asynchFile').addEventListener('change', readFile, false);
@@ -99,56 +115,48 @@ function reinit() {
     *it, we want to change "givers" val (again an old name that no longer makes sense)
     * so that the backend knows what is currently being pressed
     **/
+   
+    
+   
+  
+}
+
+function datalayerInit() {
     $('.dropChannel').mouseenter(function(e) {
         $('#giver').val(e.currentTarget.id); //.. e.target.id gives you a bug sometimes 
-     });
-    
-    var trZoomed = false;
-    $("#topRight").dblclick(function(e) {
-        if (!(trZoomed)){
-            $("#topRight").removeClass("trunzoomed");
-            $("#topRight").addClass("trzoomed");
-            trZoomed=true;
-        }
-        else{
-            $("#topRight").addClass("trunzoomed");
-            $("#topRight").removeClass("trzoomed");
-            trZoomed=false;
-        }
-        chartArea.displayChart(chartArea.lastJSON);
     });
-    
-     //.. for multi-selection: set shiftpressed to true
-    $("body").keydown(function (e) { 
+
+    //.. for multi-selection: set shiftpressed to true
+    $("body").keydown(function(e) {
         if (e.which == 16)
-            shiftKey =true;
+            shiftKey = true;
         if (e.which == 18) //.. alt
             altKey = true;
-       
-    });  
-    
+
+    });
+
     //.. and set it back up if we are releasing the key
-    $("body").keyup(function (e) { 
+    $("body").keyup(function(e) {
         if (e.which == 16)
-            shiftKey =false;
+            shiftKey = false;
         if (e.which == 18)
             altKey = false;
     });
-    
+
     var shiftKey = false; //.. for multi-selection
     var altKey = false;
-    
+
     //.. if a channel set is clicked
-    $(".dropChannel").mousedown(function(e){
-        if(!shiftKey)
+    $(".dropChannel").mousedown(function(e) {
+        if (!shiftKey)
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         else
             datalayerArea.datalayers.multiSelectLayer(e.currentTarget.id)
         javaInterface.getDataLayerStats();
     });
-    
+
     //.. if a channel set is dbl-clicked
-    $(".dropChannel").dblclick(function (e) { //.. change to .experiment
+    $(".dropChannel").dblclick(function(e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         if (altKey)
             javaInterface.postToDataLayer("frequency");
@@ -157,11 +165,14 @@ function reinit() {
         else
             javaInterface.postToDataLayer();
     });
-  
-    
-  
-}
 
+    //.. When I release a datalayer, show what techniques I intersect
+    $(".dropChannel").mouseup(function(e) {
+        datalayerArea.highlightIntersectedTechniques();
+        datalayerArea.datalayers.unselectAll();
+    });
+   
+}
 
 function techniqueInit() { 
     //.. if a technique is click (do essentially same as if channel is
@@ -174,6 +185,12 @@ function techniqueInit() {
         datalayerArea.techniques.selectTechnique(e.currentTarget.id);
         $("#technique").val(e.currentTarget.id);
     });
+    
+     //.. When I release a datalayer, show what techniques I intersect
+    $(".technique").mouseup(function(e) {
+        datalayerArea.highlightIntersectedTechniques();
+    });
+    
     
 }
 /**THIS USED TO BE IN REINIT() but it was too broken so we have to exclude it*/

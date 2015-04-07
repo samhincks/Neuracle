@@ -67,7 +67,7 @@ function JavaInterface() {
         //.. no error, then render the object datalayers
         else {
             datalayerArea.addDatalayers(JSONobj.datalayers);
-            reinit(); //.. relaod the drag/drop properties
+            datalayerInit(); //.. relaod the drag/drop properties
             techniqueInit();
         }
     }

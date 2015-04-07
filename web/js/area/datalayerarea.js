@@ -28,13 +28,16 @@ function DatalayerArea(selection) {
          //..consider each datalayers possible intersection with techniques
          for (var j in this.datalayers.dls) {
             var dl = this.datalayers.dls[j];
+            dl.intersected = 0;
             var dlRect = dl.getRect();
             
             //.. Select each technique, and check for intersection with the datalayer
             for (var i = 0 ; i < techRects.length; i++) {
                 var intersect = intersectRect(techRects[i], dlRect);
-                if (intersect) 
-                    retArray.push({sourceId : this.techniques.techniques[i].id, targetId : dl.id});
+                if (intersect) {
+                    retArray.push({sourceId : this.techniques.techniques[i].id, targetId : dl.id, sourceType :this.techniques.techniques[i].type, datalayer : dl });
+                    dl.intersected++;
+                }
             }
        }
        return retArray;
@@ -101,13 +104,30 @@ function DatalayerArea(selection) {
                 newLayer.drawArt();
             }
         } 
-       
     }
-     
-    /*Add element to selection. Eventually check bounds*/
-     this.addDLToCanvas = function(element) {
-         
+    
+    /**Place techniques ontop of datalasyer they intersect **/
+    this.highlightIntersectedTechniques = function(){
+        var intersected = this.getIntersectedTechniques();
+        for (var i =0; i <intersected.length; i++) {
+            var source = $("#" + intersected[i].sourceId);
+            var target = $("#" + intersected[i].targetId);
+            var techType = intersected[i].sourceType;
+            var leftOffset =0;
+            if (techType == "FeatureSet")
+                leftOffset = source.width()*2;
+            else if (techType == "AttributeSelection")
+                leftOffset = source.width()*4;
+            
+            console.log(target.position());
+            source.css({top: (target.position().top-source.height()*2), left: (target.position().left +leftOffset), position:'absolute'});
+
+            $("#"+intersected[i].sourceId).addClass("techniqueSelected");
+
+        }
     }
+   
+    
     /**techniques is an array of JSONObjs streamed from Java. Add the ones that don't already exist
      **/
     this.addTechniques = function(techniques) {
@@ -135,12 +155,42 @@ function DatalayerArea(selection) {
 
         }
     }
+    
 
+    /**Move if an element is out of bounds**/ 
+    var moveOutOfBounds = function(r1) {
+        
+    }
+    
+    /**R2 is datalayer, r1 is technique. r2 has an imaginary circle around it. 
+     * check intersection with that
+     **/
     var intersectRect = function(r1, r2) {
-        return !(r2.left > r1.right || 
-                 r2.right < r1.left || 
-                 r2.top > r1.bottom ||
-                 r2.bottom < r1.top);
+        //console.log(r1);
+        var SQLENGTH = 50; 
+        var largeX = r2.right - ((r2.right - r2.left)/2);
+        var largeY =  r2.bottom - ((r2.bottom - r2.top)/2); //.. a super rectangle drawn around the datalayer
+        
+        var smallX = r1.right - ((r1.right - r1.left)/2);
+        var smallY = r1.bottom - ((r1.bottom - r1.top)/2);
+        
+        var maxY = largeY + SQLENGTH;
+        var minY = largeY - SQLENGTH;
+        
+        var maxX = largeX + SQLENGTH;
+        var minX = largeX - SQLENGTH;
+        
+         
+        //.. case by case, 1. is it within Y grasp
+        if (smallY < maxY && smallY > minY) {
+            if (smallX < maxX && smallX > minX) {
+                return true;
+            }
+        }
+        return false;
+        
+        
+        
       }
 }
 

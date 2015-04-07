@@ -26,6 +26,22 @@ function DataLayers() {
         this.selectLayer(dl.id);
     }
     
+    //.. Removes circle unless it intersects
+    this.unselectAll = function() {
+        for (var i = 0; i < this.dls.length; i++) {
+            var id = $("#" + this.dls[i].id)
+            id.removeClass("surfaceElementSelected");
+            id.removeClass("surfaceElementMultiSelected");
+            if((this.dls[i].intersected) ==0) //.. remove circle if its not currently intersecting something
+                id.children().remove();
+            else if ((this.dls[i].intersected) >=3) {
+                var cId = $("#"+this.dls[i].id +"c");
+                cId.css("opacity", 0.3);
+                cId.css("background-color","green");
+            }
+        }
+    }
+    
     //.. add the selected to class to target element; remove from all others
     this.selectLayer = function(layerId) {
         //.. remove all other 
@@ -36,6 +52,7 @@ function DataLayers() {
         
         $("#"+layerId).addClass("surfaceElementSelected");
         $("#giver").val(layerId);
+        $("#"+layerId).append("<div class = selectedCircle id = " + layerId +"c></div>")
         
         //.. clear selected array and add this single element
         selected = new Array();
@@ -83,6 +100,7 @@ function DataLayer(jsonDL) {
     this.type = jsonDL.type;
     this.elementTag = '<div id = "'+this.id+'" class = " dropChannel surfaceElement" > </div>';
     this.sqScale = d3.scale.linear().domain([0, 625000]).range([15, 60]);
+    this.intersected = 0; //.. increase if anything is intersected
 
    //..  Draw lines inside it as art, and lines connecting
    //... it to elements it may have been derived from
@@ -101,7 +119,6 @@ function DataLayer(jsonDL) {
            $("#"+this.id).addClass("experiment");
            //plumbTechniques.setExperimentEPs();
         }*/ 
-        console.log(jsonDL);
         if (jsonDL.type == "2D")
             if(this.numChannels <17)
                 $("#" + this.id).addClass("chanset");
