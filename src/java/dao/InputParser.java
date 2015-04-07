@@ -140,6 +140,16 @@ public  class InputParser {
              c = new Command("debug2");
              throw new Exception("Here is the message that should be displayed in red");
         }    
+        
+        else if (command.startsWith("readevery")) {
+            c = new Command("readevery");
+            if (parameters.length ==0) c.retMessage = "readevery = " +ctx.getFileReadSampling();
+            else {
+                int readevery = Integer.parseInt(parameters[0]);
+                ctx.setFileReadSampling(readevery);
+                c.retMessage = "Files will only record every " + readevery +"th reading";
+            }
+        } 
         else if(command.startsWith("rthelp")){
             c = new Command("rthelp");
             c.retMessage =" Do the following in order::" 
@@ -270,9 +280,9 @@ public  class InputParser {
                 System.out.println(jo.get("classes"));
             }
             if (TEST ==5) { //.. Test multilayer appending
-                //.. First select all layers
-                ctx.setCurrentName("b");
-                bDAO = (BiDAO) ctx.getCurrentDataLayer();
+                //.. First select all layers  
+                ctx.setCurrentName("b");  
+                bDAO = (BiDAO) ctx.getCurrentDataLayer();  
               //  bDAO.dataLayer.printStream();
                 
                 ctx.setCurrentName("c");

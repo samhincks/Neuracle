@@ -15,12 +15,10 @@ function JavaInterface() {
         var JSONobj = eval('('+ xhr +')'); 
         if (JSONobj.error != null){
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
-            consoleArea.messageStack.pop();//.. remove since it was erroneous
         }
         else if(JSONobj.content != "")
             consoleArea.displayMessage(JSONobj.content, "systemmess", "blueline");
         
-        console.log("returning from console ");
         //.. is there some action to complete here? A new dataset to reload
         if(JSONobj.action != null) {
              if (JSONobj.action.id == "reload") {

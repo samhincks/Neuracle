@@ -125,8 +125,8 @@ public class ThisActionBeanContext extends ActionBeanContext{
         return fileReadSampling;
     }
     
-    public void setFileReadSampling(int _) {
-        fileReadSampling = _;
+    public void setFileReadSampling(int fr) {
+        this.fileReadSampling = fr;
     }
 
 
