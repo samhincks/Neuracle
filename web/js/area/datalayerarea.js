@@ -30,13 +30,14 @@ function DatalayerArea(selection) {
             var dl = this.datalayers.dls[j];
             dl.intersected = 0;
             var dlRect = dl.getRect();
-            
-            //.. Select each technique, and check for intersection with the datalayer
-            for (var i = 0 ; i < techRects.length; i++) {
-                var intersect = intersectRect(techRects[i], dlRect, 50, 50);
-                if (intersect) {
-                    retArray.push({sourceId : this.techniques.techniques[i].id, targetId : dl.id, sourceType :this.techniques.techniques[i].type, datalayer : dl });
-                    dl.intersected++;
+            if (dl.type =="3D"){
+                //.. Select each technique, and check for intersection with the datalayer
+                for (var i = 0 ; i < techRects.length; i++) {
+                    var intersect = intersectRect(techRects[i], dlRect, 75, 75);
+                    if (intersect) {
+                        retArray.push({sourceId : this.techniques.techniques[i].id, targetId : dl.id, sourceType :this.techniques.techniques[i].type, datalayer : dl });
+                        dl.intersected++;
+                    }
                 }
             }
        }
@@ -141,7 +142,7 @@ function DatalayerArea(selection) {
             else if (techType == "AttributeSelection")
                 leftOffset = source.width()*4;
             
-            source.css({top: (target.position().top-source.height()*2), left: (target.position().left +leftOffset), position:'absolute'});
+            //source.css({top: (target.position().bottom+source.height()*2), left: (target.position().left +leftOffset), position:'absolute'});
 
             $("#"+intersected[i].sourceId).addClass("techniqueSelected");
 
@@ -178,11 +179,6 @@ function DatalayerArea(selection) {
     }
     
 
-    /**Move if an element is out of bounds**/ 
-    var moveOutOfBounds = function(r1) {
-        
-    }
-    
     /**R2 is datalayer, r1 is technique. r2 has an imaginary circle around it. 
      * check intersection with that
      **/

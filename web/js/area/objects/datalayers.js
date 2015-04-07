@@ -30,15 +30,15 @@ function DataLayers() {
     this.unselectAll = function() {
         for (var i = 0; i < this.dls.length; i++) {
             var id = $("#" + this.dls[i].id)
-            id.removeClass("surfaceElementSelected");
-            id.removeClass("surfaceElementMultiSelected");
             if((this.dls[i].intersected) ==0) {//.. remove circle if its not currently intersecting something
-                id.removeClass("datalayerSelected");
                 id.css("border-color", "black");
             }
             else if ((this.dls[i].intersected) >=3) {
                 id.css("border-color","green");
             }
+            else 
+                id.css("border-color", "blue");
+
                 
             
         }
@@ -48,13 +48,22 @@ function DataLayers() {
     this.selectLayer = function(layerId) {
         //.. remove all other 
         for(var i =0; i< this.dls.length; i++) {
-             $("#"+this.dls[i].id).removeClass("datalayerSelected")
-             $("#"+this.dls[i].id).removeClass("surfaceElementMultiSelected")
+            var dl = this.dls[i]; 
+            var curId =  dl.id;
+             $("#"+curId).removeClass("datalayerSelected")
+             $("#"+curId).removeClass("surfaceElementMultiSelected")
+             $("#"+curId).removeClass("surfaceElementSelected")
+             
+             if(layerId == curId) {
+                 if (dl.type == "2D") 
+                    $("#" + layerId).addClass("surfaceElementSelected");
+                 else 
+                    $("#" + layerId).addClass("datalayerSelected");
+                
+             }
         }
         
-        $("#"+layerId).addClass("datalayerSelected");
         $("#giver").val(layerId);
-      //  $("#"+layerId).append("<div class = selectedCircle id = " + layerId +"c></div>")
         
         //.. clear selected array and add this single element
         selected = new Array();
@@ -101,7 +110,7 @@ function DataLayer(jsonDL) {
     this.numPoints = jsonDL.numPoints;
     this.type = jsonDL.type;
     this.elementTag = '<div id = "'+this.id+'" class = " dropChannel surfaceElement" > </div>';
-    this.sqScale = d3.scale.linear().domain([0, 625000]).range([15, 60]);
+    this.sqScale = d3.scale.linear().domain([0, 625000]).range([45, 90]);
     this.intersected = 0; //.. increase if anything is intersected
 
    //..  Draw lines inside it as art, and lines connecting

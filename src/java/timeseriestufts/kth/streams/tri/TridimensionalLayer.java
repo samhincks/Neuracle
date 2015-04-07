@@ -40,8 +40,11 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
      */
     @Override
     public int getCount() {
-        System.err.println("Not yet implemented");
-        return 1;
+        int sum =0;
+        for (BidimensionalLayer bd : matrixes) {
+            sum += bd.getCount();
+        }
+        return sum;
     }
     
    /**Returns sum of all values
@@ -49,7 +52,7 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
     */
     @Override
     public double getSum() {
-        System.err.println("Not yet implemented");
+        int sum = 0;
         return 1;
     }
    
@@ -58,7 +61,6 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
      */
     @Override   
     public double getMean() {
-        System.err.println("Not yet implemented");
         return 1;
     }
     
@@ -67,7 +69,6 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
      */
     @Override
     public  double getMedian() {
-        System.err.println("Not yet implemented");
         return 1;
     }
     
@@ -76,7 +77,6 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
      */
     @Override
     public  double getStdDev() {
-        System.err.println("Not yet implemented");
         return 1;
     }   
     
@@ -85,7 +85,6 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
      */
     @Override
     public  double getStdErr() {
-        System.err.println("Not yet implemented");
         return 1;
     }
     
@@ -94,7 +93,6 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
      */
     @Override
     public double getMin() {
-        System.err.println("Not yet implemented");
         return 1;
     }   
    
@@ -103,7 +101,6 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
      */
     @Override
     public double getMax() {
-        System.err.println("Not yet implemented");
         return 1;
     }
     
@@ -112,7 +109,6 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
      */
     @Override
     public double getMode() {
-        System.err.println("Not yet implemented");
         return 1;
     }
     
