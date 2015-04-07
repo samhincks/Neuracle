@@ -170,6 +170,7 @@ function datalayerInit() {
     $(".dropChannel").mouseup(function(e) {
         datalayerArea.highlightIntersectedTechniques();
         datalayerArea.datalayers.unselectAll();
+        datalayerArea.boundsCheck();
     });
    
 }
@@ -189,6 +190,7 @@ function techniqueInit() {
      //.. When I release a datalayer, show what techniques I intersect
     $(".technique").mouseup(function(e) {
         datalayerArea.highlightIntersectedTechniques();
+        datalayerArea.boundsCheck();
     });
     
     

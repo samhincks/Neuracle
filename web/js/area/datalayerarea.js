@@ -33,7 +33,7 @@ function DatalayerArea(selection) {
             
             //.. Select each technique, and check for intersection with the datalayer
             for (var i = 0 ; i < techRects.length; i++) {
-                var intersect = intersectRect(techRects[i], dlRect);
+                var intersect = intersectRect(techRects[i], dlRect, 50, 50);
                 if (intersect) {
                     retArray.push({sourceId : this.techniques.techniques[i].id, targetId : dl.id, sourceType :this.techniques.techniques[i].type, datalayer : dl });
                     dl.intersected++;
@@ -41,6 +41,24 @@ function DatalayerArea(selection) {
             }
        }
        return retArray;
+    }
+    
+    this.boundsCheck = function(){
+        var techniqueTags = $('.surfaceElement');
+        var container = $("#topLeft");
+        var contRect = makeRect(container);
+        var containerWidth = contRect.right - contRect.left -40;
+        var containerHeight = contRect.bottom - contRect.top -40;
+       
+        for (var i = 0 ; i < techniqueTags.length; i++) {
+            var techEl = $(techniqueTags[i]);
+            var techRect = makeRect(techEl);
+            
+            if (!(intersectRect(techRect, contRect, containerHeight/2, containerWidth/2))) {
+                techEl.css({top: (10), left: (20), position:'absolute'});
+            }
+        }
+        
     }
     
     /**Given a jquery element with left,top, width, height defined, return
@@ -165,20 +183,19 @@ function DatalayerArea(selection) {
     /**R2 is datalayer, r1 is technique. r2 has an imaginary circle around it. 
      * check intersection with that
      **/
-    var intersectRect = function(r1, r2) {
+    var intersectRect = function(r1, r2, SLACKY, SLACKX) {
         //console.log(r1);
-        var SQLENGTH = 50; 
         var largeX = r2.right - ((r2.right - r2.left)/2);
         var largeY =  r2.bottom - ((r2.bottom - r2.top)/2); //.. a super rectangle drawn around the datalayer
         
         var smallX = r1.right - ((r1.right - r1.left)/2);
         var smallY = r1.bottom - ((r1.bottom - r1.top)/2);
         
-        var maxY = largeY + SQLENGTH;
-        var minY = largeY - SQLENGTH;
+        var maxY = largeY + SLACKY;
+        var minY = largeY - SLACKY;
         
-        var maxX = largeX + SQLENGTH;
-        var minX = largeX - SQLENGTH;
+        var maxX = largeX + SLACKX;
+        var minX = largeX - SLACKX;
         
          
         //.. case by case, 1. is it within Y grasp
