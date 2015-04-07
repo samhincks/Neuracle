@@ -116,9 +116,6 @@ function reinit() {
     * so that the backend knows what is currently being pressed
     **/
    
-    
-   
-  
 }
 
 function datalayerInit() {

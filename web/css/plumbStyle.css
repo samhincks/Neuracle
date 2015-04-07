@@ -118,6 +118,12 @@
 
 }
 
+.datalayerSelected {
+    border:25px  solid #346789;
+    opacity: 0.3;
+    z-index: 12;
+}
+
 .selectedCircle {
     background-color: black;
     border-radius: 5%;
@@ -140,12 +146,14 @@
     -o-box-shadow: 2px 2px 19px #444;
     -webkit-box-shadow: 2px 2px 19px #444;
     -moz-box-shadow: 2px 2px 19px #444;
-    opacity:0.6;
+    opacity:0.3;
     filter:alpha(opacity=60);
 }
 
+
 .surfaceElementSelected {
- border:2px solid #346789;
+ border:3px solid #346789;
+ opacity: 0.8;
  z-index: 12;
  
 }

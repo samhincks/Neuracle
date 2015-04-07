@@ -47,9 +47,13 @@ function DatalayerArea(selection) {
         var techniqueTags = $('.surfaceElement');
         var container = $("#topLeft");
         var contRect = makeRect(container);
-        var containerWidth = contRect.right - contRect.left -40;
-        var containerHeight = contRect.bottom - contRect.top -40;
-       
+        
+        contRect.left -= 30;
+        contRect.right -= 10;
+        contRect.top -= 30;
+        contRect.bottom -= 10;
+        var containerWidth = contRect.right - contRect.left;
+        var containerHeight = contRect.bottom - contRect.top;
         for (var i = 0 ; i < techniqueTags.length; i++) {
             var techEl = $(techniqueTags[i]);
             var techRect = makeRect(techEl);
@@ -137,7 +141,6 @@ function DatalayerArea(selection) {
             else if (techType == "AttributeSelection")
                 leftOffset = source.width()*4;
             
-            console.log(target.position());
             source.css({top: (target.position().top-source.height()*2), left: (target.position().left +leftOffset), position:'absolute'});
 
             $("#"+intersected[i].sourceId).addClass("techniqueSelected");

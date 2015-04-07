@@ -32,13 +32,15 @@ function DataLayers() {
             var id = $("#" + this.dls[i].id)
             id.removeClass("surfaceElementSelected");
             id.removeClass("surfaceElementMultiSelected");
-            if((this.dls[i].intersected) ==0) //.. remove circle if its not currently intersecting something
-                id.children().remove();
-            else if ((this.dls[i].intersected) >=3) {
-                var cId = $("#"+this.dls[i].id +"c");
-                cId.css("opacity", 0.3);
-                cId.css("background-color","green");
+            if((this.dls[i].intersected) ==0) {//.. remove circle if its not currently intersecting something
+                id.removeClass("datalayerSelected");
+                id.css("border-color", "black");
             }
+            else if ((this.dls[i].intersected) >=3) {
+                id.css("border-color","green");
+            }
+                
+            
         }
     }
     
@@ -46,13 +48,13 @@ function DataLayers() {
     this.selectLayer = function(layerId) {
         //.. remove all other 
         for(var i =0; i< this.dls.length; i++) {
-             $("#"+this.dls[i].id).removeClass("surfaceElementSelected")
+             $("#"+this.dls[i].id).removeClass("datalayerSelected")
              $("#"+this.dls[i].id).removeClass("surfaceElementMultiSelected")
         }
         
-        $("#"+layerId).addClass("surfaceElementSelected");
+        $("#"+layerId).addClass("datalayerSelected");
         $("#giver").val(layerId);
-        $("#"+layerId).append("<div class = selectedCircle id = " + layerId +"c></div>")
+      //  $("#"+layerId).append("<div class = selectedCircle id = " + layerId +"c></div>")
         
         //.. clear selected array and add this single element
         selected = new Array();
