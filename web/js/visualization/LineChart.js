@@ -23,7 +23,7 @@ function LineChart() {
     //.. width, height, margin. If these are customizable we need settors 
     var width = 700, 
         height = 400,
-        margin = {top:20, left: 30, right: 30, bottom: 20 };
+        margin = {top:20, left: 60, right: 30, bottom: 20 };
 
     var maxTime =-1;
     
@@ -55,8 +55,6 @@ function LineChart() {
     var lineTrans =2000;
     var chartTrans = 2000;
     var transitionLength =2000; //.. the length of a scale transition
-    var thickness = 10; //.. the higher thinnes the thinner it will be
-    var sdevSensitivity = 10; //.. higher value means thickness is more determined by standard deviation
     var drawn; //.. used in transition to average to store averages and standard deviations
     var xAxis;
     var yAxis;
@@ -72,6 +70,9 @@ function LineChart() {
             selection = d3.select(s).append("svg:svg");
         }
         else selection = d3.select("body").append("svg:svg");
+        selection.attr("id", "areachart");
+        
+        
         try {channels(data[0][0])[key];}catch(error){ throw("Specify proper keys and channel functions for accessing data")};
         
         if (!(setHeightByAreaChart)){
@@ -129,31 +130,35 @@ function LineChart() {
         //.. Add an x axis
         xAxis = d3.svg.axis()
             .scale(x2) //.. use same scaling function as for x
-            .orient("top");
+            .orient("bottom");
             
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + (height - margin.bottom) + ")") //.. 0,0 refers to 0,height
             .call(xAxis);
         
+        /**
         svg.append("text")
              .attr("text-anchor", "end")
             .attr("x", width)
             .attr("y", height - 6)
-            .text("Time");
+            .text("Time");**/
 
        //.. Add a y axis
        yAxis = d3.svg.axis()
            .scale(y)
-           .orient("right");
+           .orient("left");
        
        svg.append("g")
            .attr("class", "y axis")
+           .attr("transform", "translate(" + (margin.left-5) + ",0)")
+
            .call(yAxis);
         chart.hasTransitioned = false;
 
         return chart;
     }
+    
     
     //.. Having swapped the key, transition to the new element
     chart.transition = function() {
@@ -464,12 +469,13 @@ function LineChart() {
         return retArray;
     }
 
+   
+    
     return chart; //.. return a function which has configuration properties width and height
 }
 
 
 //.. Test
-//test();
 //test();
 function test() {
     var chart = LineChart();
@@ -480,7 +486,6 @@ function test() {
         chart.transition();
     });
    
-    var selection = d3.select("#topRight").append("svg:svg");
 
     for (var i=0;i <20; i++) {
         chart.addRow(getRandomRow2(i,"low"),0);
@@ -537,10 +542,11 @@ function test() {
         chart.addRow(getRandomRow2(i, "high"),13);
     }
 
-    chart.key(0).channels(function(d){return d.channels;}).width(900).height(400)(selection).transition();
-    setTimeout(function() {chart.transitionToAverage(30000)},1000);
+    chart.key(0).channels(function(d){return d.channels;}).width(900).height(400)("#topRight").transition();
+   // setTimeout(function() {chart.transitionToAverage(30000)},1000);
     
 }
+
     
 function getRandomRow(i, condition) {
    var row = new Object();
