@@ -1050,7 +1050,8 @@ public class DataManipulationParser extends Parser{
         for (ChannelSet cs : chanSets) {
             ChannelSet filteredSet = cs.calcOxy(true, null, null); //.. we want a copy;
             retString += "Applied CalcOxy, so that 0->7 : Probe A. 8->15" +
-"                + \" ProbeB:: 0->3&8->12 : HbO::... 0,4,8,12: closest;; 3,7,11,15 : farthest\";::";
+"                + \" ProbeB:: 0->3&8->12 : HbO at even positions, and Hb at odd if zero-indexed; lower values within"
+                    + " the probe correspond to closer distances to the source:::";
             if(lowpass ==0){ 
                 filteredSet = filteredSet.movingAverage(10, false);
                 retString += "Applied MovingAverage, 10 readings back::";
@@ -1076,13 +1077,23 @@ public class DataManipulationParser extends Parser{
             retString += "Z scored the data, so that each value is replaced by the difference between "
                     + " it and the channel's corresponding mean, divided by the standard deviation::";
             
+            //.. Split into an experiment - of course this is not perfectly generalizable, so condition name should be parameter
             Experiment e = filteredSet.splitByLabel("condition");
             ArrayList<String> toKeep = new ArrayList();
             toKeep.add("easy");
             toKeep.add("hard");
             toKeep.add("rest"); 
             e = e.removeAllClassesBut(toKeep);
+          
+            //.. remove instances 10 percent larger than the average
+            int instLength = e.getMostCommonInstanceLength();
+            int origSize = e.matrixes.size();
+            e = e.removeUnfitInstances(instLength, 0.1);
+            int newSize = e.matrixes.size();
+            if(origSize != newSize)
+                retString += "Experiment changed from " + origSize +" to " + newSize+ " instances::";
             
+            //.. anchor it, setting start to zero
             e = e.anchorToZero(false);
             e.setParent(cs.getId()); //.. set parent to what we derived it from
 

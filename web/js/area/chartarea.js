@@ -246,7 +246,7 @@ function ChartArea(id, descArea) {
         }
             
     }
-    this.testCharts();
+    //this.testCharts();
 
     
 }

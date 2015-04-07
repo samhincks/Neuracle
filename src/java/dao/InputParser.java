@@ -16,6 +16,7 @@ import dao.techniques.TechniquesDAO;
 import filereader.Label;
 import filereader.Labels;
 import filereader.Markers;
+import filereader.experiments.BesteExperiment;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -223,6 +224,12 @@ public  class InputParser {
             ChannelSet b = ChannelSet.generate(2, 10);
             ChannelSet c = ChannelSet.generate(2, 10);
             
+            //.. 1.1 And add some real data
+            Experiment realE = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
+            ctx.addDataLayer("reale", new TriDAO(realE));
+            ChannelSet cs = BesteExperiment.getChannelSet(13);
+            ctx.addDataLayer("realcs", new BiDAO(cs));
+            
             //.. 2. Associate correct number of markers with that data
             Markers m = Markers.generate(1, 10); // 10 * 20 = 200
             b.addMarkers(m);
@@ -249,7 +256,7 @@ public  class InputParser {
             tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
             tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
             
-            int TEST =5;
+            int TEST =6;
             if (TEST ==0) 
                  response= ip.parseInput("removeallbut(a,b)", ctx);
             
@@ -295,7 +302,11 @@ public  class InputParser {
                 ctx.setCurrentName("mergedb-c");
                 bDAO = (BiDAO) ctx.getCurrentDataLayer();
                 bDAO.dataLayer.printStream();
-
+            }
+            
+            if (TEST ==6) {
+                ctx.setCurrentName("realcs");
+                response = ip.parseInput("fnirs", ctx);
             }
            
             System.out.println(response.get("content"));

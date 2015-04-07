@@ -263,6 +263,13 @@ public class BesteExperiment {
             e.printStackTrace();
         }
     }
+    
+    public static ChannelSet getChannelSet(int index) throws Exception {
+        TSTuftsFileReader f = new TSTuftsFileReader();
+        f.readEvery = 1;
+        ChannelSet cs = f.readData(",", getFiles().get(index));
+        return cs;
+    }
 
     public static Experiment getExperiment(String file) throws Exception {
         TSTuftsFileReader f = new TSTuftsFileReader();

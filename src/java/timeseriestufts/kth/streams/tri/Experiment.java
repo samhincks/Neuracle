@@ -7,15 +7,17 @@ package timeseriestufts.kth.streams.tri;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import timeseriestufts.evaluatable.AttributeSelection;
 import timeseriestufts.evaluatable.Dataset;
 import timeseriestufts.evaluatable.FeatureSet;
-import timeseriestufts.evaluation.crossvalidation.CrossValidation;
-import timeseriestufts.evaluation.crossvalidation.Fold;
 import timeseriestufts.evaluatable.TechniqueSet;
 import timeseriestufts.evaluatable.WekaClassifier;
 import timeseriestufts.evaluatable.performances.Predictions;
+import timeseriestufts.evaluation.crossvalidation.CrossValidation;
+import timeseriestufts.evaluation.crossvalidation.Fold;
 import timeseriestufts.evaluation.experiment.Classification;
 import timeseriestufts.kth.streams.bi.BidimensionalLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
@@ -519,6 +521,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
               boolean add = true; //.. stays true as long as we want to add this instance
               int maxp = in.getMaxPoints();
               int minp = in.getMinPoints();
+              System.out.println("min is " + minp + " max is " + maxp + " . and we are accepting " +(pctLarger*expectedLength));
 
               //.. first if an instances channels deviate significantly from each other, remove them
               if (maxp > minp * pctLarger)
@@ -599,12 +602,32 @@ public class Experiment extends TridimensionalLayer<Instance>{
         }
     }
     
+    /**Return the most common instance length**/
+    public int getMostCommonInstanceLength() {
+        HashMap<Integer, Integer> hm = new HashMap();
+        for (Instance ins : matrixes) {
+            int pts = ins.getMaxPoints();
+            Integer len = hm.get(pts);
+            if (len == null) hm.put(pts, 1);
+            else  hm.put(pts, len+1); 
+        }
+        int maxC = -1;
+        int maxV = -1;
+        for (Map.Entry<Integer,Integer> m : hm.entrySet()) {
+            if (m.getValue() > maxC) {
+                maxV = m.getKey();
+                maxC = m.getValue();
+            }
+        }
+        return maxV;
+    }
+    
     
     public static void main(String [] args) {
         try{
             Experiment e = Experiment.generate(2,4,6);
-            
-            int TEST =2;
+            System.out.println("experiment has " + e.getMostCommonInstanceLength());
+            int TEST =3;
             if (TEST ==0){
                 e.printStream();
                 System.out.println("xxxxxxxxxx");
@@ -626,6 +649,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
         }
         catch(Exception e) {e.printStackTrace();}
     }
+
 
 
     
