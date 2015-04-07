@@ -79,8 +79,11 @@ function DataLayer(jsonDL) {
     this.id = jsonDL.id;
     this.parent =jsonDL.parent;
     this.numChannels = jsonDL.numchannels;
+    this.numPoints = jsonDL.numPoints;
     this.type = jsonDL.type;
     this.elementTag = '<div id = "'+this.id+'" class = " dropChannel surfaceElement" > </div>';
+    this.sqScale = d3.scale.linear().domain([0, 625000]).range([15, 60]);
+
    //..  Draw lines inside it as art, and lines connecting
    //... it to elements it may have been derived from
    //. Errors will occur if it has not been appended to the canvas
@@ -98,6 +101,7 @@ function DataLayer(jsonDL) {
            $("#"+this.id).addClass("experiment");
            //plumbTechniques.setExperimentEPs();
         }*/ 
+        console.log(jsonDL);
         if (jsonDL.type == "2D")
             if(this.numChannels <17)
                 $("#" + this.id).addClass("chanset");
@@ -108,10 +112,10 @@ function DataLayer(jsonDL) {
             if (jsonDL.numlabels ==2) $("#"+this.id).addClass("experiment2");
             if (jsonDL.numlabels ==3) $("#"+this.id).addClass("experiment3");
             if (jsonDL.numlabels ==4) $("#"+this.id).addClass("experiment4");
-            
-            $("#" + this.id).addClass("experiment2");
-
+            else $("#" + this.id).addClass("experiment2");
         }
+        var scaledSize = this.sqScale(jsonDL.numpoints);
+        $("#" + this.id).width(scaledSize).height(scaledSize /1.7);
 
         //.. if this datalayer was derived from another layer, draw a line between them 
         if (this.parent != null && this.parent != "Motherless") {
