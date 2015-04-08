@@ -5,7 +5,7 @@ function CorrelationMatrix() {
     //.. width, height, margin. If these are customizable we need settors 
     var width = 700,
             height = 400,
-            margin = {top: 30, left: 30, right: 30, bottom: 20};
+            margin = {top: 10, left: 30, right: 30, bottom: 20};
     
     var selection;
    
@@ -41,13 +41,14 @@ function CorrelationMatrix() {
         
         var x = d3.scale.ordinal()
                 .domain(indexes)
-                .rangePoints([margin.left, width]);
+                .rangePoints([margin.left, width -margin.left]);
+        var rectWidth = x(1) - x(0);
+        var rectMarg = rectWidth/2;
         var y = d3.scale.ordinal()
                 .domain(indexes)
-                .rangePoints([margin.top, height]);
+                .rangePoints([margin.top, height-margin.bottom-(rectMarg)]);
         
         //.. a square is whatever can fit between two values
-        var rectWidth = x(1) - x(0);
         var rectHeight = y(1) - y(0);
 
         var rect = svg.selectAll("rect");  
@@ -80,12 +81,12 @@ function CorrelationMatrix() {
         
         svg.append("g")
                 .attr("class", "y axis")
-                .attr("transform", "translate(" + (margin.left - 5) + ",5)")
+                .attr("transform", "translate(" + (margin.left - 5) + "," +rectMarg+")")
                 .call(yAxis);
         
         svg.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(7," + (height - margin.bottom+30) + ")") //.. 0,0 refers to 0,height
+                .attr("transform", "translate("+rectMarg+"," + (height - margin.bottom+10) + ")") //.. 0,0 refers to 0,height
                 .call(xAxis);
     }
     
@@ -93,11 +94,19 @@ function CorrelationMatrix() {
         data = arr;
         return chart; //.. for chaining
     }
+    chart.width = function(w) {
+        width = w;
+        return chart;
+    }
+    chart.height = function(h) {
+        height = h;
+        return chart;
+    }
     
     return chart;
 }
 
-testCM();
+//testCM();
 function testCM() { 
     var chart = CorrelationMatrix();
     //.. add chart

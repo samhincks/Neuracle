@@ -49,9 +49,10 @@ function ChartArea(id, descArea) {
     }
     this.displayCorrelation = function(JSONobj) {
         $(selection).children().remove();
+        var width = $(selection).width() - border;
+        var height = $(selection).height() - border;
         var corChart = CorrelationMatrix();
-        corChart.data(JSONobj.data)(selection);
-        var self = this;
+        corChart.data(JSONobj.data).width(width).height(height)(selection);
     }
     
     this.displayChannelSet = function(JSONobj) {
@@ -71,7 +72,6 @@ function ChartArea(id, descArea) {
         var actualMaxPoints = JSONobj.actualNumPoints;
         var readingsPerSec = JSONobj.readingsPerSec;
         var maxInSeconds = (actualMaxPoints / readingsPerSec)
-        console.log(actualMaxPoints + " , " + readingsPerSec + " , " + maxInSeconds);
 
         //.. add a menu for selecting channel 
         $("#channelSelection").remove();

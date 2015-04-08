@@ -148,7 +148,6 @@ public class BiDAO extends DataLayerDAO {
                      else if (bFirstVal != null)  //.. I think this is the only one that is active, prove it and you can delete a
                          correlations.put(bFirstVal);
                      
-                     
                      else{ //.. With the hashmap this should only happen 50% of the time
                         int diff = b.getSAXDistanceTo(a,LENGTH, ALPHABET); //.. MAGIC PARAMETER! 750 takes super long but what ive been doing
                         JSONObject o = new JSONObject();
