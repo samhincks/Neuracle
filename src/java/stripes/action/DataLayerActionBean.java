@@ -161,9 +161,10 @@ public class DataLayerActionBean extends BaseActionBean{
             JSONObject jsonObj = new JSONObject();
             jsonObj.put("error", e.getMessage());
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));
-
         }
     }
+    
+    
     public Resolution getLatestStream() throws JSONException {
         try{
             ctx.setCurrentName(giver);

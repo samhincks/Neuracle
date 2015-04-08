@@ -124,12 +124,13 @@ public class BiDAO extends DataLayerDAO {
             jsonObj.put("data", data); //.. data is array of arrays, index corresponds to order we see channel
             
             int ALPHABET = 5;
-            int LENGTH = 50;
+            int LENGTH = 10; //.. 50
             
             if (channelSet.getCount() > 250000)
                 LENGTH =25;
+            
             //.. if points = 153400, then these parameters take about 18 seconds
-            HashMap<String, Integer> hm = new HashMap(); //.. This hashmap makes it take half the time. EMPIRICALLY
+            HashMap<String, JSONObject> hm = new HashMap(); //.. This hashmap makes it take half the time. EMPIRICALLY
             
             for (Channel a  : channelSet.streams) { 
                  JSONArray correlations = new JSONArray();
@@ -137,19 +138,27 @@ public class BiDAO extends DataLayerDAO {
                  for (Channel b : channelSet.streams) {  
                      String comboId = a.id + b.id;
                      String comboId2 = b.id +a.id;//.. it will be in either one of those
-                     Integer aFirstVal = hm.get(comboId);
-                     Integer bFirstVal = hm.get(comboId2);
+                     JSONObject aFirstVal = hm.get(comboId);
+                     JSONObject bFirstVal = hm.get(comboId2);
                      
-                     if (aFirstVal != null)
+                     if (aFirstVal != null) 
                          correlations.put(aFirstVal);
                      
-                     else if (bFirstVal != null)
+                     
+                     else if (bFirstVal != null)  //.. I think this is the only one that is active, prove it and you can delete a
                          correlations.put(bFirstVal);
+                     
                      
                      else{ //.. With the hashmap this should only happen 50% of the time
                         int diff = b.getSAXDistanceTo(a,LENGTH, ALPHABET); //.. MAGIC PARAMETER! 750 takes super long but what ive been doing
-                        correlations.put(diff);
-                        hm.put(comboId, diff);  
+                        JSONObject o = new JSONObject();
+                        o.put("data", diff);
+                        o.put("i", a.id);
+                        o.put("j", b.id);
+                        
+                        hm.put(comboId, o);
+                        correlations.put(o);
+
                      }
                  }
              }

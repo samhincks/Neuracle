@@ -97,6 +97,7 @@ function LineChart() {
             .attr("class","chart")
             .attr("width",width)
             .attr("height", height);
+        
         //.. Add a path element to our visualization. USe D3's line'
         line = d3.svg.line()
             .interpolate("basis") //.. makes jagged smooth
