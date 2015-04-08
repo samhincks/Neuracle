@@ -101,21 +101,21 @@ function DataLayers() {
 * parent = the id that derived it if any
 * numChannels = number of channels
  **/
-var globalFreqId;
+var globalFreqId; //.. this needs to be a global since I'm a bad programmer and don't know how 'this' works
 function DataLayer(jsonDL) {
     this.id = jsonDL.id;
     this.parent =jsonDL.parent;
     this.numChannels = jsonDL.numchannels;
     this.numPoints = jsonDL.numPoints;
     this.type = jsonDL.type;
-   
-    
     this.freqButton = "freq"+this.id; //.. For some reason it wont respond if I give it a unique id
     this.elementTag = '<div id = "'+this.id+'" class = " dropChannel surfaceElement"> <div title = "F" id = "'+this.freqButton+'"> </div></div>';
     this.sqScale = d3.scale.linear().domain([0, 625000]).range([45, 90]);
     this.intersected = 0; //.. increase if anything is intersected
 
-    /**Display other graphing possibilities inside the container, when we hover over**/
+    /**Display other graphing possibilities inside the container, when we hover over.
+     * CALL THIS AFTER YOU'VE ADDED THE ELEMENT TAG TO THE DOM, AND NO MORE
+     * **/
     this.displaySubGraphs = function() {
         $("#"+this.id).attr("title", this.id + " has " + this.numChannels + " channels");
         globalFreqId = $("#" + this.freqButton);
@@ -128,11 +128,9 @@ function DataLayer(jsonDL) {
             globalFreqId.tooltip({
                 content: "F",
                 tooltipClass: "freq",
-                hide: {duration: 5000},
+                hide: {duration: 1200},
                 position: {my: 'right bottom+15', at: 'left center', collision: 'flipfit'},
                 open: function(event, ui) {
-
-                    console.log("opening");
                     $(ui.tooltip).dblclick(function(e) {
                         javaInterface.postToDataLayer("frequency");
                     });
@@ -142,10 +140,9 @@ function DataLayer(jsonDL) {
             $("#" + this.id).tooltip({
                 content: "C",
                 tooltipClass: "corr",
-                hide: {duration: 5000},
+                hide: {duration: 1200},
                 position: {my: 'left bottom-15', at: 'left center', collision: 'flipfit'},
                 open: function(event, ui) {
-
                     $(ui.tooltip).dblclick(function(e) {
                         javaInterface.postToDataLayer("correlation");
                     });
