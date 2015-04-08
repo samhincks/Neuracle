@@ -13,7 +13,8 @@ import java.awt.Point;
 import java.sql.ResultSet;  
 import java.sql.ResultSetMetaData;   
 import java.util.ArrayList;
-import java.util.Hashtable;                 
+import java.util.HashMap;                 
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map.Entry;   
 import java.util.PriorityQueue;
@@ -110,25 +111,46 @@ public class BiDAO extends DataLayerDAO {
         //dataLayer.setStatsMap();
     }
     
-    /**
+    /**  
      Return a correlation matrix between each pairwise channel . 
      * Either SAX correlation 
     **/
     public JSONObject getCorrelationJSON() throws Exception {
         jsonObj = new JSONObject();
         ChannelSet channelSet = (ChannelSet)dataLayer;
-        System.out.println("CORRELEATION");
         try {
             jsonObj.put("id", getId());
             JSONArray data = new JSONArray();
             jsonObj.put("data", data); //.. data is array of arrays, index corresponds to order we see channel
-             for (Channel a  : channelSet.streams) { 
+            
+            int ALPHABET = 5;
+            int LENGTH = 50;
+            
+            if (channelSet.getCount() > 250000)
+                LENGTH =25;
+            //.. if points = 153400, then these parameters take about 18 seconds
+            HashMap<String, Integer> hm = new HashMap(); //.. This hashmap makes it take half the time. EMPIRICALLY
+            
+            for (Channel a  : channelSet.streams) { 
                  JSONArray correlations = new JSONArray();
                  data.put(correlations); // each channel has correlations to all other channels   
                  for (Channel b : channelSet.streams) {  
-                     int diff = b.getSAXDistanceTo(a,50, 5); //.. MAGIC PARAMETER! 750 takes super long but what ive been doing
-                     correlations.put(diff);
-                     System.out.println(a.id + " " + b.id + " : " + diff);
+                     String comboId = a.id + b.id;
+                     String comboId2 = b.id +a.id;//.. it will be in either one of those
+                     Integer aFirstVal = hm.get(comboId);
+                     Integer bFirstVal = hm.get(comboId2);
+                     
+                     if (aFirstVal != null)
+                         correlations.put(aFirstVal);
+                     
+                     else if (bFirstVal != null)
+                         correlations.put(bFirstVal);
+                     
+                     else{ //.. With the hashmap this should only happen 50% of the time
+                        int diff = b.getSAXDistanceTo(a,LENGTH, ALPHABET); //.. MAGIC PARAMETER! 750 takes super long but what ive been doing
+                        correlations.put(diff);
+                        hm.put(comboId, diff);  
+                     }
                  }
              }
         }
