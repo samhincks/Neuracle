@@ -101,7 +101,6 @@ function DataLayers() {
 * parent = the id that derived it if any
 * numChannels = number of channels
  **/
-var globalFreqId; //.. this needs to be a global since I'm a bad programmer and don't know how 'this' works
 function DataLayer(jsonDL) {
     this.id = jsonDL.id;
     this.parent =jsonDL.parent;
@@ -109,6 +108,7 @@ function DataLayer(jsonDL) {
     this.numPoints = jsonDL.numPoints;
     this.type = jsonDL.type;
     this.freqButton = "freq"+this.id; //.. For some reason it wont respond if I give it a unique id
+    var globalFreqId = $("#"+this.freqButton);
     this.elementTag = '<div id = "'+this.id+'" class = " dropChannel surfaceElement"> <div title = "F" id = "'+this.freqButton+'"> </div></div>';
     this.sqScale = d3.scale.linear().domain([0, 625000]).range([45, 90]);
     this.intersected = 0; //.. increase if anything is intersected
@@ -118,12 +118,11 @@ function DataLayer(jsonDL) {
      * **/
     this.displaySubGraphs = function() {
         $("#"+this.id).attr("title", this.id + " has " + this.numChannels + " channels");
-        globalFreqId = $("#" + this.freqButton);
+        globalFreqId = $("#" + this.freqButton); //.. but when it adds a new datalayer it will refer to the latest one!
         globalFreqId.attr("title", "F"); //.. this line of code doesnt work
 
         //.. For a channelset, display frequency and correlation views
         if (this.type =="2D") {
-           
             //.. Give it the title attribute, so that the tooltip function applies
             globalFreqId.tooltip({
                 content: "F",
@@ -146,8 +145,9 @@ function DataLayer(jsonDL) {
                     $(ui.tooltip).dblclick(function(e) {
                         javaInterface.postToDataLayer("correlation");
                     });
-                    
-                    globalFreqId.tooltip('open'); //.. doesnt trigger conventional open
+                    console.log(this.id);
+                    var fId = $("#freq"+this.id);
+                    fId.tooltip('open'); //.. doesnt trigger conventional open
                 },
                 close: function(event, ui) {
                     globalFreqId.tooltip('close'); //.. doesnt trigger conventional open
