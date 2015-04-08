@@ -23,6 +23,9 @@
         <link type="text/css" rel="stylesheet" href="css/d3Style.css" />
         <link type="text/css" rel="stylesheet" href="css/plumbStyle.css" />
         <link type="text/css" rel="stylesheet" href="css/consoleStyle.css" />
+        <link type="text/css" rel="stylesheet" href="css/jquery-ui.css" />
+
+
  
     </head>
     
@@ -49,7 +52,6 @@
 
             <!--Where we place our Chart-->
             <div id ="topRight" class ="component trunzoomed">         
-               
             </div>
             
             <!--Where we place our the description of selection-->
@@ -63,7 +65,7 @@
                    <div id ="fileUpload">
                         <s:file name="newAttachment" style="background-color:#b0c4de;"/> 
                         </br>
-                        <s:submit name = "registerFile" value = "submitFile" /> 
+                        <s:submit name = "registerFile" value = "submitFile" title = "Enter a file, then hit submit" /> 
                         </br>
                         </br>
                         </br>
@@ -76,6 +78,8 @@
                 
                 
             </div>
+           
+           
             <!--Bottom right, where we put the console  -->
             <div id ="bottomRight" class ="component">
                 <!--The console --> 
@@ -97,15 +101,14 @@
                         
             </div>
             
-            
         
         <!--External JSLibraries-->
-        <script type="text/javascript" src="js/lib/jquery.min.js"></script> 
-        <script type="text/javascript" src="js/lib/jquery-ui-1.8.22.custom.min.js"></script>  
+        <script type="text/javascript" src="js/lib/jquery2.min.js"></script>
+        <script type="text/javascript" src="js/lib/jquery-ui-1.11.min.js"></script> 
         <script type="text/javascript" src="js/lib/jquery.jsPlumb-1.3.3-all.js"></script> 
          <script type="text/javascript" src="js/lib/jquery.pep.js"></script> 
          <script type="text/javascript" src="js/lib/d3.min.js"></script>  
-
+         
 
         <!--VISUALIZATIONS-->
         <script type="text/javascript" src="js/visualization/d3tip.js"></script> 

@@ -24,6 +24,7 @@ function DataLayers() {
             this.dls[this.dls.length] = dl;
         }
         this.selectLayer(dl.id);
+        dl.displaySubGraphs();
     }
     
     //.. Removes circle unless it intersects
@@ -37,7 +38,7 @@ function DataLayers() {
                 id.css("border-color","green");
             }
             else 
-                id.css("border-color", "blue");
+                id.css("border-color", "crimson");
 
                 
             
@@ -60,6 +61,7 @@ function DataLayers() {
                  else 
                     $("#" + layerId).addClass("datalayerSelected");
                 
+                dl.displaySubGraphs();
              }
         }
         
@@ -94,8 +96,6 @@ function DataLayers() {
         $("#giver").val(selectionIds);
     }
     
-   
-    
 }
 
 /*type = 2D/3D
@@ -103,16 +103,74 @@ function DataLayers() {
 * parent = the id that derived it if any
 * numChannels = number of channels
  **/
+var globalFreqId;
 function DataLayer(jsonDL) {
     this.id = jsonDL.id;
     this.parent =jsonDL.parent;
     this.numChannels = jsonDL.numchannels;
     this.numPoints = jsonDL.numPoints;
     this.type = jsonDL.type;
-    this.elementTag = '<div id = "'+this.id+'" class = " dropChannel surfaceElement" > </div>';
+   
+    
+    this.freqButton = "freq"; //.. For some reason it wont respond if I give it a unique id
+    globalFreqId= $("#"+this.freqButton);
+    this.elementTag = '<div id = "'+this.id+'" class = " dropChannel surfaceElement"> <div id = "'+this.freqButton+'"> </div></div>';
     this.sqScale = d3.scale.linear().domain([0, 625000]).range([45, 90]);
     this.intersected = 0; //.. increase if anything is intersected
 
+    /**Display other graphing possibilities inside the container, when we hover over**/
+    this.displaySubGraphs = function() {
+       // $(".ui-tooltip").remove();
+        $("#"+this.id).attr("title", this.id + " has " + this.numChannels + " channels");
+        
+        if (this.type =="2D") {
+            globalFreqId.attr("title", "F");
+
+            //.. make our chart... does it make sense to reinstantiate chart each time? can we still do transition
+            globalFreqId.tooltip({
+                content: "F",
+                tooltipClass: "freq",
+                hide: {duration: 5000},
+                position: {my: 'right bottom+15', at: 'left center', collision: 'flipfit'},
+                open: function(event, ui) {
+                    $(ui.tooltip).dblclick(function(e) {
+                        javaInterface.postToDataLayer("frequency");
+                    });
+                }
+            });
+            $("#" + this.id).tooltip({
+                content: "C",
+                tooltipClass: "corr",
+                hide: {duration: 5000},
+                position: {my: 'left bottom-15', at: 'left center', collision: 'flipfit'},
+                open: function(event, ui) {
+                    $(ui.tooltip).dblclick(function(e) {
+                        javaInterface.postToDataLayer("correlation");
+                        console.log("C");
+                    });
+                    /*
+                    $(ui.tooltip).mouseenter(function(e) {
+                        $(".corr").css("font-color", "blue");
+                        console.log("entering");
+                    });
+                    $(ui.tooltip).mouseleave(function(e) {
+                        $(ui.tooltip).css("opacity", 1);
+                    }); */
+
+                  globalFreqId.tooltip('open'); //.. doesnt trigger conventional open
+                },
+                close: function(event, ui) {
+                    globalFreqId.tooltip('close'); //.. doesnt trigger conventional open
+                }
+            });
+           
+            
+        }
+    }
+    
+    
+    
+    
    //..  Draw lines inside it as art, and lines connecting
    //... it to elements it may have been derived from
    //. Errors will occur if it has not been appended to the canvas

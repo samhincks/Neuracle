@@ -145,6 +145,7 @@ function datalayerInit() {
 
     //.. if a channel set is clicked
     $(".dropChannel").mousedown(function(e) {
+        $(".ui-tooltip").remove();
         if (!shiftKey)
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         else
@@ -169,6 +170,11 @@ function datalayerInit() {
         datalayerArea.datalayers.unselectAll();
         datalayerArea.boundsCheck();
     });
+    
+   
+    $(".dropChannel").mouseenter(function(e) {
+        $(".ui-tooltip").remove();
+    });
    
 }
 
@@ -187,6 +193,7 @@ function techniqueInit() {
      //.. When I release a datalayer, show what techniques I intersect
     $(".technique").mouseup(function(e) {
         datalayerArea.highlightIntersectedTechniques();
+        datalayerArea.datalayers.unselectAll();
         datalayerArea.boundsCheck();
     });
     

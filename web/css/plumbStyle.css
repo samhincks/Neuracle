@@ -118,6 +118,15 @@
 
 }
 
+
+.corButton {
+    background-image: url('../images/correlation.png'); 
+    width:100%;
+    height:100%;
+    
+}
+
+//.. in fact, means an experiment selected
 .datalayerSelected {
     border:25px  solid #346789;
     opacity: 0.3;
