@@ -102,7 +102,6 @@ function DatalayerArea(selection) {
                 
                 //.. then append to canvas and determine its position
                 $(selection).append(newLayer.elementTag);
-                
                 //.. IF it has a parent place directly beneath it
                 if (!(newLayer.parent == "Motherless")) {
                     var parent = this.datalayers.getDLById(newLayer.parent);
@@ -125,6 +124,9 @@ function DatalayerArea(selection) {
                 }
                 
                 newLayer.drawArt();
+                
+                newLayer.displaySubGraphs();
+
             }
         } 
     }

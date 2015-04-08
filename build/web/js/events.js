@@ -145,7 +145,6 @@ function datalayerInit() {
 
     //.. if a channel set is clicked
     $(".dropChannel").mousedown(function(e) {
-        $(".ui-tooltip").remove();
         if (!shiftKey)
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         else
@@ -173,7 +172,6 @@ function datalayerInit() {
     
    
     $(".dropChannel").mouseenter(function(e) {
-        $(".ui-tooltip").remove();
     });
    
 }
