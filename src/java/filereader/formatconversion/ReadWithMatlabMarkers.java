@@ -231,7 +231,40 @@ public class ReadWithMatlabMarkers {
         return null;
     }
     
-    public static void main (String [] args) {
+    public static void main(String[] args) {
+        GR();
+    }
+    
+    
+    public static void GR() {
+        String folder = "input/Glassroutes/";
+        try {
+            for (int i = 1; i < 20; i++) {
+                if(i!= 17){
+                    String subjNum = (i<10) ? "0" +i : i+"";
+                    String subjFolder = "glassroutes_S2"+subjNum;
+                    String input = folder +subjFolder+ "/fnirsData.txt";
+                    String marker = folder + subjFolder + "/markers.txt";
+                    String output = "input/" + subjNum + ".csv";
+                    System.out.println("Making" + input);
+
+                    ReadWithMatlabMarkers reader = new ReadWithMatlabMarkers(marker, input);
+                    ArrayList<ReadWithMatlabMarkers.Trial> trials = reader.readMarkerFileDan();
+                    reader.readFNIRSFile();
+                    reader.writeToFile(output);
+                    for (Trial t : trials) {
+                      //     System.out.println("start: " + t.start + " - " + t.end + " .. "+t.label);
+                    }
+                }
+                
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    public static void UAV () {
         String folder = "input/UAV_selected/";
         try{
             for (int i =0; i < 28; i++){

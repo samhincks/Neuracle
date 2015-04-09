@@ -1,0 +1,30 @@
+This MATLAB session will be logged in file C:\GlassRoutes/glassroutes_S201/2015-01-19_13-36-53/diary.txt
+Subject:	S201
+Project:	glassroutes
+Date:	19-Jan-2015 13:36:53
+
+Opening the fNIRS serial port COM1 (timeout: 2)
+Starting socket connection to 130.64.22.24:1001
+Opening socket connection to 130.64.22.24:1001
+Error opening socket connection to 130.64.22.24:1001
+	Initializing classification values
+ 
+[Point #0] NOT_MEASUREMENT period
+{??? Error using ==> fscanf
+Too many output arguments.
+
+Error in ==> <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop.m',78,0)">RealTimeLoop at 78</a>
+                    [rawMarker,countRawMarker,errorMsgRawMarker] = fscanf(socket,'%s');
+} 
+% Modify expression to add input arguments.
+% Example:
+%   a = [1 2 3; 4 5 6]; 
+%   foo(a);
+
+RealTimeLoop
+{Warning: Name is nonexistent or not a directory: libsvm-3.13\matlab.} 
+> In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\matlab\general\path.m',110,1)">path at 110</a>
+  In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\matlab\general\addpath.m',87,1)">addpath at 87</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\Constants.m',43,1)">Constants at 43</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop_prepare.m',15,1)">RealTimeLoop_prepare at 15</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop.m',45,1)">RealTimeLoop at 45</a>

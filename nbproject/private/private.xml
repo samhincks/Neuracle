@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="13">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="17">
         <file>
             <url>web/js/movingLinegraph.js</url>
             <bookmark id="10">
@@ -19,6 +19,19 @@
             <bookmark id="11">
                 <name/>
                 <line>18</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/area/chartarea.js</url>
+            <bookmark id="16">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+            <bookmark id="17">
+                <name/>
+                <line>0</line>
                 <key/>
             </bookmark>
         </file>
@@ -52,31 +65,29 @@
             <url>src/java/dao/datalayers/BiDAO.java</url>
             <bookmark id="9">
                 <name/>
-                <line>233</line>
+                <line>263</line>
                 <key/>
             </bookmark>
             <bookmark id="12">
                 <name/>
-                <line>294</line>
+                <line>324</line>
                 <key/>
             </bookmark>
             <bookmark id="8">
                 <name/>
-                <line>466</line>
+                <line>496</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/area/datalayerarea.js</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/area/objects/datalayers.js</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/Command.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/css/consoleStyle.css</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/events.js</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/css/d3Style.css</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/css/style.css</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/css/plumbStyle.css</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/visualization/PredictionChart.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/area/chartarea.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/visualization/LineChart.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/visualization/CorrelationMatrix.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/stripes/action/ConsoleActionBean.java</file>
         </group>
     </open-files>
 </project-private>

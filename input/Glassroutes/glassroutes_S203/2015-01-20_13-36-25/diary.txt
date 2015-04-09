@@ -1,0 +1,36 @@
+This MATLAB session will be logged in file C:\GlassRoutes/glassroutes_S203/2015-01-20_13-36-25/diary.txt
+Subject:	S203
+Project:	glassroutes
+Date:	20-Jan-2015 13:36:25
+
+Opening the fNIRS serial port COM1 (timeout: 2)
+Starting socket connection to 130.64.22.24:1001
+Opening socket connection to 130.64.22.24:1001
+Connected: socket connection to 130.64.22.24:1001
+Initializing classification values
+ 
+[Point #0] NOT_MEASUREMENT period
+[Point #1] was longer than 0.0848s (took 0.087934s)
+[Point #100] Status msg: not_measurement period; 8.5s elapsed
+[Point #200] Status msg: not_measurement period; 17.0s elapsed
+{Warning: Invalid escape sequence appears in format string. See help sprintf for valid escape sequences.} 
+> In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\shared\instrument\@icinterface\fscanf.m',206,1)">icinterface.fscanf at 206</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop.m',78,1)">RealTimeLoop at 78</a>
+{??? Error using ==> <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\shared\instrument\@icinterface\fscanf.m',207,0)">icinterface.fscanf at 207</a>
+Error using ==> <a href="matlab: opentoline('C:
+
+Error in ==> <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop.m',78,0)">RealTimeLoop at 78</a>
+                    [rawMarker,countRawMarker,errorMsgRawMarker] = fscanf(socket,'%s');
+} 
+% Modify expression to add input arguments.
+% Example:
+%   a = [1 2 3; 4 5 6]; 
+%   foo(a);
+
+RealTimeLoop
+{Warning: Name is nonexistent or not a directory: libsvm-3.13\matlab.} 
+> In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\matlab\general\path.m',110,1)">path at 110</a>
+  In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\matlab\general\addpath.m',87,1)">addpath at 87</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\Constants.m',43,1)">Constants at 43</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop_prepare.m',15,1)">RealTimeLoop_prepare at 15</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop.m',45,1)">RealTimeLoop at 45</a>

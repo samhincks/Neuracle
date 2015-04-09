@@ -1,0 +1,45 @@
+This MATLAB session will be logged in file C:\GlassRoutes/glassroutes_S205/2015-01-21_11-33-36/diary.txt
+Subject:	S205
+Project:	glassroutes
+Date:	21-Jan-2015 11:33:36
+
+Opening the fNIRS serial port COM1 (timeout: 2)
+Starting socket connection to 130.64.22.24:1001
+Opening socket connection to 130.64.22.24:1001
+Connected: socket connection to 130.64.22.24:1001
+Initializing classification values
+ 
+[Point #0] NOT_MEASUREMENT period
+[Point #1] was longer than 0.0848s (took 0.095063s)
+[Point #100] Status msg: not_measurement period; 8.5s elapsed
+[Point #200] Status msg: not_measurement period; 17.0s elapsed
+Marker: 0;baselinestart;1421858040936;  (60 bytes)
+[Point #285] Application Marker: 0;baselinestart;1421858040936; marker_count: 1
+[Point #286] BASELINE period
+[Point #300] Status msg: baseline period; 1.2s elapsed
+[Point #400] Status msg: baseline period; 9.7s elapsed
+[Point #500] Status msg: baseline period; 18.1s elapsed
+[Point #600] Status msg: baseline period; 26.6s elapsed
+Marker: 0;baselineend;1421858070937;  (56 bytes)
+[Point #640] Application Marker: 0;baselineend;1421858070937; marker_count: 2
+[Point #641] TRAINING period
+Marker: 16;hardstart;1421858071440  (52 bytes)
+[Point #646] Application Marker: 16;hardstart;1421858071440 marker_count: 3
+[Point #700] Status msg: training period; 4.5s elapsed
+[Point #800] Status msg: training period; 13.0s elapsed
+[Point #900] Status msg: training period; 21.5s elapsed
+[Point #1000] Status msg: training period; 29.9s elapsed
+{??? Operation terminated by user during ==> <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop.m',181,0)">RealTimeLoop at 181</a>
+} 
+% Modify expression to add input arguments.
+% Example:
+%   a = [1 2 3; 4 5 6]; 
+%   foo(a);
+
+RealTimeLoop
+{Warning: Name is nonexistent or not a directory: libsvm-3.13\matlab.} 
+> In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\matlab\general\path.m',110,1)">path at 110</a>
+  In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\matlab\general\addpath.m',87,1)">addpath at 87</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\Constants.m',43,1)">Constants at 43</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop_prepare.m',15,1)">RealTimeLoop_prepare at 15</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop.m',45,1)">RealTimeLoop at 45</a>

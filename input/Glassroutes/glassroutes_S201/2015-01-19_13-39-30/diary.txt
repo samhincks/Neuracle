@@ -1,0 +1,38 @@
+This MATLAB session will be logged in file C:\GlassRoutes/glassroutes_S201/2015-01-19_13-39-30/diary.txt
+Subject:	S201
+Project:	glassroutes
+Date:	19-Jan-2015 13:39:30
+
+Opening the fNIRS serial port COM1 (timeout: 2)
+Starting socket connection to 130.64.22.24:1001
+Opening socket connection to 130.64.22.24:1001
+Connected: socket connection to 130.64.22.24:1001
+Initializing classification values
+ 
+[Point #0] NOT_MEASUREMENT period
+[Point #1] was longer than 0.0848s (took 0.12919s)
+[Point #12] was longer than 0.0848s (took 0.099626s)
+[Point #46] was longer than 0.0848s (took 0.085822s)
+[Point #53] was longer than 0.0848s (took 0.13607s)
+[Point #54] was longer than 0.0848s (took 0.091685s)
+[Point #67] was longer than 0.0848s (took 0.098797s)
+[Point #70] was longer than 0.0848s (took 0.089782s)
+[Point #80] was longer than 0.0848s (took 0.093938s)
+[Point #100] Status msg: not_measurement period; 8.5s elapsed
+[Point #102] was longer than 0.0848s (took 0.1024s)
+[Point #104] was longer than 0.0848s (took 0.1015s)
+[Point #130] was longer than 0.0848s (took 0.10289s)
+{??? Operation terminated by user during ==> <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop.m',181,0)">RealTimeLoop at 181</a>
+} 
+% Modify expression to add input arguments.
+% Example:
+%   a = [1 2 3; 4 5 6]; 
+%   foo(a);
+
+RealTimeLoop
+{Warning: Name is nonexistent or not a directory: libsvm-3.13\matlab.} 
+> In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\matlab\general\path.m',110,1)">path at 110</a>
+  In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\matlab\general\addpath.m',87,1)">addpath at 87</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\Constants.m',43,1)">Constants at 43</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop_prepare.m',15,1)">RealTimeLoop_prepare at 15</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop.m',45,1)">RealTimeLoop at 45</a>

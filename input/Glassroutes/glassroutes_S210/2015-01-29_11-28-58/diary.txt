@@ -1,0 +1,32 @@
+This MATLAB session will be logged in file C:\GlassRoutes/glassroutes_S210/2015-01-29_11-28-58/diary.txt
+Subject:	S210
+Project:	glassroutes
+Date:	29-Jan-2015 11:28:58
+
+Opening the fNIRS serial port COM1 (timeout: 2)
+{??? Operation terminated by user during ==> <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\matlab\iofun\@serial\fopen.m',52,0)">serial.fopen at 52</a>
+
+In ==> <a href="matlab: opentoline('C:\GlassRoutes\openSerialPort.m',41,0)">openSerialPort at 41</a>
+    fopen(serialport);
+
+In ==> <a href="matlab: opentoline('C:\GlassRoutes\openPorts.m',38,0)">openPorts at 38</a>
+    serialfNIRS = openSerialPort(FNIRS_SERIAL, 'fNIRS', 2);
+
+In ==> <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop_prepare.m',77,0)">RealTimeLoop_prepare at 77</a>
+if ~errorflag; openPorts(); end;
+
+In ==> <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop.m',45,0)">RealTimeLoop at 45</a>
+RealTimeLoop_prepare();
+} 
+% Modify expression to add input arguments.
+% Example:
+%   a = [1 2 3; 4 5 6]; 
+%   foo(a);
+
+RealTimeLoop
+{Warning: Name is nonexistent or not a directory: libsvm-3.13\matlab.} 
+> In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\matlab\general\path.m',110,1)">path at 110</a>
+  In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2010a\toolbox\matlab\general\addpath.m',87,1)">addpath at 87</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\Constants.m',43,1)">Constants at 43</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop_prepare.m',15,1)">RealTimeLoop_prepare at 15</a>
+  In <a href="matlab: opentoline('C:\GlassRoutes\RealTimeLoop.m',45,1)">RealTimeLoop at 45</a>

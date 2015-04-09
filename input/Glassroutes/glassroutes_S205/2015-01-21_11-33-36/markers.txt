@@ -1,0 +1,8 @@
+Subject:	S205
+Project:	glassroutes
+Time:	2015-01-21_11-33-36
+
+NbPoints	Matlab_now	BoxyTime	Stimulus_String	Trial_no	Stimulus_Label	Stimulus_Time
+286	41641.040	3031.142	0;baselinestart;1421858040936;	0	baselinestart	1421858040936	
+641	41671.121	3061.264	0;baselineend;1421858070937;	0	baselineend	1421858070937	
+647	41671.635	3061.747	16;hardstart;1421858071440	16	hardstart	1421858071440	
