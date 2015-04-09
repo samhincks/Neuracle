@@ -47,6 +47,12 @@
     top:35px;
 }
 
+//.. in fact, means an experiment selected
+.datalayerSelected {
+    border:25px  solid #346789;
+    opacity: 0.3;
+    z-index: 12;
+}
 .surfaceElement {
     border:1px solid #346789;
     box-shadow: 2px 2px 19px #aaa;
@@ -91,7 +97,7 @@
     background-image: url('../images/experiment1.png');; 
 }
 .experiment4 {
-    background-image: url('../images/experiment4.png');; 
+    background-image: url('../images/experiment.png');; 
 }
 .technique {
     width:0.7em;
@@ -126,12 +132,6 @@
     
 }
 
-//.. in fact, means an experiment selected
-.datalayerSelected {
-    border:25px  solid #346789;
-    opacity: 0.3;
-    z-index: 12;
-}
 
 .selectedCircle {
     background-color: black;
@@ -171,6 +171,8 @@
  z-index: 12;
  
 }
+
+
 .dropHover {
     border:1px solid orange;
 }

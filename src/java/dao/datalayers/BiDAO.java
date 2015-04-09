@@ -114,7 +114,7 @@ public class BiDAO extends DataLayerDAO {
     /**  
      Return a correlation matrix between each pairwise channel . 
      * Either SAX correlation 
-    **/
+    **/  
     public JSONObject getCorrelationJSON() throws Exception {
         jsonObj = new JSONObject();
         ChannelSet channelSet = (ChannelSet)dataLayer;
@@ -124,7 +124,7 @@ public class BiDAO extends DataLayerDAO {
             jsonObj.put("data", data); //.. data is array of arrays, index corresponds to order we see channel
             
             int ALPHABET = 5;
-            int LENGTH = 10; //.. 50
+            int LENGTH = 50; //.. 50  
             
             if (channelSet.getCount() > 250000)
                 LENGTH =25;

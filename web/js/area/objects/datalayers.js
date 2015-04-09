@@ -47,7 +47,7 @@ function DataLayers() {
     //.. add the selected to class to target element; remove from all others
     this.selectLayer = function(layerId) {
         //.. remove all other 
-        for(var i =0; i< this.dls.length; i++) {
+        for(var i =0; i< this.dls.length; i++) {  
             var dl = this.dls[i]; 
             var curId =  dl.id;
              $("#"+curId).removeClass("datalayerSelected")
@@ -59,7 +59,7 @@ function DataLayers() {
                     $("#" + layerId).addClass("surfaceElementSelected");
                  else 
                     $("#" + layerId).addClass("datalayerSelected");
-                
+                console.log("selected " + layerId);
              }
         }
         
@@ -184,11 +184,11 @@ function DataLayer(jsonDL) {
             else
                 $("#" + this.id).addClass("chanset2");
         else { //.. 3D
+            console.log(jsonDL.numlabels);
             if (jsonDL.numlabels ==1) $("#"+this.id).addClass("experiment1");
             if (jsonDL.numlabels ==2) $("#"+this.id).addClass("experiment2");
             if (jsonDL.numlabels ==3) $("#"+this.id).addClass("experiment3");
-            if (jsonDL.numlabels ==4) $("#"+this.id).addClass("experiment4");
-            else $("#" + this.id).addClass("experiment2");
+            if (jsonDL.numlabels >=4) $("#"+this.id).addClass("experiment4");
         }
         var scaledSize = this.sqScale(jsonDL.numpoints);
         $("#" + this.id).width(scaledSize).height(scaledSize /1.7);
