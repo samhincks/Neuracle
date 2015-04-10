@@ -117,6 +117,17 @@ public class DataLayersDAO {
         catch(NullPointerException n) {throw new Exception("No streams added");}
     }
     
+    /**Get all channelsets **/
+    public ArrayList<ChannelSet> getAllChannelSets() {
+        ArrayList<ChannelSet> ret = new ArrayList();
+        for (Map.Entry<String, DataLayerDAO> e : streams.entrySet()) {
+             if (e.getValue().dataLayer instanceof ChannelSet)
+                 ret.add((ChannelSet)e.getValue().dataLayer);
+        }
+        return ret;
+    }
+    
+    
     public void removeStream(String key) throws Exception{
         DataLayerDAO dl = streams.get(key);
         dl.dataLayer.delete(); //.. does this purge all memory to this?
@@ -234,5 +245,6 @@ public class DataLayersDAO {
 //            channelSet.addMarkers(markers);
 //        }
    }
+
     
 }

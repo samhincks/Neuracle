@@ -174,10 +174,8 @@ public class TransformationParser extends Parser{
      
     /**Merge a set of selected channels into one**/
     private String append(String [] parameters) throws Exception {
-        boolean copy = true;
-        if (parameters.length > 0) copy = false;
-        
         ArrayList<ChannelSet> chanSets = getChanSets();
+        if (chanSets.size() <=1) chanSets =super.getAllChanSets();
         ChannelSet cs = chanSets.get(0).getDeepCopy();
         
         cs.id = "Merged" + chanSets.get(0).id;
@@ -189,7 +187,7 @@ public class TransformationParser extends Parser{
         //.. make a new data access object, and add it to our stream
         BiDAO bDAO = new BiDAO(cs);
         ctx.dataLayersDAO.addStream(cs.id, bDAO);
-        return "Appended channelsets into" + cs.id;
+        return "Appended  a total of " + chanSets.size() + " channelsets into" + cs.id;
       
     }
      /**
