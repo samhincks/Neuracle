@@ -129,7 +129,6 @@ function DatalayerArea(selection) {
                 
                 //.. then append to canvas and determine its position
                 $(selection).append(newLayer.elementTag);
-                                console.log("appending a new layer");
 
                 //.. IF it has a parent place directly beneath it
                 if (!(newLayer.parent == "Motherless")) {

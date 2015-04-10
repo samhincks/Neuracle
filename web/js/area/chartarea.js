@@ -30,7 +30,6 @@ function ChartArea(id, descArea) {
         }
         
         if(JSONobj.type == "experiment"){
-            console.log(JSONobj);
             this.displayExperiment(JSONobj);
         }
         
@@ -68,7 +67,7 @@ function ChartArea(id, descArea) {
     }
     this.displayExperiment = function(JSONobj) {
         $(selection).children().remove();
-        var channels = JSONobj.instances[0][0].channels;
+        var channels = JSONobj.channelnames; ///JSONobj.instances[0][0].channels;
 
         var actualMaxPoints = JSONobj.actualNumPoints;
         var readingsPerSec = JSONobj.readingsPerSec;
@@ -77,12 +76,13 @@ function ChartArea(id, descArea) {
         //.. add a menu for selecting channel 
         $("#channelSelection").remove();
         $(selection).append("<select id = channelSelection> </select>");
-
+        console.log(JSONobj);
         //.. add each channel as a value to the select menu
         for (var i = 0; i < channels.length; i++) {
+            console.log(channels[i]);
             $('#channelSelection')
                     .append($('<option>', {value: i})
-                            .text(i));
+                            .text(channels[i]));
         }
         var d3Chart = LineChart();
         var self = this;

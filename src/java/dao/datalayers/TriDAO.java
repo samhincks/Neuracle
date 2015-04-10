@@ -56,6 +56,15 @@ public class TriDAO extends DataLayerDAO {
                 jsonObj.put("actualNumPoints", mostPoints);
                 jsonObj.put("readingsPerSec", exp.readingsPerSec);
                 
+                //.. Add channel names
+                JSONArray channelids = new JSONArray();
+                Instance first = exp.matrixes.get(0);
+                for (Channel c : first.streams) {
+                    channelids.put(c.id);
+                }
+                jsonObj.put("channelnames", channelids);
+                
+                
                 //.. set constant max-points then compute how much we have to increment by if it is exceeded
                 int MAXPOINTS =400; //.. the number of points to display
                 int MINPOINTS =15; 
