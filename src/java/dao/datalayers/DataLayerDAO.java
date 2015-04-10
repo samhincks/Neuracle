@@ -54,7 +54,12 @@ public abstract class DataLayerDAO {
         }
         return retArray;
     }
-
+    
+    /**Remove al lreferences to this datalayer to free space. Ie calls delete 
+     to all tiers beneath it */ 
+    public void delete() {
+        dataLayer.delete();
+    }
   
 
     public ArrayList<FeatureSet> getFeatureSets() {
@@ -151,6 +156,7 @@ public abstract class DataLayerDAO {
          }
          return jsonObj;
     }
+
 
     
     

@@ -1053,12 +1053,12 @@ public class DataManipulationParser extends Parser{
             lowpass = Float.parseFloat(parameters[0]);
             highpass = Float.parseFloat(parameters[1]);
         } else if (parameters.length > 0) {
-            lowpass = Float.parseFloat(parameters[0]);
+            lowpass = Float.parseFloat(parameters[0]);  
         }
         ArrayList<ChannelSet> chanSets = getChanSets();
         String retString = "";
         for (ChannelSet cs : chanSets) {
-            ChannelSet filteredSet = cs.calcOxy(true, null, null); //.. we want a copy;
+            ChannelSet filteredSet = cs.calcOxy(false, null, null); //.. we want a copy;
             retString += "Applied CalcOxy, so that 0->7 : Probe A. 8->15"
                     + "                + \" ProbeB:: 0->3&8->12 : HbO at even positions, and Hb at odd if zero-indexed; lower values within"
                     + " the probe correspond to closer distances to the source:::";
@@ -1077,7 +1077,7 @@ public class DataManipulationParser extends Parser{
                 filteredSet = filteredSet.bandpass(lowpass, highpass, false);
                 retString += "Applied Bandpass; kept frequencies oscillating between " + lowpass + " and " + highpass + "hz ::";
             }
-
+     
             filteredSet = filteredSet.zScore(false);
             retString += "Z scored the data, so that each value is replaced by the difference between "
                     + " it and the channel's corresponding mean, divided by the standard deviation::";
@@ -1093,7 +1093,7 @@ public class DataManipulationParser extends Parser{
             //.. remove instances 10 percent larger than the average
             int instLength = e.getMostCommonInstanceLength();
             int origSize = e.matrixes.size();
-            e = e.removeUnfitInstances(instLength, 0.1);
+            e = e.removeUnfitInstances(instLength, 0.1, false);
             int trimmed = e.trimUnfitInstances(instLength);
             System.out.println("We trimmed " + trimmed);
             int newSize = e.matrixes.size();
@@ -1170,7 +1170,7 @@ public class DataManipulationParser extends Parser{
             //.. remove instances 10 percent larger than the average
             int instLength = e.getMostCommonInstanceLength();
             int origSize = e.matrixes.size();
-            e = e.removeUnfitInstances(instLength, 0.1);
+            e = e.removeUnfitInstances(instLength, 0.1, false);
             int newSize = e.matrixes.size();
             if(origSize != newSize)
                 retString += "Experiment changed from " + origSize +" to " + newSize+ " instances::";

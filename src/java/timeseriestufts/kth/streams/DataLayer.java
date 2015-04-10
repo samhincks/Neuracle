@@ -82,5 +82,9 @@ public abstract class DataLayer {
         statsMap.put("COUNT", (double)getCount());
         statsMap.put("SUM", getSum());
     }
+    
+    public abstract void delete();
+
+    
 
 }

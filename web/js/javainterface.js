@@ -67,6 +67,7 @@ function JavaInterface() {
         //.. no error, then render the object datalayers
         else {
             datalayerArea.addDatalayers(JSONobj.datalayers);
+            datalayerArea.removeDatalayers(JSONobj.datalayers);
             datalayerInit(); //.. relaod the drag/drop properties
             techniqueInit();
         }

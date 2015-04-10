@@ -146,7 +146,7 @@ public class TransformationParser extends Parser{
         
         else if (command.startsWith("append")) {
             c = commands.get("append");
-            c.retMessage = this.append();
+            c.retMessage = this.append(parameters);
         }
         
         else if (command.startsWith("clean")) {
@@ -164,7 +164,7 @@ public class TransformationParser extends Parser{
         String retString = "";
         ArrayList<Experiment> experiments = getExperiments();
         for (Experiment e : experiments) {
-            Experiment e2 =  e.removeUnfitInstances(e.getMostCommonInstanceLength(), 0.1);
+            Experiment e2 =  e.removeUnfitInstances(e.getMostCommonInstanceLength(), 0.1, true);
             ctx.addDataLayer(e2.id, new TriDAO(e2));
             e2.setParent(e.id);
             retString += "Cleaned " + e.id + ", transforming from " + e.matrixes.size() + " to " + e2.matrixes.size();
@@ -173,11 +173,13 @@ public class TransformationParser extends Parser{
     }
      
     /**Merge a set of selected channels into one**/
-    private String append() throws Exception {
-        //.. Select all channels
-        //.. get all chansets
+    private String append(String [] parameters) throws Exception {
+        boolean copy = true;
+        if (parameters.length > 0) copy = false;
+        
         ArrayList<ChannelSet> chanSets = getChanSets();
-        ChannelSet cs = chanSets.get(0).getCopy();
+        ChannelSet cs = chanSets.get(0).getDeepCopy();
+        
         cs.id = "Merged" + chanSets.get(0).id;
         for (int i = 1; i < chanSets.size(); i++) {
             ChannelSet cs2 = chanSets.get(i);
@@ -188,6 +190,7 @@ public class TransformationParser extends Parser{
         BiDAO bDAO = new BiDAO(cs);
         ctx.dataLayersDAO.addStream(cs.id, bDAO);
         return "Appended channelsets into" + cs.id;
+      
     }
      /**
      * Label the specified dataset at random. If specified, the second parameter

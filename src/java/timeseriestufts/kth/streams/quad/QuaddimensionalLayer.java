@@ -117,4 +117,11 @@ public class QuaddimensionalLayer extends DataLayer{
             System.out.println("****************************");
         }
     }
+    
+    public void delete() {
+        for (TridimensionalLayer tri : piles) {
+            tri.delete();
+        }
+        piles = null;
+    }
 }

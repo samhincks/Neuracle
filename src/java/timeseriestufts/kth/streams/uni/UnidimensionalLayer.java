@@ -433,5 +433,8 @@ public abstract class UnidimensionalLayer extends DataLayer {
         return false;
     }
     
+    public void delete() {
+        data = null;
+    }
     
 }

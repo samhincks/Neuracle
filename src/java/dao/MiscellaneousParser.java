@@ -58,6 +58,13 @@ public class MiscellaneousParser extends Parser{
         command.debug = "This does not work - a more thorough reload of the context is  necessary";
         commands.put(command.id, command);
         
+        
+        // -- DELETE
+        command = new Command("delete");
+        command.documentation = "Removes the selected datalayer, freeing associated memory";
+        commands.put(command.id, command);
+
+        
         //-- REGISTER
         command = new Command("register");
         command.documentation = "Registers the user to a database";
@@ -119,6 +126,14 @@ public class MiscellaneousParser extends Parser{
             c.retMessage =  "Clearing surface"; //... 
         }
         
+        else if (command.startsWith("delete")) {
+            c = commands.get("delete");
+            ctx.deleteCurrent();
+            c.action = "reload";
+            c.retMessage = "Removing " + currentDataLayer.id ; //... 
+            currentDataLayer =null;
+
+        }
         else if (command.startsWith("register")) {
             c= commands.get("register");
             c.retMessage = this.register(parameters);

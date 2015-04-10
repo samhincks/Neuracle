@@ -122,4 +122,11 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
    public  int getLayerSize() {
        return matrixes.size();
    }
+   
+   public  void delete() {
+       for (BidimensionalLayer bd : matrixes) {
+           bd.delete();
+       }
+       matrixes = null;
+   }
 }

@@ -125,7 +125,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
 
     }
     /***Return a simple copy with a new name*/
-    private ChannelSet getCopy(String id) throws Exception{
+    public ChannelSet getCopy(String id) throws Exception{
         ChannelSet cs = new ChannelSet();
         cs.setId(id);
         if (markers != null){ 
@@ -691,7 +691,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         bw.close();
     }
     
-    /****/
+    /**Append one chanset to the end of the other **/
     public void appendChanSet(ChannelSet cs2) throws Exception{
         if (cs2.streams.size()!= this.streams.size()) throw new Exception("Both channels must have as many channels");
         for (int i =0; i < this.streams.size(); i++) {
@@ -711,7 +711,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     }
 
     
-    public ChannelSet getCopy() { 
+    public ChannelSet getDeepCopy() { 
         ChannelSet cs = new ChannelSet();
         for (Channel c : streams) {
             cs.addStream(c.getCopy());

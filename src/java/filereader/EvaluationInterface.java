@@ -95,7 +95,7 @@ public class EvaluationInterface {
             baseandkeep.add("baseline");
             e = e.removeAllClassesBut(baseandkeep);
             
-            e = e.removeUnfitInstances(334, 0.1);
+            e = e.removeUnfitInstances(334, 0.1, false);
             
            // e.detrend(false);
             

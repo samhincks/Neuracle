@@ -118,10 +118,18 @@ public class DataLayersDAO {
     
     public void removeStream(String key) throws Exception{
         DataLayerDAO dl = streams.get(key);
-        dl.dataLayer = null; //.. does this purge all memory to this?
+        dl.dataLayer.delete(); //.. does this purge all memory to this?
+        dl.dataLayer = null;
         streams.remove(key);
+        dl = null;
     }
    
+    public void removeStream(DataLayer dl) {
+        dl = null;
+       // streams.remove(dl.id);
+        System.err.println("remove that sucker");
+    }
+    
     /**Dont think this works!*/
     public void removeStream(DataLayerDAO dlDAO) {
         streams.remove(dlDAO);

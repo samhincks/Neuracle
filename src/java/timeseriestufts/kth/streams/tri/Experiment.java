@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import timeseriestufts.evaluatable.AttributeSelection;
 import timeseriestufts.evaluatable.Dataset;
@@ -523,35 +524,43 @@ public class Experiment extends TridimensionalLayer<Instance>{
     /** Remove instances that do not come within a band of accepted length
      * Any instance that is different from the expectedLength by more than acceptedDifference
      **/
-    public Experiment removeUnfitInstances(int expectedLength, double acceptedDifference) {
+    public Experiment removeUnfitInstances(int expectedLength, double acceptedDifference, boolean copy) {
           ArrayList<Instance> newInstances = new ArrayList(); //.. to add to experiment
           double pctLarger = 1 + acceptedDifference; 
-         
           int removed =0;
-          for(Instance in : matrixes) {
-              boolean add = true; //.. stays true as long as we want to add this instance
-              int maxp = in.getMaxPoints();
-              int minp = in.getMinPoints();
-              //System.out.println("min is " + minp + " max is " + maxp + " . and we are accepting " +(pctLarger*expectedLength));
-
-              //.. first if an instances channels deviate significantly from each other, remove them
-              if (maxp > minp * pctLarger)
-                  add = false; 
-                  
-              //.. but also if this instances length relative to the rest of the data is too long, we dont add
-              if (maxp > pctLarger * expectedLength)
-                  add = false;
-              
-              if (add)
-                  newInstances.add(in);
-              else 
-                  removed++;
-              
-          }
-          if (removed > 0) 
-              System.err.println("Removed " + removed + " instances ");
           
-          return new Experiment(filename+"cleaned", classification, newInstances,this.readingsPerSec);        
+          if (copy) {
+            for(Instance in : matrixes) {
+                if (!shouldRemove(in,pctLarger,expectedLength))
+                    newInstances.add(in);
+                else 
+                    removed++;
+            }
+              return new Experiment(filename + "cleaned", classification, newInstances, this.readingsPerSec);
+
+          }
+          else {
+              for (Iterator<Instance> iterator = matrixes.iterator(); iterator.hasNext();) {
+                  Instance ins = iterator.next();
+                  if (shouldRemove(ins, pctLarger, expectedLength))
+                     iterator.remove();
+              }
+              return this;
+          }
+    }
+    private boolean shouldRemove(Instance in, double pctLarger, int expectedLength ) {
+        int maxp = in.getMaxPoints();
+        int minp = in.getMinPoints();
+        //System.out.println("min is " + minp + " max is " + maxp + " . and we are accepting " +(pctLarger*expectedLength));
+
+        //.. first if an instances channels deviate significantly from each other, remove them
+        if (maxp > minp * pctLarger)
+            return true; 
+
+        //.. but also if this instances length relative to the rest of the data is too long, we dont add
+        if (maxp > pctLarger * expectedLength)
+           return true;
+        return false;
     }
     
     /**Return a ChanelSetSet, where each ChannelSet represents a condition

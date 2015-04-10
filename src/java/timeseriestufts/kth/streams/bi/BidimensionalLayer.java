@@ -224,6 +224,12 @@ public abstract class BidimensionalLayer<T extends UnidimensionalLayer> extends 
         u.addPoint(value);
     }
     
+    public void delete() {
+        for (UnidimensionalLayer u : streams) {
+            u.delete();
+        }
+        streams = null;
+    }
     
     
 }

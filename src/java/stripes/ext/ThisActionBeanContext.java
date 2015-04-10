@@ -9,6 +9,7 @@ import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.ValidationError;
 import timeseriestufts.evaluatable.performances.Performances;
+import timeseriestufts.kth.streams.DataLayer;
 
 /**
  *
@@ -91,6 +92,12 @@ public class ThisActionBeanContext extends ActionBeanContext{
 
     }
     
+    /**Remove the specified datalayer. Confirmed to work**/
+    public void deleteCurrent() throws Exception{
+       //.. 1) Delete any references to the current one in datalayersDAO
+        this.dataLayersDAO.removeStream(currentDataLayer);
+    }
+    
     /**Get dataLayersDAO
      * @return 
      */
@@ -128,6 +135,8 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public void setFileReadSampling(int fr) {
         this.fileReadSampling = fr;
     }
+
+
 
 
 }

@@ -221,8 +221,8 @@ public  class InputParser {
 
         try{
             //.. 1. Fabricate fake data with 1 channel and 200 readings
-            ChannelSet b = ChannelSet.generate(2, 10);
-            ChannelSet c = ChannelSet.generate(2, 10);
+            ChannelSet b = ChannelSet.generate(2000, 10);
+            ChannelSet c = ChannelSet.generate(2000, 10);
             
             //.. 1.1 And add some real data
             Experiment realE = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
@@ -256,7 +256,23 @@ public  class InputParser {
             tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
             tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
             
-            int TEST =6;
+            int TEST =7;
+            
+            
+            if (TEST == 7) {
+                ChannelSet a1 = ChannelSet.generate(275000, 1000);
+                ctx.addDataLayer("a1", new BiDAO(a1));
+                response = ip.parseInput("delete", ctx);
+                a1 =null;
+                ChannelSet a2 = ChannelSet.generate(200000, 1000);
+                //ctx.addDataLayer("a2", new BiDAO(a2));
+                
+
+                
+            }
+            
+            
+            
             if (TEST ==0) 
                  response= ip.parseInput("removeallbut(a,b)", ctx);
             
@@ -308,6 +324,7 @@ public  class InputParser {
                 ctx.setCurrentName("realcs");
                 response = ip.parseInput("glassroutes", ctx);
             }
+            
            
             System.out.println(response.get("content"));
            // System.out.println(response.get("action"));
