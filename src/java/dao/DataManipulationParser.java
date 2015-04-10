@@ -1062,10 +1062,10 @@ public class DataManipulationParser extends Parser{
             retString += "Applied CalcOxy, so that 0->7 : Probe A. 8->15"
                     + "                + \" ProbeB:: 0->3&8->11 : HbO.:: 4->7, 12->15: Hb lower values within"
                     + " the probe correspond to closer distances to the source:::";
-            if (lowpass == 0) {
+            //if (lowpass == 0) {
                 filteredSet = filteredSet.movingAverage(10, false);
                 retString += "Applied MovingAverage, 10 readings back::";
-            }
+            //}
 
             if (lowpass > 0 && highpass == 0) {
                 filteredSet = filteredSet.lowpass(lowpass, false);

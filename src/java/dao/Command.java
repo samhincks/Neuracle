@@ -12,7 +12,7 @@ import org.json.JSONObject;
  *
  * @author samhincks  
  */                    
-public class Command {           
+public class Command {                
     public String id;       
     public String parameters =""; 
     public String debug ="";

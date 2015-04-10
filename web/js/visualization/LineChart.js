@@ -23,7 +23,7 @@ function LineChart() {
     //.. width, height, margin. If these are customizable we need settors 
     var width = 700, 
         height = 400,
-        margin = {top:20, left: 60, right: 30, bottom: 20 };
+        margin = {top:30, left: 60, right: 30, bottom: 20 };
 
     var maxTime =-1;
     
