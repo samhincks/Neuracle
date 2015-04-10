@@ -29,8 +29,9 @@ public class TSTuftsFileReader {
     private String filename;
     private String  delimeter;
     public int readingErrors =0;
-    public int readEvery=1;
+    private int readEvery=1;
     public double FRAMESIZE =1;
+    public float readingsPerSecond;
     
     
     
@@ -38,9 +39,10 @@ public class TSTuftsFileReader {
      * try reading row wise, Ch1,1,2,3,4
      * 
      */
-    public ChannelSet readData(String delimeter, String dataFile) throws Exception{
+    public ChannelSet readData(String delimeter, String dataFile, int readEvery) throws Exception{
         filename = dataFile;
-        System.out.println("trying to read" + filename);
+        this.readEvery = readEvery;
+        readingsPerSecond = Channel.HitachiRPS / readEvery;
         dataIn = new BufferedReader(new java.io.FileReader(dataFile));
         this.delimeter= delimeter;
         return readDataRowWise();
@@ -51,7 +53,7 @@ public class TSTuftsFileReader {
          dataIn = new BufferedReader(new java.io.FileReader(dataFile));
          this.delimeter = delimeter;
          this.readEvery = readEvery;
-         Channel.HitachiRPS = Channel.HitachiRPS / readEvery;
+         readingsPerSecond = Channel.HitachiRPS / readEvery;
          return readDataRowWise();
     }
     
@@ -60,7 +62,7 @@ public class TSTuftsFileReader {
          dataIn = new BufferedReader(dataFile.getReader());
          this.delimeter = delimeter;
          this.readEvery = readEvery;
-         Channel.HitachiRPS = Channel.HitachiRPS / readEvery;
+         readingsPerSecond = Channel.HitachiRPS / readEvery;
          return readDataRowWise();
     }
     /**Reads input file where columns hold channels and labels.
@@ -180,7 +182,7 @@ public class TSTuftsFileReader {
         }
         
         //.. Structure for holding ALL channels
-        ChannelSet channelSet = new ChannelSet();
+        ChannelSet channelSet = new ChannelSet(readingsPerSecond);
         channelSet.setId(filename);
         index =0;
         for (ArrayList<Float> raw : rawValues) {

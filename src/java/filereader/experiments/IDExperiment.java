@@ -173,10 +173,9 @@ public class IDExperiment extends EvaluationInterface{
     }
     private static ChannelSet getChannelSet(String s)  throws Exception{
         TSTuftsFileReader f = new TSTuftsFileReader();
-        f.readEvery = 1;
         f.FRAMESIZE = 0.09;
         
-        ChannelSet cs = f.readData(",", s);
+        ChannelSet cs = f.readData(",", s,1);
         return cs;
     }
      public static ArrayList<String> getFiles() {

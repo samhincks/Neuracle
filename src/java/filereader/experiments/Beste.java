@@ -69,11 +69,10 @@ public class Beste extends EvaluationInterface{
          try {
             //.. read
             TSTuftsFileReader f = new TSTuftsFileReader();
-            f.readEvery = 1;
             String filename = "input/bestemusic/bestemusic01.csv";
             if (filename.contains("back")) frameSize = 0.16f;
             f.FRAMESIZE= frameSize;
-            ChannelSet cs = f.readData(",", filename);
+            ChannelSet cs = f.readData(",", filename,1);
             //  ChannelSet baseline = f.readData(",", "input/UAV_processed/4.csv");
 
             //cs.detrend(baseline, 1.2, false);
@@ -125,7 +124,7 @@ public class Beste extends EvaluationInterface{
             String filename = "input/bestemusic/bestemusic12.csv";
             //.. read
             TSTuftsFileReader f = new TSTuftsFileReader();
-            ChannelSet cs = f.readData(",", filename);
+            ChannelSet cs = f.readData(",", filename, 1);
             return cs;
     }
 

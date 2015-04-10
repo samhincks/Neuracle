@@ -254,7 +254,19 @@ public  class InputParser {
             int TEST =8;
                 
             
-            String test = "LOAD";
+            String test = "RPS";
+            if(test.equals("RPS")) {
+                ctx.setCurrentName("reale");
+                tDAO = (TriDAO) ctx.getCurrentDataLayer();
+                 JSONObject jo = tDAO.getJSON();
+                 System.out.println(jo);
+            }
+            
+            if (test.equals("LOAD")) {
+                String foldername = "GRProcessed";
+                response = ip.parseInput("load(" + foldername, ctx);
+            }
+
             if (test.equals("LOAD")) {
                 String foldername = "GRProcessed";
                 response = ip.parseInput("load("+foldername, ctx);

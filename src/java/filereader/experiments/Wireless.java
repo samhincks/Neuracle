@@ -52,10 +52,9 @@ public class Wireless extends EvaluationInterface{
          try {
             //.. read
             TSTuftsFileReader f = new TSTuftsFileReader();
-            f.readEvery = 1;
             String filename = "input/ThousandMedMul.csv";
             f.FRAMESIZE= frameSize;
-            ChannelSet cs = f.readData(",", filename);
+            ChannelSet cs = f.readData(",", filename,1);
             System.out.println(cs.getChannel(1).getFrequencyDomain().getPulse());
             Experiment e = cs.splitByLabel("Condition");
             System.out.println(e.matrixes.size());

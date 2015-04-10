@@ -504,10 +504,7 @@ public class MiscellaneousParser extends Parser{
                 + " double click on the object to view the raw, unprocessed data. Then type split(condition) in order"
                 + " to group the data by trials that pertain to the same condition ";
        
-        //.. read
-        TSTuftsFileReader f = new TSTuftsFileReader();
-        f.readEvery = 1;
-        f.FRAMESIZE = 0.09;
+     
         ChannelSet cs = ChannelSet.generate(2, 100);
         cs.id = "Sample";
         cs.addMarkers(Markers.generate(10, 10));

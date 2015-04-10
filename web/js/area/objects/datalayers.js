@@ -59,7 +59,6 @@ function DataLayers() {
                     $("#" + layerId).addClass("surfaceElementSelected");
                  else 
                     $("#" + layerId).addClass("datalayerSelected");
-                console.log("selected " + layerId);
              }
         }
         
@@ -145,7 +144,6 @@ function DataLayer(jsonDL) {
                     $(ui.tooltip).dblclick(function(e) {
                         javaInterface.postToDataLayer("correlation");
                     });
-                    console.log(this.id);
                     var fId = $("#freq"+this.id);
                     fId.tooltip('open'); //.. doesnt trigger conventional open
                 },

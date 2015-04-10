@@ -37,12 +37,18 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     public float readingsPerSecond;
     public boolean test = false;//.. set to true if we fabricated this as a sample -- will change display message
 
-    /**Initialize Unidimensional Array and unidimensional stat representation. 
+    
+    /**
      */
     public ChannelSet() {
         streams = new ArrayList();
-        this.readingsPerSecond = Channel.HitachiRPS; //.. THIS IS A HACK, in fact it should be a parameter probably
-        
+        this.readingsPerSecond = Channel.HitachiRPS; 
+    }
+    /**Initialize Unidimensional Array and unidimensional stat representation. 
+     */
+    public ChannelSet(float readingsPerSecond) {
+        streams = new ArrayList();
+        this.readingsPerSecond = readingsPerSecond; 
     }
     /**
      * Initialize Unidimensional Array and unidimensional stat representation.
@@ -712,7 +718,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
 
     
     public ChannelSet getDeepCopy() { 
-        ChannelSet cs = new ChannelSet();
+        ChannelSet cs = new ChannelSet(this.readingsPerSecond);
         for (Channel c : streams) {
             cs.addStream(c.getCopy());
         }

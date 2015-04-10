@@ -766,9 +766,9 @@ public class Channel extends UnidimensionalLayer  {
                 //System.out.println(fnirsFiles[k] + " , " + hrFiles[k]);
 
                 TSTuftsFileReader f = new TSTuftsFileReader();
-                ChannelSet cs = f.readData(",", fnirsFiles[k]);
+                ChannelSet cs = f.readData(",", fnirsFiles[k],1);
                 f = new TSTuftsFileReader();
-                ChannelSet cs2 = f.readData(",", hrFiles[k]);
+                ChannelSet cs2 = f.readData(",", hrFiles[k],1);
                 //System.out.println("xxxxxxxxxxzxzxxxxxxxxxxxx");
                 //System.out.println("Now: " +fnirsFiles[k]);
                 Experiment e = cs.splitByLabel("condition");
@@ -1002,7 +1002,7 @@ public class Channel extends UnidimensionalLayer  {
                 String filename = "input/sinWave1at4hzp3at12hz.csv";
                 //.. read
                 TSTuftsFileReader f = new TSTuftsFileReader();
-                ChannelSet cs = f.readData(",", filename);
+                ChannelSet cs = f.readData(",", filename, 1);
                 //cs.printStream();
                 Channel ch = cs.getFirstChannel();
                 Complex[] transformed = ch.FFT();
@@ -1027,7 +1027,7 @@ public class Channel extends UnidimensionalLayer  {
                 //.. NEXT: SEE IF ITS JUST AN OFF-BY-X ERROR, then try a different approach.
                 //.... I CAN COUNT the number of oscillations. 
                 TSTuftsFileReader f = new TSTuftsFileReader();
-                ChannelSet cs = f.readData(",", filename);
+                ChannelSet cs = f.readData(",", filename,1);
                 Experiment e = cs.splitByLabel("condition");
                 for (int i =0; i < 15; i++){
                     Channel b1 = e.matrixes.get(i).getChannel(0);

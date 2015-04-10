@@ -72,8 +72,7 @@ public class MarkExperiment {
  
     public static Experiment getExperiment(String file, TechniqueSet ts) throws Exception {
         TSTuftsFileReader f = new TSTuftsFileReader();
-        f.readEvery = 1;
-        ChannelSet cs = f.readData(",", file);
+        ChannelSet cs = f.readData(",", file,1);
         cs.manipulate(ts, false);
         Experiment a = cs.splitByLabel("Difficulty");
         Dataset DSa = new Dataset(file);
@@ -143,9 +142,8 @@ public class MarkExperiment {
          try {
              //.. read
             TSTuftsFileReader f = new TSTuftsFileReader();
-            f.readEvery = 1;
             f.FRAMESIZE= 0.09;
-            ChannelSet cs = f.readData(",", filename);
+            ChannelSet cs = f.readData(",", filename ,1);
             cs.manipulate(ts, false);
             //cs.printStream();
            

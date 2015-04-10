@@ -87,9 +87,8 @@ public class BesteExperiment {
         try {
             //.. read
             TSTuftsFileReader f = new TSTuftsFileReader();
-            f.readEvery = 1;
             f.FRAMESIZE = 0.09;
-            ChannelSet cs = f.readData(",", filename);
+            ChannelSet cs = f.readData(",", filename,1);
             cs.manipulate(ts, false);
             
             
@@ -218,9 +217,8 @@ public class BesteExperiment {
          try {
              //.. read
             TSTuftsFileReader f = new TSTuftsFileReader();
-            f.readEvery = 1;
             f.FRAMESIZE= 0.09;
-            ChannelSet cs = f.readData(",", filename);
+            ChannelSet cs = f.readData(",", filename,1);
             cs.manipulate(ts, false);
             //cs.printStream();
            
@@ -266,15 +264,13 @@ public class BesteExperiment {
     
     public static ChannelSet getChannelSet(int index) throws Exception {
         TSTuftsFileReader f = new TSTuftsFileReader();
-        f.readEvery = 1;
-        ChannelSet cs = f.readData(",", getFiles().get(index));
+        ChannelSet cs = f.readData(",", getFiles().get(index), 1);
         return cs;
     }
 
     public static Experiment getExperiment(String file) throws Exception {
         TSTuftsFileReader f = new TSTuftsFileReader();
-        f.readEvery = 10;
-        ChannelSet cs = f.readData(",", file);
+        ChannelSet cs = f.readData(",", file, 2);
         Experiment a = cs.splitByLabel("condition");
         Dataset DSa = new Dataset(file);
         a.setDataset(DSa);

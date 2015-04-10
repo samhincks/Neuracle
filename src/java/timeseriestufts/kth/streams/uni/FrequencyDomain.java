@@ -148,9 +148,9 @@ public class FrequencyDomain {
                 //System.out.println(fnirsFiles[k] + " , " + hrFiles[k]);
 
                 TSTuftsFileReader f = new TSTuftsFileReader();
-                ChannelSet cs = f.readData(",", fnirsFiles[k]);
+                ChannelSet cs = f.readData(",", fnirsFiles[k],1);
                  f = new TSTuftsFileReader();
-                ChannelSet cs2 = f.readData(",", hrFiles[k]);
+                ChannelSet cs2 = f.readData(",", hrFiles[k],1);
                 //System.out.println("xxxxxxxxxxzxzxxxxxxxxxxxx");
                 //System.out.println("Now: " +fnirsFiles[k]);
                 Experiment e = cs.splitByLabel("condition");

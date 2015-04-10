@@ -116,8 +116,7 @@ public class AJExperiment {
 
     public static Experiment getExperiment(String file) throws Exception {
         TSTuftsFileReader f = new TSTuftsFileReader();
-        f.readEvery = 1;
-        ChannelSet cs = f.readData(",", file);
+        ChannelSet cs = f.readData(",", file,1);
         Experiment a = cs.splitByLabel("condition");
         Dataset DSa = new Dataset(file);
         a.setDataset(DSa);
@@ -168,9 +167,8 @@ public class AJExperiment {
          try {
              //.. read
             TSTuftsFileReader f = new TSTuftsFileReader();
-            f.readEvery = 1;
             f.FRAMESIZE= 0.09;
-            ChannelSet cs = f.readData(",", filename);
+            ChannelSet cs = f.readData(",", filename,1);
             cs.manipulate(ts, false);
            // cs.getChannel(0).printStream();
             Complex [] transformed = cs.getChannel(0).FFT();
@@ -428,7 +426,7 @@ public class AJExperiment {
           //.. NEXT: SEE IF ITS JUST AN OFF-BY-X ERROR, then try a different approach.
           //.... I CAN COUNT the number of oscillations. 
           TSTuftsFileReader f = new TSTuftsFileReader();
-          ChannelSet cs = f.readData(",", filename);
+          ChannelSet cs = f.readData(",", filename ,1);
           Experiment e = cs.splitByLabel("condition");
           Channel b1 = e.matrixes.get(1).getChannel(0);
           return cs.getChannel(0); 

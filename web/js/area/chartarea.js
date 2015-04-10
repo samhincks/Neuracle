@@ -30,6 +30,7 @@ function ChartArea(id, descArea) {
         }
         
         if(JSONobj.type == "experiment"){
+            console.log(JSONobj);
             this.displayExperiment(JSONobj);
         }
         

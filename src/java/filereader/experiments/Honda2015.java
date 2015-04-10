@@ -32,10 +32,9 @@ public class Honda2015 {
     }
     private static ChannelSet getChannelSet(String s) throws Exception {
         TSTuftsFileReader f = new TSTuftsFileReader();
-        f.readEvery = 1;
         f.FRAMESIZE = 0.09;
 
-        ChannelSet cs = f.readData("\t", s);
+        ChannelSet cs = f.readData("\t", s,1);
         return cs;
     }
     public static ArrayList<String> getSpecific() {
