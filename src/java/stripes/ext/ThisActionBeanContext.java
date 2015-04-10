@@ -97,6 +97,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
        //.. 1) Delete any references to the current one in datalayersDAO
         this.dataLayersDAO.removeStream(currentDataLayer);
     }
+   
     
     /**Get dataLayersDAO
      * @return 

@@ -81,6 +81,31 @@ function DatalayerArea(selection) {
          $(selection).append(element.elementTag);
    }
     
+    /**If our datalayers object contains datalayers which we no longer want, then 
+     * remove them**/
+    this.removeDatalayers = function(layers) {
+        //... Add the datalayers that may have been created  
+        var arrayLength =this.datalayers.dls.length; 
+        for (var i = 0; i < arrayLength; i++) {
+            var dl = this.datalayers.dls[i];
+            var exists = false;
+            for (var j in layers) {
+                if (layers[j].id == dl.id) {
+                    exists =true; break;
+                }
+            }
+            if (!exists) {
+                //.. 1) remove from the DOM
+                $("#"+dl.id).remove();
+                //.. 2) remove from array, padding it without disturbing iteration through this loop
+                this.datalayers.dls.splice(i, 1);
+                arrayLength--;
+                i--;
+            }
+            
+        }
+    }
+    
     /**Datalayers is an array of JSONObjs streamed from Java. 
      *Add the ones that don't already exist
      */

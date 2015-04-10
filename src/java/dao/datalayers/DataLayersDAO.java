@@ -4,8 +4,8 @@
  */
 package dao.datalayers;
 
-import filereader.Labels; 
-import filereader.Label;
+import filereader.Label; 
+import filereader.Labels;
 import filereader.Markers;
 import java.sql.ResultSet;
 import java.util.ArrayList;  
@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;   
 import java.util.Iterator;  
 import java.util.List;
+import java.util.Map;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
@@ -124,19 +125,14 @@ public class DataLayersDAO {
         dl = null;
     }
    
-    public void removeStream(DataLayer dl) {
-        dl = null;
-       // streams.remove(dl.id);
-        System.err.println("remove that sucker");
-    }
+  
+    public void deleteAll()throws Exception{
+        ArrayList<String> toDelete =  new ArrayList();
+        for (Map.Entry<String, DataLayerDAO> e : streams.entrySet()) {
+            toDelete.add(e.getKey());
+        }
+        for (String s : toDelete) {removeStream(s);}
     
-    /**Dont think this works!*/
-    public void removeStream(DataLayerDAO dlDAO) {
-        streams.remove(dlDAO);
-    }
-
-    public void removeAll(){
-        streams = new HashMap();
     }
 
     /**Each datalayer has a set of connections to techniques which inform how 

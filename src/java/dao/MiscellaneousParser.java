@@ -121,16 +121,16 @@ public class MiscellaneousParser extends Parser{
         
         else if (command.startsWith("clear")) {
             c = commands.get("clear");
-            ctx.dataLayersDAO.removeAll();
+            String [] params = new String[1];
+            params[0] = "*";
             c.action = "reload";
-            c.retMessage =  "Clearing surface"; //... 
+            c.retMessage = delete(params); //... 
         }
         
         else if (command.startsWith("delete")) {
             c = commands.get("delete");
-            ctx.deleteCurrent();
             c.action = "reload";
-            c.retMessage = "Removing " + currentDataLayer.id ; //... 
+            c.retMessage = delete(parameters);// "Removing " + currentDataLayer.id ; 
             currentDataLayer =null;
 
         }
@@ -170,6 +170,34 @@ public class MiscellaneousParser extends Parser{
         
         if (c ==null) return null;
         return c.getJSONObject();
+    }
+    
+    /**Delete selected, multiselectd, or all datalayers**/
+    private String delete(String [] parameters) throws Exception {
+        if (parameters.length >0) {
+            //.. delete all
+            ctx.getDataLayers().deleteAll();
+            return "Deleted all";
+        }
+        String retMessage = "Deleted ";   
+        try{
+            for (ChannelSet cs : super.getChanSets()) {
+                retMessage +=  cs.id +", ";
+                ctx.getDataLayers().removeStream(cs.id);
+
+            }
+        }
+        catch(Exception e) {System.err.println(e.getMessage());}
+
+        try {
+            for (Experiment e : super.getExperiments()) {
+                retMessage += e.id + ", ";
+                ctx.getDataLayers().removeStream(e.id);
+            }
+        } catch (Exception e) { System.err.println(e.getMessage());};
+
+
+        return retMessage;
     }
     
     /** Enumerates datasets loaded in this session.**/
