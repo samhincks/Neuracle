@@ -129,24 +129,26 @@ function DatalayerArea(selection) {
                 
                 //.. then append to canvas and determine its position
                 $(selection).append(newLayer.elementTag);
+                                console.log("appending a new layer");
+
                 //.. IF it has a parent place directly beneath it
                 if (!(newLayer.parent == "Motherless")) {
+                    console.log("motherless");
                     var parent = this.datalayers.getDLById(newLayer.parent);
                     var parentPos = parent.getPosition();
                     var yInc = parent.getSize().height+newLayer.getSize().height*2.5;//.. add a certain amount in y positioning
                     newLayer.setPos(parentPos.left,parentPos.top+yInc);
                 }
-                
                 //.. move it rightward
                 else{
-                   $("#"+newLayer.id).offset({left:leftMost, top:fromTop});
+                   $("#"+newLayer.id).offset({left:leftMost, top:(fromTop% $("#topLeft").height())});
                    leftMost += newLayer.getSize().width*1.3;
                    var containerWidth = $("#topLeft").width();
                    
                    //.. if it gets too far left, then jump down a few spaces
                    if (leftMost > containerWidth-60) {
                        leftMost = 30;
-                       fromTop += 150;
+                       fromTop += 150 
                    }
                 }
                 

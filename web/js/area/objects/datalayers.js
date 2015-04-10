@@ -214,6 +214,7 @@ function DataLayer(jsonDL) {
     
     /*Position an element relative to the top-left corner*/
     this.setPos = function(x,y) {
+        y = y % 300;
         $("#"+this.id).offset({left:x, top:y});
     }
     
