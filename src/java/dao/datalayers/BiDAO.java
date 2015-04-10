@@ -9,9 +9,9 @@ import filereader.Label;
 import filereader.Labels;
 import filereader.Markers;
 import filereader.TSTuftsFileReader;
-import java.awt.Point;
+import java.awt.Point;      
 import java.sql.ResultSet;  
-import java.sql.ResultSetMetaData;   
+import java.sql.ResultSetMetaData;     
 import java.util.ArrayList;
 import java.util.HashMap;                 
 import java.util.Hashtable;
@@ -114,7 +114,7 @@ public class BiDAO extends DataLayerDAO {
     /**  
      Return a correlation matrix between each pairwise channel . 
      * Either SAX correlation 
-    **/  
+    **/    
     public JSONObject getCorrelationJSON() throws Exception {
         jsonObj = new JSONObject();
         ChannelSet channelSet = (ChannelSet)dataLayer;

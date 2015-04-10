@@ -306,7 +306,7 @@ public  class InputParser {
             
             if (TEST ==6) {
                 ctx.setCurrentName("realcs");
-                response = ip.parseInput("fnirs", ctx);
+                response = ip.parseInput("glassroutes", ctx);
             }
            
             System.out.println(response.get("content"));

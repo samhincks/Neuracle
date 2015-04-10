@@ -6,6 +6,7 @@ package timeseriestufts.kth.streams.uni;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -420,6 +421,16 @@ public abstract class UnidimensionalLayer extends DataLayer {
             }
         }
         return index;
+    }
+
+    public boolean trim(int expectedLength) {
+        if (data.length > expectedLength) {
+           data = Arrays.copyOf(data, expectedLength);
+           numPoints = data.length;
+           return true;
+        }
+       
+        return false;
     }
     
     

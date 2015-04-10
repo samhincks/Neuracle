@@ -34,7 +34,13 @@ function LineChart() {
     var key = 0; //.. the set of elements in view. If its an array it's acceptable to use index position
     var channels = function(d) {return d;}; //.. function for retrieving the numeric data from input-data, by default we want row.ch1, row.ch2. But maybe we want to store data in an array
     var selection;// = d3.select("body").append("svg:svg");
-    var color = d3.scale.category10(); // to generate a different color for each line
+    
+    /**Palletton colors 
+     * ["#0A0D46",  "#004624", "#653800"]
+     * **/
+    var color =  d3.scale.ordinal()
+        .domain([0, 1, 2])
+        .range(["#6699CC", "#BDAEAC"]); //d3.scale.category10(); // to generate a different color for each line
     var max, min; //.. the maximum and minimum values of the dataset
     
     
@@ -52,6 +58,7 @@ function LineChart() {
     
     //... For the area chart that represents mean of lines of same class
     var area;
+    var meanline;
     var lineTrans =2000;
     var chartTrans = 2000;
     var transitionLength =2000; //.. the length of a scale transition
@@ -71,7 +78,6 @@ function LineChart() {
         }
         else selection = d3.select("body").append("svg:svg");
         selection.attr("id", "areachart");
-        
         
         try {channels(data[0][0])[key];}catch(error){ throw("Specify proper keys and channel functions for accessing data")};
         
@@ -283,6 +289,14 @@ function LineChart() {
              drawn[condition] = existingAvg = getAverageOfTwoArrays(existingAvg, instance);
              mergeToArea(existingAvg, condition, instance, oldLine,i);
          }
+         
+         //.. figure out afterwards how we're going to deal with multiple conditions
+        // console.log(drawn["low"]);
+
+        //.. Once complete draw a line through the middle, at the average
+         for (property in drawn) {
+             drawMeanInMiddle(drawn[property], property );
+         }
     }
     
     /**Alter the scale, so that it is fit to the area chart as opposed to the indiviudal lines
@@ -297,20 +311,27 @@ function LineChart() {
          //.. Add a y axis
          yAxis = d3.svg.axis()
            .scale(y)
-           .orient("right");
+           .orient("left");
    
          svg.select(".y")
                  .transition()
                  .duration(transitionLength)
                  .call(yAxis);
          
+         console.log("transitioning");
          //.. Next redraw all data, so that it transitions to this new scale
          for (var property in drawn){
-            svg.selectAll("#area" + property)
+             svg.selectAll("#area" + property)
                    .data([drawn[property]])
                    .transition()
                    .duration(transitionLength)
                    .attr("d", area);
+           
+            svg.selectAll("#line" + property)
+                    .datum(drawn[property])
+                    .transition()
+                    .duration(transitionLength)
+                    .attr("d", meanline);
           }
        
     }
@@ -355,77 +376,65 @@ function LineChart() {
     }
     
     var fadeLine = function(oldLine, index) {
-        var line = svg.transition().delay(lineTrans*index).duration(lineTrans).selectAll("#" +oldLine.id).style("opacity",0.9).remove();
+         svg.transition().delay(lineTrans*index).duration(lineTrans).selectAll("#" +oldLine.id).style("opacity",0.9).remove();
     }
 
-    /**Move a line towards newArray's value, as it becomes increasingly opaque and eventually disappears
-     * simulating that the area chart is swallowing it
-     **/ 
-    var movePathAndFade = function(instance, newArray, oldLine, index) {
-        for (var i =0; i < instance.length; i++) {
-            instance[i].newPos = newArray[i].value;
-        }
-        
-        //.. put new Array's values
-        var transLine = svg.transition().delay(lineTrans*index).duration(lineTrans).selectAll("#"+oldLine.id).style("opacity",0.9).remove();
-        var newLine = d3.svg.line()
-            .interpolate("basis") //.. makes jagged smooth
-            .x(function(d,i) {
-               return x(i)
-             }) 
-            .y(function(d, i) { 
-                return y(instance[i].newPos);
-            });
-        
-        //... move to this new location. Un-comment this line for a completely different animation.
-        ////.. arguably it looks cooler, but its less clear what it does
-       // transLine
-        //    .attr("d", newLine);
-            
-    }  
+  
     
     /*Having drawn an area chart, update it with new data
      **/
     var updateAreaChart = function(avgArray, condition, index) {
-       var sel= svg.selectAll("#area"+condition)
+       svg.selectAll("#area"+condition)
              .data([avgArray])
              .transition()
              .delay(chartTrans*index)
              .duration(chartTrans)
              .attr("d", area);
    }
-   /**Compute the thickness of the area chart. 
-    * We want bad data to overlap and good data to cleanly separate
-    * The area cannot push us outside the chart
-    **/
-   var areaHeight = function(stdDev) {
-//       var minimum = y(min)/512; //.. the distance from top to bottom divided by X
- //      var added = y(max-stdDev)/2; //.. most of the distance added to based on std deviation
-       console.log(stdDev);
-       return stdDev;
-       //return (minimum+added);
-   }
+
   
+
+    var drawMeanInMiddle = function(avgArray, condition) {
+        avgArray.pop(); //.. LOOKS radicalyl better if we dont add teh last one
+        meanline = d3.svg.line()
+                .interpolate("basis")
+                .x(function(d,i){return x(i);})
+                .y(function(d){return y(d.value)});
+       
+        svg.append("path")
+                .datum(avgArray) //.. by doing datum we reserve the right to alternate which dimension of data is shown
+                .attr("class", "meanline")
+                .attr("id", "line" + condition) //.. so that it rescales
+                .attr("d", meanline)
+                .style("stroke", function(d) {
+                    return "black"; //.. assume all have same condition
+                }); 
+        
+        
+                           
+    }
    
     /**Given an array of a collection of points of form {value: x, stdder: z},
      * draw an area chart with center at x, bottom at x- stdder and top at x +stdder*/
     var drawAreaChart = function(avgArray, condition) {
-          area = d3.svg.area()
-            .interpolate("basis")
-            .x(function(d,i) {return x(i); })
-            .y0(function(d) { if (d.numExamples ==1) return y(d.value)-2; return y(d.value+(d.getStdDev()/2.0)) /*+areaHeight(d.getStdDev())*/; })
-            .y1(function(d) {if (d.numExamples ==1) return y(d.value)+2; return y(d.value -(d.getStdDev()/2.0))  /*-areaHeight(d.getStdDev())*/; });
+            //.. area is an svg object
+            area = d3.svg.area()
+                .interpolate("basis")
+                .x(function(d,i) {return x(i); })
+                .y0(function(d) { if (d.numExamples ==1) return y(d.value)-2; return y(d.value+(d.getStdDev()/2.0)) /*+areaHeight(d.getStdDev())*/; })
+                .y1(function(d) {if (d.numExamples ==1) return y(d.value)+2; return y(d.value -(d.getStdDev()/2.0))  /*-areaHeight(d.getStdDev())*/; });
         
            var ent =svg.selectAll(".area")
               .data([avgArray])
               .enter();
-              
            var path = ent.append("path")
                .attr("id", "area"+condition)
                .attr("class", "avgArea")
                .attr("d", area)
                .style("fill", color(condition)) ///color(condition)
-               .style("opacity", 0.9);
+               .style("opacity", 0.9); 
+       
+            
     }
     
     /* Returns an array of length of the largest that is the average at each of the points;
@@ -477,7 +486,7 @@ function LineChart() {
 
 
 //.. Test
-//test();
+test();
 function test() {
     var chart = LineChart();
     var menu = d3.select("#menu select")
@@ -488,12 +497,23 @@ function test() {
     });
    
 
+    var s = new Array();
+    //.. one instance
     for (var i=0;i <20; i++) {
-        chart.addRow(getRandomRow2(i,"low"),0);
+        var row = getRandomRow3(i,"low");
+        s[i] = row.channels[0];
+
+        chart.addRow(row, 0);
     }
+    
+    //. two instances
     for (var i=0;i <20; i++) {
-        chart.addRow(getRandomRow2(i, "low"),1);
+        var row = getRandomRow3(i, "low");
+        s[i] = (row.channels[0] + s[i])/2;
+        chart.addRow(row, 1);
     }
+    
+    /*
     for (var i=0;i <20; i++) {
         chart.addRow(getRandomRow2(i, "high"),2);
     }
@@ -541,10 +561,14 @@ function test() {
     
     for (var i=0;i <20; i++) {
         chart.addRow(getRandomRow2(i, "high"),13);
-    }
+    }*/ 
 
     chart.key(0).channels(function(d){return d.channels;}).width(900).height(400)("#topRight").transition();
-   // setTimeout(function() {chart.transitionToAverage(30000)},1000);
+    setTimeout(function() {chart.transitionToAverage(10)},10);
+    setTimeout(function() {
+        chart.transitionScale(10)
+    }, 100);
+
     
 }
 
@@ -564,4 +588,11 @@ function getRandomRow2(i, condition) {
    row.channels = [Math.random()*2, Math.random()*2];
    row.condition = condition;
    return row;
+}
+function getRandomRow3(i, condition) {
+    var row = new Object();
+    row.time = i;
+    row.channels = [Math.random() * 100];
+    row.condition = condition;
+    return row;
 }

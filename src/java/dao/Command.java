@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 /**  
  *
- * @author samhincks
+ * @author samhincks  
  */                    
 public class Command {           
     public String id;       

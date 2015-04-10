@@ -509,6 +509,17 @@ public class Experiment extends TridimensionalLayer<Instance>{
         }
     }
      
+    
+    /**Trims the last few readings of instances which exceed the expected length
+     */
+    public int trimUnfitInstances(int expectedLength) {
+        int trimmed = 0;
+        for (Instance in : matrixes) {
+           trimmed +=in.trimUnfitChannels(expectedLength);
+        }
+        return trimmed;
+       
+    }
     /** Remove instances that do not come within a band of accepted length
      * Any instance that is different from the expectedLength by more than acceptedDifference
      **/
@@ -521,7 +532,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
               boolean add = true; //.. stays true as long as we want to add this instance
               int maxp = in.getMaxPoints();
               int minp = in.getMinPoints();
-              System.out.println("min is " + minp + " max is " + maxp + " . and we are accepting " +(pctLarger*expectedLength));
+              //System.out.println("min is " + minp + " max is " + maxp + " . and we are accepting " +(pctLarger*expectedLength));
 
               //.. first if an instances channels deviate significantly from each other, remove them
               if (maxp > minp * pctLarger)
@@ -540,9 +551,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
           if (removed > 0) 
               System.err.println("Removed " + removed + " instances ");
           
-          return new Experiment(filename+"cleaned", classification, newInstances,this.readingsPerSec);
-
-        
+          return new Experiment(filename+"cleaned", classification, newInstances,this.readingsPerSec);        
     }
     
     /**Return a ChanelSetSet, where each ChannelSet represents a condition

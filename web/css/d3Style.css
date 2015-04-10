@@ -23,7 +23,7 @@
    
    .chart {
       font: 10px monospace;
-      background-color:  #EEEEEE;// ghostwhite;
+      background-color: ghostwhite; // #EEEEEE;//
       text-align: right;
       color: white;
       height:100%;
@@ -78,6 +78,13 @@
         fill: none;
         stroke-width: 7px;
         opacity: 0.4;
+    }
+    .meanline{
+        stroke-width: 3px;
+        opacity: 0.4;
+        fill:none;
+       stroke-dasharray:3 3
+
     }
     .d3line:hover {
         opacity:0.9;

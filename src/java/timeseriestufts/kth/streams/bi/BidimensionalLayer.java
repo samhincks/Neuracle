@@ -68,6 +68,15 @@ public abstract class BidimensionalLayer<T extends UnidimensionalLayer> extends 
         return retVals;
     }
   
+    /**Remove last few readings from any channel which exceeds input length*/
+    public int trimUnfitChannels(int expectedLength) {
+        int trimmed=0;
+        for (UnidimensionalLayer u : streams) {
+            if(u.trim(expectedLength)) trimmed++;
+        }
+       
+        return trimmed;
+    }
  
     
     /** Returns the total number of points
