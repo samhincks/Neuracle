@@ -152,6 +152,7 @@ public class DataLayerActionBean extends BaseActionBean{
                 Performances p = ctx.getPerformances();
                 jsonObj = dlGiver.getPerformanceJSON(p);
             }
+            
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));
         }
         catch (Exception e) {

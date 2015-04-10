@@ -10,10 +10,11 @@ import filereader.Labels;
 import filereader.Markers;
 import filereader.TSTuftsFileReader;
 import java.awt.Point;      
-import java.sql.ResultSet;  
-import java.sql.ResultSetMetaData;     
-import java.util.ArrayList;
-import java.util.HashMap;                 
+import java.io.File;  
+import java.sql.ResultSet;     
+import java.sql.ResultSetMetaData;
+import java.util.ArrayList;                 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map.Entry;   
@@ -62,6 +63,19 @@ public class BiDAO extends DataLayerDAO {
     
     public BiDAO(String id) {this.id = id;}
     
+    
+    //**Create new dataLayer from input file, with a specified sampling rate*/
+    public void make(File fb, int fileSampling) throws Exception {
+        TSTuftsFileReader fileReader = new TSTuftsFileReader();
+        try {
+            dataLayer = fileReader.readData(",", fb, fileSampling); //.. try to do csv, but fall back on \t
+        } catch (Exception e) {
+            dataLayer = fileReader.readData("\t", fb, fileSampling); //.. then if this doesn't work, give up and moan
+
+        }
+        dataLayer.setId(fb.getName()+ "fs" + fileSampling); //.. No extension
+        dataLayer.setStatsMap();
+    }
     
     //**Create new dataLayer from input file, with a specified sampling rate*/
     public void make (FileBean fb, int fileSampling) throws Exception {        

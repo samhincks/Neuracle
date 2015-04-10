@@ -15,6 +15,7 @@ import filereader.Label;
 import filereader.Labels;
 import filereader.Markers;
 import filereader.TSTuftsFileReader;
+import java.io.File;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -62,6 +63,17 @@ public class MiscellaneousParser extends Parser{
         // -- DELETE
         command = new Command("delete");
         command.documentation = "Removes the selected datalayer, freeing associated memory";
+        commands.put(command.id, command);
+       
+        // -- HOLD
+        command = new Command("hold");
+        command.documentation = "Removes all but the selected datalayer";
+        commands.put(command.id, command);
+        
+         // -- LOAD
+        command = new Command("load");
+        command.documentation = "Loads the specified folder, though it must reside in input on the server";
+        command.parameters = "1. foldername";
         commands.put(command.id, command);
 
         
@@ -132,8 +144,20 @@ public class MiscellaneousParser extends Parser{
             c.action = "reload";
             c.retMessage = delete(parameters);// "Removing " + currentDataLayer.id ; 
             currentDataLayer =null;
-
         }
+        else if (command.startsWith("hold")) {
+            c = commands.get("hold");
+            c.action = "reload";
+            c.retMessage = hold();// "Removing " + currentDataLayer.id ; 
+            currentDataLayer = null;
+            
+        }
+        else if (command.startsWith("load")) {
+            c = commands.get("load");
+            c.action = "reload";
+            c.retMessage = this.load(parameters);
+        }
+        
         else if (command.startsWith("register")) {
             c= commands.get("register");
             c.retMessage = this.register(parameters);
@@ -172,6 +196,33 @@ public class MiscellaneousParser extends Parser{
         return c.getJSONObject();
     }
     
+    
+    /**Deletes all but the selected dataset**/ 
+    private String hold() throws Exception{
+        String retMessage = "Deleted all except ";
+        ArrayList<String> toKeep = new ArrayList();
+        try {
+            for (ChannelSet cs : super.getChanSets()) {
+                toKeep.add(cs.id);
+                retMessage += cs.id+",";
+
+            }
+        } catch (Exception e) {
+        }
+
+        try {
+            for (Experiment e : super.getExperiments()) {
+                toKeep.add(e.id);
+                retMessage += e.id + ",";
+
+            }
+        } catch (Exception e) {}
+        
+        ctx.getDataLayers().deleteAllExcept(toKeep);
+            
+
+        return retMessage;
+    }
     /**Delete selected, multiselectd, or all datalayers**/
     private String delete(String [] parameters) throws Exception {
         if (parameters.length >0) {
@@ -187,17 +238,50 @@ public class MiscellaneousParser extends Parser{
 
             }
         }
-        catch(Exception e) {System.err.println(e.getMessage());}
+        catch(Exception e) {}
 
         try {
             for (Experiment e : super.getExperiments()) {
                 retMessage += e.id + ", ";
                 ctx.getDataLayers().removeStream(e.id);
             }
-        } catch (Exception e) { System.err.println(e.getMessage());};
+        } catch (Exception e) {};
 
 
         return retMessage;
+    }
+    
+    private String load(String [] parameters) throws Exception{
+        String folderName = "GRProcessed";
+        if (parameters.length >0)folderName = parameters[0];
+        
+        String folder = ctx.getServletContext().getRealPath(folderName);
+        File folderF = new File(folder);
+        File[] listOfFiles = folderF.listFiles();  
+        int filesRead =0;
+        
+        if (listOfFiles == null) throw new Exception("No such folder " + folder);
+        //.. Add everry file to the context
+        for (int i = 0; i < listOfFiles.length; i++) {
+            File fileName = listOfFiles[i];
+            if (fileName.isFile()) {
+                        
+                BiDAO mDAO = new BiDAO();
+                mDAO.make(fileName, ctx.getFileReadSampling());
+                //.. if this is as yet uninitizliaed
+                if (ctx.dataLayersDAO == null) {
+                    ctx.dataLayersDAO = new DataLayersDAO();
+                }
+                //.. Add to the persistent context, and save by id 
+                ctx.dataLayersDAO.addStream(mDAO.getId(), mDAO);
+                ctx.setCurrentName(mDAO.getId());
+                filesRead++;
+            }
+          
+            
+        }
+        
+        return "Read " + filesRead+ " files";
     }
     
     /** Enumerates datasets loaded in this session.**/

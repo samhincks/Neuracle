@@ -8,6 +8,7 @@
 package filereader;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import net.sourceforge.stripes.action.FileBean;
@@ -44,13 +45,21 @@ public class TSTuftsFileReader {
         this.delimeter= delimeter;
         return readDataRowWise();
     }
-     public ChannelSet readData(String delimeter, FileBean dataFile, int readEvery) throws Exception{
+    
+    public ChannelSet readData(String delimeter, File dataFile, int readEvery) throws Exception{
+         filename = dataFile.getName();
+         dataIn = new BufferedReader(new java.io.FileReader(dataFile));
+         this.delimeter = delimeter;
+         this.readEvery = readEvery;
+         return readDataRowWise();
+    }
+    
+    public ChannelSet readData(String delimeter, FileBean dataFile, int readEvery) throws Exception{
          filename = dataFile.getFileName();
          dataIn = new BufferedReader(dataFile.getReader());
          this.delimeter = delimeter;
          this.readEvery = readEvery;
          return readDataRowWise();
-
     }
     /**Reads input file where columns hold channels and labels.
      * 

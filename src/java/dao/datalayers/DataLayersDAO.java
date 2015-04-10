@@ -134,6 +134,17 @@ public class DataLayersDAO {
         for (String s : toDelete) {removeStream(s);}
     
     }
+    public void deleteAllExcept(ArrayList<String> ids) throws Exception {
+        ArrayList<String> toDelete = new ArrayList();
+        for (Map.Entry<String, DataLayerDAO> e : streams.entrySet()) {
+            if(!ids.contains(e.getKey()))
+               toDelete.add(e.getKey());
+        }
+        for (String s : toDelete) {
+            removeStream(s);
+        }
+
+    }
 
     /**Each datalayer has a set of connections to techniques which inform how 
      they should be evaluated. Each time we evaluate reset connections before we 

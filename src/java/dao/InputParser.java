@@ -256,7 +256,14 @@ public  class InputParser {
             tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
             tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
             
-            int TEST =7;
+            int TEST =8;
+            
+            
+            String test = "LOAD";
+            if (test.equals("LOAD")) {
+                String foldername = "GRProcessed";
+                response = ip.parseInput("load("+foldername, ctx);
+            }
             
             
             if (TEST == 7) {
@@ -265,10 +272,6 @@ public  class InputParser {
                 response = ip.parseInput("delete", ctx);
                 a1 =null;
                 ChannelSet a2 = ChannelSet.generate(200000, 1000);
-                //ctx.addDataLayer("a2", new BiDAO(a2));
-                
-
-                
             }
             
             
