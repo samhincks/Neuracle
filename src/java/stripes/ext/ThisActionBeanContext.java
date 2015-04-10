@@ -97,6 +97,9 @@ public class ThisActionBeanContext extends ActionBeanContext{
        //.. 1) Delete any references to the current one in datalayersDAO
         this.dataLayersDAO.removeStream(currentDataLayer);
     }
+    public void deselectLayer() throws Exception{
+       currentDataLayer =null;
+    }
    
     
     /**Get dataLayersDAO
@@ -136,6 +139,8 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public void setFileReadSampling(int fr) {
         this.fileReadSampling = fr;
     }
+
+   
 
 
 

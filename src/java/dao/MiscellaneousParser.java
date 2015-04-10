@@ -136,14 +136,14 @@ public class MiscellaneousParser extends Parser{
             String [] params = new String[1];
             params[0] = "*";
             c.action = "reload";
-            c.retMessage = delete(params); //... 
+            c.retMessage = delete(params); 
+            
         }
         
         else if (command.startsWith("delete")) {
             c = commands.get("delete");
             c.action = "reload";
             c.retMessage = delete(parameters);// "Removing " + currentDataLayer.id ; 
-            currentDataLayer =null;
         }
         else if (command.startsWith("hold")) {
             c = commands.get("hold");
@@ -220,7 +220,6 @@ public class MiscellaneousParser extends Parser{
         
         ctx.getDataLayers().deleteAllExcept(toKeep);
             
-
         return retMessage;
     }
     /**Delete selected, multiselectd, or all datalayers**/
@@ -228,6 +227,8 @@ public class MiscellaneousParser extends Parser{
         if (parameters.length >0) {
             //.. delete all
             ctx.getDataLayers().deleteAll();
+            ctx.deselectLayer();
+
             return "Deleted all";
         }
         String retMessage = "Deleted ";   
@@ -247,6 +248,7 @@ public class MiscellaneousParser extends Parser{
             }
         } catch (Exception e) {};
 
+        ctx.deselectLayer();
 
         return retMessage;
     }

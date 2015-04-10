@@ -484,8 +484,8 @@ function LineChart() {
 }
 
 
-//.. Test
-test();
+//.. Test/
+//test();
 function test() {
     var chart = LineChart();
     var menu = d3.select("#menu select")

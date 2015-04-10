@@ -55,11 +55,6 @@ public  class InputParser {
     private ThisActionBeanContext ctx;
     public double FRAMESIZE =1;
     
-    
-    private String getHelp() {
-        return "Figure it out for yourself!";
-    }
-    
     private MiscellaneousParser miscParser;
     private ExternalDataParser dataParser;
     private TransformationParser transformationParser;
@@ -257,7 +252,7 @@ public  class InputParser {
             tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
             
             int TEST =8;
-            
+                
             
             String test = "LOAD";
             if (test.equals("LOAD")) {

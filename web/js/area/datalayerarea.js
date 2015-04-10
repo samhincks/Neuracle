@@ -102,8 +102,10 @@ function DatalayerArea(selection) {
                 arrayLength--;
                 i--;
             }
-            
         }
+        if (this.datalayers.dls.length ==0) 
+           
+        console.log("now we have " + this.datalayers.dls.length);
     }
     
     /**Datalayers is an array of JSONObjs streamed from Java. 
