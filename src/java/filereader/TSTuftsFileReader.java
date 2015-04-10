@@ -51,6 +51,7 @@ public class TSTuftsFileReader {
          dataIn = new BufferedReader(new java.io.FileReader(dataFile));
          this.delimeter = delimeter;
          this.readEvery = readEvery;
+         Channel.HitachiRPS = Channel.HitachiRPS / readEvery;
          return readDataRowWise();
     }
     
@@ -59,6 +60,7 @@ public class TSTuftsFileReader {
          dataIn = new BufferedReader(dataFile.getReader());
          this.delimeter = delimeter;
          this.readEvery = readEvery;
+         Channel.HitachiRPS = Channel.HitachiRPS / readEvery;
          return readDataRowWise();
     }
     /**Reads input file where columns hold channels and labels.

@@ -43,7 +43,7 @@ import timeseriestufts.kth.streams.tri.Experiment;
 public class Channel extends UnidimensionalLayer  {
     protected double framesize;  
     public float sampleRate; //.. num samples persecond
-    public static float HitachiRPS = 11.7925f; //.. readings per second for the hitachi
+    public static float HitachiRPS = 11.7925f; //.. readings per second for the hitachi. You could hack this
     private Complex [] transformed = null;
     private FrequencyDomain frequencyDomain = null;
     
