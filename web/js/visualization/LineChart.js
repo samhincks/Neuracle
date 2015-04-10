@@ -393,7 +393,6 @@ function LineChart() {
    }
 
   
-
     var drawMeanInMiddle = function(avgArray, condition) {
         avgArray.pop(); //.. LOOKS radicalyl better if we dont add teh last one
         meanline = d3.svg.line()

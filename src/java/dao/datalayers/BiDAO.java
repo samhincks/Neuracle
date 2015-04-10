@@ -67,10 +67,10 @@ public class BiDAO extends DataLayerDAO {
     public void make (FileBean fb, int fileSampling) throws Exception {        
         TSTuftsFileReader fileReader = new TSTuftsFileReader();
         try{
-            dataLayer = fileReader.readData(",",fb); //.. try to do csv, but fall back on \t
+            dataLayer = fileReader.readData(",",fb, fileSampling); //.. try to do csv, but fall back on \t
         }
         catch(Exception e) {
-            dataLayer = fileReader.readData("\t", fb); //.. then if this doesn't work, give up and moan
+            dataLayer = fileReader.readData("\t", fb,fileSampling); //.. then if this doesn't work, give up and moan
 
         }
         dataLayer.setId(fb.getFileName()+"fs"+fileSampling); //.. No extension

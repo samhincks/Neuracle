@@ -44,10 +44,11 @@ public class TSTuftsFileReader {
         this.delimeter= delimeter;
         return readDataRowWise();
     }
-     public ChannelSet readData(String delimeter, FileBean dataFile) throws Exception{
+     public ChannelSet readData(String delimeter, FileBean dataFile, int readEvery) throws Exception{
          filename = dataFile.getFileName();
          dataIn = new BufferedReader(dataFile.getReader());
          this.delimeter = delimeter;
+         this.readEvery = readEvery;
          return readDataRowWise();
 
     }
