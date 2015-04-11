@@ -114,6 +114,14 @@ function LineChart() {
                 return y(channels(d)[key]);
             });
 
+        var tip = d3.tip()
+                .attr('class', 'd3-tip')
+                .offset([-10, 0])
+                .html(function(d, i) {
+                    return "<strong> " + d[0].condition + "</strong>";
+                })
+        svg.call(tip);
+        
         //... now I want to create a collection of path elements using datum hack
         //.. ERROR BENEATH
         for (var i=0; i < data.length; i++ ) {
@@ -122,6 +130,8 @@ function LineChart() {
                 .attr("class", "d3line")
                 .attr("d", line)
                 .attr("id", "instance"+i)
+                .on("mouseover", tip.show)
+                .on("mouseout", tip.hide)
                 .style("stroke", function(d) {
                     return color(d[0].condition); //.. assume all have same condition
                  });

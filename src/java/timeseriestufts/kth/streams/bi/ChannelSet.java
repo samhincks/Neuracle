@@ -518,17 +518,19 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             sixNinetyCols = new ArrayList();
             eightThirtyCols = new ArrayList();
             
-            //.. PROBE A
+            /**First four are 830, then 690*/
+            
             for (int i = 0; i < quarter; i++) {
-                sixNinetyCols.add(i);
-                eightThirtyCols.add(i + quarter);
+                sixNinetyCols.add(i+quarter);
+                eightThirtyCols.add(i );
+            }
+
+            //.. PROBE B
+            for (int i = half; i < half + quarter; i++) {
+                sixNinetyCols.add(i+quarter);
+                eightThirtyCols.add(i);
             }
             
-            //.. PROBE B
-            for (int i = half; i < half +quarter; i++) {
-                sixNinetyCols.add(i);
-                eightThirtyCols.add(i + quarter);
-            }
         }
         
         /** So if these defaults are used then:
@@ -569,7 +571,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                     hbO = hbO / (den *1000.0f);
                     HbOChan.addPoint(hbO);
                 }
-                cs.addStream(HbOChan);
+                cs.addStream(HbOChan);  
 
                 //.. Hb = (abs830 * eo690 - abs690 * eo830) / den * 1000; % concentration change(micromolar)
                 Channel HbChan = new Channel(snCol.getFramesize(), snCol.getCount());
@@ -739,7 +741,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             Markers markers = Markers.generate(3, 10);
             cs.addMarkers(markers);
 
-            int TEST = 6;
+            int TEST = 4;
             
             if (TEST ==0){
                 Experiment e = cs.splitByLabel(markers.name);
@@ -774,7 +776,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             
             //.. TEST CALCULATING OXY
             if (TEST ==4) {
-                //ChannelSet cs2 = cs.calcOxy(true, null, null);
+                cs = Beste.getChannelSet();
+                ChannelSet cs2 = cs.calcOxy(false, null, null);
                 //cs2.printStream();
                 cs.writeToFile("output/oxy.csv", 1, false);
             }
