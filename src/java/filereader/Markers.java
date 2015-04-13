@@ -16,6 +16,7 @@ import timeseriestufts.kth.streams.bi.ChannelSet.Tuple;
  * @author samhincks
  */
 public class Markers {
+
     public String name;
     public ArrayList<Trial> trials;
     public Labels saveLabels;
@@ -83,6 +84,53 @@ public class Markers {
         for (Trial t : trials) {
             t.printTrial();
         }
+    }
+    
+    
+    /**Make a set of trials according to instruction specified in conditions
+     *  easy:120, rest:150
+     **/ 
+    public static Markers make(int start, int end, int realEnd, String[] conditions) throws Exception{
+        ArrayList<Trial> trials = new ArrayList();        
+        //.. there is a baseline 
+        if (start >0 ) { 
+            Trial t = new Trial("baseline", 0);
+            t.end = start;
+            trials.add(t);
+        }
+
+        int index = start;
+        int conIndex =0;
+        while (index < end) {
+            String cond = conditions[conIndex%conditions.length];
+            String [] values = cond.split(":");
+           
+            //.. moan if user error
+            if (values.length <2) throw new Exception("You must specify the condition name and its length, separated by a colon, eg. hard:200");
+
+            //.. add trial and increment indexes
+            String name = values[0];
+            int length = Integer.parseInt(values[1]);
+            Trial t = new Trial(name, index);
+            index += length;
+            t.end = index;
+            
+            //.. ONLY ADD if we aren't exceeding length of channelset
+            if (index < end)
+                trials.add(t);
+            conIndex++;
+        }
+        
+        //.. if end < lastReading, then pad with 'end' 
+        if (end < realEnd) {
+            Trial t = new Trial("end", index);
+            t.end = realEnd;
+            trials.add(t);
+        }
+        
+        return new Markers("condition", trials);
+        
+
     }
     
     public static Markers generate(int numSplits, int lengthPerTrial) {
@@ -177,8 +225,20 @@ public class Markers {
     }
 
     public static void main(String []args ) {
-        Trial t = new Trial("bajs", 10); t.end = 30;
-        System.out.println(t.intersects(10, 12));
+       try{
+            int TEST =1;
+
+            if (TEST ==1) {
+                String [] conditions = {"easy:30", "rest:10", "hard:30"};
+                Markers m = Markers.make(100, 1222, 1444, conditions);
+                m.printTrials();
+            }
+            if (TEST ==0) {
+                Trial t = new Trial("bajs", 10); t.end = 30;
+                System.out.println(t.intersects(10, 12));
+            }
+       }
+       catch(Exception e) {e.printStackTrace();}
     }
     
 }

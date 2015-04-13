@@ -43,6 +43,15 @@ public class TransformationParser extends Parser{
         command.parameters = "1[Optional]. trialLength = the length of the trial";
         commands.put(command.id, command);
         
+        // -- ASSIGNLABEL
+        command = new Command("assignlabel");
+        command.documentation = "A risky procedure unless 100% certain. Assigns labels according to a known pattern. "
+                + " The first specified condition is presumed to start at the index of the first parameter and end y locations after"
+                + " with input (condition:y), where the second condition continues. This pattern repeats through the entire dataset"
+                + " unless an end location is specified within a colon-delineated first parameter  ";
+        command.parameters = "assignlabel(132, easy:100, rest:30,hard:100) 1. Index of first relevant reading (everything else becomes baseline). 2. condition:length. 3. condition:length [...]";
+        commands.put(command.id, command);
+        
         //-- LABEL
         command = new Command("label");
         command.documentation = "Typically called by a JS script and not the user. Alters the label being"
@@ -93,9 +102,6 @@ public class TransformationParser extends Parser{
         command.documentation = "With an experiment selected, remove any instances which are longer than the mode";
         command.action = "reload";
         commands.put(command.id, command);
-
-        
-        
     }
 
     public JSONObject execute(String command, String[] parameters, ThisActionBeanContext ctx, 
@@ -110,6 +116,10 @@ public class TransformationParser extends Parser{
             c.retMessage = this.randomlyLabel(parameters);
         }
 
+        if (command.startsWith("assignlabel")) {
+            c = commands.get("assignlabel");
+            c.retMessage = this.assignLabel(parameters);
+        }
       
         else if (command.startsWith("label")) {
             c = commands.get("label");
@@ -190,12 +200,41 @@ public class TransformationParser extends Parser{
         return "Appended  a total of " + chanSets.size() + " channelsets into" + cs.id;
       
     }
+    
+    private String assignLabel(String [] parameters) throws Exception {
+        String baseline = parameters[0];
+        String[] values = baseline.split(":");
+        int start = Integer.parseInt(values[0]);
+        String retMessage = "Assigning labels to channelset ";
+
+        int end=-1; //.. where to stop
+        if (values.length > 1) 
+            end = Integer.parseInt(values[1]);
+       
+        ArrayList<ChannelSet> css = super.getAllChanSets();
+        for (ChannelSet cs : css) {
+            Markers m;
+            if (end == -1) {
+                end = cs.getMinPoints();
+                m = Markers.make(start, end, end, Arrays.copyOfRange(parameters, 1, parameters.length));
+            }
+            else {
+                m = Markers.make(start, end, cs.getMinPoints(), Arrays.copyOfRange(parameters, 1, parameters.length));
+            }
+            BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(cs.id);
+            bDAO.addMarkers(m);
+            retMessage += bDAO.getId() +"  ";
+        }
+        
+        return retMessage;
+    }
+    
+    
      /**
      * Label the specified dataset at random. If specified, the second parameter
      * is how long each trial should be
      */
     private String randomlyLabel(String [] parameters) throws Exception {
-        System.out.println("pm " + parameters.length);
         String filename = currentDataLayer.id;
         int trialLength = 10;
         if (parameters.length > 0) {

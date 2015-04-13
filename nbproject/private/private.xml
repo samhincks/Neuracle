@@ -2,40 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="19">
         <file>
-            <url>src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</url>
-            <bookmark id="19">
-                <name/>
-                <line>507</line>
-                <key/>
-            </bookmark>
-            <bookmark id="18">
-                <name/>
-                <line>789</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/js/movingLinegraph.js</url>
-            <bookmark id="10">
-                <name/>
-                <line>61</line>
-                <key/>
-            </bookmark>
-            <bookmark id="13">
-                <name/>
-                <line>502</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/js/streamchart.js</url>
-            <bookmark id="11">
-                <name/>
-                <line>18</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>web/js/area/chartarea.js</url>
             <bookmark id="16">
                 <name/>
@@ -43,24 +9,6 @@
                 <key/>
             </bookmark>
             <bookmark id="17">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/dao/InputParser.java</url>
-            <bookmark id="3">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-            <bookmark id="2">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-            <bookmark id="1">
                 <name/>
                 <line>0</line>
                 <key/>
@@ -89,6 +37,58 @@
             <bookmark id="8">
                 <name/>
                 <line>510</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/dao/InputParser.java</url>
+            <bookmark id="3">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+            <bookmark id="2">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+            <bookmark id="1">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/movingLinegraph.js</url>
+            <bookmark id="10">
+                <name/>
+                <line>61</line>
+                <key/>
+            </bookmark>
+            <bookmark id="13">
+                <name/>
+                <line>502</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</url>
+            <bookmark id="19">
+                <name/>
+                <line>507</line>
+                <key/>
+            </bookmark>
+            <bookmark id="18">
+                <name/>
+                <line>778</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/streamchart.js</url>
+            <bookmark id="11">
+                <name/>
+                <line>18</line>
                 <key/>
             </bookmark>
         </file>
