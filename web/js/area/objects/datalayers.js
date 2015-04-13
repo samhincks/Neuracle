@@ -31,14 +31,21 @@ function DataLayers() {
         for (var i = 0; i < this.dls.length; i++) {
             var id = $("#" + this.dls[i].id)
             if((this.dls[i].intersected) ==0) {//.. remove circle if its not currently intersecting something
-                id.css("border-color", "black");
+                id.removeClass("experimentHalfIntersected");
+                id.removeClass("experimentIntersected");
+
             }
             else if ((this.dls[i].intersected) >=3) {
-                id.css("border-color","green");
+                id.addClass("experimentIntersected");
+                id.removeClass("experimentHalfIntersected");
+
             }
-            else 
-                id.css("border-color", "crimson");
-            
+            else {
+                id.addClass("experimentHalfIntersected");
+                id.removeClass("experimentIntersected");
+
+                
+            }
         }
     }
     
@@ -106,7 +113,7 @@ function DataLayer(jsonDL) {
     this.type = jsonDL.type;
     this.freqButton = "freq"+this.id; //.. For some reason it wont respond if I give it a unique id
     var globalFreqId = $("#"+this.freqButton);
-    this.elementTag = '<div id = "'+this.id+'" class = " surfaceElement"> <div title = "F" id = "'+this.freqButton+'"> </div></div>';
+    this.elementTag = '<div id = "'+this.id+'" class = "datalayer surfaceElement"> <div title = "F" id = "'+this.freqButton+'"> </div></div>';
     this.sqScale = d3.scale.linear().domain([0, 625000]).range([45, 90]);
     this.intersected = 0; //.. increase if anything is intersected
 

@@ -119,7 +119,7 @@ function reinit() {
 }
 
 function datalayerInit() {
-    $('.surfaceElement').mouseenter(function(e) {
+    $('.datalayer').mouseenter(function(e) {
         $('#giver').val(e.currentTarget.id); //.. e.target.id gives you a bug sometimes 
     });
 
@@ -144,7 +144,7 @@ function datalayerInit() {
     var altKey = false;
 
     //.. if a channel set is clicked
-    $(".surfaceElement").mousedown(function(e) {
+    $(".datalayer").mousedown(function(e) {
         if (!shiftKey)
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         else
@@ -153,7 +153,7 @@ function datalayerInit() {
     });
 
     //.. if a channel set is dbl-clicked
-    $(".surfaceElement").dblclick(function(e) { //.. change to .experiment
+    $(".datalayer").dblclick(function(e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         if (altKey)
             javaInterface.postToDataLayer("frequency");
@@ -164,15 +164,13 @@ function datalayerInit() {
     });
 
     //.. When I release a datalayer, show what techniques I intersect
-    $(".surfaceElement").mouseup(function(e) {
+    $(".datalayer").mouseup(function(e) {
         datalayerArea.highlightIntersectedTechniques();
         datalayerArea.datalayers.unselectAll();
         datalayerArea.boundsCheck();
     });
     
    
-    $(".surfaceElement").mouseenter(function(e) {
-    });
    
 }
 
