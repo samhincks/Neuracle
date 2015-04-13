@@ -17,11 +17,16 @@ import timeseriestufts.kth.streams.bi.ChannelSet;
 public class Honda2015 {
     public static void main(String[] args) {
         try{
-           read();
+           //read();
+            SOError();
         }
         catch(Exception e) { e.printStackTrace();}
     }
    
+    private static void SOError() throws Exception {
+        ChannelSet cs = getChannelSet("input/Honda/Part9HbHbO");
+        cs.printStream();
+    }
     
    private static void read() throws Exception {
         ArrayList<String> files = Honda2015.getSpecific();

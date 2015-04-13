@@ -78,6 +78,7 @@ public class TSTuftsFileReader {
      * 
      */
     public ChannelSet readDataRowWise() throws Exception {
+        chews =0;
         String line;
         
         ArrayList<ArrayList<Float>> rawValues = new ArrayList(); //.. which we will read into proper structure
@@ -208,14 +209,19 @@ public class TSTuftsFileReader {
         return channelSet;
     }
 
+    int MAXCHEW = 100;
+    int chews =0;
     /** Returns an array of column names in all cases.
      * If the first line is an array of column names, then that is returned.
      * If it isn't, it checks to see if it seems like an array of validly delimeted values, and returns that.
      * Otherwise it chews until it sees a delimited line. DOESNT WORK IF FIRST LINES HAVE THAT DELIMETER
      **/
     private String[] getFirstOrFabricated() throws Exception{
+        chews++;
         String line = dataIn.readLine();
         String[] firstLine = line.split(delimeter);
+        
+        if (chews >MAXCHEW) throw new Exception("Exceeded maximum lines to chew away");
         //.. Valid nominal line
         if(isNominal(firstLine)) return firstLine;
         //.. Crap we should chew away
