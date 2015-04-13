@@ -19,11 +19,13 @@
         <title>Time Mine</title>
         <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>  If we dont do remote, pep doesnt work-->
 
+       <link type="text/css" rel="stylesheet" href="css/jquery-ui.css" /> 
         <link type="text/css" rel="stylesheet" href="css/style.css" />
         <link type="text/css" rel="stylesheet" href="css/d3Style.css" />
-        <link type="text/css" rel="stylesheet" href="css/plumbStyle.css" />
-        <link type="text/css" rel="stylesheet" href="css/consoleStyle.css" />
-        <link type="text/css" rel="stylesheet" href="css/jquery-ui.css" />
+       <link type="text/css" rel="stylesheet" href="css/consoleStyle.css" /> 
+       <link type="text/css" rel="stylesheet" href="css/dlStyle.css" />
+
+
 
 
  
@@ -119,7 +121,6 @@
         <script type="text/javascript" src="js/visualization/streamchart.js"></script> 
         <script type="text/javascript" src="js/visualization/CorrelationMatrix.js"></script> 
         <script type="text/javascript" src="js/visualization/PredictionChart.js"></script> 
-
 
 
         <!--AREAS-->

@@ -38,8 +38,6 @@ function DataLayers() {
             }
             else 
                 id.css("border-color", "crimson");
-
-                
             
         }
     }
@@ -50,15 +48,15 @@ function DataLayers() {
         for(var i =0; i< this.dls.length; i++) {  
             var dl = this.dls[i]; 
             var curId =  dl.id;
-             $("#"+curId).removeClass("datalayerSelected")
+             $("#"+curId).removeClass("experimentSelected")
              $("#"+curId).removeClass("surfaceElementMultiSelected")
-             $("#"+curId).removeClass("surfaceElementSelected")
+             $("#"+curId).removeClass("channelsetSelected")
              
              if(layerId == curId) {
                  if (dl.type == "2D") 
-                    $("#" + layerId).addClass("surfaceElementSelected");
+                    $("#" + layerId).addClass("channelsetSelected");
                  else 
-                    $("#" + layerId).addClass("datalayerSelected");
+                    $("#" + layerId).addClass("experimentSelected");
              }
         }
         
@@ -76,7 +74,7 @@ function DataLayers() {
 
         //.. change the color scheme of a the existing selection if tehre is just one
         if (selected.length ==1) {
-          $("#"+selected[0]).removeClass("surfaceElementSelected")
+          $("#"+selected[0]).removeClass("channelsetSelected")
           $("#"+selected[0]).addClass("surfaceElementMultiSelected");
         }
         
@@ -108,7 +106,7 @@ function DataLayer(jsonDL) {
     this.type = jsonDL.type;
     this.freqButton = "freq"+this.id; //.. For some reason it wont respond if I give it a unique id
     var globalFreqId = $("#"+this.freqButton);
-    this.elementTag = '<div id = "'+this.id+'" class = " dropChannel surfaceElement"> <div title = "F" id = "'+this.freqButton+'"> </div></div>';
+    this.elementTag = '<div id = "'+this.id+'" class = " surfaceElement"> <div title = "F" id = "'+this.freqButton+'"> </div></div>';
     this.sqScale = d3.scale.linear().domain([0, 625000]).range([45, 90]);
     this.intersected = 0; //.. increase if anything is intersected
 
@@ -150,9 +148,7 @@ function DataLayer(jsonDL) {
                 close: function(event, ui) {
                     globalFreqId.tooltip('close'); //.. doesnt trigger conventional open
                 }
-            });
-           
-            
+            });            
         }
     }
     
@@ -163,19 +159,7 @@ function DataLayer(jsonDL) {
    //... it to elements it may have been derived from
    //. Errors will occur if it has not been appended to the canvas
     this.drawArt = function() {
-      /*  //.. draw out the lines inside it
-        if (jsonDL.type =="2D") {
-           plumb.draw2DLinesWithinBox(this.id, this.numChannels);
-        }
-        else {//.. if its a 3D datalayer
-            try{
-               plumb.draw3DLinesWithinBox(this.id,jsonDL.numlabels)
-            }
-            catch (error) {console.log("Does the id have an illegal character in it?");};
-           //.. add an additional class "experiment"
-           $("#"+this.id).addClass("experiment");
-           //plumbTechniques.setExperimentEPs();
-        }*/ 
+        //.. Assign appropriate image to the datalayer 
         if (jsonDL.type == "2D")
             if(this.numChannels <17)
                 $("#" + this.id).addClass("chanset");
@@ -196,7 +180,7 @@ function DataLayer(jsonDL) {
             plumb.setDerivedConnection(this.id, this.parent);
           }
         else {
-            jsPlumb.draggable($(".dropChannel"));
+            jsPlumb.draggable($(".surfaceElement"));
         }
     }
    

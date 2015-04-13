@@ -448,7 +448,7 @@ button.ui-button::-moz-focus-inner {
 	cursor: move;
 }
 .ui-draggable-handle {
-	-ms-touch-action: none;
+       -ms-touch-action: none;
 	touch-action: none;
 }
 .ui-menu {

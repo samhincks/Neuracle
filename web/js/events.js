@@ -119,7 +119,7 @@ function reinit() {
 }
 
 function datalayerInit() {
-    $('.dropChannel').mouseenter(function(e) {
+    $('.surfaceElement').mouseenter(function(e) {
         $('#giver').val(e.currentTarget.id); //.. e.target.id gives you a bug sometimes 
     });
 
@@ -144,7 +144,7 @@ function datalayerInit() {
     var altKey = false;
 
     //.. if a channel set is clicked
-    $(".dropChannel").mousedown(function(e) {
+    $(".surfaceElement").mousedown(function(e) {
         if (!shiftKey)
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         else
@@ -153,7 +153,7 @@ function datalayerInit() {
     });
 
     //.. if a channel set is dbl-clicked
-    $(".dropChannel").dblclick(function(e) { //.. change to .experiment
+    $(".surfaceElement").dblclick(function(e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         if (altKey)
             javaInterface.postToDataLayer("frequency");
@@ -164,14 +164,14 @@ function datalayerInit() {
     });
 
     //.. When I release a datalayer, show what techniques I intersect
-    $(".dropChannel").mouseup(function(e) {
+    $(".surfaceElement").mouseup(function(e) {
         datalayerArea.highlightIntersectedTechniques();
         datalayerArea.datalayers.unselectAll();
         datalayerArea.boundsCheck();
     });
     
    
-    $(".dropChannel").mouseenter(function(e) {
+    $(".surfaceElement").mouseenter(function(e) {
     });
    
 }
@@ -197,24 +197,3 @@ function techniqueInit() {
     
     
 }
-/**THIS USED TO BE IN REINIT() but it was too broken so we have to exclude it*/
-  //.. Pep the element, applying kinetic drag
-    /*$('.dropChannel').pep({                    
-        constrainToParent: true
-    });  */
-
-/*
-    //.. Make so that buttons are droppable elements
-    $('.dropChannel').droppable( {
-        drop: channelSurface.handleDropEvent
-    }); 
-                   // $('.technique').pep({constrainToParent: true });
-
-      */          
-    /* DRAG now contained within plumb
-    //.. Make so that buttons are draggable elements, set containments, etc
-    //.. I think this overrides pep
-    $('.dropChannel').draggable({
-        cancel:true,
-        cursor: 'move'
-    }); */ 
