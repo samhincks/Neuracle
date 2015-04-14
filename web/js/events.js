@@ -148,7 +148,7 @@ function datalayerInit() {
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         else
             datalayerArea.datalayers.multiSelectLayer(e.currentTarget.id)
-        //javaInterface.getDataLayerStats();
+        javaInterface.getDataLayerStats();
     });
 
     //.. if a channel set is dbl-clicked

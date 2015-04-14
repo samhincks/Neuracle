@@ -16,7 +16,7 @@ import timeseriestufts.evaluation.experiment.Classification;
  * 2) By technique: we might also want to know how a technique fared over different datasets
  * @author samhincks
  */
-public class Performances {
+public class Performances {     
     public HashMap<String, Dataset>  dataSets = new HashMap(); //.. make this hashmap since values is so convenient
     public HashMap<String, TechniqueSet> techniqueSets = new HashMap();
     public HashMap<String, Predictions> predictionSets = new HashMap();
