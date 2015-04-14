@@ -41,7 +41,8 @@ import timeseriestufts.kth.streams.uni.FrequencyDomain;
  */
 public class DataManipulationParser extends Parser{
     public Technique currentTechnique;
-    public DataManipulationParser(){
+    public DataManipulationParser(ThisActionBeanContext ctx){
+        super(ctx);
         commands = new Hashtable();
    
         Command command = new Command("gethrv");
@@ -163,9 +164,8 @@ public class DataManipulationParser extends Parser{
         
     }
 
-    public JSONObject execute(String command, String[] parameters, ThisActionBeanContext ctx,
+    public JSONObject execute(String command, String[] parameters,
             DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception {
-        this.ctx = ctx;
         this.currentDataLayer = currentDataLayer;
         if(techDAO != null)
             this.currentTechnique = techDAO.technique;
@@ -267,7 +267,7 @@ public class DataManipulationParser extends Parser{
         if (c == null) {
             return null;
         }
-        return c.getJSONObject();
+        return c.getJSONObject(ctx.getTutorial());
     }
 
     /**

@@ -30,7 +30,8 @@ import timeseriestufts.kth.streams.tri.TridimensionalLayer;
  */
 public class TransformationParser extends Parser{
     
-    public TransformationParser(){
+    public TransformationParser(ThisActionBeanContext ctx) {
+        super(ctx);
         commands = new Hashtable();  
         /**
          * -- Every command this Parser handles should be added to commands with
@@ -104,9 +105,8 @@ public class TransformationParser extends Parser{
         commands.put(command.id, command);
     }
 
-    public JSONObject execute(String command, String[] parameters, ThisActionBeanContext ctx, 
+    public JSONObject execute(String command, String[] parameters,
             DataLayer currentDataLayer,TechniqueDAO currentTechnique) throws Exception {
-        System.out.println("pm " + parameters.length);
         this.ctx = ctx;
         this.currentDataLayer = currentDataLayer;
         Command c = null;
@@ -167,7 +167,7 @@ public class TransformationParser extends Parser{
         if (c == null) {
             return null;
         }
-        return c.getJSONObject();
+        return c.getJSONObject(ctx.getTutorial());
     }
     
     private String clean() throws Exception {

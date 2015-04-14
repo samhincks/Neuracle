@@ -35,7 +35,8 @@ import timeseriestufts.kth.streams.uni.Channel;
  * @author samhincks
  */
 public class MiscellaneousParser extends Parser{ 
-    public MiscellaneousParser() {
+    public MiscellaneousParser(ThisActionBeanContext ctx) {
+        super(ctx);
         commands = new Hashtable();
         /**--  Every command this Parser handles should be added to commands
          *     with a corresponding function for execution in the execute function--**/
@@ -111,11 +112,12 @@ public class MiscellaneousParser extends Parser{
         command = new Command("tutorial");
         command.documentation = "Loads a sample file, and executes basic instructions on it";   
         command.action = "reload";
+        command.tutorial = "fittslukare";
         commands.put(command.id, command);
         
     }
     
-    public JSONObject execute(String command, String [] parameters, ThisActionBeanContext ctx, 
+    public JSONObject execute(String command, String [] parameters,
             DataLayer currentDataLayer,  TechniqueDAO techDAO ) throws Exception{
         this.ctx = ctx;
         this.currentDataLayer = currentDataLayer;
@@ -193,7 +195,7 @@ public class MiscellaneousParser extends Parser{
         }
         
         if (c ==null) return null;
-        return c.getJSONObject();
+        return c.getJSONObject(ctx.getTutorial());
     }
     
     
@@ -519,12 +521,11 @@ public class MiscellaneousParser extends Parser{
         ctx.dataLayersDAO.addStream(mDAO.getId(), mDAO);
         ctx.setCurrentName(mDAO.getId());
         return retString;
-        
     }
     
     private String tutorial() throws Exception { 
         ctx.setTutorial(true);
-        
+        ctx.inputParser.parseInput("load(tutorial)");
         return  "In the topleft corner, you can see that we have created a sample random"
                 + " dataset for you. To upload your own, click chose file, and then select a valid"
                 + " CSV,value. The first row should contain comma-separated names; then subsequent rows"

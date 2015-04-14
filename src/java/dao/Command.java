@@ -20,12 +20,14 @@ public class Command {
     public String documentation =""; //.. populated when the command is executed
     public String action = null;
     public JSONObject data =null;
+    public String tutorial = null;
  
     public Command(String id) {
         this.id = id;
     }
       
-    public JSONObject getJSONObject() throws Exception{
+    public JSONObject getJSONObject(boolean showTut) throws Exception{
+        System.out.println("showing tuto");
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("content", retMessage);
         jsonObj.put("id", id);
@@ -37,6 +39,9 @@ public class Command {
             jsObj.put("data", data);
             jsonObj.put("action", jsObj);
         }
+        
+        if (tutorial != null && showTut)
+            jsonObj.put("tutorial", tutorial);
         return jsonObj;
     }
 }

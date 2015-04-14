@@ -60,14 +60,15 @@ public class InputParser {
     private TransformationParser transformationParser;
     private DataManipulationParser mlParser;
    
-    public InputParser() {
-        miscParser = new MiscellaneousParser();
-        dataParser = new ExternalDataParser();
-        transformationParser = new TransformationParser();
-        mlParser = new DataManipulationParser();
+    public InputParser(ThisActionBeanContext ctx) {
+        miscParser = new MiscellaneousParser(ctx);
+        dataParser = new ExternalDataParser(ctx);
+        transformationParser = new TransformationParser(ctx);
+        mlParser = new DataManipulationParser(ctx);
+        this.ctx = ctx;
     } 
     
-    public JSONObject parseInput(String input, ThisActionBeanContext ctx) throws JSONException, Exception {
+    public JSONObject parseInput(String input) throws JSONException, Exception {
         JSONObject jsonObj = null; 
         try {
             //.. remove upper letters; trim spaces
@@ -93,16 +94,16 @@ public class InputParser {
             jsonObj = this.rapidExecute(input,parameters, ctx, currentDataLayer,techDAO);
             
             if (jsonObj ==null)
-                jsonObj = miscParser.execute(input,parameters, ctx, currentDataLayer,techDAO);
+                jsonObj = miscParser.execute(input,parameters, currentDataLayer,techDAO);
             
             if (jsonObj == null)
-                jsonObj = dataParser.execute(input,parameters,ctx,currentDataLayer,techDAO);
+                jsonObj = dataParser.execute(input,parameters,currentDataLayer,techDAO);
                 
             if (jsonObj ==null)
-                jsonObj = transformationParser.execute(input, parameters,ctx,currentDataLayer,techDAO); 
+                jsonObj = transformationParser.execute(input, parameters,currentDataLayer,techDAO); 
             
             if (jsonObj ==null)
-                jsonObj = mlParser.execute(input, parameters,ctx,currentDataLayer,techDAO); 
+                jsonObj = mlParser.execute(input, parameters,currentDataLayer,techDAO); 
             
              
              //.. finally if nothing recognized this command, complain at user
@@ -124,9 +125,9 @@ public class InputParser {
  
    public JSONObject rapidExecute(String command, String[] parameters, ThisActionBeanContext ctx,
             DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception {
-        this.ctx = ctx;
         this.currentDataLayer = currentDataLayer;
         Command c = null;
+        System.out.println(ctx);
 
         if (command.startsWith("debug")) {
              c = new Command("debug");
@@ -169,7 +170,7 @@ public class InputParser {
             for (JSONObject com : transformationParser.getCommands()){commands.put(com);}
             for (JSONObject com : dataParser.getCommands()){commands.put(com);}
             for (JSONObject com : mlParser.getCommands()){commands.put(com);}
-            return c.getJSONObject();
+            return c.getJSONObject(ctx.getTutorial());
 
             
         }
@@ -178,7 +179,7 @@ public class InputParser {
         if (c == null) {
             return null;
         }
-        return c.getJSONObject();
+        return c.getJSONObject(ctx.getTutorial());
     }
     
     
@@ -209,10 +210,10 @@ public class InputParser {
     /***Eventually I should write test classes but it is looking difficult to simulate the session
      context without stripes dispatchment**/
     public static void main(String[] args) {
-        InputParser ip = new InputParser();
         
         //.. The necessary parts of a test: a context, a datalayer, and a datalayerDAO 
         ThisActionBeanContext ctx = new ThisActionBeanContext(true);
+        InputParser ip = new InputParser(ctx);
 
         try{
             //.. 1. Fabricate fake data with 1 channel and 200 readings
@@ -241,7 +242,7 @@ public class InputParser {
             //.. 4. Initialize a technique, select the channelset b, and make it an experimetn
             TechniqueSet ts = TechniqueSet.generate();
             ctx.setCurrentName("b");
-            JSONObject response = ip.parseInput("split(condition)", ctx);
+            JSONObject response = ip.parseInput("split(condition)");
             ctx.setCurrentName("bcondition");
             TriDAO tDAO = (TriDAO) ctx.getCurrentDataLayer();
             
@@ -264,19 +265,19 @@ public class InputParser {
             
             if (test.equals("LOAD")) {
                 String foldername = "GRProcessed";
-                response = ip.parseInput("load(" + foldername, ctx);
+                response = ip.parseInput("load(" + foldername);
             }
 
             if (test.equals("LOAD")) {
                 String foldername = "GRProcessed";
-                response = ip.parseInput("load("+foldername, ctx);
+                response = ip.parseInput("load("+foldername);
             }
             
             
             if (TEST == 7) {
                 ChannelSet a1 = ChannelSet.generate(275000, 1000);
                 ctx.addDataLayer("a1", new BiDAO(a1));
-                response = ip.parseInput("delete", ctx);
+                response = ip.parseInput("delete");
                 a1 =null;
                 ChannelSet a2 = ChannelSet.generate(200000, 1000);
             }
@@ -284,28 +285,28 @@ public class InputParser {
             
             
             if (TEST ==0) 
-                 response= ip.parseInput("removeallbut(a,b)", ctx);
+                 response= ip.parseInput("removeallbut(a,b)");
             
             if (TEST ==1) {
-                response = ip.parseInput("intercept(bestemusic07.csv, bajs, bajs)", ctx);
+                response = ip.parseInput("intercept(bestemusic07.csv, bajs, bajs)");
             }
             
             if (TEST ==2) {
-                response = ip.parseInput("save(", ctx);
+                response = ip.parseInput("save(");
             }
             
             if (TEST ==3) {
-                response = ip.parseInput("label(", ctx);
+                response = ip.parseInput("label(");
             }
             if (TEST ==4) {
-                response = ip.parseInput("train", ctx); //.. After this, the associated weka classifier is trained
+                response = ip.parseInput("train"); //.. After this, the associated weka classifier is trained
                 
                 //.. Having trained, now test
                 ctx.setCurrentName("b");
                 bDAO = (BiDAO) ctx.getCurrentDataLayer();
                 bDAO.addConnection(wc);
                  
-                response = ip.parseInput("classify", ctx);
+                response = ip.parseInput("classify");
                 Predictions p = ctx.getPerformances().predictionSets.get("b");
                 System.out.println(p.getPctCorrect());
                 JSONObject jo = bDAO.getPerformanceJSON(ctx.getPerformances());
@@ -323,7 +324,7 @@ public class InputParser {
                // bDAO.dataLayer.printStream();
                 
                 ctx.setCurrentName("b:c");
-                response = ip.parseInput("append", ctx);
+                response = ip.parseInput("append");
                 System.out.println(response.get("content"));
                 ctx.setCurrentName("mergedb-c");
                 bDAO = (BiDAO) ctx.getCurrentDataLayer();
@@ -332,7 +333,7 @@ public class InputParser {
             
             if (TEST ==6) {
                 ctx.setCurrentName("realcs");
-                response = ip.parseInput("glassroutes", ctx);
+                response = ip.parseInput("glassroutes");
             }
             
            

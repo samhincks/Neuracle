@@ -1,5 +1,6 @@
 package stripes.ext; 
 
+import dao.InputParser;
 import dao.datalayers.DataLayerDAO;
 import dao.datalayers.DataLayersDAO;
 import dao.datalayers.UserDAO;
@@ -21,11 +22,14 @@ public class ThisActionBeanContext extends ActionBeanContext{
         ValidationError s = new SimpleError(error);
         this.getValidationErrors().addGlobalError(s);
     }
-    
+   public InputParser inputParser;
+
     public ThisActionBeanContext() {
-        
+        inputParser = new InputParser(this);
     }
     public ThisActionBeanContext(boolean test) {
+        inputParser = new InputParser(this);
+
         this.test = test;
     }
     public boolean test = false;
@@ -37,7 +41,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public static UserDAO userDAO = new UserDAO();
     public static Performances performances = new Performances();
     private static int fileReadSampling =1; //.. set to two and we read every other row from file
-    private boolean tutorial; //.. True if we're running a tutorial. 
+    private boolean tutorial = false; //.. True if we're running a tutorial. 
     
     public void printState() throws Exception{
         System.out.println("\t Datalayer " + currentDataLayer);
@@ -144,7 +148,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public void setTutorial(boolean b) {
         tutorial = b;
     }
-    
+       
     public boolean getTutorial() {
         return tutorial;
     }

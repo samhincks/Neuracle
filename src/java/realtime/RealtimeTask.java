@@ -54,7 +54,7 @@ public abstract class RealtimeTask  implements Runnable{
             
             //.. Initialize the components of the server, a hack, emulating hte interface
             ThisActionBeanContext ctx = new ThisActionBeanContext(true);
-            InputParser ip = new InputParser();
+            InputParser ip = new InputParser(ctx);
             trainingDuration = (NBackTask.duration +7000)*TRIALS;
             
             stream(ctx, ip);
@@ -67,7 +67,7 @@ public abstract class RealtimeTask  implements Runnable{
             
             //ctx.setCurrentName(DBNAME);
             //BiDAO b =  (BiDAO) ctx.getCurrentDataLayer();
-            //JSONObject obj = ip.parseInput("getlabels", ctx);
+            //JSONObject obj = ip.parseInput("getlabels");
             //System.out.println(obj.get("content"));
             //ChannelSet cs = (ChannelSet)b.dataLayer;
             //cs.writeToFile(cs.id, 1, false);
@@ -83,7 +83,7 @@ public abstract class RealtimeTask  implements Runnable{
     public static void stream(ThisActionBeanContext ctx, InputParser ip) throws Exception{
         //.. Synchronize with the database, labeling all the existing parts junk
         String command = "synchronize(" + DBNAME + ")";
-        String resp = ip.parseInput(command, ctx).getString("content");
+        String resp = ip.parseInput(command).getString("content");
         System.out.println(resp);
 
         //.. As new data is streamed in, assign a meaningful label to it
@@ -109,11 +109,11 @@ public abstract class RealtimeTask  implements Runnable{
     }
     public static void labelServer(ThisActionBeanContext ctx, InputParser ip) throws Exception{
         String command = "synchronize(" + DBNAME + ")";
-        ip.parseInput(command, ctx);
+        ip.parseInput(command);
         
         //.. Set label of subsequent values to 'to-be-classified' or unknown
         command = "label(" + DBNAME + "," + CNAME + ",unknown)";
-        ip.parseInput(command, ctx);
+        ip.parseInput(command);
         
         LabelingTask lt = new LabelingTask(ctx,ip);
         Thread t  = new Thread(lt);
@@ -143,7 +143,7 @@ public abstract class RealtimeTask  implements Runnable{
                 while (ticks < iterations) {
                     //.. Synchronize the last datapoints, and alter how the next ones will get labeled
                     String command = "stream(" + DBNAME + ")";
-                    String resp = ip.parseInput(command, ctx).getString("content");
+                    String resp = ip.parseInput(command).getString("content");
                     //System.out.println(resp);  
                     Thread.sleep(REFRESHRATE);
                     ticks++;
@@ -168,10 +168,10 @@ public abstract class RealtimeTask  implements Runnable{
             
             //.. Having modified what we're selecting, split into an experiment
             String command = "split("+CNAME+")";
-            JSONObject response = ip.parseInput(command, ctx);
+            JSONObject response = ip.parseInput(command);
             ctx.setCurrentName(EXPNAME);
             command = "keep("+keep+")";
-            response = ip.parseInput(command, ctx);
+            response = ip.parseInput(command);
             
             //.. after removing some instances the experiment name has changed, so hack a bit
             EXPNAME = response.getString("content").split("--")[1];
@@ -194,7 +194,7 @@ public abstract class RealtimeTask  implements Runnable{
             
             //.. Train the machine learnign algorithm to the WC algorithm
             command = "train()";
-            response = ip.parseInput(command, ctx);
+            response = ip.parseInput(command);
         }
     }
     
@@ -216,11 +216,11 @@ public abstract class RealtimeTask  implements Runnable{
 
                 //.. Synchronize the dataset, making sure our classifications is up-to-date
                 String command = "synchronize(" + DBNAME + ")";
-                String resp = ip.parseInput(command, ctx).getString("content");
+                String resp = ip.parseInput(command).getString("content");
 
                 //.. classify the specified last band of data
                 command = "classifylast()";
-                JSONObject response = ip.parseInput(command, ctx);
+                JSONObject response = ip.parseInput(command);
                 System.out.println(response.get("content"));
                 ticks++;
             }
@@ -243,7 +243,7 @@ public abstract class RealtimeTask  implements Runnable{
         public void run() {
             try {
                 String command = "nback( " + back +"," + duration+ "," + LabelInterceptorTask.LABELPORT+")";
-                JSONObject resp = ip.parseInput(command, ctx);
+                JSONObject resp = ip.parseInput(command);
                 System.out.println(resp.getString("content"));
                 ticks++;
             } catch (Exception e) {
@@ -262,7 +262,7 @@ public abstract class RealtimeTask  implements Runnable{
         public void run() {
             try {
                 String command = "interceptlabel("+DBNAME+","+CNAME +","+LabelInterceptorTask.LABELPORT;
-                JSONObject resp = ip.parseInput(command, ctx);
+                JSONObject resp = ip.parseInput(command);
                 System.out.println(resp.getString("content"));
 
                 ticks++;

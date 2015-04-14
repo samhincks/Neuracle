@@ -36,11 +36,11 @@ public abstract class Parser {
     public ThisActionBeanContext ctx;
     public DataLayer currentDataLayer;
     
-    public Parser () {
-        
+    public Parser (ThisActionBeanContext ctx) {
+        this.ctx = ctx;
     }
     
-    public abstract JSONObject execute(String command, String[] parameters, ThisActionBeanContext ctx,
+    public abstract JSONObject execute(String command, String[] parameters, 
             DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception; 
     
     
@@ -210,9 +210,11 @@ public abstract class Parser {
         ArrayList<JSONObject> rObj = new ArrayList(); 
        
         for (Command c : commands.values()) {
-            rObj.add(c.getJSONObject());
+            System.out.println(c.id);
+            System.out.println(ctx);
+            rObj.add(c.getJSONObject(ctx.getTutorial()));
         }
-        return rObj;
+        return rObj;   
     }
     
     public String getDocumentation(String param) {

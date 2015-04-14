@@ -30,7 +30,7 @@ public class ConsoleActionBean extends DataLayerActionBean {
     public String getTechnique() { return technique;}
     public void setTechnique(String technique) {this.technique = technique;}
     
-    public InputParser inputParser = new InputParser(); //.. should be a property of ctx
+  //  public InputParser inputParser = new InputParser(); //.. should be a property of ctx
     
     
     /**Parse the input from the console.
@@ -39,6 +39,7 @@ public class ConsoleActionBean extends DataLayerActionBean {
     //... where we can parse the input
     @DefaultHandler
     public Resolution parseInput() throws JSONException{
+        InputParser inputParser = ctx.inputParser;
         //.. Parse the actual input
         JSONObject jsonObj = new JSONObject();
         try {
@@ -53,7 +54,7 @@ public class ConsoleActionBean extends DataLayerActionBean {
                     || consoleInput.startsWith("classify"))){
                 setTechniqueParams();
             }
-            jsonObj = inputParser.parseInput(consoleInput, ctx);
+            jsonObj = inputParser.parseInput(consoleInput);
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));
         }
         catch(Exception e) {
