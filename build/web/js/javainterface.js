@@ -69,7 +69,6 @@ function JavaInterface() {
             datalayerArea.addDatalayers(JSONobj.datalayers);
             datalayerArea.removeDatalayers(JSONobj.datalayers);
             datalayerInit(); //.. relaod the drag/drop properties
-            techniqueInit();
         }
     }
      /**Retrieve all techniques and their names*/
@@ -86,7 +85,6 @@ function JavaInterface() {
         //.. no error, then render the object datalayers
         else {
             datalayerArea.addTechniques(JSONobj.techniques);
-            techniqueInit();
         }
     }
     
@@ -219,11 +217,13 @@ function JavaInterface() {
          if(JSONobj.description != null)
              chartArea.displayTechniqueDescription(JSONobj.description);
          
+         if (JSONobj.attributes != null)
+            consoleArea.displayAttributes(JSONobj.attributes);
+         
          if(JSONobj.performance != null)
             chartArea.displayPerformance(JSONobj.performance);
         
-         if (JSONobj.attributes != null)
-             consoleArea.displayAttributes(JSONobj.attributes);
+         
          
     }
     

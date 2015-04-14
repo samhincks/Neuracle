@@ -128,7 +128,7 @@ public class DataLayerActionBean extends BaseActionBean{
             //.. if we want to see data
             if (!prediction && !frequency && !correlation){ 
                 System.out.println("2d view");
-                 jsonObj  = dlGiver.getJSON();
+                jsonObj  = dlGiver.getJSON();
             }
             else if (correlation) {
                  System.out.println("Corr view");
@@ -161,9 +161,9 @@ public class DataLayerActionBean extends BaseActionBean{
             }
           
             
-            //.. if we want to see a stats representation of performance. 
-            else {
-                throw new Exception("Frankly don't know how you got this message");
+            //.. THE ONLY EFFECT WAS TO CHANGE THE CTX.CURRENTNAME. A BIT ANNOYING THAT THIS NEEDED TO USE THE BACKEND
+            else { //.. STATS
+                throw new Exception();
                 //Performances p = ctx.getPerformances();
                 // jsonObj = dlGiver.getPerformanceJSON(p);
             }
@@ -189,7 +189,7 @@ public class DataLayerActionBean extends BaseActionBean{
             jsonObj = dlGiver.getJSON();
             
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));
-
+  
         }
         catch (Exception e) {
             JSONObject jsonObj = new JSONObject();

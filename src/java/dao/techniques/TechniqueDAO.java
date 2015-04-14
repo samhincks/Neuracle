@@ -52,7 +52,6 @@ public class TechniqueDAO {
          }
          
          else if (technique instanceof FeatureSet) {
-             
              FeatureSet fs = (FeatureSet) technique;
              descObj.put("value", fs.getFeatureDescriptionString());
              

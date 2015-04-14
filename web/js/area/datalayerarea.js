@@ -208,6 +208,7 @@ function DatalayerArea(selection) {
                 addTechToCanvas(newTechnique);
                 newTechnique.initializePlumb();
                 this.techniques.addTechnique(newTechnique);
+                individualTechniqueInit(idName);
             }
             
             else if (t.type =="Classifier" && t.trained>0) {

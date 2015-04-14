@@ -148,7 +148,7 @@ function datalayerInit() {
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         else
             datalayerArea.datalayers.multiSelectLayer(e.currentTarget.id)
-        javaInterface.getDataLayerStats();
+        javaInterface.getDataLayerStats(); //.. I'm not happy with this, but for now we tell the back end who's being selected each time we select a layer
     });
 
     //.. if a channel set is dbl-clicked
@@ -168,24 +168,23 @@ function datalayerInit() {
    
 }
 
-function techniqueInit() { 
+function individualTechniqueInit(id) {
     //.. if a technique is click (do essentially same as if channel is
-    $(".technique").dblclick(function(e) {
+    $("#"+id).dblclick(function(e) {
         javaInterface.getTechniqueStats();
     });
 
     //.. if a technique is click (do essentially same as if channel is
-    $(".technique").mousedown(function(e) {
+    $("#"+id).mousedown(function(e) {
         datalayerArea.techniques.selectTechnique(e.currentTarget.id);
         $("#technique").val(e.currentTarget.id);
     });
-    
-     //.. When I release a datalayer, show what techniques I intersect
-    $(".technique").mouseup(function(e) {
+
+    //.. When I release a datalayer, show what techniques I intersect
+    $("#"+id).mouseup(function(e) {
         datalayerArea.highlightIntersectedTechniques();
         datalayerArea.datalayers.unselectAll();
         datalayerArea.boundsCheck();
     });
-    
-    
 }
+

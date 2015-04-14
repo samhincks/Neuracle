@@ -76,10 +76,8 @@ function ChartArea(id, descArea) {
         //.. add a menu for selecting channel 
         $("#channelSelection").remove();
         $(selection).append("<select id = channelSelection> </select>");
-        console.log(JSONobj);
         //.. add each channel as a value to the select menu
         for (var i = 0; i < channels.length; i++) {
-            console.log(channels[i]);
             $('#channelSelection')
                     .append($('<option>', {value: i})
                             .text(channels[i]));
