@@ -25,10 +25,6 @@
        <link type="text/css" rel="stylesheet" href="css/consoleStyle.css" /> 
        <link type="text/css" rel="stylesheet" href="css/dlStyle.css" />
 
-
-
-
- 
     </head>
     
     <body class ="unselectable" id ="doc">   
@@ -44,6 +40,8 @@
                    <s:text name = "stats" id = "stats" style ="visibility:hidden"/> 
                    <s:text name = "frequency" id = "frequency" style ="visibility:hidden"/> 
                    <s:text name = "correlation" id = "correlation" style ="visibility:hidden"/> 
+                   <s:text name = "prediction" id = "prediction" style ="visibility:hidden"/> 
+
                 </s:form>
                 
                <s:form beanclass ="stripes.action.TechniqueActionBean" id = "techniques" class ="unselectable"> 

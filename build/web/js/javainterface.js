@@ -97,11 +97,15 @@ function JavaInterface() {
                 $('#frequency').val(true);
                 $('#correlation').val(false);
             }
-            
             else if (message =="correlation") {
                 $('#correlation').val(true);
                 $('#frequency').val(false);
-
+            } 
+            else if (message =="prediction") {
+                console.log("PREDICTION!");
+                $('#correlation').val(false);
+                $('#frequency').val(false);
+                $('#prediction').val(true);
             }
         }
         else {
@@ -122,16 +126,18 @@ function JavaInterface() {
 
         if (JSONobj.error != null)
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
-        
+        //.. otherwise no error, so we display the graph
+        else if (JSONobj.performance != null) {
+            chartArea.displayPerformance(JSONobj.performance);
+        }
+
+        else if (JSONobj.predictions != null) {
+            chartArea.displayChart(JSONobj.predictions);
+        }
         else { //.. no error
             chartArea.displayChart(JSONobj);
         }
         
-       // console.log(JSONobj);
-        /**TEMP**/
-        
-       // chartArea.displayPredictions(1,2);
-        /**8END***/
     }
     
     /**Given the state of our technique connections as known by plumb, 
@@ -174,6 +180,8 @@ function JavaInterface() {
     }
     
     /*Display descriptions and statistics for a datalayer 
+     * 
+     * THIS FUNCTION WILL PROBABLY SOON BE DEPRECATED
      **/
     this.returnFromDataLayerStats = function(xhr) {
         var JSONobj = eval('('+ xhr +')'); 

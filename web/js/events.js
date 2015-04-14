@@ -141,26 +141,20 @@ function datalayerInit() {
     });
 
     var shiftKey = false; //.. for multi-selection
-    var altKey = false;
-
+    var altKey = false; //.. not currently in sue
     //.. if a channel set is clicked
     $(".datalayer").mousedown(function(e) {
         if (!shiftKey)
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         else
             datalayerArea.datalayers.multiSelectLayer(e.currentTarget.id)
-        javaInterface.getDataLayerStats();
+        //javaInterface.getDataLayerStats();
     });
 
     //.. if a channel set is dbl-clicked
     $(".datalayer").dblclick(function(e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
-        if (altKey)
-            javaInterface.postToDataLayer("frequency");
-        else if (altKey)
-            javaInterface.postToDataLayer("correlation");
-        else
-            javaInterface.postToDataLayer();
+        javaInterface.postToDataLayer();
     });
 
     //.. When I release a datalayer, show what techniques I intersect

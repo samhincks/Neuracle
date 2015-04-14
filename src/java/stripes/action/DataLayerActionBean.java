@@ -106,6 +106,10 @@ public class DataLayerActionBean extends BaseActionBean{
     public boolean getCorrelation() { return correlation;}
     public void setCorrelation(boolean correlation) {this.correlation = correlation;}
     
+    private static boolean prediction =false;
+    public boolean getPrediction() { return prediction;}
+    public void setPrediction(boolean prediction) {this.prediction = prediction;}
+    
     
     private boolean merge = false; //.. hacky, but set this to true if the channels should be merged
     public void setMerge(boolean merge) {this.merge = merge;} //.. set to false when its done
@@ -122,7 +126,7 @@ public class DataLayerActionBean extends BaseActionBean{
             JSONObject jsonObj;
 
             //.. if we want to see data
-            if (!stats && !frequency && !correlation){ 
+            if (!prediction && !frequency && !correlation){ 
                 System.out.println("2d view");
                  jsonObj  = dlGiver.getJSON();
             }
@@ -145,12 +149,23 @@ public class DataLayerActionBean extends BaseActionBean{
                     jsonObj = tDAO.getFreqDomainJSON();
                 }
             } 
+            
+            else if(prediction) {
+                System.out.println("PREDICTION!!!" + " on " + dlGiver.getId());
+                if (!(dlGiver instanceof BiDAO)) {
+                    throw new Exception("Didn't work"); //.. fail silently
+                } else {
+                    Performances p = ctx.getPerformances();
+                    jsonObj = dlGiver.getPerformanceJSON(p);   
+                }
+            }
           
             
             //.. if we want to see a stats representation of performance. 
             else {
-                Performances p = ctx.getPerformances();
-                jsonObj = dlGiver.getPerformanceJSON(p);
+                throw new Exception("Frankly don't know how you got this message");
+                //Performances p = ctx.getPerformances();
+                // jsonObj = dlGiver.getPerformanceJSON(p);
             }
             
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));

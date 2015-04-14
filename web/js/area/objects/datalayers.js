@@ -123,19 +123,19 @@ function DataLayer(jsonDL) {
     this.displaySubGraphs = function() {
         $("#"+this.id).attr("title", this.id + " has " + this.numChannels + " channels");
         globalFreqId = $("#" + this.freqButton); //.. but when it adds a new datalayer it will refer to the latest one!
-        globalFreqId.attr("title", "F"); //.. this line of code doesnt work
+        globalFreqId.attr("title", "P"); //.. this line of code doesnt work
 
         //.. For a channelset, display frequency and correlation views
         if (this.type =="2D") {
             //.. Give it the title attribute, so that the tooltip function applies
             globalFreqId.tooltip({
-                content: "F",
+                content: "P",
                 tooltipClass: "freq",
                 hide: {duration: 1200},
                 position: {my: 'right bottom+15', at: 'left center', collision: 'flipfit'},
                 open: function(event, ui) {
                     $(ui.tooltip).dblclick(function(e) {
-                        javaInterface.postToDataLayer("frequency");
+                        javaInterface.postToDataLayer("prediction");
                     });
                 }
             });

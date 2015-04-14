@@ -213,9 +213,6 @@ public class BiDAO extends DataLayerDAO {
             //.. default variables
             data.put("start", 1);
             
-            for (String s : channelSet.getColumnNames()) {
-            }
-            
             JSONArray values = new JSONArray();
             
             //.. only show some channels if we have absurdly many, and only 
