@@ -21,6 +21,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
         ValidationError s = new SimpleError(error);
         this.getValidationErrors().addGlobalError(s);
     }
+    
     public ThisActionBeanContext() {
         
     }
@@ -36,7 +37,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public static UserDAO userDAO = new UserDAO();
     public static Performances performances = new Performances();
     private static int fileReadSampling =1; //.. set to two and we read every other row from file
-    
+    private boolean tutorial; //.. True if we're running a tutorial. 
     
     public void printState() throws Exception{
         System.out.println("\t Datalayer " + currentDataLayer);
@@ -138,6 +139,14 @@ public class ThisActionBeanContext extends ActionBeanContext{
     
     public void setFileReadSampling(int fr) {
         this.fileReadSampling = fr;
+    }
+
+    public void setTutorial(boolean b) {
+        tutorial = b;
+    }
+    
+    public boolean getTutorial() {
+        return tutorial;
     }
 
    

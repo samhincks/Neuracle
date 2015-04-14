@@ -495,7 +495,7 @@ public class MiscellaneousParser extends Parser{
         return retString;
     }
     
-    private String tutorial() throws Exception {
+    private String tutorial2() throws Exception {
         String retString = "In the topleft corner, you can see that we have created a sample random"
                 + " dataset for you. To upload your own, click chose file, and then select a valid"
                 + " CSV,value. The first row should contain comma-separated names; then subsequent rows"
@@ -522,6 +522,15 @@ public class MiscellaneousParser extends Parser{
         
     }
     
-    
-    
+    private String tutorial() throws Exception { 
+        ctx.setTutorial(true);
+        
+        return  "In the topleft corner, you can see that we have created a sample random"
+                + " dataset for you. To upload your own, click chose file, and then select a valid"
+                + " CSV,value. The first row should contain comma-separated names; then subsequent rows"
+                + " should contain time-ordered values that pertain to that column. The last k>1 columns should"
+                + " be text -- a name for the trial. Subsequent rows with the same name belong to the same trial;; Now, "
+                + " double click on the object to view the raw, unprocessed data. Then type split(condition) in order"
+                + " to group the data by trials that pertain to the same condition ";
+    }
 }

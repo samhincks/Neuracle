@@ -46,8 +46,8 @@ import timeseriestufts.kth.streams.tri.Experiment;
 public class BesteExperiment {
     public static void main(String [] args) {
         try{
-           //  testMusic();
-           testAllMusic(); 
+             testMusic();
+         //  testAllMusic(); 
          //   testMulti();
          //   testRealTime();
           //  testFromDFFile();
@@ -178,12 +178,13 @@ public class BesteExperiment {
         return ts;
     }
     public static void testMusic() throws Exception {
+        System.out.println("bajs");
         TechniqueSet ts = getMusicTS("bajs");
         ArrayList<String> files = getFiles();
          PrintStream out = System.out;
-        System.setOut(new PrintStream(new OutputStream() {  @Override public void write(int arg0) throws IOException { }}));
-        
-        
+       // System.setOut(new PrintStream(new OutputStream() {  @Override public void write(int arg0) throws IOException { }}));
+        System.out.println("G");
+        System.out.println(files.size());
         for(String filename : files ){
             Dataset ds = new Dataset(filename);
             testMusicFile(ds, ts, filename);
@@ -204,7 +205,7 @@ public class BesteExperiment {
         FeatureSet fs = new FeatureSet("fs");
         //fs.addFeaturesFromConsole("slope^mean^absmean^largest^smallest^sax-cmkfd^sax-lcbom", "*", "*");
 
-        fs.addFeaturesFromConsole("mean", "*", "*");
+        fs.addFeaturesFromConsole("slope", "*", "*");
         ts.addTechnique(fs);
         ts.addTechnique(new AttributeSelection(ASType.none, 150));
         ts.addTechnique(new PassFilter(PassFilter.FilterType.LowPass, 1));

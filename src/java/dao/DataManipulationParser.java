@@ -1083,9 +1083,7 @@ public class DataManipulationParser extends Parser{
             retString += "Z scored the data, so that each value is replaced by the difference between "
                     + " it and the channel's corresponding mean, divided by the standard deviation::";
 
-            //.. Split into an experiment - of course this is not perfectly generalizable, so condition name should be parameter
-           
-            
+            //.. Split into an experiment - of course this is not perfectly generalizable, so condition name should be parameter               
             Experiment e = super.getExperiment(filteredSet, "condition");
             ArrayList<String> toKeep = new ArrayList();
             toKeep.add("easy");
@@ -1097,7 +1095,6 @@ public class DataManipulationParser extends Parser{
             int origSize = e.matrixes.size();
             e = e.removeUnfitInstances(instLength, 0.1, false);
             int trimmed = e.trimUnfitInstances(instLength);
-            System.out.println("We trimmed " + trimmed);
             int newSize = e.matrixes.size();
             if (origSize != newSize) {
                 retString += "Experiment changed from " + origSize + " to " + newSize + " instances::";

@@ -30,7 +30,7 @@ public class ConsoleActionBean extends DataLayerActionBean {
     public String getTechnique() { return technique;}
     public void setTechnique(String technique) {this.technique = technique;}
     
-    public InputParser inputParser = new InputParser();
+    public InputParser inputParser = new InputParser(); //.. should be a property of ctx
     
     
     /**Parse the input from the console.
@@ -42,7 +42,6 @@ public class ConsoleActionBean extends DataLayerActionBean {
         //.. Parse the actual input
         JSONObject jsonObj = new JSONObject();
         try {
-            System.out.println("F " + technique);
             //--- SET any additional parameters not parsed in text for certain commands
             if (this.getTechnique()!=null){
                 ctx.setCurrentTechnique(technique);
