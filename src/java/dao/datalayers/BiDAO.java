@@ -217,7 +217,7 @@ public class BiDAO extends DataLayerDAO {
             
             //.. only show some channels if we have absurdly many, and only 
             //... show so many points if we have absurdly many
-            int MAXCHANNELS = 7;
+            int MAXCHANNELS = 16;
             int numChannels = channelSet.getChannelCount();
             int chanInc = 1;
             if (numChannels> MAXCHANNELS)

@@ -92,18 +92,17 @@ public class InputParser {
             //String command = input.split("(")[0];
             String [] parameters = this.getParameters(input);
             jsonObj = this.rapidExecute(input,parameters, ctx, currentDataLayer,techDAO);
+            if (jsonObj ==null){
+                jsonObj = miscParser.execute(input,parameters, currentDataLayer,techDAO); } 
             
-            if (jsonObj ==null)
-                jsonObj = miscParser.execute(input,parameters, currentDataLayer,techDAO);
-            
-            if (jsonObj == null)
-                jsonObj = dataParser.execute(input,parameters,currentDataLayer,techDAO);
+            if (jsonObj == null) {
+                jsonObj = dataParser.execute(input,parameters,currentDataLayer,techDAO); }
                 
-            if (jsonObj ==null)
-                jsonObj = transformationParser.execute(input, parameters,currentDataLayer,techDAO); 
+            if (jsonObj ==null){
+                jsonObj = transformationParser.execute(input, parameters,currentDataLayer,techDAO);  }
             
-            if (jsonObj ==null)
-                jsonObj = mlParser.execute(input, parameters,currentDataLayer,techDAO); 
+            if (jsonObj ==null){
+                jsonObj = mlParser.execute(input, parameters,currentDataLayer,techDAO);}
             
              
              //.. finally if nothing recognized this command, complain at user
@@ -127,7 +126,6 @@ public class InputParser {
             DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception {
         this.currentDataLayer = currentDataLayer;
         Command c = null;
-        System.out.println(ctx);
 
         if (command.startsWith("debug")) {
              c = new Command("debug");

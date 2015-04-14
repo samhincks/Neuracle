@@ -47,13 +47,13 @@ public class TechniquesDAO {
      }
      
       private TechniqueDAO getDefaultAttributeSelection()  {
-          AttributeSelection as = new AttributeSelection(ASType.info, 3);
+          AttributeSelection as = new AttributeSelection(ASType.none, 3);
           TechniqueDAO td = new TechniqueDAO(as);
           return td;
      }
     
      private TechniqueDAO getDefaultML() {
-         WekaClassifier classifier = new WekaClassifier(WekaClassifier.MLType.lmt);
+         WekaClassifier classifier = new WekaClassifier(WekaClassifier.MLType.smo);
          TechniqueDAO td = new TechniqueDAO(classifier);
          return td;
      } 

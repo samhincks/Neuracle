@@ -210,8 +210,6 @@ public abstract class Parser {
         ArrayList<JSONObject> rObj = new ArrayList(); 
        
         for (Command c : commands.values()) {
-            System.out.println(c.id);
-            System.out.println(ctx);
             rObj.add(c.getJSONObject(ctx.getTutorial()));
         }
         return rObj;   

@@ -109,6 +109,12 @@ public class DataManipulationParser extends Parser{
                + " and evaluating it on unseen instances ::";
         command.parameters = "1[OPTIONAL] fodls =  The number of folds for the crossfold validation";
         command.debug = "Unclear if numFolds still works";
+        command.tutorial = "The number above reflects the classification accuracy. Trained on all but one trial (and repeated"
+                + " for every trial, what percent of the time did the machine learning algorithm guess correctly?"
+                + " :: Let's try it again with some new classification techniques:: Type makeml(lmt) to create a logistic modeling tree machine learning"
+                + " algorithm :: Type makeas(info, 100) to create an algorithm that ranks features by information gain, and keeps the top 100"
+                + "  :: Then type makefs(*,*,*) to instruct the system to create every single feature I've created  ::"
+                + "  Finally, overlap these new objects, and type train  ";
         commands.put(command.id, command);
         
         //--ANCHOR 
@@ -122,6 +128,10 @@ public class DataManipulationParser extends Parser{
         command.documentation = " With a 3D dataset (a collection of instances) selected and connected to\"\n" +
 "               + \" at least one of each TechniqueSet (feature set, attribute selection, machine learning, and settings," +
                 " trains a classifier which can be applied to any other arbitrary channelset, that is synchronized or not";
+        command.tutorial = " Now you've trained the machine learning. Once again, you can see how internally accurate the analysis was, "
+                + " but this time, the machine learning algorithm remembers its knowledge, and you can link it to a livestream"
+                + " of data, or apply it to any loaded dataset, where workload levels may be known or unknown. ::"
+                + " Drag the trained machine learning algorithm to one of the other hitherto untouched files, and type classify() ";
         commands.put(command.id, command);
         
         //-- CLASSIFY 
@@ -130,6 +140,7 @@ public class DataManipulationParser extends Parser{
                 + " algorithm, classifies the 2D channelset with an instance length matching that length"
                 + " in the training; if the machine learning algorithm supports confidence, also provides a confidence.";
         command.parameters = "1[OPTIONAL] k = provide a new classification every kth reading";
+        command.tutorial = " "; 
         commands.put(command.id, command);
         
         //-- CLASSIFYLAST
@@ -618,9 +629,19 @@ public class DataManipulationParser extends Parser{
         } 
         
         else if (input.startsWith("makefs(") || input.startsWith("newfeatureset(")) {
-            TechniqueDAO tDAO = new TechniqueDAO(new FeatureSet(id));
-            techniquesDAO.addTechnique(id, tDAO);
-            return ("Successfully made Feature Set " + id);
+             if (parameters.length ==1) {
+                TechniqueDAO tDAO = new TechniqueDAO(new FeatureSet(id));
+                techniquesDAO.addTechnique(id, tDAO);
+                return ("Successfully made Feature Set " + id);
+            }
+            else { //.. featureset with all features
+                id = "ALL";
+                TechniqueDAO tDAO = new TechniqueDAO(new FeatureSet(id));
+                techniquesDAO.addTechnique(id, tDAO);
+                currentTechnique = tDAO.technique;
+                return this.addFeatures(parameters);
+
+            } 
         } 
 
         //. MAKE Attribute Selection - Handle

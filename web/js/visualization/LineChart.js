@@ -38,9 +38,9 @@ function LineChart() {
     /**Palletton colors 
      * ["#0A0D46",  "#004624", "#653800"]
      * **/
-    var color =  d3.scale.ordinal()
+    var color = d3.scale.category10();  /*d3.scale.ordinal()
         .domain([0, 1, 2])
-        .range(["#6699CC", "#BDAEAC"]); //d3.scale.category10(); // to generate a different color for each line
+        .range(["#6699CC", "#BDAEAC"]);*/// to generate a different color for each line
     var max, min; //.. the maximum and minimum values of the dataset
     
     

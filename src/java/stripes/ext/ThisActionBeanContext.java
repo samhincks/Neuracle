@@ -24,10 +24,13 @@ public class ThisActionBeanContext extends ActionBeanContext{
     }
    public InputParser inputParser;
 
-    public ThisActionBeanContext() {
+    public ThisActionBeanContext() { 
+        /***Gets reinitialized all the time which is why we need to make stuff
+       static**/
         inputParser = new InputParser(this);
     }
     public ThisActionBeanContext(boolean test) {
+
         inputParser = new InputParser(this);
 
         this.test = test;
@@ -41,7 +44,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public static UserDAO userDAO = new UserDAO();
     public static Performances performances = new Performances();
     private static int fileReadSampling =1; //.. set to two and we read every other row from file
-    private boolean tutorial = false; //.. True if we're running a tutorial. 
+    private static boolean tutorial = false; //.. True if we're running a tutorial. 
     
     public void printState() throws Exception{
         System.out.println("\t Datalayer " + currentDataLayer);

@@ -56,6 +56,7 @@ function ConsoleArea() {
             //.. now get the server's response'
             javaInterface.postToConsole();
          }
+        
        if (this.messageStack[this.messageStack.length-1] != userText)
            this.messageStack.push(userText);
        //.. remove the text
@@ -79,12 +80,7 @@ function ConsoleArea() {
              javaInterface.postConnectionsToTechnique();
              return false;//.. return false as we still want to go to java
          }
-         
-         //.. if we made fs with wrong name
-         if (userText.startsWith("makefs(")) {
-             if (userText.indexOf(",") != -1) return true;
-             return false;
-         }
+        
          
          if (userText.startsWith("streamsynch(")) {
              if (this.streaming) {

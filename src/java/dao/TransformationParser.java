@@ -74,6 +74,14 @@ public class TransformationParser extends Parser{
                 + " with labels specified comma-separated in parens ";
         command.parameters = "1.->n a list of labels to keep";
         command.action = "reload";
+        command.tutorial = "Now you have an object with fewer trials -- specifically those which you may want to train"
+                + " a machine learning algorithm on. Double click this new object, navigate through the various channels, "
+                + " and click shift, to merge the visualization into an areachart where each area represents the average"
+                + " signal of all the channels, with a height of one standard deviation. You will notice that the data appears"
+                + " quite noisy. Maybe that's a problem, but maybe not. Some of those rapid osillations represent the user's "
+                + " respiration and heart rate -- potential information for our machine learning algorithm. :: Drag this"
+                + " new object so that it intersects the three tiny objects in the topright corner, which represent"
+                + " choice of machine learning, attribute selection, and featureset.::  Then type evaluate()  ";
         commands.put(command.id, command);
         
         //-- SPLIT
@@ -82,6 +90,10 @@ public class TransformationParser extends Parser{
                 + " '3D' dataset organized in terms labels and channels";
         command.parameters = "conditionName = the condition to split by";
         command.action = "reload"; 
+        command.tutorial = "If you double click on this newly derived object, you will see a visualization "
+                + " of all the trials from where it started to where it ended. The baseline trial is "
+                + " much longer than the others, and we aren't interested in the in between resting trials.::  "
+                + " Type keep(easy,hard) to remove all trials except those with the desired conditions";
         commands.put(command.id, command);
         
         //-- PARTITION
@@ -107,7 +119,6 @@ public class TransformationParser extends Parser{
 
     public JSONObject execute(String command, String[] parameters,
             DataLayer currentDataLayer,TechniqueDAO currentTechnique) throws Exception {
-        this.ctx = ctx;
         this.currentDataLayer = currentDataLayer;
         Command c = null;
 

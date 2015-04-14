@@ -54,6 +54,7 @@ public class ConsoleActionBean extends DataLayerActionBean {
                     || consoleInput.startsWith("classify"))){
                 setTechniqueParams();
             }
+            System.out.println("parsing " + consoleInput);
             jsonObj = inputParser.parseInput(consoleInput);
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));
         }

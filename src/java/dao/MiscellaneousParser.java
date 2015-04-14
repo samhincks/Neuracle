@@ -112,7 +112,9 @@ public class MiscellaneousParser extends Parser{
         command = new Command("tutorial");
         command.documentation = "Loads a sample file, and executes basic instructions on it";   
         command.action = "reload";
-        command.tutorial = "fittslukare";
+        command.tutorial = "Double click on one of the files in the topleft corner to view the raw-data. Double clicking"
+                + " the C will show correlations between channels, and the P will show predictions made on this channel"
+                + " if any are available:: With the file selected, type split(condition) to group the data by common conditions";
         commands.put(command.id, command);
         
     }
@@ -526,12 +528,11 @@ public class MiscellaneousParser extends Parser{
     private String tutorial() throws Exception { 
         ctx.setTutorial(true);
         ctx.inputParser.parseInput("load(tutorial)");
-        return  "In the topleft corner, you can see that we have created a sample random"
-                + " dataset for you. To upload your own, click chose file, and then select a valid"
+        return  "In the topleft corner, you can see that we have created sample"
+                + " datasets for you from a real experiment. To upload your own, click chose file, and then select a valid"
                 + " CSV,value. The first row should contain comma-separated names; then subsequent rows"
                 + " should contain time-ordered values that pertain to that column. The last k>1 columns should"
-                + " be text -- a name for the trial. Subsequent rows with the same name belong to the same trial;; Now, "
-                + " double click on the object to view the raw, unprocessed data. Then type split(condition) in order"
-                + " to group the data by trials that pertain to the same condition ";
+                + " be text -- a name for the trial. Subsequent rows with the same name belong to the same trial. Alternatively, "
+                + " if you have placed your folder inside build/web/input/foldername, then load(foldername) will open all files therin ";
     }
 }

@@ -27,7 +27,6 @@ public class Command {
     }
       
     public JSONObject getJSONObject(boolean showTut) throws Exception{
-        System.out.println("showing tuto");
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("content", retMessage);
         jsonObj.put("id", id);
@@ -39,7 +38,6 @@ public class Command {
             jsObj.put("data", data);
             jsonObj.put("action", jsObj);
         }
-        
         if (tutorial != null && showTut)
             jsonObj.put("tutorial", tutorial);
         return jsonObj;
