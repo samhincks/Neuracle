@@ -100,6 +100,30 @@ public abstract class Parser {
     protected ArrayList<ChannelSet> getAllChanSets() throws Exception {
         return ctx.getDataLayers().getAllChannelSets();
     }
+    
+    protected Experiment getExperiment(ChannelSet cs, String labelName) throws Exception {
+        Experiment e = cs.splitByLabel(labelName);
+        e.setId(cs.getId() + labelName);
+        e.setParent(cs.getId()); //.. set parent to what we derived it from
+        e.test = cs.test; //.. part of the tutorial
+
+        //.. EVERYTIME WE ADD AN EXPERIMENT, WE WANT TO UPDATE THE FEATURESET (nice idea thinking this should be in a different thread, but orka do thread safety
+        for (TechniqueDAO td : ctx.getTechniques().getTechniques()) {
+            if (td.technique instanceof FeatureSet) {
+                FeatureSet fs = (FeatureSet) td.technique;
+                e.extractAttributes(fs);
+                try {
+                    fs.addExperimentToInfogain(e.getWekaInstances(false));
+                } catch (Exception ex) {
+                    //.. This is fine. A valiant effort to add more information to the featureset
+                    //.. if the extra datalayer pertained to the same experiment as the first..
+
+                }
+            }
+        }
+        return e;
+    }
+    
     protected String makeExperiment(ChannelSet cs, String labelName) throws Exception {
         Experiment e = cs.splitByLabel(labelName);
         e.setId(cs.getId() + labelName);

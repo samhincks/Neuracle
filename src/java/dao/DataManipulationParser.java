@@ -1084,11 +1084,12 @@ public class DataManipulationParser extends Parser{
                     + " it and the channel's corresponding mean, divided by the standard deviation::";
 
             //.. Split into an experiment - of course this is not perfectly generalizable, so condition name should be parameter
-            Experiment e = filteredSet.splitByLabel("condition");
+           
+            
+            Experiment e = super.getExperiment(filteredSet, "condition");
             ArrayList<String> toKeep = new ArrayList();
             toKeep.add("easy");
             toKeep.add("hard");
-            toKeep.add("rest");
             e = e.removeAllClassesBut(toKeep);
 
             //.. remove instances 10 percent larger than the average
