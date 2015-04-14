@@ -1130,7 +1130,7 @@ public class DataManipulationParser extends Parser{
         ArrayList<ChannelSet> chanSets = getChanSets();
         String retString = "";
         for (ChannelSet cs : chanSets) {
-            ChannelSet filteredSet = cs.calcOxy(true, null, null); //.. we want a copy;
+            ChannelSet filteredSet = cs.calcOxy(false, null, null); //.. we want a copy;
             retString += "Applied CalcOxy, so that 0->7 : Probe A. 8->15" +
 "                + \" ProbeB:: 0->3&8->12 : HbO at even positions, and Hb at odd if zero-indexed; lower values within"
                     + " the probe correspond to closer distances to the source:::";

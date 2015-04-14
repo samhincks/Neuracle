@@ -51,6 +51,7 @@ function Technique(jsonTech) {
     this.type = jsonTech.type;
     this.elementTag = '<div id = "'+this.id+'"class = "technique surfaceElement"> </div>';
 
+    this.trained =false;
     this.initializePlumb = function() {
         if (this.type =="Classifier") {
             $("#"+this.id).addClass("classifierT");    

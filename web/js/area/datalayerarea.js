@@ -30,16 +30,23 @@ function DatalayerArea(selection) {
             var dl = this.datalayers.dls[j];
             dl.intersected = 0;
             var dlRect = dl.getRect();
-            if (dl.type =="3D"){
                 //.. Select each technique, and check for intersection with the datalayer
                 for (var i = 0 ; i < techRects.length; i++) {
                     var intersect = intersectRect(techRects[i], dlRect, 75, 75);
                     if (intersect) {
                         retArray.push({sourceId : this.techniques.techniques[i].id, targetId : dl.id, sourceType :this.techniques.techniques[i].type, datalayer : dl });
-                        dl.intersected++;
+                        if (dl.type =="3D")
+                             dl.intersected++;
+                        else { //.. then wenwant the technique to change color only if its trained
+                            this.techniques.techniques[i].intersected++;
+                        }
                     }
+                    else {
+                        $(techniqueTags[i]).removeClass("classifierTrainedIntersected");
+                    }
+                
                 }
-            }
+           
        }
        return retArray;
     }
@@ -103,9 +110,7 @@ function DatalayerArea(selection) {
                 i--;
             }
         }
-        if (this.datalayers.dls.length ==0) 
            
-        console.log("now we have " + this.datalayers.dls.length);
     }
     
     /**Datalayers is an array of JSONObjs streamed from Java. 
@@ -175,6 +180,13 @@ function DatalayerArea(selection) {
             //source.css({top: (target.position().bottom+source.height()*2), left: (target.position().left +leftOffset), position:'absolute'});
 
             $("#"+intersected[i].sourceId).addClass("techniqueSelected");
+           
+            var tech = this.techniques.getTechniqueById(intersected[i].sourceId);
+            
+            if (tech.trained > 0) 
+                $("#" + intersected[i].sourceId).addClass("classifierTrainedIntersected");
+            
+            //.. when am I going to remove this class? 
 
         }
     }
@@ -199,10 +211,8 @@ function DatalayerArea(selection) {
             }
             
             else if (t.type =="Classifier" && t.trained>0) {
-                var curWidth = $("#"+idName).width();
-                var curHeight = $("#" + idName).height();
-                $("#"+idName).width(curWidth*1.3);
-                $("#" +idName).height(curHeight * 1.3);
+                this.techniques.getTechniqueById(idName).trained =true;
+                $("#"+idName).addClass("classifierTrained");
             }
 
         }
