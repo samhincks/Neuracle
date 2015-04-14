@@ -167,8 +167,9 @@ public class DataManipulationParser extends Parser{
             DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception {
         this.ctx = ctx;
         this.currentDataLayer = currentDataLayer;
-        if(this.techDAO != null)
+        if(techDAO != null)
             this.currentTechnique = techDAO.technique;
+        
         Command c = null;
         
         if (command.startsWith("gethrv")) {

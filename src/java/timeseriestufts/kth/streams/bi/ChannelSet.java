@@ -537,7 +537,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
          *  The snc[0] is ProbeA, 690, closest, 
          *  and it corresponds to etc[0] which is ProbeA 690 Closest
          *  At snc[4] it flips, and its Probe B
-         **/  
+         **/    
         
         if (sixNinetyCols.size() != eightThirtyCols.size()) throw new Exception("CALCOXY: There must be as many of both columns");
         

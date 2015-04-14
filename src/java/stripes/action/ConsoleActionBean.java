@@ -42,6 +42,7 @@ public class ConsoleActionBean extends DataLayerActionBean {
         //.. Parse the actual input
         JSONObject jsonObj = new JSONObject();
         try {
+            System.out.println("F " + technique);
             //--- SET any additional parameters not parsed in text for certain commands
             if (this.getTechnique()!=null){
                 ctx.setCurrentTechnique(technique);

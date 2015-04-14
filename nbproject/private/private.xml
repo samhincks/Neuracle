@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="19">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="20">
         <file>
             <url>web/js/area/chartarea.js</url>
             <bookmark id="16">
@@ -11,14 +11,6 @@
             <bookmark id="17">
                 <name/>
                 <line>0</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/js/FreqBarChart.js</url>
-            <bookmark id="4">
-                <name/>
-                <line>281</line>
                 <key/>
             </bookmark>
         </file>
@@ -37,6 +29,35 @@
             <bookmark id="1">
                 <name/>
                 <line>0</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/area/datalayerarea.js</url>
+            <bookmark id="20">
+                <name/>
+                <line>185</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</url>
+            <bookmark id="19">
+                <name/>
+                <line>507</line>
+                <key/>
+            </bookmark>
+            <bookmark id="18">
+                <name/>
+                <line>778</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/FreqBarChart.js</url>
+            <bookmark id="4">
+                <name/>
+                <line>281</line>
                 <key/>
             </bookmark>
         </file>
@@ -72,19 +93,6 @@
             </bookmark>
         </file>
         <file>
-            <url>src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</url>
-            <bookmark id="19">
-                <name/>
-                <line>507</line>
-                <key/>
-            </bookmark>
-            <bookmark id="18">
-                <name/>
-                <line>778</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>web/js/streamchart.js</url>
             <bookmark id="11">
                 <name/>
@@ -95,11 +103,13 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/TransformationParser.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/filereader/Markers.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/MiscellaneousParser.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/kth/streams/uni/Channel.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/filereader/experiments/Honda2015.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/area/datalayerarea.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/area/objects/techniques.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/events.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/index.jsp</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/javainterface.js</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/InputParser.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/stripes/action/ConsoleActionBean.java</file>
         </group>
     </open-files>
 </project-private>

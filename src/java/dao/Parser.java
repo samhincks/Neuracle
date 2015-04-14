@@ -35,7 +35,6 @@ public abstract class Parser {
     public Hashtable<String, Command> commands;
     public ThisActionBeanContext ctx;
     public DataLayer currentDataLayer;
-    public TechniqueDAO techDAO;
     
     public Parser () {
         
