@@ -127,6 +127,19 @@ public class DataLayersDAO {
         return ret;
     }
     
+    /**
+     * Get all channelsets *
+     */
+    public ArrayList<Experiment> getAllExperiments() {
+        ArrayList<Experiment> ret = new ArrayList();
+        for (Map.Entry<String, DataLayerDAO> e : streams.entrySet()) {
+            if (e.getValue().dataLayer instanceof Experiment) {
+                ret.add((Experiment) e.getValue().dataLayer);
+            }
+        }
+        return ret;
+    }
+    
     
     public void removeStream(String key) throws Exception{
         DataLayerDAO dl = streams.get(key);

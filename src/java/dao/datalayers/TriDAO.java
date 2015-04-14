@@ -122,7 +122,7 @@ public class TriDAO extends DataLayerDAO {
         }
         
         else if (dataLayer instanceof ChannelSetSet) {
-            jsonObj.put("error", "Cannot yet visualize multiple channelsets");
+            //jsonObj.put("error", "Cannot yet visualize multiple channelsets");
         }
         return jsonObj;
      }

@@ -131,7 +131,7 @@ public class DataLayerActionBean extends BaseActionBean{
                 jsonObj  = dlGiver.getJSON();
             }
             else if (correlation) {
-                 System.out.println("Corr view");
+                System.out.println("Corr view");
                 if (!(dlGiver instanceof BiDAO)) {
                     throw new Exception(); //.. fail silently
                 } else {
@@ -151,9 +151,8 @@ public class DataLayerActionBean extends BaseActionBean{
             } 
             
             else if(prediction) {
-                System.out.println("PREDICTION!!!" + " on " + dlGiver.getId());
                 if (!(dlGiver instanceof BiDAO)) {
-                    throw new Exception("Didn't work"); //.. fail silently
+                    throw new Exception(); //.. fail silently
                 } else {
                     Performances p = ctx.getPerformances();
                     jsonObj = dlGiver.getPerformanceJSON(p);   

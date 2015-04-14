@@ -109,11 +109,11 @@ public class DataManipulationParser extends Parser{
                + " and evaluating it on unseen instances ::";
         command.parameters = "1[OPTIONAL] fodls =  The number of folds for the crossfold validation";
         command.debug = "Unclear if numFolds still works";
-        command.tutorial = "The number above reflects the classification accuracy. Trained on all but one trial (and repeated"
+        command.tutorial = "The number above reflects the classification accuracy. Trained on all but one trial and repeated"
                 + " for every trial, what percent of the time did the machine learning algorithm guess correctly?"
                 + " :: Let's try it again with some new classification techniques:: Type makeml(lmt) to create a logistic modeling tree machine learning"
-                + " algorithm :: Type makeas(info, 100) to create an algorithm that ranks features by information gain, and keeps the top 100"
-                + "  :: Then type makefs(*,*,*) to instruct the system to create every single feature I've created  ::"
+                + " algorithm (the bird) :: Type makeas(info, 100) to create an algorithm that ranks features by information gain, and keeps the top 100 (the filter)"
+                + "  :: Then type makefs(*,*,*) to instruct the system to create every single feature I've created (the compass) ::"
                 + "  Finally, overlap these new objects, and type train  ";
         commands.put(command.id, command);
         
@@ -128,10 +128,10 @@ public class DataManipulationParser extends Parser{
         command.documentation = " With a 3D dataset (a collection of instances) selected and connected to\"\n" +
 "               + \" at least one of each TechniqueSet (feature set, attribute selection, machine learning, and settings," +
                 " trains a classifier which can be applied to any other arbitrary channelset, that is synchronized or not";
-        command.tutorial = " Now you've trained the machine learning. Once again, you can see how internally accurate the analysis was, "
+        command.tutorial = " Now you've trained the machine learning algorithm. Once again, you can see how internally accurate the analysis was, "
                 + " but this time, the machine learning algorithm remembers its knowledge, and you can link it to a livestream"
                 + " of data, or apply it to any loaded dataset, where workload levels may be known or unknown. ::"
-                + " Drag the trained machine learning algorithm to one of the other hitherto untouched files, and type classify() ";
+                + " Drag the trained machine learning algorithm to the original ungrouped file and type classify() ";
         commands.put(command.id, command);
         
         //-- CLASSIFY 
@@ -140,17 +140,25 @@ public class DataManipulationParser extends Parser{
                 + " algorithm, classifies the 2D channelset with an instance length matching that length"
                 + " in the training; if the machine learning algorithm supports confidence, also provides a confidence.";
         command.parameters = "1[OPTIONAL] k = provide a new classification every kth reading";
-        command.tutorial = " "; 
+        command.tutorial = " The machine learning algorithm made a succession of classifications on the channelset. :: "
+                + "Hovering over this channel set, double click the p by it to see the a visualization of predictions made. "
+                + " In the chart, the length of the rectangles reflect how many readings back the classifier considered"
+                + " data for when it made its classification. If you had added a parameter to classify, eg classify(100), then "
+                + " the classifier would have provided a classification every 100th reading. By default, it never made classifications"
+                + " overlap. :: Since we know the conditions of the data we are classifying, the visualization has colored green the "
+                + " correct predictions and red the wrong ones. Since there are only two classes, the height on the y axis "
+                + " reflects the classifier's confidence. ::"
+                + "  Now, lets clear our surface. Pressing shift, click on the three datasets which we have not used so far. Then type hold ";
         commands.put(command.id, command);
-        
+              
         //-- CLASSIFYLAST
         command = new Command("classifylast");
         command.documentation = " With a 2D channelset selected and intersecting a trained machine learning "
                 + " algorithm, classifies the last points of the channelset equal to the length of the training trial ";
         commands.put(command.id, command);
         
-        //-- fnirs 
-        command = new Command("fnirs");
+        //-- imagent fnirs 
+        command = new Command("music");
         command.documentation = " Applies a range of data-manipulations to the selected datasets, "
                 + " ultimate putting it into the best visualizable form";
         commands.put(command.id, command);
@@ -161,9 +169,19 @@ public class DataManipulationParser extends Parser{
                 + " ultimate putting it into the best visualizable form";
         commands.put(command.id, command);
         
-        command = new Command("glassroutes");
+        command = new Command("imagent");
         command.documentation = " Applies a range of data-manipulations to the selected datasets, "
-                + " ultimate putting it into the best visualizable form, customizedd for the glassroutes experimetn";
+                + " ultimate putting it into the best visualizable form, customizedd for the glassroutes experiment";
+        command.tutorial = "This provides a good opportunity to consider the scientific meaning in the dataset. Remember that "
+                + " our condition-grouped object now refers to the data from more than just one participant. ::"
+                + " Double click the instance-object and see if you agree with the following statements. "
+                + "(a) Probe A appears better than Probe B:: (b) The oxy and deoxy channels tend to be negatively correlated ::"
+                + " Then, if you like, double click the C on the parent object, wait 30 seconds for it to compute, and consider"
+                + " the relationship between channels in this new layer. ;;"
+                + " As a last step in the tutorial,  see if you can confirm what we just saw in  "
+                + " these visualizations by making a new featureset. :: Type makefs(slope, *,*), then double click on this newly created featurset object ::"
+                + " The attributes in the console have been ranked according to the information gain, the degree to which"
+                + " their values can meaningfully separate the conditions:: Does probe A appear to have better data than probe B? ";
         commands.put(command.id, command);
         
         //-- granger 
@@ -187,7 +205,7 @@ public class DataManipulationParser extends Parser{
             c = commands.get("gethrv");
             c.retMessage = getHRV(parameters);
         }
-        
+          
         else if (command.startsWith("getpulse")) {
             c = commands.get("getpulse");
             c.retMessage = getPulse(parameters);
@@ -224,7 +242,7 @@ public class DataManipulationParser extends Parser{
             c = commands.get("make");
             c.retMessage = make(command, parameters,ctx.getTechniques());
             c.action = "reloadT";
-        } 
+        }   
         else if (command.startsWith("evaluate")) {
             c = commands.get("evaluate");
             c.retMessage = evaluate(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
@@ -250,15 +268,15 @@ public class DataManipulationParser extends Parser{
             c.retMessage = classify(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
         }
         
-        else if (command.startsWith("fnirs")) {
-            c = commands.get("fnirs");
-            c.retMessage = fnirs(parameters);
+        else if (command.startsWith("music")) {
+            c = commands.get("music");
+            c.retMessage = music(parameters);
             c.action = "reload";
         }
         
-        else if (command.startsWith("glassroutes")) {
-            c = commands.get("glassroutes");
-            c.retMessage = glassroutes(parameters);
+        else if (command.startsWith("imagent")) {
+            c = commands.get("imagent");
+            c.retMessage = imagent(parameters);
             c.action = "reload";
         }
         
@@ -635,11 +653,26 @@ public class DataManipulationParser extends Parser{
                 return ("Successfully made Feature Set " + id);
             }
             else { //.. featureset with all features
-                id = "ALL";
-                TechniqueDAO tDAO = new TechniqueDAO(new FeatureSet(id));
+                id = getFSId(parameters[0]) +"-"+getFSId(parameters[1]) +"-"+getFSId(parameters[2]);
+                FeatureSet fs = new FeatureSet(id);
+                TechniqueDAO tDAO = new TechniqueDAO(fs);
                 techniquesDAO.addTechnique(id, tDAO);
                 currentTechnique = tDAO.technique;
-                return this.addFeatures(parameters);
+                String ret = this.addFeatures(parameters);
+                  
+                //.. Evaluate info gain on fresly created featureset
+                ArrayList<Experiment> exp = super.getAllExperiments();  
+                for (Experiment e : exp){
+                    e.extractAttributes(fs);
+                    try {
+                        fs.addExperimentToInfogain(e.getWekaInstances(false));
+                    } catch (Exception ex) {
+                       //.. This is fine. A valiant effort to add more information to the featureset
+                        //.. if the extra datalayer pertained to the same experiment as the first..
+                    }
+                }
+
+                return ret;
 
             } 
         } 
@@ -676,7 +709,12 @@ public class DataManipulationParser extends Parser{
         }
 
         throw new Exception("Unable to parse input " + input);
-
+    }
+    
+    /** Since star gives an error**/
+    private String getFSId(String input) throws Exception {
+        if (input == null) throw new Exception("Three parameters required");
+        return (input.equals("*") ? "all" : input);
     }
     /**
      * Parse: makeML("jrip), etc
@@ -1068,7 +1106,7 @@ public class DataManipulationParser extends Parser{
          Prediction p = classifier.getLastPrediction(cs );
          return p.toString();
     }
-    public String glassroutes(String[] parameters) throws Exception {
+    public String imagent(String[] parameters) throws Exception {
         float lowpass = 0;
         float highpass = 0;
         if (parameters.length > 1) {
@@ -1081,9 +1119,7 @@ public class DataManipulationParser extends Parser{
         String retString = "";
         for (ChannelSet cs : chanSets) {
             ChannelSet filteredSet = cs.calcOxy(false, null, null); //.. we want a copy;
-            retString += "Applied CalcOxy, so that 0->7 : Probe A. 8->15"
-                    + "                + \" ProbeB:: 0->3&8->11 : HbO.:: 4->7, 12->15: Hb lower values within"
-                    + " the probe correspond to closer distances to the source:::";
+            retString += "Applied CalcOxy ";
             //if (lowpass == 0) {
                 filteredSet = filteredSet.movingAverage(10, false);
                 retString += "Applied MovingAverage, 10 readings back::";
@@ -1137,7 +1173,7 @@ public class DataManipulationParser extends Parser{
         }
         return retString;
     }
-    public String fnirs(String [] parameters) throws Exception{
+    public String music(String [] parameters) throws Exception{
         float lowpass =0;
         float highpass=0;
         if (parameters.length > 1) {

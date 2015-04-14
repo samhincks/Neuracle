@@ -112,9 +112,8 @@ public class MiscellaneousParser extends Parser{
         command = new Command("tutorial");
         command.documentation = "Loads a sample file, and executes basic instructions on it";   
         command.action = "reload";
-        command.tutorial = "Double click on one of the files in the topleft corner to view the raw-data. Double clicking"
-                + " the C will show correlations between channels, and the P will show predictions made on this channel"
-                + " if any are available:: With the file selected, type split(condition) to group the data by common conditions";
+        command.tutorial = "Double click on one of the files in the topleft corner to view the raw-data."
+                + "Then, with the file selected, type split(condition) to group the data by common conditions";
         commands.put(command.id, command);
         
     }
@@ -153,6 +152,9 @@ public class MiscellaneousParser extends Parser{
             c = commands.get("hold");
             c.action = "reload";
             c.retMessage = hold();// "Removing " + currentDataLayer.id ; 
+            c.tutorial = " You've cleared your data analysis surface. "
+                    + " With the three datasets selected the three datasets, type append to "
+                    + " merge them all into one selection";
             currentDataLayer = null;
             
         }

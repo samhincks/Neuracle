@@ -76,7 +76,7 @@ public class TransformationParser extends Parser{
         command.action = "reload";
         command.tutorial = "Now you have an object with fewer trials -- specifically those which you may want to train"
                 + " a machine learning algorithm on. Double click this new object, navigate through the various channels, "
-                + " and click shift, to merge the visualization into an areachart where each area represents the average"
+                + " and click shift to merge the visualization into an areachart where each area represents the average"
                 + " signal of all the channels, with a height of one standard deviation. You will notice that the data appears"
                 + " quite noisy. Maybe that's a problem, but maybe not. Some of those rapid osillations represent the user's "
                 + " respiration and heart rate -- potential information for our machine learning algorithm. :: Drag this"
@@ -92,7 +92,7 @@ public class TransformationParser extends Parser{
         command.action = "reload"; 
         command.tutorial = "If you double click on this newly derived object, you will see a visualization "
                 + " of all the trials from where it started to where it ended. The baseline trial is "
-                + " much longer than the others, and we aren't interested in the in between resting trials.::  "
+                + " much longer than the others, and we aren't interested in the separating resting trials.::  "
                 + " Type keep(easy,hard) to remove all trials except those with the desired conditions";
         commands.put(command.id, command);
         
@@ -107,6 +107,14 @@ public class TransformationParser extends Parser{
         // -- MERGE
         command = new Command("append");
         command.documentation = "With multiple channels selected, append into a single datalayer";
+        command.tutorial = "Now it's as though all the data were read from one file. Notice that a larger"
+                + " object means it has a larger size. When your surface appears to cluttered, it makes sense to "
+                + " delete objects using the delete, clear, and hold commands to free up memory (The heap is finite!)::"
+                + " Write im into the console, but dont hit enter just yet! Instead hit the tab-button to autocomplete the command"
+                + " The tab button will print every command that matches the current input. If you hit tab without any input, "
+                + " then it will give documentation for every command that exists. :: The command imagent executes a prepared"
+                + " set of data manipulation procedures to the data, custom built for detecting cognitive workload"
+                + " using the Imagent fNIRS. :: Select the largest object, then type imagent in the console. ";
         command.action = "reload";
         commands.put(command.id, command);
         

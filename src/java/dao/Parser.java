@@ -101,6 +101,12 @@ public abstract class Parser {
         return ctx.getDataLayers().getAllChannelSets();
     }
     
+     /**Get all channelsets irrespective of whether or not they're selected
+     */
+    protected ArrayList<Experiment> getAllExperiments() throws Exception {
+        return ctx.getDataLayers().getAllExperiments();
+    }
+    
     protected Experiment getExperiment(ChannelSet cs, String labelName) throws Exception {
         Experiment e = cs.splitByLabel(labelName);
         e.setId(cs.getId() + labelName);
