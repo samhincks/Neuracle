@@ -144,6 +144,7 @@ function datalayerInit() {
     var altKey = false; //.. not currently in sue
     //.. if a channel set is clicked
     $(".datalayer").mousedown(function(e) {
+        /// $(".ui-tooltip").tooltip('close'); // doesnt work 
         if (!shiftKey)
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         else

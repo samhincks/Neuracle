@@ -69,6 +69,9 @@ public class MiscellaneousParser extends Parser{
         // -- HOLD
         command = new Command("hold");
         command.documentation = "Removes all but the selected datalayer";
+        command.tutorial = " You've cleared your data analysis surface. "
+                + " With the three datasets selected, type append to "
+                + " merge them all into one selection";
         commands.put(command.id, command);
         
          // -- LOAD
@@ -152,9 +155,7 @@ public class MiscellaneousParser extends Parser{
             c = commands.get("hold");
             c.action = "reload";
             c.retMessage = hold();// "Removing " + currentDataLayer.id ; 
-            c.tutorial = " You've cleared your data analysis surface. "
-                    + " With the three datasets selected the three datasets, type append to "
-                    + " merge them all into one selection";
+           
             currentDataLayer = null;
             
         }

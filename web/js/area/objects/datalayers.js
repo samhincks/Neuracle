@@ -66,7 +66,6 @@ function DataLayers() {
                     $("#" + layerId).addClass("experimentSelected");
              }
         }
-        
         $("#giver").val(layerId);
         
         //.. clear selected array and add this single element
@@ -127,7 +126,7 @@ function DataLayer(jsonDL) {
         var globalNameId = $("#" + this.nameButton);
         globalNameId.attr("title", "N"); 
         var type = this.type;
-
+        var titleId = this.id.split("-")[0];
         //.. For a channelset, display frequency and correlation views
             //.. Give it the title attribute, so that the tooltip function applies
             globalFreqId.tooltip({
@@ -161,7 +160,7 @@ function DataLayer(jsonDL) {
             });
             
             $("#" + this.id).tooltip({
-                content: this.id,
+                content: titleId,
                 hide: {duration: 1200},
                 open: function(event, ui) {
                     $(ui.tooltip).dblclick(function(e) {

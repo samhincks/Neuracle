@@ -1,6 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="20">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="22">
+        <file>
+            <url>src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</url>
+            <bookmark id="19">
+                <name/>
+                <line>507</line>
+                <key/>
+            </bookmark>
+            <bookmark id="18">
+                <name/>
+                <line>778</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/area/datalayerarea.js</url>
+            <bookmark id="20">
+                <name/>
+                <line>185</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/area/objects/datalayers.js</url>
+            <bookmark id="22">
+                <name/>
+                <line>132</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/movingLinegraph.js</url>
+            <bookmark id="10">
+                <name/>
+                <line>61</line>
+                <key/>
+            </bookmark>
+            <bookmark id="13">
+                <name/>
+                <line>502</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/streamchart.js</url>
+            <bookmark id="11">
+                <name/>
+                <line>18</line>
+                <key/>
+            </bookmark>
+        </file>
         <file>
             <url>web/js/area/chartarea.js</url>
             <bookmark id="16">
@@ -33,27 +83,6 @@
             </bookmark>
         </file>
         <file>
-            <url>web/js/area/datalayerarea.js</url>
-            <bookmark id="20">
-                <name/>
-                <line>185</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</url>
-            <bookmark id="19">
-                <name/>
-                <line>507</line>
-                <key/>
-            </bookmark>
-            <bookmark id="18">
-                <name/>
-                <line>778</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>web/js/FreqBarChart.js</url>
             <bookmark id="4">
                 <name/>
@@ -79,36 +108,12 @@
                 <key/>
             </bookmark>
         </file>
-        <file>
-            <url>web/js/movingLinegraph.js</url>
-            <bookmark id="10">
-                <name/>
-                <line>61</line>
-                <key/>
-            </bookmark>
-            <bookmark id="13">
-                <name/>
-                <line>502</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/js/streamchart.js</url>
-            <bookmark id="11">
-                <name/>
-                <line>18</line>
-                <key/>
-            </bookmark>
-        </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/area/datalayerarea.js</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/area/objects/datalayers.js</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/events.js</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/stripes/action/DataLayerActionBean.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/javainterface.js</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/datalayers/DataLayerDAO.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/evaluatable/performances/Performances.java</file>
         </group>
     </open-files>
 </project-private>
