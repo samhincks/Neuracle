@@ -164,11 +164,9 @@ function datalayerInit() {
         datalayerArea.boundsCheck();
     });
     
-   
-   
 }
 
-function individualTechniqueInit(id) {
+function individualTechniqueInit(id, type) {
     //.. if a technique is click (do essentially same as if channel is
     $("#"+id).dblclick(function(e) {
         javaInterface.getTechniqueStats();
@@ -186,5 +184,8 @@ function individualTechniqueInit(id) {
         datalayerArea.datalayers.unselectAll();
         datalayerArea.boundsCheck();
     });
+    
+    $("#"+id).attr("title", type + ": " + id);
+    $("#"+id).tooltip();
 }
 

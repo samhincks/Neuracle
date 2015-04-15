@@ -112,8 +112,8 @@ function DataLayer(jsonDL) {
     this.numPoints = jsonDL.numPoints;
     this.type = jsonDL.type;
     this.freqButton = "freq"+this.id; //.. For some reason it wont respond if I give it a unique id
-    var globalFreqId = $("#"+this.freqButton);
-    this.elementTag = '<div id = "'+this.id+'" class = "datalayer surfaceElement"> <div title = "F" id = "'+this.freqButton+'"> </div></div>';
+    this.nameButton = "name" + this.freqButton; 
+    this.elementTag = '<div id = "'+this.id+'" class = "datalayer surfaceElement"> <div title = "F" id = "'+this.freqButton+'"> <div title = "N" id = "' + this.nameButton+ '"</div></div></div>';
     this.sqScale = d3.scale.linear().domain([0, 625000]).range([45, 90]);
     this.intersected = 0; //.. increase if anything is intersected
 
@@ -122,11 +122,12 @@ function DataLayer(jsonDL) {
      * **/
     this.displaySubGraphs = function() {
         $("#"+this.id).attr("title", this.id + " has " + this.numChannels + " channels");
-        globalFreqId = $("#" + this.freqButton); //.. but when it adds a new datalayer it will refer to the latest one!
+        var globalFreqId = $("#" + this.freqButton); //.. but when it adds a new datalayer it will refer to the latest one!
         globalFreqId.attr("title", "P"); //.. this line of code doesnt work
+        var globalNameId = $("#" + this.nameButton);
+        globalNameId.attr("title", "N"); 
 
         //.. For a channelset, display frequency and correlation views
-        if (this.type =="2D") {
             //.. Give it the title attribute, so that the tooltip function applies
             globalFreqId.tooltip({
                 content: "P",
@@ -137,7 +138,24 @@ function DataLayer(jsonDL) {
                     $(ui.tooltip).dblclick(function(e) {
                         javaInterface.postToDataLayer("prediction");
                     });
+                    var nId = $("#name" + this.id);
+                    nId.tooltip('open'); //.. doesnt trigger conventional open
+                },
+                close: function(event, ui) {
+                    globalNameId.tooltip('close'); //.. doesnt trigger conventional open
                 }
+            });
+            
+            globalNameId.tooltip({
+                content: this.id,
+                hide: {duration: 1200},
+                open: function(event, ui) {
+                    $(ui.tooltip).dblclick(function(e) {
+                        javaInterface.postToDataLayer();
+                    });
+                },
+                position: {my: 'left bottom+90', at: 'center center', collision: 'flipfit'}
+               
             });
             
             $("#" + this.id).tooltip({
@@ -156,7 +174,7 @@ function DataLayer(jsonDL) {
                     globalFreqId.tooltip('close'); //.. doesnt trigger conventional open
                 }
             });            
-        }
+        
     }
     
     
