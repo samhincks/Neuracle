@@ -126,6 +126,7 @@ function DataLayer(jsonDL) {
         globalFreqId.attr("title", "P"); //.. this line of code doesnt work
         var globalNameId = $("#" + this.nameButton);
         globalNameId.attr("title", "N"); 
+        var type = this.type;
 
         //.. For a channelset, display frequency and correlation views
             //.. Give it the title attribute, so that the tooltip function applies
@@ -147,32 +148,35 @@ function DataLayer(jsonDL) {
             });
             
             globalNameId.tooltip({
+                content: "C",
+               tooltipClass: "corr",
+                hide: {duration: 1200},
+                position: {my: 'left bottom', at: 'left center', collision: 'flipfit'},
+                open: function(event, ui) {
+                    $(ui.tooltip).dblclick(function(e) {
+                        javaInterface.postToDataLayer("correlation");
+                    });
+                },
+                
+            });
+            
+            $("#" + this.id).tooltip({
                 content: this.id,
                 hide: {duration: 1200},
                 open: function(event, ui) {
                     $(ui.tooltip).dblclick(function(e) {
                         javaInterface.postToDataLayer();
                     });
-                },
-                position: {my: 'left bottom+90', at: 'center center', collision: 'flipfit'}
-               
-            });
-            
-            $("#" + this.id).tooltip({
-                content: "C",
-                tooltipClass: "corr",
-                hide: {duration: 1200},
-                position: {my: 'left bottom-15', at: 'left center', collision: 'flipfit'},
-                open: function(event, ui) {
-                    $(ui.tooltip).dblclick(function(e) {
-                        javaInterface.postToDataLayer("correlation");
-                    });
-                    var fId = $("#freq"+this.id);
-                    fId.tooltip('open'); //.. doesnt trigger conventional open
+                    if (type =="2D"){ //.. set of chain of showing corr view if its a 2D
+                        var fId = $("#freq"+this.id);
+                        fId.tooltip('open'); //.. doesnt trigger conventional open
+                    }
                 },
                 close: function(event, ui) {
                     globalFreqId.tooltip('close'); //.. doesnt trigger conventional open
-                }
+                },
+                position: {my: 'left bottom+70', at: 'center center', collision: 'flipfit'}
+                
             });            
         
     }
