@@ -5,12 +5,10 @@
  ***/
 
 var consoleArea = new ConsoleArea();
-var descriptionArea = new DescriptionArea("#farBottomRight");
-var chartArea = new ChartArea("#topRight", descriptionArea);
+var chartArea = new ChartArea("#topRight");
 var javaInterface = new JavaInterface();
 var plumb = new Plumb();
 var datalayerArea = new DatalayerArea("#content");
-var plumbTechniques = new PlumbTechniques();
 var address = "http://localhost:8080/SensorMining/";/*"http://sensormining.herokuapp.com/";*/ //.. the address of the back-end
 
 /* When document is loaded, do init, ie set listeners etc. 

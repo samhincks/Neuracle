@@ -1,7 +1,3 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 
 /**Collection of available techniques*/
@@ -45,7 +41,9 @@ function Techniques() {
 }
 
 
-//.. Five Types: Settings, Filters, Selection, Features, ML
+/* Three active types: featureset, classifier, and attribute selection 
+ * These govern the machine learnign choices in the backend
+ */
 function Technique(jsonTech) {
     this.id = jsonTech.id;
     this.type = jsonTech.type;
@@ -55,24 +53,19 @@ function Technique(jsonTech) {
     this.initializePlumb = function() {
         if (this.type =="Classifier") {
             $("#"+this.id).addClass("classifierT");    
-           // plumbTechniques.setClassifierEP(this.id);
         }
         
         else if(this.type =="FeatureSet") {
             $("#"+this.id).addClass("featureSetT");        
-            //plumbTechniques.setFeatureSetEP(this.id);
         }
         
         else if(this.type =="Settings") {
             $(this.elementTag).addClass("settingsT");        
-           // plumbTechniques.setSettingsEP(this.id);
         }
         
         else if(this.type =="AttributeSelection") {    
             $("#"+this.id).addClass("attributeSelectionT");    
-            //plumbTechniques.setAttributeSelectionEP(this.id);
         }
-        
         jsPlumb.draggable($("#"+this.id));
     }
 

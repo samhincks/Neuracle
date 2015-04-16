@@ -122,11 +122,9 @@
 
 
         <!--AREAS-->
-        <script type="text/javascript" src="js/area/descriptionarea.js"></script>
         <script type="text/javascript" src="js/area/chartarea.js"></script>
         <script type="text/javascript" src="js/area/datalayerarea.js"></script> 
         <script type="text/javascript" src="js/area/objects/plumb.js"></script> 
-        <script type="text/javascript" src="js/area/objects/plumbtechniques.js"></script> 
         <script type="text/javascript" src="js/area/objects/datalayers.js"></script> 
         <script type="text/javascript" src="js/area/objects/techniques.js"></script> 
         <script type="text/javascript" src="js/area/consolearea.js"></script> 

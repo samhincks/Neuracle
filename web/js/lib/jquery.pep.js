@@ -11,7 +11,6 @@
  */
 
 ;(function ( $, window, document, undefined ) {
-	console.log("loaded"); 
     // Create the defaults once
     var pluginName = 'pep',
         defaults = {

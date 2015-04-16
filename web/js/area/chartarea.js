@@ -1,25 +1,20 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/* Javascript logic for the area denoted as #topRight. This inititiates D3 charts
+ * in the visualization folder, in response to JSONObjects from the server*/
 function ChartArea(id, descArea) {
    var selection = id;
-   //var chart = new Chart();
-   var descriptionArea = descArea;
    var streamChart; 
    this.displayedDL=""; //.. set to currently displayed datalayer
    this.timeToTransition = 200;
    this.transitionLength = 300;
    this.singleTransition; //.. total transition / each line
-   var added =0;
    var lastGraph = "none";
    this.lastJSON; //.. we might wnat to redraw the graph, for instance if we resize the graph
    var border =20;
    var sc = new StreamChart();
    
    /*Given a jsonObj packaged as a 2D or 3D datalayer display it in the graph
-    *Experiment JSONObj =  A collection of instances = a collection of rows =
-    *       an object with a collection of channels, time, and condition. channels indexed by index.
+    *Most JSONObj's returned are straightforward. Experiment is tricky: it's   A collection of instances =
+    *    a collection of rows = an object with a collection of channels, time, and condition. channels indexed by index.
     */
    this.displayChart = function (JSONobj) {
         this.lastJSON = JSONobj; //.. remember what is written for zoom
@@ -45,8 +40,9 @@ function ChartArea(id, descArea) {
              sc.displayChart(JSONobj, streamChart, data);
         }
         this.displayedDL = JSONobj.id;
-        descriptionArea.displayedDL = this.displayedDL;
     }
+    
+    
     this.displayCorrelation = function(JSONobj) {
         $(selection).children().remove();
         var width = $(selection).width() - border;
@@ -65,9 +61,11 @@ function ChartArea(id, descArea) {
         data["maxTime"] = maxInSeconds;
         streamChart = new LineGraph({containerId: 'topRight', data: data});
     }
+    
+    
     this.displayExperiment = function(JSONobj) {
         $(selection).children().remove();
-        var channels = JSONobj.channelnames; ///JSONobj.instances[0][0].channels;
+        var channels = JSONobj.channelnames; 
 
         var actualMaxPoints = JSONobj.actualNumPoints;
         var readingsPerSec = JSONobj.readingsPerSec;
@@ -90,9 +88,7 @@ function ChartArea(id, descArea) {
                 .on("change", function() {
                     var channel = menu.property("value");
                     d3Chart.key(channel);
-                    d3Chart(selection);
-
-                });
+                    d3Chart(selection); });
 
         //.. build the line chart with default width and height and key
         var width = $(selection).width() - border;
@@ -137,55 +133,26 @@ function ChartArea(id, descArea) {
     }
     
 
-    /*This cant be plain old line, becaues then it wont work for multiple classes. But we could
-     * alter the opacity. We could draw little dots that were color based on prediction. They would
-     * be green dark if confident and correct. And light red if confident and wrong. Hovering over
-     * them would reveal the actual confidence. You would receive, at a glance, how often predictions
-     * were made, then perhaps you could hover over to see how far back that prediction applied*/
+    /*Display predictions in the prediction chart */
     this.displayPredictions =function(JSONobj){
         $(selection).children().remove();
+        
+        //.. extract parameters from the JSON obj
         var width = $(selection).width() - border;
         var height = $(selection).height() - border;
-        var chart = PredictionChart();
         var everyK = JSONobj.every;
         var length = JSONobj.length;
         var data = JSONobj.predictions;
         var classes = JSONobj.classes.values;
+        
+        //.. Instantiate the chart setting relevant parameterrs
+        var chart = PredictionChart();
+
         chart.data(data).width(width).height(height).instance(everyK, length).classes(classes)(selection);
     }
     
-    /** A lightweight stream of a datalayer. Inside a little information box, display a table
-     * describing the channel.
-     * Object must have .id , .channels , and .points
-     **/
-    this.displayDescription = function (JSONobj) {
-        //.. remove existing selection and append
-        //$(selection).children().remove();
-        $(selection).append("<div id = descriptionBox class = infoBox> </div>" );
-        var description = $("#descriptionBox");
-        
-        //.. set the text
-        var text = "ID: " + JSONobj.id + "  /  CHANNELS: " + JSONobj.channels +"  / POINTS: " + JSONobj.points;
-        description.text(text);
-        
-        this.displayedDL = JSONobj.id;
-    }
     
-     /** A lightweight stream of a technique
-     **/
-    this.displayTechniqueDescription = function (JSONobj) {
-        //.. remove existing selection and append
-        $(selection).children().remove();
-        $(selection).append("<div id = descriptionBox class = infoBox> </div>" );
-        var description = $("#descriptionBox");
-        
-        //.. set the text
-        var text = "ID: " + JSONobj.id + "  /  TYPE: " + JSONobj.type ;
-        if (JSONobj.value != null) text +="  /  VALUE: " +JSONobj.value;
-        description.text(text);
-        
-        this.displayedDL = JSONobj.id;
-    }
+    
     
     /**Can be displayed in conjunction with a description. Display a bar chart describing performance
      **/
@@ -206,7 +173,9 @@ function ChartArea(id, descArea) {
     }
     
    
-    
+    /** Currently a hidden feature, but the system supports extracting a displaying the various
+     * frequencies of an experiment
+     **/
     this.displayFrequency = function(JSONobj, JSONdescription) {
         //.. remove any existing charts
         d3.select(".chart").remove();
@@ -236,7 +205,8 @@ function ChartArea(id, descArea) {
         }, 1000); 
     }
     
-     this.testCharts = function() {
+    //.. Many of the test functions are inteh visualization object
+    this.testCharts = function() {
         var test = "prediction";
         if (test == "prediction") {
             var chart = PredictionChart();

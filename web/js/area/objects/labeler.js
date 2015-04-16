@@ -1,3 +1,4 @@
+/* A front-end labeling mechanism interacts with a realteim streaming server. */
 function Labeler()
 {
     this.times =0; //.. used for setInterval
@@ -13,7 +14,7 @@ function Labeler()
     this.fileName;
     var self;
     
-    /**
+    /**Initiate the labeling, and display helpful messages to the conesole
      **/
     this.initiateLabeling = function(filename,conditionName,conditions,
         trialLength, trialsOfEach,restLength) {

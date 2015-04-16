@@ -219,8 +219,8 @@ function JavaInterface() {
      this.returnFromTechniqueStats = function(xhr) {
          var JSONobj = eval('('+ xhr +')'); 
          
-         if(JSONobj.description != null)
-             chartArea.displayTechniqueDescription(JSONobj.description);
+         if(JSONobj.description != null) //.. For now we are content with info displayed by tooltip
+            // chartArea.displayTechniqueDescription(JSONobj.description);
          
          if (JSONobj.attributes != null)
             consoleArea.displayAttributes(JSONobj.attributes);
