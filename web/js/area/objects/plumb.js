@@ -386,6 +386,6 @@ function Plumb() {
     this.setDerivedConnection = function(idA, idB) {
        var e1 = jsPlumb.addEndpoint(idA,{ anchor:"Center" }, derivedEndpoint);
        var e2 = jsPlumb.addEndpoint(idB,{ anchor:"Center" }, derivedEndpoint);
-       jsPlumb.connect({ source:e1, target:e2, paintStyle:{ dashstyle:"2 4", strokeStyle:"#465", lineWidth:2 } });
+       jsPlumb.connect({source:e1, target:e2, paintStyle:{ dashstyle:"2 4", strokeStyle:"#465", lineWidth:2 } });
     }
 }

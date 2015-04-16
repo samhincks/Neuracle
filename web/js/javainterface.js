@@ -27,7 +27,8 @@ function JavaInterface() {
         if(JSONobj.action != null) {
              if (JSONobj.action.id == "reload") {
                 javaInterface.postToDataLayers(); //.. just get the names of the datalayers
-             }
+                //.. And then clean some of the lines
+            }
              
              if(JSONobj.action.id == "reloadT") {
                  javaInterface.postToTechniques();

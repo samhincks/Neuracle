@@ -137,7 +137,6 @@ function DatalayerArea(selection) {
 
                 //.. IF it has a parent place directly beneath it
                 if (!(newLayer.parent == "Motherless")) {
-                    console.log("motherless");
                     var parent = this.datalayers.getDLById(newLayer.parent);
                     var parentPos = parent.getPosition();
                     var yInc = parent.getSize().height+newLayer.getSize().height*2.5;//.. add a certain amount in y positioning
@@ -183,11 +182,13 @@ function DatalayerArea(selection) {
            
             var tech = this.techniques.getTechniqueById(intersected[i].sourceId);
             
-            if (tech.trained > 0) 
+            if (tech.trained > 0) {
                 $("#" + intersected[i].sourceId).addClass("classifierTrainedIntersected");
+                //.. This breaks evrything
+                //this.datalayers.selectLayer(intersected[i].targetId);       
+                //javaInterface.getDataLayerStats(); //.. I'm not happy with this, but for now we tell the back end who's being selected each time we select a layer
+            }
             
-            //.. when am I going to remove this class? 
-
         }
     }
    

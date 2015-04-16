@@ -1053,8 +1053,7 @@ public class DataManipulationParser extends Parser{
         
         if(!(currentDataLayer instanceof ChannelSet)) throw new Exception("The command classify only "
                 + "applies to 2D Channelsets " + currentDataLayer.id + " doesn't fit that bill");
-        ChannelSet cs = (ChannelSet) currentDataLayer;
-        
+        ChannelSet cs = (ChannelSet) currentDataLayer; 
         
         //.. retrieve the hovered over classifier, and bitch if somethings wrong
         ArrayList<ClassificationAlgorithm> classifiers =  dDAO.getClassifiers();

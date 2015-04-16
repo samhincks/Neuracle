@@ -12,8 +12,8 @@ import org.json.JSONObject;
  *
  * @author samhincks  
  */                    
-public class Command {                
-    public String id;         
+public class Command {                   
+    public String id;                     
     public String parameters =""; 
     public String debug ="";
     public String retMessage =""; //.. populated when the command is executed
