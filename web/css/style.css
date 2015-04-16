@@ -2,12 +2,8 @@
     Document   : style
     Created on : Aug 2, 2012, 10:45:28 AM
     Author     : Sam Hincks
-    Description:
-        Purpose of the stylesheet follows.
+    Description: Generic styling for the overall layout
 */
-   
-    /**Governing the main layout. 
-    **/
   
     #timemine {
         width:100%;

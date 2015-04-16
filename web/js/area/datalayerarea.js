@@ -157,7 +157,7 @@ function DatalayerArea(selection) {
                 
                 newLayer.drawArt();
                 
-                newLayer.displaySubGraphs();
+                newLayer.displayTooltips();
 
             }
         } 

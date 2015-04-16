@@ -2,10 +2,9 @@
     Document   : d3Style
     Created on : Jul 3, 2013, 11:32:06 AM
     Author     : samhincks
-    Description:
-        Purpose of the stylesheet follows.
+    Description: Styling for charts, in #topRight and visualization/
 */
-  .step {
+    .step {
         width: 1000px;
         height: 1000px;
         display: block;
@@ -68,11 +67,6 @@
     .y.axis.pred{
         font: 12px monospace;
     }
-/*  path {
-        stroke: steelblue;
-        stroke-width: 2;
-        fill: none;
-    }*/
 
     .d3line {
         fill: none;

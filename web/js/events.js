@@ -8,7 +8,6 @@ var consoleArea = new ConsoleArea();
 var descriptionArea = new DescriptionArea("#farBottomRight");
 var chartArea = new ChartArea("#topRight", descriptionArea);
 var javaInterface = new JavaInterface();
-var channelSurface = new ChannelSurface();
 var plumb = new Plumb();
 var datalayerArea = new DatalayerArea("#content");
 var plumbTechniques = new PlumbTechniques();

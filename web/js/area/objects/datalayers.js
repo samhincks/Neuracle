@@ -1,8 +1,3 @@
-var brown ="#A6611A";
-var beige = "#DFC27D";
-var teal = "#80CDC1";
-var emerald = "#018571";
-
 
 /**Collection of available data layers*/
 function DataLayers() {
@@ -33,18 +28,14 @@ function DataLayers() {
             if((this.dls[i].intersected) ==0) {//.. remove circle if its not currently intersecting something
                 id.removeClass("experimentHalfIntersected");
                 id.removeClass("experimentIntersected");
-
             }
-            else if ((this.dls[i].intersected) >=3) {
+            else if ((this.dls[i].intersected) >=3) { //.. Make background green
                 id.addClass("experimentIntersected");
                 id.removeClass("experimentHalfIntersected");
-
             }
-            else {
+            else { //.. Make red, so that user knows they need to move it a little
                 id.addClass("experimentHalfIntersected");
                 id.removeClass("experimentIntersected");
-
-                
             }
         }
     }
@@ -59,6 +50,7 @@ function DataLayers() {
              $("#"+curId).removeClass("surfaceElementMultiSelected")
              $("#"+curId).removeClass("channelsetSelected")
              
+             //.. And add selection css if we now have access toe the current one
              if(layerId == curId) {
                  if (dl.type == "2D") 
                     $("#" + layerId).addClass("channelsetSelected");
@@ -84,10 +76,12 @@ function DataLayers() {
           $("#"+selected[0]).addClass("surfaceElementMultiSelected");
         }
         
+        //.. Add it if it doesn't already exist
         if(selected.indexOf(layerId) == -1) 
             selected.push(layerId);
         
-        //.. make a String of of all selected data layers which will be sent to java
+        //.. make a String of of all selected data layers which will be sent to java. 
+        //.. Java will know its a multiselection by an id that has many colons
         var selectionIds =""; 
         for (var i in selected) {
             selectionIds += selected[i];
@@ -110,106 +104,105 @@ function DataLayer(jsonDL) {
     this.numChannels = jsonDL.numchannels;
     this.numPoints = jsonDL.numPoints;
     this.type = jsonDL.type;
-    this.freqButton = "freq"+this.id; //.. For some reason it wont respond if I give it a unique id
-    this.nameButton = "name" + this.freqButton; 
-    this.elementTag = '<div id = "'+this.id+'" class = "datalayer surfaceElement"> <div title = "F" id = "'+this.freqButton+'"> <div title = "N" id = "' + this.nameButton+ '"</div></div></div>';
-    this.sqScale = d3.scale.linear().domain([0, 625000]).range([45, 90]);
+    this.predButton = "pred"+this.id; 
+    this.corrButton = "corr" + this.predButton; //.. hacked to make tooltips work
+    this.elementTag = '<div id = "'+this.id+'" class = "datalayer surfaceElement"> <div title = "F" id = "'+this.predButton+'"> <div title = "N" id = "' + this.corrButton+ '"</div></div></div>';
+    this.sqScale = d3.scale.linear().domain([0, 625000]).range([45, 90]); //.. scale the size of the datalayer
     this.intersected = 0; //.. increase if anything is intersected
 
-    /**Display other graphing possibilities inside the container, when we hover over.
-     * CALL THIS AFTER YOU'VE ADDED THE ELEMENT TAG TO THE DOM, AND NO MORE
-     * **/
-    this.displaySubGraphs = function() {
+    /** Display tooltips by the datalayer. Somewhat of a hack, since we want three
+     * tooltips for one datalayer, so we've made the corresponding tag for an element
+     * a triple embedded div
+     **/
+    this.displayTooltips = function() {
+        //.. Give the divs the title attribute, so that tooltips work
         $("#"+this.id).attr("title", this.id + " has " + this.numChannels + " channels");
-        var globalFreqId = $("#" + this.freqButton); //.. but when it adds a new datalayer it will refer to the latest one!
-        globalFreqId.attr("title", "P"); //.. this line of code doesnt work
-        var globalNameId = $("#" + this.nameButton);
-        globalNameId.attr("title", "N"); 
+        var predId = $("#" + this.predButton); //.. but when it adds a new datalayer it will refer to the latest one!
+        predId.attr("title", "P"); //.. this line of code doesnt work
+        var corrId = $("#" + this.corrButton);
+        corrId.attr("title", "N"); 
         var type = this.type;
         var titleId = this.id.split("-")[0];
-        //.. For a channelset, display frequency and correlation views
-            //.. Give it the title attribute, so that the tooltip function applies
-            globalFreqId.tooltip({
-                content: "P",
-                tooltipClass: "freq",
-                hide: {duration: 1200},
-                position: {my: 'right bottom+15', at: 'left center', collision: 'flipfit'},
-                open: function(event, ui) {
-                    $(ui.tooltip).dblclick(function(e) {
-                        javaInterface.postToDataLayer("prediction");
-                    });
-                    var nId = $("#name" + this.id);
-                    nId.tooltip('open'); //.. doesnt trigger conventional open
-                },
-                close: function(event, ui) {
-                    globalNameId.tooltip('close'); //.. doesnt trigger conventional open
-                }
-            });
-            
-            globalNameId.tooltip({
-                content: "C",
-               tooltipClass: "corr",
-                hide: {duration: 1200},
-                position: {my: 'left bottom', at: 'left center', collision: 'flipfit'},
-                open: function(event, ui) {
-                    $(ui.tooltip).dblclick(function(e) {
-                        javaInterface.postToDataLayer("correlation");
-                    });
-                },
-                
-            });
-            
-            $("#" + this.id).tooltip({
-                content: titleId,
-                hide: {duration: 1200},
-                open: function(event, ui) {
-                    $(ui.tooltip).dblclick(function(e) {
-                        javaInterface.postToDataLayer();
-                    });
-                    if (type =="2D"){ //.. set of chain of showing corr view if its a 2D
-                        var fId = $("#freq"+this.id);
-                        fId.tooltip('open'); //.. doesnt trigger conventional open
-                    }
-                },
-                close: function(event, ui) {
-                    globalFreqId.tooltip('close'); //.. doesnt trigger conventional open
-                },
-                position: {my: 'left bottom+70', at: 'center center', collision: 'flipfit'}
-                
-            });            
         
+        //.. For a channelset, display frequency and correlation views
+        //.. Give it the title attribute, so that the tooltip function applies
+        predId.tooltip({
+            content: "P",
+            tooltipClass: "pred",
+            hide: {duration: 1200},
+            position: {my: 'right bottom+15', at: 'left center', collision: 'flipfit'},
+            open: function(event, ui) {
+                $(ui.tooltip).dblclick(function(e) {
+                    javaInterface.postToDataLayer("prediction");
+                });
+                var nId = $("#corr" + this.id);
+                nId.tooltip('open'); //.. doesnt trigger conventional open
+            },
+            close: function(event, ui) {
+                corrId.tooltip('close'); //.. doesnt trigger conventional open
+            }
+        });
+
+        corrId.tooltip({
+           content: "C",
+           tooltipClass: "corr",
+            hide: {duration: 1200},
+            position: {my: 'left bottom', at: 'left center', collision: 'flipfit'},
+            open: function(event, ui) {
+                $(ui.tooltip).dblclick(function(e) {
+                    javaInterface.postToDataLayer("correlation");
+                });
+            },
+
+        });
+
+        $("#" + this.id).tooltip({
+            content: titleId,
+            hide: {duration: 1200},
+            open: function(event, ui) {
+                $(ui.tooltip).dblclick(function(e) {
+                    javaInterface.postToDataLayer();
+                });
+                if (type =="2D"){ //.. set of chain of showing corr view if its a 2D
+                    var fId = $("#pred"+this.id);
+                    fId.tooltip('open'); //.. doesnt trigger conventional open
+                }
+            },
+            close: function(event, ui) {
+                predId.tooltip('close'); //.. doesnt trigger conventional open
+            },
+            position: {my: 'left bottom+70', at: 'center center', collision: 'flipfit'}
+
+        });            
     }
     
-    
-    
-    
-   //..  Draw lines inside it as art, and lines connecting
-   //... it to elements it may have been derived from
-   //. Errors will occur if it has not been appended to the canvas
+   /** Add an appropriate image to the datalayer that conveys information about the datalayer**/
     this.drawArt = function() {
         //.. Assign appropriate image to the datalayer 
-        if (jsonDL.type == "2D")
+        if (jsonDL.type == "2D") {
             if(this.numChannels <17)
                 $("#" + this.id).addClass("chanset");
             else
                 $("#" + this.id).addClass("chanset2");
+        }
         else { //.. 3D
-            console.log(jsonDL.numlabels);
             if (jsonDL.numlabels ==1) $("#"+this.id).addClass("experiment1");
             if (jsonDL.numlabels ==2) $("#"+this.id).addClass("experiment2");
             if (jsonDL.numlabels ==3) $("#"+this.id).addClass("experiment3");
             if (jsonDL.numlabels >=4) $("#"+this.id).addClass("experiment4");
         }
+        
+        //.. Set appropriate size (though we may want to change this if we run on a better server)
         var scaledSize = this.sqScale(jsonDL.numpoints);
         $("#" + this.id).width(scaledSize).height(scaledSize /1.7);
 
         //.. if this datalayer was derived from another layer, draw a line between them 
-        if (this.parent != null && this.parent != "Motherless") {
+        if (this.parent != null && this.parent != "Motherless") 
             plumb.setDerivedConnection(this.id, this.parent);
-          }
-        else {
+        
+        else 
             jsPlumb.draggable($(".surfaceElement"));
-        }
+        
     }
    
     
@@ -228,6 +221,7 @@ function DataLayer(jsonDL) {
         $("#"+this.id).offset({left:x, top:y});
     }
     
+    /*Return a rect describe xy coordinates of the object*/
     this.getRect = function() {
         var pos = this.getPosition();
         var size = this.getSize();
@@ -239,31 +233,5 @@ function DataLayer(jsonDL) {
     }
 }
 
-//.. This isn't really used anymore
-function ChannelSurface() {
-    var dropperId =""; //.. set when handleDropEvent is fired
-    var draggerId =""; //.. set when  channel is cliecked
 
-    /**This is fired when one channel is dropped on another channel             * 
-     */
-     this.handleDropEvent = function(event, ui ) {
-        //.. Get the id of the dropper and dragger and set their values in the html form
-        var draggable = ui.draggable;
-        dropperId = $(this).attr( 'id' );
-        draggerId = draggable.attr('id'); 
-        $('#receiver').val(dropperId);
-        $('#giver').val(draggerId);
-        
-        //.. retrieve the corresponding form, and go to its actionbean with parameters
-        javaInterface.postToDataLayerAndMerge();
-    }
-    
-    this.getDropperId = function() {
-        return dropperId;
-    }
-    this.getDraggerId = function() {
-        return draggerId;
-    }
-                     
-}
 

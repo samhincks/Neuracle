@@ -2,8 +2,7 @@
     Document   : plumbStyle
     Created on : May 25, 2013, 6:45:09 PM
     Author     : samhincks
-    Description:
-        Purpose of the stylesheet follows.
+    Description: Styling for datalayers and techniques, in #topLeft / js/area/objects
 */ 
 
 .surfaceElement {
@@ -141,13 +140,8 @@
 }
 
 
-
 /**
----------------------------------------------------------------
-Questionable whether we still use it... 
------------------------------------------------
----------------------------
----------
+For drawing connectors between objects
 **/
 ._jsPlumb_overlay {
     z-index:51;
