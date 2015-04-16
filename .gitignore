@@ -4,3 +4,5 @@
 *.war
 
 /dist/
+/build/
+/input/
