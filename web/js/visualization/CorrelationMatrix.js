@@ -1,3 +1,8 @@
+/**
+ CorrelationMatrix: a set of variously opaque rectangles, showcasing correlation
+ between channels. High opacity -> low distance between channel
+  **/
+
 function CorrelationMatrix() {
     var data; //.. a 2D array of 'nearness' correlations 
 

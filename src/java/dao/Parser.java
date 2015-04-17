@@ -8,9 +8,13 @@ package dao;
 
 import dao.datalayers.BiDAO;
 import dao.datalayers.DataLayerDAO;
+import dao.datalayers.DataLayersDAO;
 import dao.datalayers.TriDAO;
 import dao.techniques.TechniqueDAO;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -235,5 +239,33 @@ public abstract class Parser {
             }
         }
         return retString;
+    }
+    
+    /**Add a new file, and select it**/
+    public void addFile(File fileName) throws Exception{ 
+        BiDAO mDAO = new BiDAO();
+        mDAO.make(fileName, ctx.getFileReadSampling());
+        //.. if this is as yet uninitizliaed
+        if (ctx.dataLayersDAO == null) {
+            ctx.dataLayersDAO = new DataLayersDAO();
+        }
+
+        //.. Add to the persistent context, and save by id 
+        ctx.dataLayersDAO.addStream(mDAO.getId(), mDAO);
+        ctx.setCurrentName(mDAO.getId());
+    }
+    /**
+     * Add a new file, given an inputstream and select it* */
+    public void addFile(InputStream is, String name) throws Exception {
+        BiDAO mDAO = new BiDAO();
+        mDAO.make(is, ctx.getFileReadSampling(), name);
+        //.. if this is as yet uninitizliaed
+        if (ctx.dataLayersDAO == null) {
+            ctx.dataLayersDAO = new DataLayersDAO();
+        }
+
+        //.. Add to the persistent context, and save by id 
+        ctx.dataLayersDAO.addStream(mDAO.getId(), mDAO);
+        ctx.setCurrentName(mDAO.getId());
     }
 }

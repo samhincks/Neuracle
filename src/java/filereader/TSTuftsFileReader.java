@@ -10,6 +10,8 @@ package filereader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import net.sourceforge.stripes.action.FileBean;
 import timeseriestufts.evaluatable.AttributeSelection;
@@ -47,7 +49,14 @@ public class TSTuftsFileReader {
         this.delimeter= delimeter;
         return readDataRowWise();
     }
-    
+    public ChannelSet readData(String delimeter, InputStream is, int readEvery, String name) throws Exception {
+        filename = name;
+        dataIn = new BufferedReader(new InputStreamReader(is));
+        this.delimeter = delimeter;
+        this.readEvery = readEvery;
+        readingsPerSecond = Channel.HitachiRPS / readEvery;
+        return readDataRowWise();
+    }
     public ChannelSet readData(String delimeter, File dataFile, int readEvery) throws Exception{
          filename = dataFile.getName();
          dataIn = new BufferedReader(new java.io.FileReader(dataFile));

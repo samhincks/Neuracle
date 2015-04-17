@@ -44,13 +44,12 @@ function DatalayerArea(selection) {
                     else {
                         $(techniqueTags[i]).removeClass("classifierTrainedIntersected");
                     }
-                
                 }
-           
        }
        return retArray;
     }
     
+    /*Reset position if buoyant user moves datalayer outside container*/
     this.boundsCheck = function(){
         var techniqueTags = $('.surfaceElement');
         var container = $("#topLeft");
@@ -70,7 +69,6 @@ function DatalayerArea(selection) {
                 techEl.css({top: (10), left: (20), position:'absolute'});
             }
         }
-        
     }
     
     /**Given a jquery element with left,top, width, height defined, return
@@ -110,12 +108,10 @@ function DatalayerArea(selection) {
                 i--;
             }
         }
-           
     }
     
     /**Datalayers is an array of JSONObjs streamed from Java. 
-     *Add the ones that don't already exist
-     */
+     *Add the ones that don't already exist */
     this.addDatalayers  = function(layers) {
         //... Add the datalayers that may have been created       
         for (var i =0; i< layers.length; i++) { 
@@ -154,11 +150,9 @@ function DatalayerArea(selection) {
                        fromTop += 150 
                    }
                 }
-                
+                //.. add images and art 
                 newLayer.drawArt();
-                
                 newLayer.displayTooltips();
-
             }
         } 
     }
@@ -167,39 +161,22 @@ function DatalayerArea(selection) {
     this.highlightIntersectedTechniques = function(){
         var intersected = this.getIntersectedTechniques();
         for (var i =0; i <intersected.length; i++) {
-            var source = $("#" + intersected[i].sourceId);
-            var target = $("#" + intersected[i].targetId);
-            var techType = intersected[i].sourceType;
-            var leftOffset =0;
-            if (techType == "FeatureSet")
-                leftOffset = source.width()*2;
-            else if (techType == "AttributeSelection")
-                leftOffset = source.width()*4;
-            
-            //source.css({top: (target.position().bottom+source.height()*2), left: (target.position().left +leftOffset), position:'absolute'});
-
-            $("#"+intersected[i].sourceId).addClass("techniqueSelected");
-           
             var tech = this.techniques.getTechniqueById(intersected[i].sourceId);
             
+            //.. show its a valid selection ebtween trained classifier and channelset
             if (tech.trained > 0) {
                 $("#" + intersected[i].sourceId).addClass("classifierTrainedIntersected");
-                //.. This breaks evrything
-                //this.datalayers.selectLayer(intersected[i].targetId);       
-                //javaInterface.getDataLayerStats(); //.. I'm not happy with this, but for now we tell the back end who's being selected each time we select a layer
-            }
-            
+             }
         }
     }
    
     
-    /**techniques is an array of JSONObjs streamed from Java. Add the ones that don't already exist
-     **/
+    /**techniques is an array of JSONObjs streamed from Java. Add the ones that don't already exist  **/
     this.addTechniques = function(techniques) {
-
         //... Add the techniques that may have been created       
         for (var i =0; i< techniques.length; i++) { 
             var t = techniques[i];
+            
             //.. the technique that should be reloaded
             var idName = t.id;
             $("#" + idName).width(12.0);
@@ -211,6 +188,7 @@ function DatalayerArea(selection) {
                 individualTechniqueInit(idName, t.type);
             }
             
+            //.. Add a special shadow if its a trained usable classifier 
             else if (t.type =="Classifier" && t.trained>0) {
                 this.techniques.getTechniqueById(idName).trained =true;
                 $("#"+idName).addClass("classifierTrained");
@@ -220,9 +198,8 @@ function DatalayerArea(selection) {
     }
     
 
-    /**R2 is datalayer, r1 is technique. r2 has an imaginary circle around it. 
-     * check intersection with that
-     **/
+    /**R2 is datalayer, r1 is technique, for instance. Return true if they intersect
+     * given an amount of afforded slack */
     var intersectRect = function(r1, r2, SLACKY, SLACKX) {
         //console.log(r1);
         var largeX = r2.right - ((r2.right - r2.left)/2);
@@ -245,9 +222,6 @@ function DatalayerArea(selection) {
             }
         }
         return false;
-        
-        
-        
       }
 }
 

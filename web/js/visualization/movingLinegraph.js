@@ -1,19 +1,7 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
-/**
+/** SamHincks repurposed this from somebody else's code: http://bl.ocks.org/phoebebright/4124200
  * Create and draw a new line-graph.
+ * 
  * 
  * Arguments:
  *	 containerId => id of container to insert SVG into [REQUIRED]
@@ -77,7 +65,6 @@ function LineGraph(argsMap) {
                 
 		var numSteps = tempData.values[0].length;
                
-		console.log(tempData);
                 for (var i =0; i < data.values.length; i++) {
                     for (var j =0; j < tempData.values[i].length; j++) {
                         data.values[i].push(tempData.values[i][j]);
@@ -121,7 +108,7 @@ function LineGraph(argsMap) {
 		// data is being replaced, not appended so we re-assign 'data'
 		data = processDataMap(newData);
 		// and then we rebind data.values to the lines
-	    graph.selectAll("g .lines path").data(data.values)
+	         graph.selectAll("g .lines path").data(data.values)
 		
 		// redraw (with transition)
 		redrawAxes(true);
@@ -221,7 +208,7 @@ function LineGraph(argsMap) {
 		// margins with defaults (do this before processDataMap since it can modify the margins)
 		margin[0] = getOptionalVar(argsMap, 'marginTop', 20) // marginTop allows fitting the actions, date and top of axis labels
 		margin[1] = getOptionalVar(argsMap, 'marginRight', 20)
-		margin[2] = getOptionalVar(argsMap, 'marginBottom', 35) // marginBottom allows fitting the legend along the bottom
+		margin[2] = getOptionalVar(argsMap, 'marginBottom', 70) // marginBottom allows fitting the legend along the bottom
 		margin[3] = getOptionalVar(argsMap, 'marginLeft', 90) // marginLeft allows fitting the axis labels
 		
 		// assign instance vars from dataMap
@@ -681,13 +668,19 @@ function LineGraph(argsMap) {
 		createLegend();		
 		setValueLabelsToLatest();
 	}
-	
 	/**
 	 * Create a legend that displays the name of each line with appropriate color coding
 	 * and allows for showing the current value when doing a mouseOver
 	 */
 	var createLegend = function() {
-		// append a group to contain all lines
+		/* append a group to contain all lines
+                var legend = d3.select("#farBottomRight").append("svg:svg")  
+                .attr("class", "line-graph")
+                .attr("width", 100)
+                .attr("height", 100)
+                .append("svg:g")
+                .attr("transform", "translate(" + 100 + "," + 0 + ")"); */
+
 		var legendLabelGroup = graph.append("svg:g")
 				.attr("class", "legend-group")
 			.selectAll("g")
@@ -698,7 +691,7 @@ function LineGraph(argsMap) {
 		legendLabelGroup.append("svg:text")
 				.attr("class", "legend name")
 				.text(function(d, i) {
-					return d;
+					return d.substring(0,5);
 				})
 				.attr("font-size", legendFontSize)
 				.style("fill", function(d, i) {
@@ -706,10 +699,12 @@ function LineGraph(argsMap) {
 					return d3Colors(i);
 				})
 				.attr("y", function(d, i) {
-					return h+28;
+                                    var dis = 24;
+                                    var inc = dis * Math.ceil((i+1) / 16);
+                                    return h+inc;
 				})
                                 .attr("x", function(d, i) {
-					return 40*i;
+					return 40 * (i %  16);
 				})
 
 				

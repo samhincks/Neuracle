@@ -1,7 +1,5 @@
 /* Sam Hincks; hacked from http://bl.ocks.org/mbostock/3903818#index.html
- * A reusable chart which follows bostock's specifications: 
- *http://bost.ocks.org/mike/chart/
- *http://bl.ocks.org/mbostock/4060954 steamgraph
+ * A LineChart that merges into an areachart
  *
  *Seemingly a powerful programming pattern; 
  *Instantiate: var chart = TSChart();
@@ -10,9 +8,6 @@
  *Transition to different dimension = chart.dimension(x).transition();
  *Show area chart = chart.transitionToAverage
  *
- *
- *IMprove:
- *condition is probably in all circumstances duplicated by putting it in each timestamp of an instance
 */
 
 function LineChart() {
@@ -154,12 +149,6 @@ function LineChart() {
             .attr("transform", "translate(0," + (height - margin.bottom) + ")") //.. 0,0 refers to 0,height
             .call(xAxis);
         
-        /**
-        svg.append("text")
-             .attr("text-anchor", "end")
-            .attr("x", width)
-            .attr("y", height - 6)
-            .text("Time");**/
 
        //.. Add a y axis
        yAxis = d3.svg.axis()

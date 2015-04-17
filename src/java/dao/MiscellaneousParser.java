@@ -15,7 +15,11 @@ import filereader.Label;
 import filereader.Labels;
 import filereader.Markers;
 import filereader.TSTuftsFileReader;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -76,8 +80,13 @@ public class MiscellaneousParser extends Parser{
         
          // -- LOAD
         command = new Command("load");
-        command.documentation = "Loads the specified folder, though it must reside in input on the server";
+        command.documentation = "Loads the specified folder, though it must reside in web/input on the server";
         command.parameters = "1. foldername";
+        commands.put(command.id, command);
+        
+        command = new Command("loadfiles");
+        command.documentation = "Loads the specified files, in the web/ folder";
+        command.parameters = "A comma-separated set of files";
         commands.put(command.id, command);
 
         
@@ -126,7 +135,6 @@ public class MiscellaneousParser extends Parser{
         this.ctx = ctx;
         this.currentDataLayer = currentDataLayer;
         Command c = null; 
-        
         if (command.startsWith("ls") || command.startsWith("getdatalayers")){
             c = commands.get("ls");
             c.retMessage = ls(parameters);
@@ -158,6 +166,11 @@ public class MiscellaneousParser extends Parser{
            
             currentDataLayer = null;
             
+        }
+        else if (command.startsWith("loadfiles")) {
+            c = commands.get("loadfiles");
+            c.action = "reload";
+            c.retMessage = this.loadFiles(parameters);
         }
         else if (command.startsWith("load")) {
             c = commands.get("load");
@@ -260,12 +273,33 @@ public class MiscellaneousParser extends Parser{
         return retMessage;
     }
     
+    private String loadFiles(String [] parameters ) throws Exception {
+        String retMessage = "";
+        for (String s : parameters) {
+            if (!(s.startsWith("/"))) s = "/"+s;
+            InputStream is  = ctx.getServletContext().getResourceAsStream(s);
+            
+            //.. extract name 
+            String [] vals = s.split("/");
+            String name = vals[vals.length-1];
+            
+            //.. add file if it exists
+            if (is != null) 
+                super.addFile(is, name);
+                 
+            else
+                retMessage += "Couldn't read " + s + ". ";
+        }
+               
+        return "Attempted to load " + parameters.length + " file(s). " +  retMessage;  
+    }
     private String load(String [] parameters) throws Exception{
         String folderName = "GRProcessed";
         if (parameters.length >0)folderName = parameters[0];
         
         String folder = ctx.getServletContext().getRealPath(folderName);
         File folderF = new File(folder);
+        if (folderF == null) throw new Exception("Cannot find folder" + folder);
         File[] listOfFiles = folderF.listFiles();  
         int filesRead =0;
         
@@ -274,16 +308,7 @@ public class MiscellaneousParser extends Parser{
         for (int i = 0; i < listOfFiles.length; i++) {
             File fileName = listOfFiles[i];
             if (fileName.isFile()) {
-                        
-                BiDAO mDAO = new BiDAO();
-                mDAO.make(fileName, ctx.getFileReadSampling());
-                //.. if this is as yet uninitizliaed
-                if (ctx.dataLayersDAO == null) {
-                    ctx.dataLayersDAO = new DataLayersDAO();
-                }
-                //.. Add to the persistent context, and save by id 
-                ctx.dataLayersDAO.addStream(mDAO.getId(), mDAO);
-                ctx.setCurrentName(mDAO.getId());
+                super.addFile(fileName);
                 filesRead++;
             }
           
@@ -530,12 +555,15 @@ public class MiscellaneousParser extends Parser{
     
     private String tutorial() throws Exception { 
         ctx.setTutorial(true);
-        ctx.inputParser.parseInput("load(tutorial)");
+        ctx.setFileReadSampling(3); //.. only read every three values, and hope that will make things fast enough
+        ctx.inputParser.parseInput("loadfiles(tutorial/11.csv, tutorial/12.csv, tutorial/13.csv, tutorial/14.csv)");
+      
         return  "In the topleft corner, you can see that we have created sample"
                 + " datasets for you from a real experiment. To upload your own, click chose file, and then select a valid"
                 + " CSV,value. The first row should contain comma-separated names; then subsequent rows"
                 + " should contain time-ordered values that pertain to that column. The last k>1 columns should"
                 + " be text -- a name for the trial. Subsequent rows with the same name belong to the same trial. Alternatively, "
                 + " if you have placed your folder inside build/web/input/foldername, then load(foldername) will open all files therin ";
-    }
+                
+        }
 }

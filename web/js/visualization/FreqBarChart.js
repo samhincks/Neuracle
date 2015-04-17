@@ -1,17 +1,8 @@
 /* 
- * By Default, a BarChart that moves from 0 to the values listed by some key: 
- *  key, subValueKey, expectedKey, and labelKey all have a default functions but can be overriden if dataset has different
- *    accessors for these values. Only key is strictly necessary, setting keys for the remaining accessors opens
- *    more advanced functionality. 
- * 
- * ZOOM IN: When a bar with underlying data is clicked zoom in on that bar, and reveal underlying data-dimension.
- *  - .on mousedown call splitTransition 
- * 
- * TODO:
- *  Make so that x axis is a nominal piece of the data: THIS IS DIFFICULT. WE would need to find an xscale taht operates on nominal values
- *  Deal with removing chart if it already exists (otherwise we keep painting over it)  
- *  DEAL with keys - we don't have settors/gettors and we don't use the private variables in the code at all points
- *  Document, then test all the ways that I can interact with bar chart
+ A modification ot the bar chart, used to display conditionally dependent frequency.
+    I imagine this to be more useful for an EEG than fNIRS. Currently we don't allow
+    the user to view frequency, but it would be a simple modificaiton to open this 
+    funcitonality.
  *   */
 
 function FreqBarChart() {

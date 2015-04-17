@@ -1,13 +1,11 @@
 /*Author: Sam Hincks
  * Class for controlling the console. 
- *Add messages to '#pastmessages'
+    *Add messages to '#pastmessages'
  *'  #console refers to whole area
- *   #userInput refers to where we type
- *   
- **/
+ *   #userInput refers to where we type  **/
 
 function ConsoleArea() {
-   this.streaming = false;   //.. set to true if we are streaming
+   this.streaming = false; //.. set to true if we are streaming
    this.streamInterval; 
    
    this.messageStack = []; //.. save all the users old messages. Retrieve with arrows. Delete if erroneous
@@ -20,7 +18,8 @@ function ConsoleArea() {
    this.displayMessage = function(message, primaryClass, secondaryClass) {
         if (arguments.length ==1) {primaryClass = "systemmess"; secondaryClass = "blueline";}
         if (message ==null)return;
-        ///.. ;; denotes splitting into new message
+        
+       ///.. ;; denotes splitting into new message
         var splitByNewMessage = message.split(";;");
         for (var i = 0; i < splitByNewMessage.length; i++) {
             var subMessage = splitByNewMessage[i];
@@ -59,7 +58,8 @@ function ConsoleArea() {
         
        if (this.messageStack[this.messageStack.length-1] != userText)
            this.messageStack.push(userText);
-       //.. remove the text
+       
+        //.. remove the text
        $("#userinput").val("");   
        this.scrollToBottom();
     }
@@ -69,7 +69,7 @@ function ConsoleArea() {
      *Otherwise, decide how to handle the user's input in javascript */ 
     this.parseLocally = function(userText) {
         userText = userText.trim();
-         if(userText.startsWith("view.")){
+        if(userText.startsWith("view.")){
             this.parseViewMessage(userText);
             return true; //.. parse it locally only
          }
@@ -81,7 +81,8 @@ function ConsoleArea() {
              return false;//.. return false as we still want to go to java
          }
         
-         
+        /***THESE METHODS ARE ONLY FOR REALTIME VISUALIZATION AND LABELING **/
+         //.. This will initialize successive messages from the client to the console, to repeatedly request an update
          if (userText.startsWith("streamsynch(")) {
              if (this.streaming) {
                 this.displayMessage("A streaming procedure is already being run; terminate it with clearstream()", "systemmes", "redline");
@@ -138,7 +139,6 @@ function ConsoleArea() {
             var trialsOfEach = parseInt(timing[1]);
             var restLength = parseInt(timing[2]);
             labeler = new Labeler();
-            console.log(timing + "," + trialLength + "," + trialsOfEach + "," +restLength);
             labeler.initiateLabeling(filename,conditionName,conditions,trialLength,trialsOfEach,restLength); 
             return false;
          }
@@ -195,10 +195,10 @@ function ConsoleArea() {
          
         this.displayMessage(message, "systemmess", "secondline");
     };
-    
+
+    /** A method for neatly presenting the information gain of attribtues to users **/
     this.displayAttributes = function(attributes) {
         var div = $("<div></div>");
-        
         attributes.sort(function (a,b){;return b.value - a.value;});
         var addedUpTo = attributes.length -1;
         for (var i =0; i < attributes.length; i++) {
@@ -231,6 +231,7 @@ function ConsoleArea() {
         $("#pastmessages").append(div);
     }
     
+    /* So that we know locally what the available commands are, as encoded in the java server */
     this.setCommands = function(commands, display) {
        var div = $("<div></div>");
        var cmdArray = commands.commands;
@@ -246,6 +247,7 @@ function ConsoleArea() {
 
     }
     
+    /*Display one command neatly in the console*/
     this.addCommand = function(command) {
         var d = $("<div></div>");
         //.. 1 ID
@@ -293,12 +295,9 @@ function ConsoleArea() {
             else
                 bdo2 = $("<del></del>").text(ch);
 
-           // bdo2.addClass(id +"-"+index+"-"+i+strikeThrough);
             bdo.append(bdo2);
         }
 
-        //var lineId = id+"-"+index+"-"+strikeThrough;
-        //d.addClass(lineId);
         d.append(bdo);
         return d;
     }
@@ -338,39 +337,7 @@ function ConsoleArea() {
         return found;
     }
     
-     /* ------------------
-      * NO LONGER IN USE! **/
-     
-     
-     /** Next step is to change it into multiple concurrent filepassings. As we see, 
-     * whereas the original file was 2 million; we were only able to pass about 500,000
-     * we should figure out the absolute limit, and make it into many concurrent passings
-     * with different signatures. 
-     */
-    this.passFile = function(filename, filedata) {
-        //.. Display message acknologing file being sent
-        var charsPerPass = 3;//500000.0;
-        var numPasses = Math.ceil(filedata.length / charsPerPass);
-        var start =0;
-        filedata= filedata.replace("\n", "cr13");
-
-        console.log(filedata);
-        this.displayMessage("> " + filename +", " + filedata.length, "usermessage", "");
-        //..  given the limit for how much we can pass at a time, partition into
-        //.. segments and pass one at a time
-        for (var i =0; i< numPasses; i++) {
-            var segment = filedata.substring(start, start +charsPerPass);
-            console.log(segment);
-            start += charsPerPass;
-             $("#consoleInput").val("filemessage%%%"+i+"%%%"+numPasses+"%%%"+filename +"%%%"+segment);
-            javaInterface.postToConsole();
-            for (var k =0; k < 4000000;k++) {
-                var f = 2*2;
-            }
-        }
-       
-        this.scrollToBottom();
-    }
+    
 }
 
  
