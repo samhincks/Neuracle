@@ -161,7 +161,7 @@ function DatalayerArea(selection) {
             }
             
             else //.. Even if we're not redrwaing the layer, potentially add an extra button
-                newLayer.toggleCTooltip(dl.performance);
+                localDl.toggleCTooltip(dl.performance);
             
         } 
     }
@@ -169,12 +169,17 @@ function DatalayerArea(selection) {
     /**Place techniques ontop of datalasyer they intersect **/
     this.highlightIntersectedTechniques = function(){
         var intersected = this.getIntersectedTechniques();
+        var selected = $(".channelsetSelected");
         for (var i =0; i <intersected.length; i++) {
             var tech = this.techniques.getTechniqueById(intersected[i].sourceId);
+            //var dl this.datalayers.
+            
             
             //.. show its a valid selection ebtween trained classifier and channelset
             if (tech.trained > 0) {
-                $("#" + intersected[i].sourceId).addClass("classifierTrainedIntersected");
+                //.. Don't color green unless we're selecting the one we intersect
+                if ($(selected[0]).attr("id") == intersected[i].targetId) 
+                    $("#" + intersected[i].sourceId).addClass("classifierTrainedIntersected");
              }
         }
     }
