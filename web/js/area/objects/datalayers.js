@@ -104,12 +104,15 @@ function DataLayer(jsonDL) {
     this.numChannels = jsonDL.numchannels;
     this.numPoints = jsonDL.numPoints;
     this.type = jsonDL.type;
-    this.predButton = "pred"+this.id; 
-    this.corrButton = "corr" + this.predButton; //.. hacked to make tooltips work
-    this.elementTag = '<div id = "'+this.id+'" class = "datalayer surfaceElement"> <div title = "F" id = "'+this.predButton+'"> <div title = "N" id = "' + this.corrButton+ '"</div></div></div>';
+    this.bTooltip = "b"+this.id; 
+    this.cTooltip = "c" + this.bTooltip; //.. hacked to make tooltips work
+    this.elementTag = '<div id = "'+this.id+'" class = "datalayer surfaceElement"> <div title = "F" id = "'+this.bTooltip+'"> <div title = "N" id = "' + this.cTooltip+ '"</div></div></div>';
     this.sqScale = d3.scale.linear().domain([0, 625000]).range([45, 90]); //.. scale the size of the datalayer
     this.intersected = 0; //.. increase if anything is intersected
+    
+    this.hasPerformance = false;  //.. set to true if this object should display the P for its performance 
 
+    
     /** Display tooltips by the datalayer. Somewhat of a hack, since we want three
      * tooltips for one datalayer, so we've made the corresponding tag for an element
      * a triple embedded div
@@ -117,40 +120,42 @@ function DataLayer(jsonDL) {
     this.displayTooltips = function() {
         //.. Give the divs the title attribute, so that tooltips work
         $("#"+this.id).attr("title", this.id + " has " + this.numChannels + " channels");
-        var predId = $("#" + this.predButton); //.. but when it adds a new datalayer it will refer to the latest one!
-        predId.attr("title", "P"); //.. this line of code doesnt work
-        var corrId = $("#" + this.corrButton);
-        corrId.attr("title", "N"); 
+        var cId = $("#" + this.cTooltip); //.. but when it adds a new datalayer it will refer to the latest one!
+        cId.attr("title", "P"); //.. this line of code doesnt work
+        var bId = $("#" + this.bTooltip);
+        bId.attr("title", "N"); 
+        
+        //.. set these fresh variables since this context will be clobbered where we need them
         var type = this.type;
+        var hasPerformance =this.hasPerformance; 
         var titleId = this.id.split("-")[0];
         
         //.. For a channelset, display frequency and correlation views
         //.. Give it the title attribute, so that the tooltip function applies
-        predId.tooltip({
-            content: "P",
+        bId.tooltip({
+            content: "C",
             tooltipClass: "pred",
             hide: {duration: 1200},
             position: {my: 'right bottom+15', at: 'left center', collision: 'flipfit'},
             open: function(event, ui) {
                 $(ui.tooltip).dblclick(function(e) {
-                    javaInterface.postToDataLayer("prediction");
+                    javaInterface.postToDataLayer("correlation");
                 });
-                var nId = $("#corr" + this.id);
-                nId.tooltip('open'); //.. doesnt trigger conventional open
+                cId.tooltip('open'); //.. doesnt trigger conventional open
             },
             close: function(event, ui) {
-                corrId.tooltip('close'); //.. doesnt trigger conventional open
+                cId.tooltip('close'); //.. doesnt trigger conventional open
             }
         });
 
-        corrId.tooltip({
-           content: "C",
+        cId.tooltip({
+           content: "P",
            tooltipClass: "corr",
             hide: {duration: 1200},
             position: {my: 'left bottom', at: 'left center', collision: 'flipfit'},
             open: function(event, ui) {
                 $(ui.tooltip).dblclick(function(e) {
-                    javaInterface.postToDataLayer("correlation");
+                    javaInterface.postToDataLayer("prediction");
                 });
             },
 
@@ -158,22 +163,29 @@ function DataLayer(jsonDL) {
 
         $("#" + this.id).tooltip({
             content: titleId,
-            hide: {duration: 1200},
+            hide: false,
             open: function(event, ui) {
                 $(ui.tooltip).dblclick(function(e) {
                     javaInterface.postToDataLayer();
                 });
+
                 if (type =="2D"){ //.. set of chain of showing corr view if its a 2D
-                    var fId = $("#pred"+this.id);
-                    fId.tooltip('open'); //.. doesnt trigger conventional open
+                    bId.tooltip('open'); //.. doesnt trigger conventional open
                 }
-            },
+            }, 
             close: function(event, ui) {
-                predId.tooltip('close'); //.. doesnt trigger conventional open
+                bId.tooltip('close'); //.. doesnt trigger conventional open
             },
             position: {my: 'left bottom+70', at: 'center center', collision: 'flipfit'}
 
         });            
+    }
+    
+    this.toggleCTooltip = function(on) {
+         if (on == "false" )//. Add Performance as part of the obejct
+            $("#cb" + this.id).tooltip({content: ""});
+        else
+            $("#cb" + this.Id).tooltip({content: "P"});
     }
     
    /** Add an appropriate image to the datalayer that conveys information about the datalayer**/

@@ -265,6 +265,7 @@ public class DataManipulationParser extends Parser{
         }
         else if (command.startsWith("classify")) {
             c = commands.get("classify");
+            c.action = "reload"; //.. since we add predictions to the view
             c.retMessage = classify(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
         }
         

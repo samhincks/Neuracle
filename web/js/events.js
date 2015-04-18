@@ -7,6 +7,7 @@
 var consoleArea = new ConsoleArea();
 var chartArea = new ChartArea("#topRight");
 var javaInterface = new JavaInterface();
+var plumbTechniques = new PlumbTechniques();
 var plumb = new Plumb();
 var datalayerArea = new DatalayerArea("#content");
 var address =  "http://localhost:8080/SensorMining/" 

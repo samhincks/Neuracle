@@ -37,6 +37,9 @@ public class DataLayersActionBean extends BaseActionBean{
                obj.put("parent", dl.getParent()); //.. get the name of the layer it was derived from
                obj.put("numchannels", dl.getChannelCount());
                obj.put("numpoints", dl.getCount());
+               if (ctx.getPerformances().predictionSets.containsKey(dl.getId()))
+                   obj.put("performance", "true");
+               else obj.put("performance", "false");
                
                //.. depending on type, place the layers type
                if (dl instanceof BidimensionalLayer)

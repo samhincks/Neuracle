@@ -119,9 +119,10 @@ function DatalayerArea(selection) {
 
             //.. the datalayer that should be reloaded
             var idName = dl.id;
+            var localDl = this.datalayers.getDLById(idName);
             
            //.. if this is a brand new datalayer, make it and determine its default position
-            if (this.datalayers.getDLById(idName) ==null) { //.. if we haven't added this dl yet'
+            if (localDl ==null) { //.. if we haven't added this dl yet'
                 //.. instantiate a new datalayer with the JSON specifications
                 var newLayer = new DataLayer(dl);
                 
@@ -150,10 +151,18 @@ function DatalayerArea(selection) {
                        fromTop += 150 
                    }
                 }
+                
+                //.. regardless if it exists or not, set the performance tag if its true
+                
                 //.. add images and art 
                 newLayer.drawArt();
                 newLayer.displayTooltips();
+                newLayer.toggleCTooltip(dl.performance);               
             }
+            
+            else //.. Even if we're not redrwaing the layer, potentially add an extra button
+                newLayer.toggleCTooltip(dl.performance);
+            
         } 
     }
     
