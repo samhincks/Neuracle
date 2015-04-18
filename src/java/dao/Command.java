@@ -9,7 +9,7 @@ package dao;
 import org.json.JSONObject;  
 
 /**    
- *
+ *  
  * @author samhincks  
  */                    
 public class Command {                   
@@ -24,7 +24,7 @@ public class Command {
  
     public Command(String id) {
         this.id = id;
-    }
+    }  
       
     public JSONObject getJSONObject(boolean showTut) throws Exception{
         JSONObject jsonObj = new JSONObject();
@@ -37,7 +37,7 @@ public class Command {
             jsObj.put("id", action); 
             jsObj.put("data", data);
             jsonObj.put("action", jsObj);
-        }
+        }  
         if (tutorial != null && showTut)
             jsonObj.put("tutorial", tutorial);
         return jsonObj;

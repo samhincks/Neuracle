@@ -91,21 +91,31 @@ function DatalayerArea(selection) {
     this.removeDatalayers = function(layers) {
         //... Add the datalayers that may have been created  
         var arrayLength =this.datalayers.dls.length; 
-        for (var i = 0; i < arrayLength; i++) {
+        
+        //.. iterate through all the layers
+        for (var i = 0; i < arrayLength; i++) { 
             var dl = this.datalayers.dls[i];
             var exists = false;
+            
+            //.. if we have a local copy of it, flag it as existing
             for (var j in layers) {
                 if (layers[j].id == dl.id) {
                     exists =true; break;
                 }
             }
+            
+            //.. if it doesn't exist, remove it from the dom. 
             if (!exists) {
                 //.. 1) remove from the DOM
                 $("#"+dl.id).remove();
+                
                 //.. 2) remove from array, padding it without disturbing iteration through this loop
                 this.datalayers.dls.splice(i, 1);
                 arrayLength--;
                 i--;
+                
+                //.. 3) Remove any plumb connectors that involve this id
+                plumb.removeConnection(dl.id);
             }
         }
     }
@@ -151,9 +161,7 @@ function DatalayerArea(selection) {
                        fromTop += 150 
                    }
                 }
-                
-                //.. regardless if it exists or not, set the performance tag if its true
-                
+                                
                 //.. add images and art 
                 newLayer.drawArt();
                 newLayer.displayTooltips();
@@ -173,8 +181,7 @@ function DatalayerArea(selection) {
         for (var i =0; i <intersected.length; i++) {
             var tech = this.techniques.getTechniqueById(intersected[i].sourceId);
             //var dl this.datalayers.
-            
-            
+            //            
             //.. show its a valid selection ebtween trained classifier and channelset
             if (tech.trained > 0) {
                 //.. Don't color green unless we're selecting the one we intersect

@@ -180,10 +180,10 @@ function JavaInterface() {
     }
     
     /*Display descriptions and statistics for a datalayer 
-     * 
-     * THIS FUNCTION WILL PROBABLY SOON BE DEPRECATED
+     * Activated when we select
      **/
     this.returnFromDataLayerStats = function(xhr) {
+        console.log("returning")
         var JSONobj = eval('('+ xhr +')'); 
         if (JSONobj.error != null) //.. we give errors here but not for technique because of teh way we retrieve Dataset performances
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
@@ -192,7 +192,7 @@ function JavaInterface() {
              descriptionArea.displayDescription(JSONobj.description);
         }
        
-       //.. otherwise no error, so we display the graph
+        //.. otherwise no error, so we display the graph
         if (JSONobj.performance != null) {
             chartArea.displayPerformance(JSONobj.performance);
         }
