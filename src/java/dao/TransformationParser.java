@@ -46,7 +46,7 @@ public class TransformationParser extends Parser{
         
         // -- ASSIGNLABEL
         command = new Command("assignlabel");
-        command.documentation = "A risky procedure unless 100% certain. Assigns labels according to a known pattern. "
+        command.documentation = "A 'risky' procedure unless 100% certain. Assigns labels according to a known pattern. "
                 + " The first specified condition is presumed to start at the index of the first parameter and end y locations after"
                 + " with input (condition:y), where the second condition continues. This pattern repeats through the entire dataset"
                 + " unless an end location is specified within a colon-delineated first parameter  ";
@@ -108,7 +108,7 @@ public class TransformationParser extends Parser{
         command = new Command("append");
         command.documentation = "With multiple channels selected, append into a single datalayer";
         command.tutorial = "Now it's as though all the data were read from one file. Notice that a larger"
-                + " object means it has a larger size. When your surface appears to cluttered, it makes sense to "
+                + " object means it has a larger size. When your surface appears top cluttered, it makes sense to "
                 + " delete objects using the delete, clear, and hold commands to free up memory (The heap is finite!)::"
                 + " Write im into the console, but dont hit enter just yet! Instead hit the tab-button to autocomplete the command"
                 + " The tab button will print every command that matches the current input. If you hit tab without any input, "
@@ -198,7 +198,7 @@ public class TransformationParser extends Parser{
             e2.setParent(e.id);
             retString += "Cleaned " + e.id + ", transforming from " + e.matrixes.size() + " to " + e2.matrixes.size();
         }
-        return retString;
+        return retString;  
     }
      
     /**Merge a set of selected channels into one**/

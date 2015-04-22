@@ -184,8 +184,9 @@ function DataLayer(jsonDL) {
     this.toggleCTooltip = function(on) {
          if (on == "false" )//. Add Performance as part of the obejct
             $("#cb" + this.id).tooltip({content: ""});
-        else
-            $("#cb" + this.Id).tooltip({content: "P"});
+        else 
+            $("#cb" + this.id).tooltip({content: "P"});
+        
     }
     
    /** Add an appropriate image to the datalayer that conveys information about the datalayer**/

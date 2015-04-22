@@ -125,7 +125,7 @@ public class MiscellaneousParser extends Parser{
         command.documentation = "Loads a sample file, and executes basic instructions on it";   
         command.action = "reload";
         command.tutorial = "Double click on one of the files in the topleft corner to view the raw-data."
-                + "Then, with the file selected, type split(condition) to group the data by common conditions";
+                + " Then, with the file selected, type split(condition) to group the data by common conditions";
         commands.put(command.id, command);
         
     }
@@ -560,10 +560,10 @@ public class MiscellaneousParser extends Parser{
       
         return  "In the topleft corner, you can see that we have created sample"
                 + " datasets for you from a real experiment. To upload your own, click chose file, and then select a valid"
-                + " CSV,value. The first row should contain comma-separated names; then subsequent rows"
-                + " should contain time-ordered values that pertain to that column. The last k>1 columns should"
+                + " tab-or-comma-separated-value file. The first row should contain set of names; then subsequent rows"
+                + " should contain time-ordered values that pertain to that column. The last k>=0 columns should"
                 + " be text -- a name for the trial. Subsequent rows with the same name belong to the same trial. Alternatively, "
-                + " if you have placed your folder inside build/web/input/foldername, then load(foldername) will open all files therin ";
+                + " if you have manually placed your folder inside build/web/input/foldername, then load(foldername) will open all files therein ";
                 
         }
 }

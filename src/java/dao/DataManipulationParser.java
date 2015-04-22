@@ -130,7 +130,7 @@ public class DataManipulationParser extends Parser{
                 " trains a classifier which can be applied to any other arbitrary channelset, that is synchronized or not";
         command.tutorial = " Now you've trained the machine learning algorithm. Once again, you can see how internally accurate the analysis was, "
                 + " but this time, the machine learning algorithm remembers its knowledge, and you can link it to a livestream"
-                + " of data, or apply it to any loaded dataset, where workload levels may be known or unknown. ::"
+                + " of data, or apply it to any loaded dataset, where the condition may be known or unknown. ::"
                 + " Drag the trained machine learning algorithm to the original ungrouped file and type classify() ";
         commands.put(command.id, command);
         
@@ -178,8 +178,9 @@ public class DataManipulationParser extends Parser{
                 + "(a) Probe A appears better than Probe B:: (b) The oxy and deoxy channels tend to be negatively correlated ::"
                 + " Then, if you like, double click the C on the parent object, wait 30 seconds for it to compute, and consider"
                 + " the relationship between channels in this new layer. ;;"
-                + " As a last step in the tutorial,  see if you can confirm what we just saw in  "
-                + " these visualizations by making a new featureset. :: Type makefs(slope, *,*), then double click on this newly created featurset object ::"
+                + " As a last step in the tutorial, see if you can confirm what we just saw in  "
+                + " these visualizations by evaluating the information gain of attribtues in a new featureset. :: Type makefs(slope, *,*), "
+                + " then double click on this newly created featurset object ::"
                 + " The attributes in the console have been ranked according to the information gain, the degree to which"
                 + " their values can meaningfully separate the conditions:: Does probe A appear to have better data than probe B? ";
         commands.put(command.id, command);

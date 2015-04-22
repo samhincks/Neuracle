@@ -168,8 +168,10 @@ function DatalayerArea(selection) {
                 newLayer.toggleCTooltip(dl.performance);               
             }
             
-            else //.. Even if we're not redrwaing the layer, potentially add an extra button
+            else { //.. Even if we're not redrwaing the layer, potentially add an extra button
                 localDl.toggleCTooltip(dl.performance);
+                console.log("toggling performance")
+            }
             
         } 
     }
