@@ -108,7 +108,7 @@ public class TransformationParser extends Parser{
         command = new Command("append");
         command.documentation = "With multiple channels selected, append into a single datalayer";
         command.tutorial = "Now it's as though all the data were read from one file. Notice that a larger"
-                + " object means it has a larger size. When your surface appears top cluttered, it makes sense to "
+                + " object means it has a larger size. When your surface appears too cluttered, it makes sense to "
                 + " delete objects using the delete, clear, and hold commands to free up memory (The heap is finite!)::"
                 + " Write im into the console, but dont hit enter just yet! Instead hit the tab-button to autocomplete the command"
                 + " The tab button will print every command that matches the current input. If you hit tab without any input, "

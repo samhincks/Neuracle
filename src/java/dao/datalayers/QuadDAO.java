@@ -24,7 +24,7 @@ public class QuadDAO extends DataLayerDAO{
     @Override
     public JSONObject getJSON() throws Exception {
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("error", "cannot visualize multiple experiments");
+        //jsonObj.put("error", "cannot visualize multiple experiments");
         return jsonObj;
     }
 

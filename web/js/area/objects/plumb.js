@@ -103,6 +103,7 @@ function Plumb() {
        this.connections.push(ex);
     }
     this.removeConnection = function(id) {
+
         for (var c in this.connections) {
            var con = this.connections[c];
            if (con.sourceId== id || con.targetId == id) {

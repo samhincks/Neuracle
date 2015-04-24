@@ -179,10 +179,8 @@ public class DataManipulationParser extends Parser{
                 + " Then, if you like, double click the C on the parent object, wait 30 seconds for it to compute, and consider"
                 + " the relationship between channels in this new layer. ;;"
                 + " As a last step in the tutorial, see if you can confirm what we just saw in  "
-                + " these visualizations by evaluating the information gain of attribtues in a new featureset. :: Type makefs(slope, *,*), "
-                + " then double click on this newly created featurset object ::"
-                + " The attributes in the console have been ranked according to the information gain, the degree to which"
-                + " their values can meaningfully separate the conditions:: Does probe A appear to have better data than probe B? ";
+                + " these visualizations by evaluating the information gain of attributes in a new featureset. :: Type makefs(slope, *,*), "
+                + " then double click on this newly created featurset object to see ranking of their information gain";  
         commands.put(command.id, command);
         
         //-- granger 

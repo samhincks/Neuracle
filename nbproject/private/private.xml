@@ -2,10 +2,41 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="24">
         <file>
+            <url>web/js/area/chartarea.js</url>
+            <bookmark id="16">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+            <bookmark id="17">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/dao/InputParser.java</url>
+            <bookmark id="3">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+            <bookmark id="2">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+            <bookmark id="1">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>web/js/area/datalayerarea.js</url>
             <bookmark id="20">
                 <name/>
-                <line>185</line>
+                <line>186</line>
                 <key/>
             </bookmark>
         </file>
@@ -39,58 +70,6 @@
             </bookmark>
         </file>
         <file>
-            <url>web/js/movingLinegraph.js</url>
-            <bookmark id="10">
-                <name/>
-                <line>61</line>
-                <key/>
-            </bookmark>
-            <bookmark id="13">
-                <name/>
-                <line>502</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/js/streamchart.js</url>
-            <bookmark id="11">
-                <name/>
-                <line>18</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/js/area/chartarea.js</url>
-            <bookmark id="16">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-            <bookmark id="17">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/dao/InputParser.java</url>
-            <bookmark id="3">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-            <bookmark id="2">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-            <bookmark id="1">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>web/js/FreqBarChart.js</url>
             <bookmark id="4">
                 <name/>
@@ -117,10 +96,31 @@
             </bookmark>
         </file>
         <file>
+            <url>web/js/movingLinegraph.js</url>
+            <bookmark id="10">
+                <name/>
+                <line>61</line>
+                <key/>
+            </bookmark>
+            <bookmark id="13">
+                <name/>
+                <line>502</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>web/js/visualization/movingLinegraph.js</url>
             <bookmark id="24">
                 <name/>
                 <line>674</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/streamchart.js</url>
+            <bookmark id="11">
+                <name/>
+                <line>18</line>
                 <key/>
             </bookmark>
         </file>
@@ -130,7 +130,6 @@
             <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/area/datalayerarea.js</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/Command.java</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/events.js</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/javainterface.js</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/area/objects/plumb.js</file>
         </group>
     </open-files>

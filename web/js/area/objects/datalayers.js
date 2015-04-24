@@ -186,7 +186,6 @@ function DataLayer(jsonDL) {
             $("#cb" + this.id).tooltip({content: ""});
         else 
             $("#cb" + this.id).tooltip({content: "P"});
-        
     }
     
    /** Add an appropriate image to the datalayer that conveys information about the datalayer**/

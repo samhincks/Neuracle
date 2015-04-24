@@ -10,8 +10,8 @@ var javaInterface = new JavaInterface();
 var plumbTechniques = new PlumbTechniques();
 var plumb = new Plumb();
 var datalayerArea = new DatalayerArea("#content");
-var address =  "http://localhost:8080/SensorMining/" 
-//var address = "http://sensormining.herokuapp.com/"; //.. the address of the back-end
+//var address =  "http://localhost:8080/SensorMining/" 
+var address = "http://sensormining.herokuapp.com/"; //.. the address of the back-end
 
 /* When document is loaded, do init, ie set listeners etc. 
  */

@@ -183,7 +183,6 @@ function JavaInterface() {
      * Activated when we select
      **/
     this.returnFromDataLayerStats = function(xhr) {
-        console.log("returning")
         var JSONobj = eval('('+ xhr +')'); 
         if (JSONobj.error != null) //.. we give errors here but not for technique because of teh way we retrieve Dataset performances
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");

@@ -16,7 +16,7 @@
 <html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF8">
-        <title>Time Mine</title>
+        <title>Neuracle</title>
         <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>  If we dont do remote, pep doesnt work-->
 
        <link type="text/css" rel="stylesheet" href="css/jquery-ui.css" /> 
@@ -41,7 +41,6 @@
                    <s:text name = "frequency" id = "frequency" style ="visibility:hidden"/> 
                    <s:text name = "correlation" id = "correlation" style ="visibility:hidden"/> 
                    <s:text name = "prediction" id = "prediction" style ="visibility:hidden"/> 
-
                 </s:form>
                 
                <s:form beanclass ="stripes.action.TechniqueActionBean" id = "techniques" class ="unselectable"> 
