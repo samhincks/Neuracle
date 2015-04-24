@@ -121,6 +121,10 @@ public class DataLayerActionBean extends BaseActionBean{
      */
     public Resolution getJSON() throws JSONException{    
         try {
+          /*  System.out.println(ctx.getRequest().getRemoteAddr() + "  " + ctx.getRequest().getSession().getId());
+            System.out.println(ctx.getServletContext().getServerInfo());
+            System.out.println(ctx.getRequest().getRemoteUser());*/
+
             ctx.setCurrentName(giver);
             DataLayerDAO dlGiver = ctx.dataLayersDAO.get(giver);         
             JSONObject jsonObj;

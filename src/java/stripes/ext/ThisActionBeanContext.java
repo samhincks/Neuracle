@@ -23,10 +23,10 @@ public class ThisActionBeanContext extends ActionBeanContext{
         this.getValidationErrors().addGlobalError(s);
     }
    public InputParser inputParser;
-
+  
+   /** Action bean context is reinitialized every 
+    **/
     public ThisActionBeanContext() { 
-        /***Gets reinitialized all the time which is why we need to make stuff
-       static**/
         inputParser = new InputParser(this);
     }
     public ThisActionBeanContext(boolean test) {
