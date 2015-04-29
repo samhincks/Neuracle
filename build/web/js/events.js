@@ -3,23 +3,21 @@
  *file is evoked. The function init() is always called. The function reinit() is
  *called everytime we load a new datalayer: it is where we set the bulk of our listeners
  ***/
-
 var consoleArea = new ConsoleArea();
-var descriptionArea = new DescriptionArea("#farBottomRight");
-var chartArea = new ChartArea("#topRight", descriptionArea);
+var chartArea = new ChartArea("#topRight");
 var javaInterface = new JavaInterface();
-var channelSurface = new ChannelSurface();
+var plumbTechniques = new PlumbTechniques();
 var plumb = new Plumb();
 var datalayerArea = new DatalayerArea("#content");
-var plumbTechniques = new PlumbTechniques();
-var address = "http://localhost:8080/SensorMining/";/*"http://sensormining.herokuapp.com/";*/ //.. the address of the back-end
+var address =  "http://localhost:8080/SensorMining/" 
+//var address = "http://sensormining.herokuapp.com/"; //.. the address of the back-end
 
 /* When document is loaded, do init, ie set listeners etc. 
  */
 $( init );
 function init() { 
     //.. Focus on input, so that it is the default location for cursor
-//    $("input").focus();
+    //    $("input").focus();
     
     //.. Tell consoleArea to display a welcome message. load a file 
     consoleArea.introduce();
@@ -90,33 +88,8 @@ function init() {
         }
         chartArea.displayChart(chartArea.lastJSON);
     });
-  
-  /*
-   document.getElementById('asynchFile').addEventListener('change', readFile, false);
-
-   function readFile (evt) {
-       var files = evt.target.files;
-       var file = files[0];           
-       var reader = new FileReader();
-      
-       reader.onload = function() {
-         consoleArea.passFile(file.name, this.result);
-       }
-       reader.readAsText(file);
-    }
-    //.. No longer in huse
-    */ 
 }
 
-/*Functions that must be loaded at start but also
- *reinitalized when we reload datalayers*/
-function reinit() {
-  /** dropchannel: this is the class for datalayers. As soon as our mouse enters
-    *it, we want to change "givers" val (again an old name that no longer makes sense)
-    * so that the backend knows what is currently being pressed
-    **/
-   
-}
 
 function datalayerInit() {
     $('.datalayer').mouseenter(function(e) {
@@ -141,7 +114,6 @@ function datalayerInit() {
     });
 
     var shiftKey = false; //.. for multi-selection
-    var altKey = false; //.. not currently in sue
     //.. if a channel set is clicked
     $(".datalayer").mousedown(function(e) {
         /// $(".ui-tooltip").tooltip('close'); // doesnt work 
@@ -173,7 +145,7 @@ function individualTechniqueInit(id, type) {
         javaInterface.getTechniqueStats();
     });
 
-    //.. if a technique is click (do essentially same as if channel is
+    //.. if a technique is clicked (do essentially same as if channel is
     $("#"+id).mousedown(function(e) {
         datalayerArea.techniques.selectTechnique(e.currentTarget.id);
         $("#technique").val(e.currentTarget.id);

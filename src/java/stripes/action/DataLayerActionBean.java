@@ -56,6 +56,7 @@ public class DataLayerActionBean extends BaseActionBean{
         BiDAO mDAO = new BiDAO(); 
         try {
             mDAO.make(newAttachment, ctx.getFileReadSampling());
+            
             //.. if this is as yet uninitizliaed
             if (ctx.dataLayersDAO == null) {
                 ctx.dataLayersDAO = new DataLayersDAO();
@@ -116,6 +117,7 @@ public class DataLayerActionBean extends BaseActionBean{
     public boolean getMerge() {return merge; }
 
     @DefaultHandler
+    
     /*Return a Streaming Resolution of the datalayer as a json object.
      * The "giver" is the is of the object currently being touched
      */

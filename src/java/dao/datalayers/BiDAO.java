@@ -33,16 +33,13 @@ import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.uni.Channel;
 import timeseriestufts.kth.streams.uni.UnidimensionalLayer;
 
-/**
- *
+/**An intermediary representation between a bidimensional layer and client-facing JSON code
  * @author Sam Hincks
  */
 public class BiDAO extends DataLayerDAO {
     ArrayList<DataLayer> channels;
     String id; 
     private ChannelSetFromStringsMaker csMaker; //.. if we are creating a datalyer from a series of strings
-    
-    //protected SemiSynchedChannelSet SSChannelSet; 
     protected JSONObject jsonObj;
     public boolean synchronizedWithDatabase = false; //.. if this layer changes in response to a database
     public int numSynchronizations =0; //.. number of times this has been synchronized
@@ -50,6 +47,8 @@ public class BiDAO extends DataLayerDAO {
     public int curPos = 0; //.. DELETE THIS LATER
     public Hashtable<String,String> curLabels = null; //.. when data is streamed in
     public ArrayList<Labels> labels = null; //.. a collection of labels describing condition of corresponding points
+    
+    
     public BiDAO(ArrayList<DataLayer> channels) {
         this.channels = channels;
     }
@@ -65,7 +64,7 @@ public class BiDAO extends DataLayerDAO {
     public BiDAO(String id) {this.id = id;}
     
     
-    //**Create new dataLayer from input file, with a specified sampling rate*/
+    /**Create new dataLayer from input file, with a specified sampling rate*/
     public void make(File fb, int fileSampling) throws Exception {
         TSTuftsFileReader fileReader = new TSTuftsFileReader();
         try {
@@ -77,6 +76,7 @@ public class BiDAO extends DataLayerDAO {
         dataLayer.setId(fb.getName()+ "fs" + fileSampling); //.. No extension
         dataLayer.setStatsMap();
     }
+    
     /**
      * Create new dataLayer from input file, with a specified sampling rate
      */
@@ -126,7 +126,8 @@ public class BiDAO extends DataLayerDAO {
     }
     
     
-    /**Add all the channels to a channelSet (they may be unsynched)
+    /**
+     * Add all the channels to a channelSet (they may be unsynched)
      * @param name 
      */
     public void makeMatrix(String name) throws Exception {
@@ -199,7 +200,8 @@ public class BiDAO extends DataLayerDAO {
     }
     
      
-    /**Return JavaScriptObject Notation of the datalayer
+    /**
+     * Return JavaScriptObject Notation of the datalayer
      * --Notation for movingLinegraph-- 
      * var data = {
      *  "start": 0 // The x of the first point
@@ -383,7 +385,7 @@ public class BiDAO extends DataLayerDAO {
      * id = id
      * @return JSONObject
      */
-     public JSONObject getJSON2() throws Exception  {    
+     public JSONObject getJSONOld() throws Exception  {    
       jsonObj = new JSONObject();
       ChannelSet channelSet = (ChannelSet)dataLayer;
      
@@ -553,36 +555,18 @@ public class BiDAO extends DataLayerDAO {
                            
     }
     
-  
-    public static void main(String[] args) {
-        try {
-            int TEST =1;
-            ChannelSet cs = ChannelSet.generate(1, 30);
-            BiDAO bcs = new BiDAO(cs);
-            
-            if (TEST ==0)
-                bcs.saveToDatabase("samhincks");
-            
-            if (TEST ==1) {
-                cs = new ChannelSet();
-                bcs = new BiDAO(cs);
-                bcs.synchronizeWithDatabase("realtime1");
-                cs.printStream();
-                
-            }
-            
-            
-        
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
+   /**Return the number of readings in this dataset
+    * @return
+    * @throws Exception 
+    */
     public int getNumReadings() throws Exception{
         ChannelSet cs = (ChannelSet) dataLayer;
         return cs.getNumPointsAtZero();
     }
 
+    /**Add Markers to the datalayer
+     * @param markers 
+     */
     public void addMarkers(Markers markers) {
         ChannelSet cs = (ChannelSet) dataLayer;
         cs.addMarkers(markers);
@@ -609,6 +593,10 @@ public class BiDAO extends DataLayerDAO {
         return null;
     }
     
+    /**Return all labels with specified name
+     * @param labelName
+     * @return 
+     */
     public Labels getLabelsWithName(String labelName) {
          if (labels != null) {
             for (Labels l : this.labels){
@@ -626,7 +614,29 @@ public class BiDAO extends DataLayerDAO {
         this.labels.add(labels);
     }
 
-   
+    public static void main(String[] args) {
+        try {
+            int TEST = 1;
+            ChannelSet cs = ChannelSet.generate(1, 30);
+            BiDAO bcs = new BiDAO(cs);
+
+            if (TEST == 0) {
+                bcs.saveToDatabase("samhincks");
+            }
+
+            if (TEST == 1) {
+                cs = new ChannelSet();
+                bcs = new BiDAO(cs);
+                bcs.synchronizeWithDatabase("realtime1");
+                cs.printStream();
+
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
 
 
    

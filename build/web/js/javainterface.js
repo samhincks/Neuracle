@@ -33,11 +33,7 @@ function JavaInterface() {
              if(JSONobj.action.id == "reloadT") {
                  javaInterface.postToTechniques();
              }
-             //.. NO longer in use??
-             //.. if this was a highlighting command that required back-end computation 
-             if(JSONobj.action.id == "sax") { 
-                 chart.drawLinePlot(JSONobj.action.data);
-             }
+           
              if(JSONobj.action.id == "csrefresh") {
                  chartArea.displayChart(JSONobj.action);
              }
@@ -95,7 +91,6 @@ function JavaInterface() {
     
     /**Having selected an element, get a stream of its data to display it. */
     this.postToDataLayer = function(message) {
-        
         $('#frequency').val(false);
         $('#correlation').val(false);
         $('#prediction').val(false);
@@ -180,8 +175,7 @@ function JavaInterface() {
     }
     
     /*Display descriptions and statistics for a datalayer 
-     * 
-     * THIS FUNCTION WILL PROBABLY SOON BE DEPRECATED
+     * Activated when we select
      **/
     this.returnFromDataLayerStats = function(xhr) {
         var JSONobj = eval('('+ xhr +')'); 
@@ -192,7 +186,7 @@ function JavaInterface() {
              descriptionArea.displayDescription(JSONobj.description);
         }
        
-       //.. otherwise no error, so we display the graph
+        //.. otherwise no error, so we display the graph
         if (JSONobj.performance != null) {
             chartArea.displayPerformance(JSONobj.performance);
         }
@@ -219,8 +213,8 @@ function JavaInterface() {
      this.returnFromTechniqueStats = function(xhr) {
          var JSONobj = eval('('+ xhr +')'); 
          
-         if(JSONobj.description != null)
-             chartArea.displayTechniqueDescription(JSONobj.description);
+         if(JSONobj.description != null) //.. For now we are content with info displayed by tooltip
+            // chartArea.displayTechniqueDescription(JSONobj.description);
          
          if (JSONobj.attributes != null)
             consoleArea.displayAttributes(JSONobj.attributes);
@@ -228,8 +222,6 @@ function JavaInterface() {
          if(JSONobj.performance != null)
             chartArea.displayPerformance(JSONobj.performance);
         
-         
-         
     }
     
 }

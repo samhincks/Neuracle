@@ -17,19 +17,15 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF8">
         <title>Neuracle</title>
-        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>  If we dont do remote, pep doesnt work-->
-
-       <link type="text/css" rel="stylesheet" href="css/jquery-ui.css" /> 
+        <link type="text/css" rel="stylesheet" href="css/jquery-ui.css" /> 
         <link type="text/css" rel="stylesheet" href="css/style.css" />
         <link type="text/css" rel="stylesheet" href="css/d3Style.css" />
-       <link type="text/css" rel="stylesheet" href="css/consoleStyle.css" /> 
-       <link type="text/css" rel="stylesheet" href="css/dlStyle.css" />
+        <link type="text/css" rel="stylesheet" href="css/consoleStyle.css" /> 
+        <link type="text/css" rel="stylesheet" href="css/dlStyle.css" />
 
     </head>
     
     <body class ="unselectable" id ="doc">   
-               
-        
         <div id ="timemine"> 
              <!--Default location for selectable data layers-->
              <div id ="topLeft" class ="component">
@@ -72,9 +68,6 @@
                     </div>
                 </s:form> 
                 
-                <!--Used when I was experimenting with with passing data as a string. finally deemed a bad idea-->
-              <!-- <input type="file" id ="asynchFile" name="asynchFile" enctype="multipart/form-data" /> -->
-                
                 
             </div>
            
@@ -89,7 +82,6 @@
                           <span class = "cursor"> </span> 
                           <input id = "userinput" ></input> 
                   </div> 
-                   <!-- <A HREF="realtime.jsp"><b> Realtime Data</b> -->
                 </div>  
                  <s:form beanclass ="stripes.action.ConsoleActionBean" id = "consoleForm" class ="unselectable"> 
                        <!--A message to the console--> 
@@ -97,7 +89,6 @@
                        <s:text name = "connections" id = "connections" style = "visibility:hidden"/>
                        <s:text name = "technique" id = "technique" style ="visibility:hidden"/> 
                  </s:form>
-                        
             </div>
             
         
@@ -105,12 +96,12 @@
         <script type="text/javascript" src="js/lib/jquery2.min.js"></script>
         <script type="text/javascript" src="js/lib/jquery-ui-1.11.min.js"></script> 
         <script type="text/javascript" src="js/lib/jquery.jsPlumb-1.3.3-all.js"></script> 
-         <script type="text/javascript" src="js/lib/jquery.pep.js"></script> 
-         <script type="text/javascript" src="js/lib/d3.min.js"></script>  
+        <script type="text/javascript" src="js/lib/jquery.pep.js"></script> 
+        <script type="text/javascript" src="js/lib/d3.min.js"></script>  
+        <script type="text/javascript" src="js/lib/d3tip.js"></script> 
          
 
         <!--VISUALIZATIONS-->
-        <script type="text/javascript" src="js/visualization/d3tip.js"></script> 
         <script type="text/javascript" src="js/visualization/LineChart.js"></script> 
         <script type="text/javascript" src="js/visualization/BarChart.js"></script> 
         <script type="text/javascript" src="js/visualization/FreqBarChart.js"></script> 
@@ -118,6 +109,10 @@
         <script type="text/javascript" src="js/visualization/streamchart.js"></script> 
         <script type="text/javascript" src="js/visualization/CorrelationMatrix.js"></script> 
         <script type="text/javascript" src="js/visualization/PredictionChart.js"></script> 
+        <script type="text/javascript" src="js/visualization/Heatmap.js"></script> 
+        <script type="text/javascript" src="js/visualization/thresholdencoding.js"></script> 
+
+
 
 
         <!--AREAS-->

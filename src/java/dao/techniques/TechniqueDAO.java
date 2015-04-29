@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package dao.techniques;
 
 import java.util.HashMap;
@@ -16,7 +13,6 @@ import timeseriestufts.evaluatable.performances.Predictions;
 
 /**What interactions are relevant with respect to the EvaluationTechnique?
  * We want to know its stats, its name. We need to be able to set its value 
- * 
  * @author samhincks
  */
 public class TechniqueDAO {

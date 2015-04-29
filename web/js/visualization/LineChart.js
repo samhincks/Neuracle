@@ -35,7 +35,7 @@ function LineChart() {
      * **/
     var color = d3.scale.category10();  /*d3.scale.ordinal()
         .domain([0, 1, 2])
-        .range(["#6699CC", "#BDAEAC"]);*/// to generate a different color for each line
+        .range(["#6699CC", "#BDAEAC"]);*/ //.. Blue and brown, for Tufts publications
     var max, min; //.. the maximum and minimum values of the dataset
     
     

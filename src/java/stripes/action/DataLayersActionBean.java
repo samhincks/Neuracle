@@ -30,7 +30,7 @@ public class DataLayersActionBean extends BaseActionBean{
             //.. Add each datalayer to the arry
             super.setUserName((String)ctx.getRequest().getSession().getAttribute("userName"));
             super.setPassword((String)ctx.getRequest().getSession().getAttribute("password"));
-//            ctx.dataLayersDAO.addDataByDB(ctx);
+
             for (DataLayer dl :ctx.dataLayersDAO.getDataLayers()){
                JSONObject obj = new JSONObject();   
                obj.put("id", dl.getId());

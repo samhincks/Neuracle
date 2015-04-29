@@ -16,8 +16,7 @@ import net.sourceforge.stripes.action.StreamingResolution;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- *
+/**For handling input from the console
  * @author samhincks
  */
 public class ConsoleActionBean extends DataLayerActionBean {
@@ -29,14 +28,10 @@ public class ConsoleActionBean extends DataLayerActionBean {
     private String technique;
     public String getTechnique() { return technique;}
     public void setTechnique(String technique) {this.technique = technique;}
-    
-  //  public InputParser inputParser = new InputParser(); //.. should be a property of ctx
-    
+        
     
     /**Parse the input from the console.
      */
-    //.. the JSONException is kinda inevitable if we want the object to be in a scope
-    //... where we can parse the input
     @DefaultHandler
     public Resolution parseInput() throws JSONException{
         InputParser inputParser = ctx.inputParser;

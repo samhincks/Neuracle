@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package stripes.action;
 
 import dao.datalayers.UserDAO;
@@ -27,8 +21,8 @@ public class UserActionBean extends BaseActionBean {
             @Validate(field ="userName",required=true,on = "loginUser"),  
             @Validate(field ="password",required=true,on = "loginUser")
           })  
-    public Resolution loginUser() throws JSONException 
-    {
+   
+    public Resolution loginUser() throws JSONException {
         String str = new String();
         try {
             if(ctx.userDAO == null)
@@ -46,7 +40,6 @@ public class UserActionBean extends BaseActionBean {
             }
         } catch(Exception e) {
             e.printStackTrace();
-//            jsonObj.put("error", e.getClass() + " : "+ e.getMessage());
             return new StreamingResolution("text", new StringReader(e.getClass() + " : "+ e.getMessage()));
         }
     }

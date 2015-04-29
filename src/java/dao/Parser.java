@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 package dao;
 
@@ -31,8 +27,9 @@ import timeseriestufts.kth.streams.tri.ChannelSetSet;
 import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.tri.TridimensionalLayer;
 
-/**
- *
+/**An abstract class; the basic flow for one of its implementing children is that
+ * you define a set of commands, place them in a commands upon initialization, and
+ * then implement them with the execute method. 
  * @author samhincks
  */
 public abstract class Parser {
@@ -208,6 +205,10 @@ public abstract class Parser {
         return retString;
     }
     
+    /**Return true if the port is available
+     * @param port
+     * @return 
+     */
     public static boolean available(int port) {
         try (Socket ignored = new Socket("localhost", port)) {
             return false;
@@ -216,6 +217,10 @@ public abstract class Parser {
         }
     }
     
+    /**Return all implemented commands
+     * @return
+     * @throws Exception 
+     */
     public ArrayList<JSONObject> getCommands() throws Exception{
         ArrayList<JSONObject> rObj = new ArrayList(); 
        
@@ -225,6 +230,10 @@ public abstract class Parser {
         return rObj;   
     }
     
+    /**Return documentation, nicely structured for all commands
+     * @param param
+     * @return 
+     */
     public String getDocumentation(String param) {
         String retString ="";
         for (Command c : commands.values()){

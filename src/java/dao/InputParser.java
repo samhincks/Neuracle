@@ -1,7 +1,3 @@
- /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package dao;
 
 import dao.datalayers.BiDAO;
@@ -44,8 +40,7 @@ import timeseriestufts.kth.streams.quad.MultiExperiment;
 import timeseriestufts.kth.streams.tri.*;
 import timeseriestufts.kth.streams.uni.Channel;
 
-/**
- *
+/** Handles input from the client
  * @author samhincks
  */
 public class InputParser {
@@ -68,6 +63,12 @@ public class InputParser {
         this.ctx = ctx;
     } 
     
+    /** Parse the input, using one of the other parsers.
+     * @param input
+     * @return
+     * @throws JSONException
+     * @throws Exception 
+     */
     public JSONObject parseInput(String input) throws JSONException, Exception {
         JSONObject jsonObj = null; 
         try {
@@ -122,6 +123,16 @@ public class InputParser {
         }
     }
  
+    /** Rapidly test a command, without creating documentation for it. Ie, parse it here,
+     * as opposed to in one of the subdirectories. 
+     * @param command
+     * @param parameters
+     * @param ctx
+     * @param currentDataLayer
+     * @param techDAO
+     * @return
+     * @throws Exception 
+     */
    public JSONObject rapidExecute(String command, String[] parameters, ThisActionBeanContext ctx,
             DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception {
         this.currentDataLayer = currentDataLayer;
@@ -169,10 +180,7 @@ public class InputParser {
             for (JSONObject com : dataParser.getCommands()){commands.put(com);}
             for (JSONObject com : mlParser.getCommands()){commands.put(com);}
             return c.getJSONObject(ctx.getTutorial());
-
-            
         }
-        
 
         if (c == null) {
             return null;
@@ -205,8 +213,7 @@ public class InputParser {
     }
     
   
-    /***Eventually I should write test classes but it is looking difficult to simulate the session
-     context without stripes dispatchment**/
+    /***Test what can be tested via simulation**/
     public static void main(String[] args) {
         
         //.. The necessary parts of a test: a context, a datalayer, and a datalayerDAO 

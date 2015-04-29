@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package dao;
 
@@ -34,16 +29,13 @@ import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.uni.Channel;
 
-/**
- *
+/** Parse and process an assortment of miscellaneous commands
  * @author samhincks
  */
 public class MiscellaneousParser extends Parser{ 
     public MiscellaneousParser(ThisActionBeanContext ctx) {
         super(ctx);
         commands = new Hashtable();
-        /**--  Every command this Parser handles should be added to commands
-         *     with a corresponding function for execution in the execute function--**/
         
         //-- LS 
         Command command = new Command("ls");
@@ -63,7 +55,6 @@ public class MiscellaneousParser extends Parser{
         command.documentation = "Removes any loaded datasets from the present surface";
         command.debug = "This does not work - a more thorough reload of the context is  necessary";
         commands.put(command.id, command);
-        
         
         // -- DELETE
         command = new Command("delete");
@@ -194,12 +185,6 @@ public class MiscellaneousParser extends Parser{
             c = commands.get("getlabels") ;
             c.retMessage = this.getLabels(parameters);
         }
-        /*
-        //.. eventually we want to split it with a while loop that evaluates each datalayer of the split
-        else if (command.startsWith("getcommands")) {
-            c = commands.get("getcommands");
-            c.retMessage = this.getCommands();
-        }*/
         
         //.. eventually we want to split it with a while loop that evaluates each datalayer of the split
         else if (command.startsWith("nback")) {
@@ -273,6 +258,11 @@ public class MiscellaneousParser extends Parser{
         return retMessage;
     }
     
+    /**Loads the specified files, provided they are in the appropriate folder 
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     private String loadFiles(String [] parameters ) throws Exception {
         String retMessage = "";
         for (String s : parameters) {
@@ -293,6 +283,12 @@ public class MiscellaneousParser extends Parser{
                
         return "Attempted to load " + parameters.length + " file(s). " +  retMessage;  
     }
+    
+    /**Loads an entire folder of files
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     private String load(String [] parameters) throws Exception{
         String folderName = "GRProcessed";
         if (parameters.length >0)folderName = parameters[0];
@@ -360,6 +356,11 @@ public class MiscellaneousParser extends Parser{
         return retString;
     }
     
+    /**Register as a user, if databases are currently in use. 
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     private String register(String [] parameters) throws Exception {
         //.. if this is the first datalayer ever added
         if (ctx.dataLayersDAO == null) {
@@ -406,10 +407,13 @@ public class MiscellaneousParser extends Parser{
         } else {
             throw new Exception("Account already exists");
         }
-
     }
     
-    
+    /**If registered and using databases, login to the server
+     * @param parts
+     * @return
+     * @throws Exception 
+     */
     public String login(String [] parts) throws Exception {
         if (parts.length != 2) 
             throw new Exception("Incorrect format; enter:  login(username, password)'");
@@ -460,39 +464,7 @@ public class MiscellaneousParser extends Parser{
 
         return content;
     }
-    /*
-    private String getCommands() {
-        String retString = "";
-        
-        retString += "LS -> list all loaded datasets::";
-        retString += "SPLIT(MARKER) -> With a 2D dataset in view, converts it into a collection of instances by partitioning the data according to where the points where the MARKER-value changes::";
-        retString += "GETLABELS ->  returns all the label-names of the dataset (which is the input for split)::";
-        retString += "COMMANDS -> What you just wrote!::";
-        retString += "REMOVE ALL BUT(x,y,z) -> With an experiment selected, removes all instances except those with class-value x,y,z::";
-        retString += "NEW FS(statistic,channel,windo) --> makes a new feature set. See ADDFEATURES::";
-        retString += "NEW AS(cfs or info, numAttributes) --> makes a new attribute selection::";
-        retString += "NEW ML(name) --> makes a new machine learnign algorithm::";
-       
-        retString += "ADDFEATURES(statistic,channel,window) --> With a feature set selected, adds a set of feature descriptions. " 
-                + "     Takes three parameters: " 
-                + " 1) statistic:  mean, slope, secondder, fwhm, largest, smallest, absmean, t2p"
-                + " 2) channel: referencable by id or index. 0^1^2 makes attributes for the first three channels."
-                + " 0+1+2+3 averages the values at the first four channels, effectively creating a region"
-                + " 3) time-window: what part of the instance: FIRSTHALF, SECONDHALF or WHOLE. "
-                + " The parameter 6:10 would constrict the features to points between index 6 and 10::";
-      
-        retString += "FILTER.MOVINGAVERAGE(readingsBack)--> apply a moving average a channel set with specified window length ::";
-        retString += "FILTER.LOWPASS(x) + FIlTER.HIGHPASS(x) or FILTER.BANDPASS(x,y)::";  
-
-        retString += "EVALUATE --> With a 3D dataset (a collection of instances) selected and connected to"
-               + " at least one of each TechniqueSet (feature set, attribute selection, machine learning, and settings,"
-               + " evaluates the dataset by creating a machine learning algorithm on different partitions of the data"
-               + " and evaluating it on unseen instances ::";
-
-
-        return retString;
-        
-    } */ 
+   
     
     /** Run a background n-back, and broadcast labels to specified port
      **/
@@ -527,32 +499,10 @@ public class MiscellaneousParser extends Parser{
         return retString;
     }
     
-    private String tutorial2() throws Exception {
-        String retString = "In the topleft corner, you can see that we have created a sample random"
-                + " dataset for you. To upload your own, click chose file, and then select a valid"
-                + " CSV,value. The first row should contain comma-separated names; then subsequent rows"
-                + " should contain time-ordered values that pertain to that column. The last k>1 columns should"
-                + " be text -- a name for the trial. Subsequent rows with the same name belong to the same trial;; Now, "
-                + " double click on the object to view the raw, unprocessed data. Then type split(condition) in order"
-                + " to group the data by trials that pertain to the same condition ";
-       
-     
-        ChannelSet cs = ChannelSet.generate(2, 100);
-        cs.id = "Sample";
-        cs.addMarkers(Markers.generate(10, 10));
-        BiDAO mDAO = new BiDAO(cs);
-        cs.test = true;
-
-        //.. if this is as yet uninitizliaed
-        if (ctx.dataLayersDAO == null) {
-            ctx.dataLayersDAO = new DataLayersDAO();
-        }
-        //.. Add to the persistent context, and save by id 
-        ctx.dataLayersDAO.addStream(mDAO.getId(), mDAO);
-        ctx.setCurrentName(mDAO.getId());
-        return retString;
-    }
-    
+    /**Run a tutorial for the user to familiarize them with basic commands
+     * @return
+     * @throws Exception 
+     */
     private String tutorial() throws Exception { 
         ctx.setTutorial(true);
         ctx.setFileReadSampling(3); //.. only read every three values, and hope that will make things fast enough

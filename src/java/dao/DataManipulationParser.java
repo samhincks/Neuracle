@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package dao;
 
@@ -35,8 +30,7 @@ import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.uni.Channel;
 import timeseriestufts.kth.streams.uni.FrequencyDomain;
 
-/**
- *
+/**For parsing and processing commands that involve statistical data manipulations
  * @author samhincks
  */
 public class DataManipulationParser extends Parser{
@@ -157,12 +151,6 @@ public class DataManipulationParser extends Parser{
                 + " algorithm, classifies the last points of the channelset equal to the length of the training trial ";
         commands.put(command.id, command);
         
-        //-- imagent fnirs 
-        command = new Command("music");
-        command.documentation = " Applies a range of data-manipulations to the selected datasets, "
-                + " ultimate putting it into the best visualizable form";
-        commands.put(command.id, command);
-        
         //-- fnirs 
         command = new Command("wireless");
         command.documentation = " Applies a range of data-manipulations to the selected datasets, "
@@ -268,11 +256,6 @@ public class DataManipulationParser extends Parser{
             c.retMessage = classify(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
         }
         
-        else if (command.startsWith("music")) {
-            c = commands.get("music");
-            c.retMessage = music(parameters);
-            c.action = "reload";
-        }
         
         else if (command.startsWith("imagent")) {
             c = commands.get("imagent");
@@ -299,9 +282,12 @@ public class DataManipulationParser extends Parser{
         return c.getJSONObject(ctx.getTutorial());
     }
 
-    /**
-     * Granger : return a JSONObject showing correlation between channels *
-     */
+   /** Computes the degree to which any pair of channels causally predicts the data at another
+    * at a specific lag. 
+    * @param parameters
+    * @return
+    * @throws Exception 
+    */
     public JSONObject granger(String[] parameters) throws Exception{
         int LAG =155;
         if (parameters.length >0) LAG = Integer.parseInt(parameters[0]);
@@ -327,8 +313,14 @@ public class DataManipulationParser extends Parser{
        
         jsonObj.put("type", "correlation");
         return jsonObj;
-        
     }
+    
+    /** Returns an estimate of the standard deviation of the heart rate, based on 
+     * fNIRS data
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     private String getHRV(String [] parameters) throws Exception {
         int channel = 0;
         String retString = "";
@@ -406,6 +398,11 @@ public class DataManipulationParser extends Parser{
         }
     }
     
+    /**Returns an estimate of the pulse in fNIRS data
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     private String getPulse(String [] parameters) throws Exception{
         int channel= 0;
         String retString = "";
@@ -577,7 +574,11 @@ public class DataManipulationParser extends Parser{
         return "Created " + filteredSet.id + " a copy of " + cs.id;
     }
     
-  
+    /** Given 830 and 690 measurements, compute oxygenation values
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     private String calcOxy(String [] parameters) throws Exception{
         ArrayList<ChannelSet> chanSets = getChanSets();
 
@@ -588,10 +589,14 @@ public class DataManipulationParser extends Parser{
             ctx.dataLayersDAO.addStream(filteredSet.id, mDAO);
         }
         
-        return "Modified " + chanSets.size() + ";;" + "0->7 : Probe A. 8->15;; :"
-                + " ProbeB;; 0->3&8->12 : HbO;;... 0,4,8,12: closest;; 3,7,11,15 : farthest";
+        return "Modified " + chanSets.size();
     }
     
+    /** Z Score the data 
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     private String zScore(String[] parameters) throws Exception {
         ArrayList<ChannelSet> chanSets = getChanSets();
 
@@ -903,7 +908,7 @@ public class DataManipulationParser extends Parser{
         return techniquesToEvaluate;
     }
 
-        /**
+     /**
      * Handle; anchor(); Make a new experiment with the start point of each
      * instance set at 0 anchor(t) = make a new copy. anchor(false) = manipulate
      * same level and all its derived from This produces a massive BUG if we run
@@ -1105,6 +1110,13 @@ public class DataManipulationParser extends Parser{
          Prediction p = classifier.getLastPrediction(cs );
          return p.toString();
     }
+    
+    /**Apply a series of manipulations to the data that make sense on a series of
+     * high-low cognitive workload inductions, using the imagent fNIRS
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     public String imagent(String[] parameters) throws Exception {
         float lowpass = 0;
         float highpass = 0;
@@ -1120,8 +1132,8 @@ public class DataManipulationParser extends Parser{
             ChannelSet filteredSet = cs.calcOxy(false, null, null); //.. we want a copy;
             retString += "Applied CalcOxy ";
             //if (lowpass == 0) {
-                filteredSet = filteredSet.movingAverage(10, false);
-                retString += "Applied MovingAverage, 10 readings back::";
+            filteredSet = filteredSet.movingAverage(10, false);
+            retString += "Applied MovingAverage, 10 readings back::";
             //}
 
             if (lowpass > 0 && highpass == 0) {
@@ -1172,80 +1184,12 @@ public class DataManipulationParser extends Parser{
         }
         return retString;
     }
-    public String music(String [] parameters) throws Exception{
-        float lowpass =0;
-        float highpass=0;
-        if (parameters.length > 1) {
-            lowpass = Float.parseFloat(parameters[0]);
-            highpass = Float.parseFloat(parameters[1]);
-        }
-        else if (parameters.length >0) {
-            lowpass = Float.parseFloat(parameters[0]);
-        }
-        ArrayList<ChannelSet> chanSets = getChanSets();
-        String retString = "";
-        for (ChannelSet cs : chanSets) {
-            ChannelSet filteredSet = cs.calcOxy(false, null, null); //.. we want a copy;
-            retString += "Applied CalcOxy, so that 0->7 : Probe A. 8->15" +
-"                + \" ProbeB:: 0->3&8->12 : HbO at even positions, and Hb at odd if zero-indexed; lower values within"
-                    + " the probe correspond to closer distances to the source:::";
-            if(lowpass ==0){ 
-                filteredSet = filteredSet.movingAverage(10, false);
-                retString += "Applied MovingAverage, 10 readings back::";
-            }
-              
-            if(lowpass >0 && highpass ==0){
-                filteredSet = filteredSet.lowpass(lowpass, false);
-                retString += "Applied Lowpass; Removed frequencies oscillating at above " +lowpass + "hz ::";
-            }
-            
-            else if(highpass >0 && lowpass ==0) {
-                filteredSet = filteredSet.highpass(highpass, false);
-                retString += "Applied Highpass; Removed frequencies oscillating below " + highpass + "hz ::";
-            } 
-            
-            else if(lowpass >0 && highpass >0) {
-                filteredSet = filteredSet.bandpass(lowpass,highpass, false);
-                retString += "Applied Bandpass; kept frequencies oscillating between " + lowpass +" and " + highpass + "hz ::";
-            }
-           
-            
-            filteredSet = filteredSet.zScore(false);
-            retString += "Z scored the data, so that each value is replaced by the difference between "
-                    + " it and the channel's corresponding mean, divided by the standard deviation::";
-            
-            //.. Split into an experiment - of course this is not perfectly generalizable, so condition name should be parameter
-            Experiment e = filteredSet.splitByLabel("condition");
-            ArrayList<String> toKeep = new ArrayList();
-            toKeep.add("easy");
-            toKeep.add("hard");
-            toKeep.add("rest"); 
-            e = e.removeAllClassesBut(toKeep);
-          
-            //.. remove instances 10 percent larger than the average
-            int instLength = e.getMostCommonInstanceLength();
-            int origSize = e.matrixes.size();
-            e = e.removeUnfitInstances(instLength, 0.1, false);
-            int newSize = e.matrixes.size();
-            if(origSize != newSize)
-                retString += "Experiment changed from " + origSize +" to " + newSize+ " instances::";
-            
-            //.. anchor it, setting start to zero
-            e = e.anchorToZero(false);
-            e.setParent(cs.getId()); //.. set parent to what we derived it from
-
-            e.setId(e.id + "-l"+lowpass+"-h"+highpass);
-            //.. make a new data access object, and add it to our stream
-            TriDAO pDAO = new TriDAO(e);
-            
-            ctx.dataLayersDAO.addStream(e.id, pDAO);
-            
-            retString += " Creating : " + e.getId() + " with " + e.matrixes.size() + " instances::" +
-                    super.getColorsMessage(e);
-        }
-        return retString;
-    }
     
+    /**Apply a series of data manipulations that make sense to the Tufts made fNIRS
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     public String wireless(String[] parameters) throws Exception {
         float lowpass = 0;
         float highpass = 0;

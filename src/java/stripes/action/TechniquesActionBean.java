@@ -58,5 +58,4 @@ public class TechniquesActionBean extends BaseActionBean{
         }   
     }
     
-    /**When */
 }

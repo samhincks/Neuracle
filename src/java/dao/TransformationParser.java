@@ -24,8 +24,7 @@ import timeseriestufts.kth.streams.quad.MultiExperiment;
 import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.tri.TridimensionalLayer;
   
-/**
- *
+/*For commands relating to converting data from one format to another. 
  * @author samhincks
  */
 public class TransformationParser extends Parser{
@@ -189,6 +188,10 @@ public class TransformationParser extends Parser{
         return c.getJSONObject(ctx.getTutorial());
     }
     
+    /**Remove instances which are too long or too short
+     * @return
+     * @throws Exception 
+     */
     private String clean() throws Exception {
         String retString = "";
         ArrayList<Experiment> experiments = getExperiments();
@@ -220,6 +223,11 @@ public class TransformationParser extends Parser{
       
     }
     
+    /**Assign a label according to a pattern to the selected dataset
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     private String assignLabel(String [] parameters) throws Exception {
         String baseline = parameters[0];
         String[] values = baseline.split(":");
@@ -249,7 +257,7 @@ public class TransformationParser extends Parser{
     }
     
     
-     /**
+    /**
      * Label the specified dataset at random. If specified, the second parameter
      * is how long each trial should be
      */
@@ -280,7 +288,7 @@ public class TransformationParser extends Parser{
 
     }
     
-        /**
+    /**
      * Handle: label(filename, curLabelName, curLabelValue). This is a like the
      * below method, typically called by a callback, but a user could also
      * trigger it. Makes so that data coming in receives the input label*
@@ -319,6 +327,11 @@ public class TransformationParser extends Parser{
         }
     }
     
+    /** With a label coming from another port, intercept and label the current data
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     private String interceptLabel(String[] parameters) throws Exception {
         if (parameters.length < 3) 
             throw new Exception("Command requires three parameters. databasename, labelName, portnum");
@@ -339,7 +352,7 @@ public class TransformationParser extends Parser{
                 + " shut down if it receives end";
     }
     
-     /**
+    /**
      * Handle: keep(x,y,z) removeAllBut(x,y,z) keeps only the instances with
      * classes x,y,z. Make a new experiment out of this and add to session
      */
@@ -369,6 +382,11 @@ public class TransformationParser extends Parser{
         return retString;
     }
     
+    /**Partition by a label, but instead of making a set of instances, make a set of channelsets
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     private String partition(String [] parameters) throws Exception {
         String labelName = parameters[0];
         labelName = labelName.replace(")", ""); //.. remove )
@@ -438,10 +456,5 @@ public class TransformationParser extends Parser{
         }
         return retString;
     }
-
-    
-   
-
-
     
 }

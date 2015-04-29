@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package dao.datalayers;
 
 import java.sql.Connection;
@@ -12,10 +9,7 @@ import java.sql.SQLException;
 import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.uni.Channel;
 
-/**
- *
- * @author 
- */
+
 public class MySqlDAO {
     private Connection conn = null;
     PreparedStatement statement = null;

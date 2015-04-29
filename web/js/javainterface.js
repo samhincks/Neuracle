@@ -33,11 +33,7 @@ function JavaInterface() {
              if(JSONobj.action.id == "reloadT") {
                  javaInterface.postToTechniques();
              }
-             //.. NO longer in use??
-             //.. if this was a highlighting command that required back-end computation 
-             if(JSONobj.action.id == "sax") { 
-                 chart.drawLinePlot(JSONobj.action.data);
-             }
+           
              if(JSONobj.action.id == "csrefresh") {
                  chartArea.displayChart(JSONobj.action);
              }
@@ -95,7 +91,6 @@ function JavaInterface() {
     
     /**Having selected an element, get a stream of its data to display it. */
     this.postToDataLayer = function(message) {
-        
         $('#frequency').val(false);
         $('#correlation').val(false);
         $('#prediction').val(false);
@@ -227,8 +222,6 @@ function JavaInterface() {
          if(JSONobj.performance != null)
             chartArea.displayPerformance(JSONobj.performance);
         
-         
-         
     }
     
 }

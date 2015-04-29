@@ -12,13 +12,10 @@ import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import org.json.JSONObject;
 
-/**
- *
+/**For getting server side data about techniques
  * @author samhincks
  */
 public class TechniqueActionBean extends BaseActionBean{
-    
-    
     private String techniqueStats;
     public String getTechniqueStats() { return techniqueStats;}
     public void setTechniqueStats(String technique) {this.techniqueStats = technique;}

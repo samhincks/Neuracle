@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package dao.datalayers;
 
 import filereader.Label; 
@@ -28,6 +24,7 @@ import timeseriestufts.kth.streams.uni.Channel;
 public class DataLayersDAO {
     public HashMap<String, DataLayerDAO> streams = new HashMap(); //.. map to individual structures
     public double FRAMESIZE =1;
+    
     /**Add a new DataLayer
      * @param key
      * @param stream 
@@ -170,7 +167,7 @@ public class DataLayersDAO {
 
     }
 
-    /**Each datalayer has a set of connections to techniques which inform how 
+    /*Each datalayer has a set of connections to techniques which inform how 
      they should be evaluated. Each time we evaluate reset connections before we 
      repopulate them*/
     public void resetTConnections() {
@@ -238,25 +235,6 @@ public class DataLayersDAO {
         }
         rs.close();
         mydao.deconnSQL();
-//        for (ArrayList<Float> raw : rawValues) {
-//            Channel c = new Channel(FRAMESIZE, raw.size()); //.. we didnt add directly to structure since we didnt know raw's size
-//            c.setId(channelNames.get(index));
-//            
-//            //.. add each value
-//            for (Float f: raw){
-//                c.addPoint(f);
-//            }
-//            
-//            channelSet.addStream(c);
-//            index++;
-//        } 
-       
-        //.. Having built a channel structure and label structure, label the channel
-        //... structure according to the label structure
-//        for (Labels l : allLabels) {
-//            Markers markers = new Markers(l);
-//            channelSet.addMarkers(markers);
-//        }
    }
 
     

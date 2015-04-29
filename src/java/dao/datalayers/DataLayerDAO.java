@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package dao.datalayers;
 
 import dao.techniques.TechniqueDAO;
@@ -55,13 +51,12 @@ public abstract class DataLayerDAO {
         return retArray;
     }
     
-    /**Remove al lreferences to this datalayer to free space. Ie calls delete 
+    /*Remove all references to this datalayer to free space. Ie calls delete 
      to all tiers beneath it */ 
     public void delete() {
         dataLayer.delete();
     }
   
-
     public ArrayList<FeatureSet> getFeatureSets() {
         ArrayList<FeatureSet> retArray = new ArrayList();
         for(TechniqueDAO tDAO : tDAOs) {
@@ -156,8 +151,4 @@ public abstract class DataLayerDAO {
          }
          return jsonObj;
     }
-
-
-    
-    
 }

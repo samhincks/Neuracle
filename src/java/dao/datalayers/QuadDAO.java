@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package dao.datalayers;
 
 import java.util.ArrayList;
@@ -9,8 +6,7 @@ import org.json.JSONObject;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.quad.MultiExperiment;
 
-/**
- *
+/** For now just a formality, since we can't really visualize so called quad daos
  * @author samhincks
  */
 public class QuadDAO extends DataLayerDAO{

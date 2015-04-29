@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package filereader;
 
 import filereader.experiments.UAV;
@@ -12,8 +9,7 @@ import java.util.ArrayList;
 import timeseriestufts.evaluatable.PassFilter;
 import timeseriestufts.evaluatable.TechniqueSet;
 
-/**
- *
+/** A temporary class for evaluating data
  * @author samhincks
  */
 public class Aggregated extends EvaluationInterface{

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package dao;
 
@@ -25,7 +20,7 @@ import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.uni.Channel;
 
 /**
- *
+ * For reading and writing to external databases
  * @author samhincks
  */
 public class ExternalDataParser extends Parser{
@@ -33,10 +28,6 @@ public class ExternalDataParser extends Parser{
     public ExternalDataParser(ThisActionBeanContext ctx) {
         super(ctx);
         commands = new Hashtable();
-        /**
-         * -- Every command this Parser handles should be added to commands with
-         * a corresponding function for execution in the execute function--*
-         */
         
         //-- SAVE
         Command command = new Command("save");
@@ -68,6 +59,14 @@ public class ExternalDataParser extends Parser{
         commands.put(command.id, command);
     }
 
+    /**Executes the specified command
+     * @param command
+     * @param parameters
+     * @param currentDataLayer
+     * @param techDAO
+     * @return
+     * @throws Exception 
+     */
     public JSONObject execute(String command, String[] parameters, 
             DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception {
         this.currentDataLayer = currentDataLayer;
@@ -99,7 +98,11 @@ public class ExternalDataParser extends Parser{
         return c.getJSONObject(ctx.getTutorial());
     }
 
-    
+    /**Save the selected dataset to a database 
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
      public String save(String[] parameters) throws Exception {
         if (ctx.dataLayersDAO.getDataLayers().size() > 0) {
             for (DataLayer dl : ctx.dataLayersDAO.getDataLayers()) {
@@ -210,6 +213,11 @@ public class ExternalDataParser extends Parser{
         }   
     }
     
+    /**Write the channelset to the file.
+     * @param parameters
+     * @return
+     * @throws Exception 
+     */
     public String write(String [] parameters) throws Exception {
        String suffix = "";
        int readEvery =1;

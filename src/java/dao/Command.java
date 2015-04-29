@@ -1,15 +1,9 @@
-  /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package dao;
 
 import org.json.JSONObject;  
 
 /**    
- *  
+ *  An object which mediates command information between server and client. 
  * @author samhincks  
  */                    
 public class Command {                   
@@ -25,13 +19,19 @@ public class Command {
     public Command(String id) {
         this.id = id;
     }  
-      
+    
+    /** Returns the JSON representation of the command object
+     * @param showTut , set to true if you want to add the tutorial data too
+     * @return
+     * @throws Exception 
+     */
     public JSONObject getJSONObject(boolean showTut) throws Exception{
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("content", retMessage);
         jsonObj.put("id", id);
         jsonObj.put("parameters", parameters);
         jsonObj.put("documentation", documentation);
+        
         if(action!= null) {
             JSONObject jsObj = new JSONObject();
             jsObj.put("id", action); 

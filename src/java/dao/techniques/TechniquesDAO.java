@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package dao.techniques;
 
 import dao.datalayers.DataLayerDAO;
@@ -18,7 +15,6 @@ import timeseriestufts.evaluatable.WekaClassifier;
 import timeseriestufts.kth.streams.DataLayer;
 
 /**Methods for interfacing with evaluation and preprocessing techniques.
- * 
  * @author samhincks
  */
 public class TechniquesDAO {

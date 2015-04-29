@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package stripes.action;
 
 import net.sourceforge.stripes.action.*;
 import stripes.ext.ThisActionBeanContext;
 
-/**
- *
+/** 
  * @author Samuel Hincks
  */ 
 public class BaseActionBean implements ActionBean{    
@@ -17,8 +13,10 @@ public class BaseActionBean implements ActionBean{
     private String password;
     
     protected ThisActionBeanContext ctx; //. store stuff through a session
+    
     @Override
     public void setContext(ActionBeanContext _ctx) { ctx = (ThisActionBeanContext)_ctx;}
+   
     @Override
     public ThisActionBeanContext getContext() { return ctx;}
     

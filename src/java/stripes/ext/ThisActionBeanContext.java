@@ -12,8 +12,8 @@ import net.sourceforge.stripes.validation.ValidationError;
 import timeseriestufts.evaluatable.performances.Performances;
 import timeseriestufts.kth.streams.DataLayer;
 
-/**
- *
+/**The context established between user and server. Arguably, some data that is stored
+ * in context should be in session. 
  * @author Sam Hincks
  */
 public class ThisActionBeanContext extends ActionBeanContext{
@@ -22,7 +22,8 @@ public class ThisActionBeanContext extends ActionBeanContext{
         ValidationError s = new SimpleError(error);
         this.getValidationErrors().addGlobalError(s);
     }
-   public InputParser inputParser;
+    
+    public InputParser inputParser;
   
    /** Action bean context is reinitialized every 
     **/
@@ -155,10 +156,5 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public boolean getTutorial() {
         return tutorial;
     }
-
-   
-
-
-
 
 }

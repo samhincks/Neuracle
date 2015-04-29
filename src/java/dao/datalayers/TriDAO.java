@@ -18,8 +18,7 @@ import timeseriestufts.kth.streams.uni.Channel;
 import timeseriestufts.kth.streams.uni.UnidimensionalLayer; 
 
 
-/**
- *
+/** Experiment visualization
  * @author Sam Hincks
  */
 public class TriDAO extends DataLayerDAO {

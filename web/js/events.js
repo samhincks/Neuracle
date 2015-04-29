@@ -3,7 +3,6 @@
  *file is evoked. The function init() is always called. The function reinit() is
  *called everytime we load a new datalayer: it is where we set the bulk of our listeners
  ***/
-
 var consoleArea = new ConsoleArea();
 var chartArea = new ChartArea("#topRight");
 var javaInterface = new JavaInterface();
@@ -89,33 +88,8 @@ function init() {
         }
         chartArea.displayChart(chartArea.lastJSON);
     });
-  
-  /*
-   document.getElementById('asynchFile').addEventListener('change', readFile, false);
-
-   function readFile (evt) {
-       var files = evt.target.files;
-       var file = files[0];           
-       var reader = new FileReader();
-      
-       reader.onload = function() {
-         consoleArea.passFile(file.name, this.result);
-       }
-       reader.readAsText(file);
-    }
-    //.. No longer in huse
-    */ 
 }
 
-/*Functions that must be loaded at start but also
- *reinitalized when we reload datalayers*/
-function reinit() {
-  /** dropchannel: this is the class for datalayers. As soon as our mouse enters
-    *it, we want to change "givers" val (again an old name that no longer makes sense)
-    * so that the backend knows what is currently being pressed
-    **/
-   
-}
 
 function datalayerInit() {
     $('.datalayer').mouseenter(function(e) {
@@ -140,7 +114,6 @@ function datalayerInit() {
     });
 
     var shiftKey = false; //.. for multi-selection
-    var altKey = false; //.. not currently in sue
     //.. if a channel set is clicked
     $(".datalayer").mousedown(function(e) {
         /// $(".ui-tooltip").tooltip('close'); // doesnt work 
@@ -172,7 +145,7 @@ function individualTechniqueInit(id, type) {
         javaInterface.getTechniqueStats();
     });
 
-    //.. if a technique is click (do essentially same as if channel is
+    //.. if a technique is clicked (do essentially same as if channel is
     $("#"+id).mousedown(function(e) {
         datalayerArea.techniques.selectTechnique(e.currentTarget.id);
         $("#technique").val(e.currentTarget.id);

@@ -1,9 +1,9 @@
 /* 
     Document   : consoleStyle
     Created on : Jul 3, 2013, 11:33:00 AM
-    Author     : samhincks
-    Description:
-        Purpose of the stylesheet follows.
+---------------------------------------------
+    Styling for the console (#bottomRight, area/consolearea.js)
+---------------------------------------------
 */
     #console {   
         width:99.8%;
@@ -28,7 +28,6 @@
     }
 
     .redline {     
-       // color: crimson; 
         color: #ED2E2E;
     }
     .greyline {
