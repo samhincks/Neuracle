@@ -203,11 +203,10 @@ public class ExternalDataParser extends Parser{
     public JSONObject stream(String [] parameters) throws Exception {
         if (currentDataLayer.id == null) throw new Exception("Must select a datalayer");
         String filename = currentDataLayer.id; 
- 
         if (ctx.dataLayersDAO.streams.containsKey(filename)) {
             BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(filename);
             bDAO.synchronizeWithDatabase(filename);
-            return bDAO.getLastUpdateJSON();
+            return bDAO.getLastUpdateJSON();       
         } else {
             throw new Exception("Context does not contain datalayer " + filename);
         }   

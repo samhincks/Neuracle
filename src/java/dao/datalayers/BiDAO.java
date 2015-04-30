@@ -341,23 +341,44 @@ public class BiDAO extends DataLayerDAO {
                 pointsInc = this.addedInLastSynchronization / MAXPOINTS;
             }
             int startingPoint = numPoints - this.addedInLastSynchronization;
-             
+            
             //.. add points at specified increments
             for (int j = startingPoint; j < numPoints; j += pointsInc) {
                 JSONArray timeData = new JSONArray(); //.. each channel's value at the timestamp
-             //   if (channelSet.getChannelCount()!= 2) System.out.println("not 2 : " +channelSet.getChannelCount());
+                
                 for (int i = 0; i < channelSet.getChannelCount(); i++) {
                     UnidimensionalLayer channel = channelSet.getChannel(i);
-                    //if (channel.numPoints != numPoints) throw new Exception("Misaligned channels. First has " + numPoints + " . " +i + " has " + channel.numPoints);
                     Float p = channel.getPointOrNull(j);          
                     if (p!= null){   
                         JSONArray arr = new JSONArray();   
-                        arr.put(p);      
+                        arr.put(p);       //.. little one element arrays!
                         timeData.put(arr);
                     }
                 }
-                values.put(timeData);        
-            }          
+                
+                System.out.println(channelSet.markers.size());
+                //... Add numerically visualizable markers
+                int lastIndex =0;
+                for (int i = 0; i < channelSet.markers.size(); i++) {
+                    Markers m = channelSet.markers.get(i);
+                    int index; 
+                    try {                     
+                        String conName = m.saveLabels.channelLabels.get(j).value;
+                        index = m.getClassification().getIndex(conName);
+                    }
+                    //.. Not impossible that marker and data is a little out of synch, which is ok
+                    catch(Exception e ) {index = lastIndex;}  //.. just assign as the last one 
+                    System.out.println("getting " + index);
+                    JSONArray arr = new JSONArray();
+                    arr.put(index);
+                    timeData.put(arr);
+                }
+                
+                values.put(timeData);    
+                
+                
+            }  
+            
                 
             int mostPoints = channelSet.getMaxPoints();
             float maxTime = (mostPoints / channelSet.readingsPerSecond);

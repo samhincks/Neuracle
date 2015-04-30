@@ -136,13 +136,12 @@ public class MiscellaneousParser extends Parser{
             c.retMessage = readEvery(parameters);
         }
         
-        else if (command.startsWith("clear")) {
+        else if (command.equals("clear") || command.equals("clear(") || command.equals("clear()")) {
             c = commands.get("clear");
             String [] params = new String[1];
             params[0] = "*";
             c.action = "reload";
             c.retMessage = delete(params); 
-            
         }
         
         else if (command.startsWith("delete")) {
@@ -212,8 +211,7 @@ public class MiscellaneousParser extends Parser{
                 retMessage += cs.id+",";
 
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
             for (Experiment e : super.getExperiments()) {

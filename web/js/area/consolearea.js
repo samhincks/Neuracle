@@ -48,6 +48,9 @@ function ConsoleArea() {
     this.parseUserMessage = function(userText) {
         this.displayMessage("> " +userText, "usermessage", "");
         
+        if (this.streaming && !(userText.startsWith("streamlabel") || userText.startsWith("nback") || userText.startsWith("interceptlab") )) 
+            this.parseLocally("clearstream");
+        
         if(!this.parseLocally(userText)) {   
             //.. save the text to the imaginary form for Stripes purposes
             $("#consoleInput").val(userText);
@@ -83,7 +86,7 @@ function ConsoleArea() {
         
         /***THESE METHODS ARE ONLY FOR REALTIME VISUALIZATION AND LABELING **/
          //.. This will initialize successive messages from the client to the console, to repeatedly request an update
-         if (userText.startsWith("streamsynch(")) {
+        /* if (userText.startsWith("streamsynch(")) {
              if (this.streaming) {
                 this.displayMessage("A streaming procedure is already being run; terminate it with clearstream()", "systemmes", "redline");
                 return true;
@@ -98,17 +101,17 @@ function ConsoleArea() {
                 javaInterface.postToConsole();
             }, 300);
             return true;
-         }
-         
+         }*/ 
+         /**FIGURE OUT WHY I IMPLEMENTED BOTH STREAM AND STREAMSYNCH. CALLING BOTH MESSES IT ALL UP**/
         else if (userText.startsWith("stream(") || userText == "stream") {
             if (this.streaming){
                 this.displayMessage("A streaming procedure is already being run; terminate it with clearstream()", "systemmes", "redline");
                 return true;
             }
-
+            
+            this.streaming = true;
              //.. callback that periodically issues a request to update; until what;
             this.streamInterval= setInterval(function() {
-                this.streaming = true;
                 $("#consoleInput").val(userText);
                 javaInterface.postToConsole();
             }, 50); //.. less than 50 and there are errors
@@ -310,7 +313,8 @@ function ConsoleArea() {
     }
     
     this.getLastDown = function() {
-        this.upped--;
+        if (this.upped > 0 )
+            this.upped--;
         return this.messageStack[this.messageStack.length - this.upped];
     }
 

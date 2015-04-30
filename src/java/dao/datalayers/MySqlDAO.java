@@ -11,17 +11,17 @@ import timeseriestufts.kth.streams.uni.Channel;
 
 
 public class MySqlDAO {
-    private Connection conn = null;
+    private Connection conn = null;  
     PreparedStatement statement = null;
 
     // connect to MySQL
     public void connSQL() {
             String url = "jdbc:mysql://localhost:3306/newttt?characterEncoding=latin1";
             String username = "root";
-            String password = "fnirs196"; // loading drive to connet to the database 
+            //String password = "fnirs196"; // loading drive to connet to the database 
             try { 
                     Class.forName("com.mysql.jdbc.Driver" ); 
-                    conn = DriverManager.getConnection(url,username, password ); 
+                    conn = DriverManager.getConnection(url,username,"");//, password ); 
                     }
             //catch drive exception
              catch ( ClassNotFoundException cnfex ) {

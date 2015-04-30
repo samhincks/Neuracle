@@ -58,14 +58,12 @@ function LineGraph(argsMap) {
                     return;
                 }
 		
-                //.. This affects realtime streaming if we've added a condition. 
-                //... It expects having a certain length, and when all the sudden it sees that we have more, it freaks
-                //... So one fix would be to just splice the data.values
+                console.log("hora");
                 if (tempData.values.length != data.values.length){
                     
                     console.log(tempData.values.length);
                     console.log(data.values.length);  
-                   // data.values = data.values.slice(0, tempData.values.length);
+
                     console.log("There is a mismatch between the length of received data and existing data");
                     return;
                 }

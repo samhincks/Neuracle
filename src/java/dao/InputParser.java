@@ -156,13 +156,15 @@ public class InputParser {
                 c.retMessage = "Files will only record every " + readevery +"th reading";
             }
         } 
-        else if(command.startsWith("rthelp")){
+        else if(command.startsWith("rthelp")){   
             c = new Command("rthelp");
             c.retMessage =" Do the following in order::" 
-                    + "1. streamsynch(dbname)::"
-                    + "2. interceptlabel(dbname, condition, port)::"
+                    + "0. python3 samImagentRealtime.py (with mysql connected)::"
+                    + "1. synchronize(realtime1), stream(realtime1)::"
+                    + "2. interceptlabel(realtime1, condition, port), ::"
+                    + "2.5  clearstream() because streaming visualization is expensive. (it will still be updated)"
                     + "3. nback(n, duration, port) *however many, but dont overlap!::" 
-                    +" 4 split(condition). getlabels() + keep(x,y,z)"
+                    +" 4  split(condition). getlabels() + keep(x,y,z)"
                     + "5. train(dbname) with techniques intersected::"
                     + "6. classifylast() with db selected";
         }
@@ -259,8 +261,34 @@ public class InputParser {
             
             int TEST =8;
                 
-            
-            String test = "RPS";
+            String test = "MARKERVIZ";
+            if (test.equals("MARKERVIZ")) {
+                response = ip.parseInput("synchronize(realtime1)");
+                ctx.setCurrentName("realtime1");
+
+                response = ip.parseInput("randomlylabel()");
+                response = ip.parseInput("synchronize(realtime1)");
+                response = ip.parseInput("stream()");
+                System.out.println(response);
+
+                Thread.sleep(2000);
+                response = ip.parseInput("synchronize(realtime1)");
+                response = ip.parseInput("stream()");
+                System.out.println(response);
+    
+                Thread.sleep(2000);  
+
+                response = ip.parseInput("synchronize(realtime1)");
+                response = ip.parseInput("stream()");
+                System.out.println(response);
+
+                Thread.sleep(2000);
+                response = ip.parseInput("synchronize(realtime1)");
+                response = ip.parseInput("stream()");
+                System.out.println(response);
+
+                
+            }
             if(test.equals("RPS")) {
                 ctx.setCurrentName("reale");
                 tDAO = (TriDAO) ctx.getCurrentDataLayer();
