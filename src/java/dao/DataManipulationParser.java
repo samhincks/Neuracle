@@ -171,6 +171,10 @@ public class DataManipulationParser extends Parser{
                 + " then double click on this newly created featurset object to see ranking of their information gain";  
         commands.put(command.id, command);
         
+        command = new Command("hincks");
+        command.documentation = " Applies a range of data-manipulations to the selected datasets, customized for the unique brain of Sam Hincks";
+
+        
         //-- granger 
         command = new Command("granger");
         command.documentation = "Estimates causality between all pairwise voxels, returning a visualization ";
@@ -260,6 +264,11 @@ public class DataManipulationParser extends Parser{
         else if (command.startsWith("imagent")) {
             c = commands.get("imagent");
             c.retMessage = imagent(parameters);
+            c.action = "reload";
+        }
+        else if (command.startsWith("hincks")) {
+            c = commands.get("hincks");
+            c.retMessage = hincks(parameters);
             c.action = "reload";
         }
         
@@ -1111,6 +1120,75 @@ public class DataManipulationParser extends Parser{
          return p.toString();
     }
     
+    public String hincks(String[] parameters) throws Exception { 
+        float lowpass = 0;
+        float highpass = 0;
+        if (parameters.length > 1) {
+            lowpass = Float.parseFloat(parameters[0]);
+            highpass = Float.parseFloat(parameters[1]);
+        } else if (parameters.length > 0) {
+            lowpass = Float.parseFloat(parameters[0]);
+        }
+        ArrayList<ChannelSet> chanSets = getChanSets();
+        String retString = "";
+        for (ChannelSet cs : chanSets) {
+            retString += "Applied CalcOxy ";
+            //if (lowpass == 0) {
+            ChannelSet filteredSet = cs.movingAverage(10, true);
+            retString += "Applied MovingAverage, 10 readings back::";
+            //}
+
+            if (lowpass > 0 && highpass == 0) {
+                filteredSet = filteredSet.lowpass(lowpass, false);
+                retString += "Applied Lowpass; Removed frequencies oscillating at above " + lowpass + "hz ::";
+            } else if (highpass > 0 && lowpass == 0) {
+                filteredSet = filteredSet.highpass(highpass, false);
+                retString += "Applied Highpass; Removed frequencies oscillating below " + highpass + "hz ::";
+            } else if (lowpass > 0 && highpass > 0) {
+                filteredSet = filteredSet.bandpass(lowpass, highpass, false);
+                retString += "Applied Bandpass; kept frequencies oscillating between " + lowpass + " and " + highpass + "hz ::";
+            }
+
+            filteredSet = filteredSet.zScore(false);
+            retString += "Z scored the data, so that each value is replaced by the difference between "
+                    + " it and the channel's corresponding mean, divided by the standard deviation::";
+
+            //.. Split into an experiment - of course this is not perfectly generalizable, so condition name should be parameter               
+            Experiment e = super.getExperiment(filteredSet, "condition");
+            ArrayList<String> toKeep = new ArrayList();
+            toKeep.add("easy");
+            toKeep.add("hard");
+            toKeep.add("medium");
+            toKeep.add("rest");
+            e = e.removeAllClassesBut(toKeep);
+
+            //.. remove instances 10 percent larger than the average
+            int instLength = e.getMostCommonInstanceLength();
+            int origSize = e.matrixes.size();
+            //e = e.removeUnfitInstances(instLength, 0.1, false);
+            int trimmed = e.trimUnfitInstances(instLength);
+            int newSize = e.matrixes.size();
+            if (origSize != newSize) {
+                retString += "Experiment changed from " + origSize + " to " + newSize + " instances::";
+            }
+
+            //.. anchor it, setting start to zero
+            e = e.anchorToZero(false);
+            e.setParent(cs.getId()); //.. set parent to what we derived it from
+
+            e.setId(e.id + "-l" + lowpass + "-h" + highpass);
+
+            //.. make a new data access object, and add it to our stream
+            TriDAO pDAO = new TriDAO(e);
+
+            ctx.dataLayersDAO.addStream(e.id, pDAO);
+
+            retString += " Creating : " + e.getId() + " with " + e.matrixes.size() + " instances::"
+                    + super.getColorsMessage(e);
+        }
+        return retString;
+    }
+    
     /**Apply a series of manipulations to the data that make sense on a series of
      * high-low cognitive workload inductions, using the imagent fNIRS
      * @param parameters
@@ -1129,13 +1207,13 @@ public class DataManipulationParser extends Parser{
         ArrayList<ChannelSet> chanSets = getChanSets();
         String retString = "";
         for (ChannelSet cs : chanSets) {
-            ChannelSet filteredSet = cs.calcOxy(false, null, null); //.. we want a copy;
+            ChannelSet filteredSet = cs.calcOxy(true, null, null); //.. we want a copy;
             retString += "Applied CalcOxy ";
             //if (lowpass == 0) {
-            filteredSet = filteredSet.movingAverage(10, false);
+            filteredSet = filteredSet.movingAverage(10, false);  
             retString += "Applied MovingAverage, 10 readings back::";
             //}
-
+  
             if (lowpass > 0 && highpass == 0) {
                 filteredSet = filteredSet.lowpass(lowpass, false);
                 retString += "Applied Lowpass; Removed frequencies oscillating at above " + lowpass + "hz ::";
@@ -1156,12 +1234,14 @@ public class DataManipulationParser extends Parser{
             ArrayList<String> toKeep = new ArrayList();
             toKeep.add("easy");
             toKeep.add("hard");
+            toKeep.add("medium");  
+            toKeep.add("rest");
             e = e.removeAllClassesBut(toKeep);
 
             //.. remove instances 10 percent larger than the average
             int instLength = e.getMostCommonInstanceLength();
             int origSize = e.matrixes.size();
-            e = e.removeUnfitInstances(instLength, 0.1, false);
+            //e = e.removeUnfitInstances(instLength, 0.1, false);
             int trimmed = e.trimUnfitInstances(instLength);
             int newSize = e.matrixes.size();
             if (origSize != newSize) {

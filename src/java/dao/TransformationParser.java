@@ -15,6 +15,7 @@ import filereader.Markers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Random;
 import org.json.JSONObject;
 import realtime.LabelInterceptorTask;
 import stripes.ext.ThisActionBeanContext;
@@ -333,13 +334,23 @@ public class TransformationParser extends Parser{
      * @throws Exception 
      */
     private String interceptLabel(String[] parameters) throws Exception {
-        if (parameters.length < 3) 
-            throw new Exception("Command requires three parameters. databasename, labelName, portnum");
-        String dbName = parameters[0];
-        String labelName = parameters[1];
-        int port = Integer.parseInt(parameters[2]);
+        String dbName;
+        String labelName; 
+        int port;
+        if (parameters.length < 3) {
+            dbName = "realtime1";
+            labelName = "condition";
+            Random generator = new Random();
+            port = generator.nextInt(1500) + 1000;
+        }        
+        else{
+            dbName = parameters[0];
+            labelName = parameters[1];
+            port = Integer.parseInt(parameters[2]);
+        }
         if (!(Parser.available(port))) throw new Exception("Port " + port + " is not available");
         
+        ctx.curPort = port;
         int pingDelay =1000;
         label(new String []{dbName, labelName, "junk"});
         LabelInterceptorTask lt = new LabelInterceptorTask(port, dbName, labelName, this,pingDelay );

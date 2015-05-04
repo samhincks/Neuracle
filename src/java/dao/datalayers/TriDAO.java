@@ -81,7 +81,7 @@ public class TriDAO extends DataLayerDAO {
                 } 
                 else jsonObj.put("maxPoints", mostPoints);
 
-               
+               int index =0;
                 //.. for each instance
                 for (BidimensionalLayer bd : exp.matrixes) {
                     Instance instance = (Instance)bd;
@@ -92,7 +92,11 @@ public class TriDAO extends DataLayerDAO {
                     for (int i =0; i <maxRows; i+= pointsInc) {
                         JSONObject row = new JSONObject();
                         row.put("time", i);
-                        row.put("condition", instance.condition);
+                       
+                        if(i==0){
+                            row.put("condition", instance.condition); //.. this and index, its kind of a pain that we put it on every point but we need to for visualization tip
+                            row.put("index", index);
+                        }
                         JSONArray channels = new JSONArray();
 
                         //.. add the value at each channel
@@ -111,6 +115,7 @@ public class TriDAO extends DataLayerDAO {
                         rows.put(row);
                     }
                     instances.put(rows);
+                    index++;
                 }
                 jsonObj.put("instances", instances);
                 jsonObj.put("type", "experiment");

@@ -113,7 +113,7 @@ function LineChart() {
                 .attr('class', 'd3-tip')
                 .offset([-10, 0])
                 .html(function(d, i) {
-                    return "<strong> " + d[0].condition + "</strong>";
+                    return "<strong> " + d[0].condition + " : " +d[0].index+ "</strong>";
                 })
         svg.call(tip);
         

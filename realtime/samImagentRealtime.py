@@ -30,7 +30,7 @@ from time import sleep
 #DEVICE = 'CMS50D'
 #DEVICE = 'fNIRS'
 DEVICE = 'Imagent'
-DEVICE = 'Fake'
+#DEVICE = 'Fake'
 
 """
 Time format info
@@ -122,8 +122,8 @@ def readFromImagent():
                 cur=conn.cursor()   
                 
                 #Insert the data to the Table REALTIME            
-                cur.execute("""INSERT INTO REALTIME1(Time,Marker,DC1A,DC2A,DC3A,DC4A,DC5A,DC6A,DC7A,DC1B,DC2B,DC3B,DC4B,DC5B,DC6B,DC7B,DC8B) VALUES
-                  (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(values[0],values[1],float(values[2]),float(values[3]),float(values[4]),float(values[5]),float(values[6]),float(values[7]),float(values[8]),float(values[9]),float(values[10]),float(values[11]),float(values[12]),float(values[13]),float(values[14]),float(values[15]),float(values[16])))
+                cur.execute("""INSERT INTO REALTIME1(DC1A,DC2A,DC3A,DC4A,DC5A,DC6A,DC7A,DC8A,DC1B,DC2B,DC3B,DC4B,DC5B,DC6B,DC7B,DC8B) VALUES
+                  (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(float(values[2]),float(values[3]),float(values[4]),float(values[5]),float(values[6]),float(values[7]),float(values[8]),float(values[9]),float(values[10]),float(values[11]),float(values[12]),float(values[13]),float(values[14]),float(values[15]),float(values[16]),float(values[17])))
         
                 
      
@@ -257,7 +257,7 @@ def main():
     elif DEVICE == "Imagent":
         tableName = "REALTIME1"
         cur.execute("DROP TABLE IF EXISTS " + tableName)
-        createQuery = "CREATE TABLE " + tableName +" (Time VARCHAR(45),Marker VARCHAR(45),DC1A VARCHAR(45), DC2A VARCHAR(45), DC3A VARCHAR(45), DC4A VARCHAR(45), DC5A VARCHAR(45), DC6A VARCHAR(45), DC7A VARCHAR(45), DC1B VARCHAR(45), DC2B VARCHAR(45), DC3B VARCHAR(45), DC4B VARCHAR(45), DC5B VARCHAR(45), DC6B VARCHAR(45), DC7B VARCHAR(45), DC8B VARCHAR(45))"; 
+        createQuery = "CREATE TABLE " + tableName +" (DC1A VARCHAR(45), DC2A VARCHAR(45), DC3A VARCHAR(45), DC4A VARCHAR(45), DC5A VARCHAR(45), DC6A VARCHAR(45), DC7A VARCHAR(45), DC8A VARCHAR(45),DC1B VARCHAR(45), DC2B VARCHAR(45), DC3B VARCHAR(45), DC4B VARCHAR(45), DC5B VARCHAR(45), DC6B VARCHAR(45), DC7B VARCHAR(45), DC8B VARCHAR(45))"; 
         cur.execute(createQuery)
         readFromImagent()
     elif DEVICE == "Fake":

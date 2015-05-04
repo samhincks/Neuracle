@@ -117,7 +117,7 @@ public class MiscellaneousParser extends Parser{
         command.action = "reload";
         command.tutorial = "Double click on one of the files in the topleft corner to view the raw-data."
                 + " Then, with the file selected, type split(condition) to group the data by common conditions";
-        commands.put(command.id, command);
+        commands.put(command.id, command);   
         
     }
     
@@ -284,9 +284,9 @@ public class MiscellaneousParser extends Parser{
     
     /**Loads an entire folder of files
      * @param parameters
-     * @return
-     * @throws Exception 
-     */
+     * @return  
+     * @throws Exception   
+     */       
     private String load(String [] parameters) throws Exception{
         String folderName = "GRProcessed";
         if (parameters.length >0)folderName = parameters[0];
@@ -296,11 +296,11 @@ public class MiscellaneousParser extends Parser{
         if (folderF == null) throw new Exception("Cannot find folder" + folder);
         File[] listOfFiles = folderF.listFiles();  
         int filesRead =0;
-        
+          
         if (listOfFiles == null) throw new Exception("No such folder " + folder);
         //.. Add everry file to the context
         for (int i = 0; i < listOfFiles.length; i++) {
-            File fileName = listOfFiles[i];
+            File fileName = listOfFiles[i];  
             if (fileName.isFile()) {
                 super.addFile(fileName);
                 filesRead++;
@@ -468,22 +468,32 @@ public class MiscellaneousParser extends Parser{
      **/
     private String nBack(String [] parameters) throws Exception{
         if (AudioNBack.nbackRunning) throw new Exception("There is already an nback running");
-        if (parameters.length <2) return "nBack takes 2 or3 parameters: n, duration, port";
-        int n = Integer.parseInt(parameters[0]);
-        if (n >2 || n <0) throw new Exception("Supported n-backs are 0,1,2");
-        int seconds = Integer.parseInt(parameters[1]);
+        
+        int n=0;
+        int seconds = 30;
+        int port = ctx.curPort;
+        if (parameters.length ==3) {
+            n = Integer.parseInt(parameters[0]);
+            if (n >2 || n <0) throw new Exception("Supported n-backs are 0,1,2");
+            seconds = Integer.parseInt(parameters[1]);
+            port = Integer.parseInt(parameters[2]);
+        }
+        
+        else if (parameters.length ==1 || parameters.length ==2) {
+            n = Integer.parseInt(parameters[0]);
+            if (n > 2 || n < 0) 
+                throw new Exception("Supported n-backs are 0,1,2");
+            
+            if (parameters.length == 2) 
+                seconds = Integer.parseInt(parameters[1]);
+            
+        }     
+        
         int duration = seconds * 1000 - 7000; //.. since it takes 3000 to introduce it
         if (duration < 0) throw new Exception("Too short duration to play audio");
-        int port =0;
-        if (!(Parser.available(port))) throw new Exception("Port " + port + " is not available");
 
         AudioNBack nBack;
-        if (parameters.length ==3) {
-            port = Integer.parseInt(parameters[2]);
-            nBack = new AudioNBack(n, duration, new Client(port));
-        }
-        else
-            nBack = new AudioNBack(n, duration);
+        nBack = new AudioNBack(n, duration, new Client(port));        
         
         if (!ctx.test) nBack.directory = ctx.getServletContext().getRealPath("WEB-INF/audio/") +"/";
 
@@ -492,10 +502,10 @@ public class MiscellaneousParser extends Parser{
         t.start();
         
         String retString = "Initialized " + n +"-back for " + seconds + "s";
-        if(parameters.length ==3) retString += ". Broadcasting condition to " + port;
+        retString += ". Broadcasting condition to " + port;
         
-        return retString;
-    }
+        return retString;    
+    }  
     
     /**Run a tutorial for the user to familiarize them with basic commands
      * @return

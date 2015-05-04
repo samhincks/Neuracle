@@ -168,7 +168,9 @@ public class ExternalDataParser extends Parser{
      * no such datalayer exists, it creates a new one *
      */
     public String synchronize(String [] parameters) throws Exception {
-        String filename = parameters[0];
+        String filename ;
+        if (parameters.length ==0) filename = "realtime1";
+        else filename = parameters[0];
         
         //.. if this is the first datalayer ever added
         if (ctx.dataLayersDAO == null) {
@@ -203,23 +205,24 @@ public class ExternalDataParser extends Parser{
     public JSONObject stream(String [] parameters) throws Exception {
         if (currentDataLayer.id == null) throw new Exception("Must select a datalayer");
         String filename = currentDataLayer.id; 
+        
         if (ctx.dataLayersDAO.streams.containsKey(filename)) {
             BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(filename);
-            bDAO.synchronizeWithDatabase(filename);
-            return bDAO.getLastUpdateJSON();       
+            bDAO.synchronizeWithDatabase(filename);  
+            return bDAO.getLastUpdateJSON();         
         } else {
             throw new Exception("Context does not contain datalayer " + filename);
         }   
     }
     
-    /**Write the channelset to the file.
-     * @param parameters
-     * @return
+    /**Write the channelset to the file.  
+     * @param parameters   
+     * @return    
      * @throws Exception 
-     */
+     */   
     public String write(String [] parameters) throws Exception {
        String suffix = "";
-       int readEvery =1;
+       int readEvery =1;  
        boolean conToInt = false;
        if(parameters.length> 0) suffix = parameters[0];
        if(parameters.length >1) readEvery = Integer.parseInt(parameters[1]);

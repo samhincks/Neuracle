@@ -368,13 +368,15 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         Experiment experiment = new Experiment(this.id, relevantMarkers.getClassification(),this.readingsPerSecond);
         //.. Build a new Channel with new points for each trial
         for (Trial t : relevantMarkers.trials) {
-            Instance instance = new Instance(t.name, t.start, t.end);
+            if (t.end - t.start > 2){
+                Instance instance = new Instance(t.name, t.start, t.end);
 
-            for (Channel c : streams) {
-                Channel subChannel = c.getSample(t.start, t.end,false);
-                instance.addStream(subChannel);
+                for (Channel c : streams) {
+                    Channel subChannel = c.getSample(t.start, t.end,false);
+                    instance.addStream(subChannel);
+                }
+                experiment.addMatrix(instance);
             }
-            experiment.addMatrix(instance);
         }
         
         return experiment;
@@ -561,25 +563,25 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 
                 //.. HbO = (abs690*ed830-abs830*ed690)/den*1000; % concentration change (micromolar).
                 Channel HbOChan = new Channel(snCol.getFramesize(), snCol.getCount());
-                HbOChan.id ="HbO-" + i + "-";
+                HbOChan.id ="HbO-";
                 //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
-                if (i < quarter) HbOChan.id += "A";
-                else HbOChan.id += "B";
+                if (i < quarter) HbOChan.id += i +"-A";
+                else HbOChan.id +=(i-quarter) + "-B";
                 
                 for (int j =0; j < minSize; j++) {
                     float hbO = Math.abs(snCol.getPoint(j)) * ed830 - Math.abs(etCol.getPoint(j))*ed690;
                     hbO = hbO / (den *1000.0f);
                     HbOChan.addPoint(hbO);
-                }
+                }   
                 cs.addStream(HbOChan);  
 
                 //.. Hb = (abs830 * eo690 - abs690 * eo830) / den * 1000; % concentration change(micromolar)
                 Channel HbChan = new Channel(snCol.getFramesize(), snCol.getCount());
               
-                HbChan.id = "Hb-"+i;
+                HbChan.id = "Hb-";
                 //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
-                if (i < quarter) HbOChan.id += "-A";
-                else HbOChan.id += "-B";
+                if (i < quarter) HbChan.id += (i) +"-A";
+                else HbChan.id += (i-quarter) +"-B";
                 
                 for (int j = 0; j < minSize; j++) {
                     float hb = Math.abs(etCol.getPoint(j)) * eo690 - Math.abs(snCol.getPoint(j)) * eo830;
@@ -607,10 +609,10 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 }
 
                 //.. HbO = (abs690*ed830-abs830*ed690)/den*1000; % concentration change (micromolar).
-                snCol.id = "HbO-" +i +"-";
+                snCol.id = "HbO-" +i;
                 //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
-                if (i < quarter) snCol.id += "A";
-                else snCol.id += "B";
+                if (i < quarter) snCol.id += i +"-"+ "A";
+                else snCol.id += (i-quarter) +"B";
                 
                 for (int j = 0; j < minSize; j++) {
                     float hbO = Math.abs(snCol.getPoint(j)) * ed830 - Math.abs(etCol.getPoint(j)) * ed690;
@@ -619,10 +621,10 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 }
 
                 //.. Hb = (abs830 * eo690 - abs690 * eo830) / den * 1000; % concentration change(micromolar)
-                etCol.id = "Hb-" +i;
+                etCol.id = "Hb-";
                 //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
-                if (i < quarter) etCol.id += "-A";
-                else etCol.id += "-B";
+                if (i < quarter) etCol.id += i + "-A";
+                else etCol.id += (i-quarter)+ "-B";
                 
                 for (int j = 0; j < minSize; j++) {
                     float hb = Math.abs(etCol.getPoint(j)) * eo690 - Math.abs(snCol.getPoint(j)) * eo830;
@@ -677,11 +679,13 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                
                //.. a fixable error that occurs if we generate markers through generate
                if (m.saveLabels == null ) throw new Exception("The way markers were instantiated does not permit writing file currently");
-               if (l.channelLabels.size() != numPoints) throw new Exception ("NumPoints = " + numPoints + 
+               if (l.channelLabels.size() > numPoints) throw new Exception ("NumPoints = " + numPoints + 
                        " Labels = " + l.channelLabels.size() + " . They are misaligned");
                
+               if (i >= l.channelLabels.size())
+                   bw.write("-1");
                //.. write out the actual label value
-               if (!(labelToInt))
+               else if (!(labelToInt))
                    bw.write(l.channelLabels.get(i).value);
                
                //.. write out a numeric representation, sometimes convenient for visualization
