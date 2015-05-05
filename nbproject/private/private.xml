@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="24">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="27">
         <file>
             <url>web/js/area/chartarea.js</url>
             <bookmark id="16">
@@ -16,11 +16,6 @@
         </file>
         <file>
             <url>src/java/dao/InputParser.java</url>
-            <bookmark id="3">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
             <bookmark id="2">
                 <name/>
                 <line>0</line>
@@ -29,6 +24,11 @@
             <bookmark id="1">
                 <name/>
                 <line>0</line>
+                <key/>
+            </bookmark>
+            <bookmark id="27">
+                <name/>
+                <line>251</line>
                 <key/>
             </bookmark>
         </file>
@@ -42,14 +42,9 @@
         </file>
         <file>
             <url>src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</url>
-            <bookmark id="19">
+            <bookmark id="25">
                 <name/>
-                <line>509</line>
-                <key/>
-            </bookmark>
-            <bookmark id="18">
-                <name/>
-                <line>782</line>
+                <line>489</line>
                 <key/>
             </bookmark>
         </file>
@@ -127,13 +122,12 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/TransformationParser.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/evaluatable/WekaClassifier.java</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/MiscellaneousParser.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/web/js/visualization/movingLinegraph.js</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/ExternalDataParser.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</file>
-            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/datalayers/BiDAO.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/kth/streams/tri/Experiment.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/InputParser.java</file>
             <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/dao/DataManipulationParser.java</file>
+            <file>file:/Users/samhincks/Documents/Github/SensorMining/src/java/timeseriestufts/kth/streams/bi/Instance.java</file>
         </group>
     </open-files>
 </project-private>

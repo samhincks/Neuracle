@@ -123,13 +123,20 @@ public class WekaClassifier  extends ClassificationAlgorithm{
             //.. my version for knowing condition and its percentage; weka's for classification
             weka.core.Instance wInstance = (weka.core.Instance) wEnumeration.nextElement();
             Instance myInstance = testing.matrixes.get(index);
-            //.. only classify if we have this condition
-            if (testing.classification.hasCondition(myInstance.condition)) {
-                Classifier classifier = getClassifier();
-                
+            Classifier classifier = getClassifier();
+
+            //.. if its conditionless, classify regardless 
+            if (myInstance.condition == null) {
                 int guess = (int) classifier.classifyInstance(wInstance);
                 double[] distribution = classifier.distributionForInstance(wInstance);
-
+                
+                //.. save the prediction
+                predictions.addPrediction(guess, distribution, index);
+            }
+            //.. only classify if we have this condition
+            else if (testing.classification.hasCondition(myInstance.condition)) {
+                int guess = (int) classifier.classifyInstance(wInstance);
+                double[] distribution = classifier.distributionForInstance(wInstance);
                 //.. save the prediction
                 predictions.addPrediction(guess, (int) wInstance.classValue(),
                         myInstance.conditionPercentage, distribution, index);
@@ -191,11 +198,8 @@ public class WekaClassifier  extends ClassificationAlgorithm{
        double pctGreater = confidence / secondLargest;
        Prediction p = new Prediction(guessS, "unknown",  confidence, pctGreater, 0);
        return p;
-
-    
    }
    
-    
     
     /**Return the Weka Classifier this object refers to*/
     public Classifier getClassifier() {
@@ -206,13 +210,13 @@ public class WekaClassifier  extends ClassificationAlgorithm{
             case tnn:
                 return tnn;
             case lmt:
-                return lmt;
+                return lmt;  
             case nb:
                 return nb;
             case smo:
                 return smo;
             case logistic:
-                return logistic;
+                return logistic;  
             case jrip:
                 return jrip;
             case simple:
@@ -221,15 +225,12 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                 return adaboost; 
             case multilayer :
                 return multilayer;
-             
             case libsvm :
                 return libsvm;
             case cvsmo : 
                 return cvsmo;
-                
             case gridsmo :
                 return gridsmo;
-                
             default:
                 return j48;
         }   

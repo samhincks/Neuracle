@@ -223,45 +223,51 @@ public class InputParser {
         InputParser ip = new InputParser(ctx);
 
         try{
-            //.. 1. Fabricate fake data with 1 channel and 200 readings
+         
+            //.. . Fabricate fake data with 1 channel and 200 readings
             ChannelSet b = ChannelSet.generate(2000, 10);
             ChannelSet c = ChannelSet.generate(2000, 10);
-            
-            //.. 1.1 And add some real data
+
+            //.. And add some real data
             Experiment realE = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
             ctx.addDataLayer("reale", new TriDAO(realE));
             ChannelSet cs = BesteExperiment.getChannelSet(13);
             ctx.addDataLayer("realcs", new BiDAO(cs));
-            
-            //.. 2. Associate correct number of markers with that data
-            Markers m = Markers.generate(1, 10); // 10 * 20 = 200
-            b.addMarkers(m);
-            b.id = "b";
-            c.id = "c";
-            c.addMarkers(m);
-            BiDAO bDAO = new BiDAO(b);
-            BiDAO cDAO = new BiDAO(c);
 
-            //.. 3. Add these to the session context
-            ctx.addDataLayer("b", bDAO);
-            ctx.addDataLayer("c", cDAO);
-
-            //.. 4. Initialize a technique, select the channelset b, and make it an experimetn
-            TechniqueSet ts = TechniqueSet.generate();
-            ctx.setCurrentName("b");
-            JSONObject response = ip.parseInput("split(condition)");
-            ctx.setCurrentName("bcondition");
+            //.. connect experiment and 
+            ctx.setCurrentName("reale");
             TriDAO tDAO = (TriDAO) ctx.getCurrentDataLayer();
+            TechniqueSet ts = TechniqueSet.generate();
             
-            //.. 5. associate technique with experiment
+            //..  associate technique with experiment
             TechniqueDAO wc = new TechniqueDAO(ts.getClassifier());
             tDAO.addConnection(wc);
             tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
             tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
             
+            
+            
             int TEST =8;
                 
-            String test = "MARKERVIZ";
+            String test = "multiclasstrain";
+            JSONObject response = new JSONObject();
+            
+            if (test.equals("multiclasstrain")) {
+                response = ip.parseInput("train(-4)");
+            }
+            
+            if (test.equals("realtimeclass")) {
+                response = ip.parseInput("train"); //.. After this, the associated weka classifier is trained
+
+                //.. Having trained, now test
+                response = ip.parseInput("synchronize(realtime1)");
+                ctx.setCurrentName("realtime1");
+                BiDAO bDAO = (BiDAO) ctx.getCurrentDataLayer();
+                bDAO.addConnection(wc);
+                
+                response = ip.parseInput("classifylast");
+            }
+            
             if (test.equals("MARKERVIZ")) {
                 response = ip.parseInput("synchronize(realtime1)");
                 ctx.setCurrentName("realtime1");
@@ -331,38 +337,7 @@ public class InputParser {
             if (TEST ==3) {
                 response = ip.parseInput("label(");
             }
-            if (TEST ==4) {
-                response = ip.parseInput("train"); //.. After this, the associated weka classifier is trained
-                
-                //.. Having trained, now test
-                ctx.setCurrentName("b");
-                bDAO = (BiDAO) ctx.getCurrentDataLayer();
-                bDAO.addConnection(wc);
-                 
-                response = ip.parseInput("classify");
-                Predictions p = ctx.getPerformances().predictionSets.get("b");
-                System.out.println(p.getPctCorrect());
-                JSONObject jo = bDAO.getPerformanceJSON(ctx.getPerformances());
-                System.out.println(jo.get("predictions"));
-                System.out.println(jo.get("classes"));
-            }
-            if (TEST ==5) { //.. Test multilayer appending
-                //.. First select all layers  
-                ctx.setCurrentName("b");  
-                bDAO = (BiDAO) ctx.getCurrentDataLayer();  
-              //  bDAO.dataLayer.printStream();
-                
-                ctx.setCurrentName("c");
-                bDAO = (BiDAO) ctx.getCurrentDataLayer();
-               // bDAO.dataLayer.printStream();
-                
-                ctx.setCurrentName("b:c");
-                response = ip.parseInput("append");
-                System.out.println(response.get("content"));
-                ctx.setCurrentName("mergedb-c");
-                bDAO = (BiDAO) ctx.getCurrentDataLayer();
-                bDAO.dataLayer.printStream();
-            }
+           
             
             if (TEST ==6) {
                 ctx.setCurrentName("realcs");

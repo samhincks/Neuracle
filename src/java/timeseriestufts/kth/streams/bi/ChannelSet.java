@@ -420,7 +420,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     
     /**Return a new channelset of this layer between start and end**/
     public ChannelSet getChannelSetBetween(int start, int end) throws Exception{
-        if (start > end || end > this.getFirstChannel().numPoints) throw new Exception ("Invalid arguments");
+        if (start > end || end > this.getFirstChannel().numPoints) 
+            throw new Exception ("ChannelSet.getChannelSetBetween(): Invalid arguments. The first channel has  " + this.getFirstChannel().numPoints + ". You have requested " + start +" , " + end);
         ChannelSet cs = this.getCopy(start, end);
         
         for (Channel c : this.streams) {
@@ -456,6 +457,23 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         return cs;
     }
     
+    /**Get condition between start and end, and set its value to conditionValue
+     * @param start
+     * @param end
+     * @param conditionValue
+     * @return
+     * @throws Exception 
+     */
+    public Instance getInstance(int start, int end, String conditionValue) throws Exception {
+        Instance instance = new Instance(conditionValue, start, end); //.. it has no condition, for instance if unlabeled data
+        ChannelSet sample = this.getChannelSetBetween(start, end);
+
+        for (Channel c : sample.streams) {
+            instance.addStream(c);
+        }
+        return instance;
+    }
+    
     /**Return an instance between start and end.
      if markerStart= start, then the channelset hasn't been manipulated with at all.
      if its different then we use this info to find what condition we are from the markers
@@ -464,16 +482,20 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         //... However, all of this instance won't uniquely refer to one instance.
         ///... so we need to express it as a percentage
         ChannelSet sample = this.getChannelSetBetween(start, end);
+        Instance instance;
+        if (!(this.markers == null || this.markers.isEmpty())) {
+            //.. get the majority condition between start and end as a tuple, where 2nd part is pctange
+            Markers theseMarkers = getMarkersWithName(conditionName);
 
-        //.. get the majority condition between start and end as a tuple, where 2nd part is pctange
-        Markers theseMarkers = getMarkersWithName(conditionName);
-      
-        //.. We might be offset relative to the markers file so correct based on realstar
-        int markerStart = start + getRealStart();
-        int markerEnd = getRealStart()+end;
-        Tuple<String, Double> condTuple = theseMarkers.getConditionBetween(markerStart, markerEnd); 
-        Instance instance = new Instance(condTuple.x, start, end, condTuple.y);
-
+            //.. We might be offset relative to the markers file so correct based on realstar
+            int markerStart = start + getRealStart();
+            int markerEnd = getRealStart()+end;
+            Tuple<String, Double> condTuple = theseMarkers.getConditionBetween(markerStart, markerEnd); 
+            System.out.println("setting condition with " + condTuple.x);
+            instance = new Instance(condTuple.x, start, end, condTuple.y);
+        }
+        else
+            instance = new Instance(null,start,end); //.. it has no condition, for instance if unlabeled data
         for (Channel c : sample.streams) {
             instance.addStream(c);
         }
@@ -492,7 +514,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             
             //.. get Instance between i and instancelength back
             Instance myInstance = this.getInstance(c.name, start, end);
-            if( c.hasCondition(myInstance.condition))
+            if(myInstance.condition == null || c.hasCondition(myInstance.condition))
                 myInstances.add(myInstance);
         }
         return new Experiment("testingStream", c, myInstances, this.readingsPerSecond);
@@ -573,8 +595,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                     hbO = hbO / (den *1000.0f);
                     HbOChan.addPoint(hbO);
                 }   
-                cs.addStream(HbOChan);  
-
+                cs.addStream(HbOChan);    
+    
                 //.. Hb = (abs830 * eo690 - abs690 * eo830) / den * 1000; % concentration change(micromolar)
                 Channel HbChan = new Channel(snCol.getFramesize(), snCol.getCount());
               

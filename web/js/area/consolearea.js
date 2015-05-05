@@ -7,6 +7,7 @@
 function ConsoleArea() {
    this.streaming = false; //.. set to true if we are streaming
    this.streamInterval; 
+   this.pings =[] //.. a hash of commands we are pinging at the server 
    
    this.messageStack = []; //.. save all the users old messages. Retrieve with arrows. Delete if erroneous
    this.commands; //.. initialize this when we start. In other words, ping server
@@ -75,10 +76,10 @@ function ConsoleArea() {
         if(userText.startsWith("view.")){
             this.parseViewMessage(userText);
             return true; //.. parse it locally only
-         }
+        }
          
          //.. if this is an evaluation command first save the connections to the context
-         if(userText.startsWith("evaluate") || userText.startsWith("train") 
+        if(userText.startsWith("evaluate") || userText.startsWith("train") 
                  ||userText.startsWith("classify") ) {
              javaInterface.postConnectionsToTechnique();
              return false;//.. return false as we still want to go to java
@@ -152,6 +153,53 @@ function ConsoleArea() {
              return true;
          }
          
+         //.. repeat(classifyLast(), 200) shoots the command classifyLast to the server every 200ms
+         else if (userText.startsWith("repeat(")) {
+            var mes = userText.split("("); //.. will be parameters (100,200)
+            var params = mes[1].split(",");
+            var command = params[0];
+            command = command.replace(")","")
+            var commandName = command.split("(")[0];
+            var delay = 1000;
+            
+            //.. if delay value is specified, set it
+            if (params.length >1){
+                delay = params[1];
+                delay = delay.replace(")","");
+                if (delay < 20) {
+                    consoleArea.displayMessage("Delay must be greater than 20");
+                    return true;
+                }
+            }
+            
+            //.. for this one, we must intersect layer with techniques
+            if (command.startsWith("classifylast")) javaInterface.postConnectionsToTechnique();
+
+            //.. set an interval to repeat, and store it so that we can delete
+            this.pings[commandName] =  setInterval(function() {
+                $("#consoleInput").val(command);
+                javaInterface.postToConsole();
+            }, delay);
+            consoleArea.displayMessage("Pinging " + command  +  " every " + delay);
+            
+            return true;
+         }
+         //.. terminate specified pinging or all
+         else if (userText.startsWith("stop")) {
+            var mes = userText.split("("); //.. will be parameters (100,200)
+            if (mes.length >1) {
+                var params = mes[1].split(",");
+                var command = params[0];
+                command = command.replace(")", "");
+                clearInterval(this.pings[command]);
+            }
+            else {
+                for (var i in this.pings) {
+                    clearInterval(this.pings[i]);
+                }
+            }
+            return true;
+         }
          return false;
     }
     
@@ -247,7 +295,6 @@ function ConsoleArea() {
             div.addClass("systemmess");
              $("#pastmessages").append(div);
          }
-
     }
     
     /*Display one command neatly in the console*/

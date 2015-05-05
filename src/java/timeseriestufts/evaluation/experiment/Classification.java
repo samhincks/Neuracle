@@ -162,4 +162,11 @@ public class Classification {
     
     }
 
+    public void printClassification() {
+        System.out.println(this.name);
+        for(String s : this.values) {
+            System.out.println(s);
+        }
+    }
+
 }

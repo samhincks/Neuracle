@@ -400,9 +400,8 @@ public class Experiment extends TridimensionalLayer<Instance>{
         this.techniqueSet = ts;
         
         //.. extract features
-        if(!extracted) {
+        if(!extracted) 
             this.extractAttributes(ts.getFeatureSet());
-        }
         
         //.. get instances from my instance objects, with all attributes extracted
         weka.core.Instances instances = getWekaInstances(true); //.. try to extract attribtues if specified
@@ -640,6 +639,64 @@ public class Experiment extends TridimensionalLayer<Instance>{
         return maxV;
     }
     
+    /**Divide the experiment into n parts. Two ways to do this. Either keep instance length
+     * the same, or divide into truly smaller parts. 
+     * @param parts, # of parts to divide into
+     * @param reduce, true if we want smaller instance lengths
+     * @return a new experiment, a shallow copy of the points
+     */
+    public Experiment getBoundaryInstances(boolean reduce, int parts) throws Exception{
+        ArrayList<String> values = new ArrayList(); 
+        ArrayList<Instance> instances = new ArrayList();
+        Experiment e;
+        int regLength = this.getMostCommonInstanceLength() -1;
+        int partLength = (int) Math.floor(regLength / parts) - 1;
+
+        //.. divide each instance into separete parts
+        if (reduce) {
+            for (Instance ins : matrixes) {
+                int position = 0;
+                for (int i = 0; i < parts; i++) {
+                    String condition = ins.condition+i;
+                    Instance sub= ins.getInstance(position, position + partLength, condition);
+                    position+=partLength;
+                    if (!(values.contains(condition))) values.add(condition);
+                    instances.add(sub);
+                }
+            }
+        }
+        
+        //.. maintain length, but slide
+        else { //.. now the parts parameter refers to how far up to advance after each
+            for(int i =0; i < matrixes.size()-1; i++) {
+                Instance a = matrixes.get(i);
+                Instance b = matrixes.get(i+1);
+                int position =0;
+                
+                //.. create a new instance for each sliding part
+                for (int j = 0; j < parts; j++) {
+                    int end = position + regLength;
+                    int spillOver = end - regLength;
+                    String conditionName =  ( (spillOver <=0) ? a.condition : a.condition +"-"+b.condition+j);
+                    Instance aPart = a.getInstance(position, regLength, conditionName);
+                    
+                    //.. if we need some of B
+                    if (spillOver >0) aPart.appendChanSet(b.getChannelSetBetween(0, spillOver));
+                    
+                    //.. advance token add position, and add classification
+                    position+=partLength;
+                    instances.add(aPart);
+                    if (!(values.contains(conditionName))) values.add(conditionName);
+                }                
+            }
+        }
+        
+        Classification c = new Classification(values, this.classification.name);
+        e = new Experiment(this.filename, c, instances,this.readingsPerSec);
+
+        return e;
+    }
+    
     
     public static void main(String [] args) {
         try{
@@ -663,10 +720,18 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 e =  Experiment.generate(2,4,6);
                 e.evaluate(TechniqueSet.generate(), Dataset.generate(), -1);
             }
+            if (TEST ==3) {
+                e = e.getBoundaryInstances(true, 3);
+                //System.out.println("experiment has " + e.getMostCommonInstanceLength());
+                System.out.println(e.matrixes.size());
+                e.printInfo();
+              //  e.printInfo();
+            }
 
         }
         catch(Exception e) {e.printStackTrace();}
     }
+
 
 
 

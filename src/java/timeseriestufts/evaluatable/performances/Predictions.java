@@ -96,6 +96,18 @@ public class Predictions {
         predictions.add(prediction);
     }
     
+    public void addPrediction(int guess, double [] confidences, int instanceIndex) {
+        //.. retrieve string version of guess. note classification.values must match guess indexes
+        String guessS = classification.values.get(guess);
+
+        //.. retrieve confidence scores
+        double confidence = confidences[guess];
+
+        //.. make new prediction and add
+        Prediction prediction = new Prediction(guessS, confidence, instanceIndex);
+        predictions.add(prediction);
+    }
+    
     public void addPrediction(Prediction p) {
         predictions.add(p);
     }

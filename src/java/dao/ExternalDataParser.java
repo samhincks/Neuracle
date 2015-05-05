@@ -77,15 +77,15 @@ public class ExternalDataParser extends Parser{
             c.retMessage = this.save(parameters);
         } 
         
-        else if (command.startsWith("synchronize")) {
-            c = commands.get("synchronize");
+        else if (command.startsWith("synchronize")) {   
+            c = commands.get("synchronize");  
             c.retMessage = this.synchronize(parameters);
         }
-        
+          
         else if (command.startsWith("stream(") || command.equals("stream")) {
             c = commands.get("stream");
-            c.data = this.stream(parameters);
-        }  
+            c.data = this.stream(parameters);   
+        }      
         
         else if (command.startsWith("write")) {
             c = commands.get("write");
@@ -178,13 +178,15 @@ public class ExternalDataParser extends Parser{
         }
 
         BiDAO bDAO; //.. the datalayer we are building
-
+   
         //.. either get bDAO or create it (create if this is the first request processed)
         if (ctx.dataLayersDAO.streams.containsKey(filename)) {
             bDAO = (BiDAO) ctx.dataLayersDAO.get(filename);
             int added = bDAO.synchronizeWithDatabase(filename);
             if(parameters.length>1) return null; //.. 2nd parameter means now output
-            return "Updated " + filename + " with " + added + " changes to each column";
+            String ret = "Updated " + filename + " with " + added + " changes to each column";
+            System.out.println(ret);
+            return ret;
         } else {
             ChannelSet cs = new ChannelSet();
             cs.id = filename;

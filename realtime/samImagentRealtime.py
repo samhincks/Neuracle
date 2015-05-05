@@ -89,9 +89,11 @@ def readFromFake():
                     user='root', db='newttt')
         cur=conn.cursor()   
         
+
         #Insert the data to the Table REALTIME            
-        cur.execute("""INSERT INTO REALTIME1(A,B) VALUES
-                  (%s,%s)""",(randint(1,10),randint(1,10)))
+        cur.execute("""INSERT INTO REALTIME1(DC1A,DC2A,DC3A,DC4A,DC5A,DC6A,DC7A,DC8A,DC1B,DC2B,DC3B,DC4B,DC5B,DC6B,DC7B,DC8B) VALUES
+          (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(randint(1,10),randint(1,5),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3)))
+        
         
         conn.commit()
         cur.close()
@@ -263,7 +265,8 @@ def main():
     elif DEVICE == "Fake":
         tableName = "REALTIME1"
         cur.execute("DROP TABLE IF EXISTS " + tableName)
-        createQuery = "CREATE TABLE " + tableName +" (A VARCHAR(45),B VARCHAR(45))"; 
+        createQuery = "CREATE TABLE " + tableName +" (DC1A VARCHAR(45), DC2A VARCHAR(45), DC3A VARCHAR(45), DC4A VARCHAR(45), DC5A VARCHAR(45), DC6A VARCHAR(45), DC7A VARCHAR(45), DC8A VARCHAR(45),DC1B VARCHAR(45), DC2B VARCHAR(45), DC3B VARCHAR(45), DC4B VARCHAR(45), DC5B VARCHAR(45), DC6B VARCHAR(45), DC7B VARCHAR(45), DC8B VARCHAR(45))"; 
+         
         cur.execute(createQuery)
         readFromFake()
 

@@ -122,6 +122,7 @@ public class DataManipulationParser extends Parser{
         command.documentation = " With a 3D dataset (a collection of instances) selected and connected to\"\n" +
 "               + \" at least one of each TechniqueSet (feature set, attribute selection, machine learning, and settings," +
                 " trains a classifier which can be applied to any other arbitrary channelset, that is synchronized or not";
+        command.parameters = "train(4) divides each instance into four parts, train(-4) also creates four new instances for each instance, but preserves length (so that it overlaps with one after";
         command.tutorial = " Now you've trained the machine learning algorithm. Once again, you can see how internally accurate the analysis was, "
                 + " but this time, the machine learning algorithm remembers its knowledge, and you can link it to a livestream"
                 + " of data, or apply it to any loaded dataset, where the condition may be known or unknown. ::"
@@ -171,9 +172,6 @@ public class DataManipulationParser extends Parser{
                 + " then double click on this newly created featurset object to see ranking of their information gain";  
         commands.put(command.id, command);
         
-        command = new Command("hincks");
-        command.documentation = " Applies a range of data-manipulations to the selected datasets, customized for the unique brain of Sam Hincks";
-
         
         //-- granger 
         command = new Command("granger");
@@ -266,11 +264,7 @@ public class DataManipulationParser extends Parser{
             c.retMessage = imagent(parameters);
             c.action = "reload";
         }
-        else if (command.startsWith("hincks")) {
-            c = commands.get("hincks");
-            c.retMessage = hincks(parameters);
-            c.action = "reload";
-        }
+   
         
         else if (command.startsWith("wireless")) {
             c = commands.get("wireless");
@@ -761,7 +755,7 @@ public class DataManipulationParser extends Parser{
         int numFolds = -1;
         if (parameters.length > 0) {
             numFolds = Integer.parseInt(parameters[0]);
-        }
+        }  
 
         //.. Add technique description to return string
         String retString = "Evaluating an experiment... ";
@@ -970,6 +964,10 @@ public class DataManipulationParser extends Parser{
      * Bugs: multi-analysis. The retString classification accuracy doesnt owrk
      */
     private String train(String[] parameters, DataLayerDAO dDAO, Performances performances) throws Exception {
+        int numClasses =-999; //.. set to positive number 
+        if (parameters.length >= 1) {
+            numClasses = Integer.parseInt(parameters[0]);
+        }
         
         if (!(currentDataLayer instanceof Experiment || currentDataLayer instanceof MultiExperiment)) {
             throw new Exception("You must split the data into instances first, e.g. (split(labelName)");
@@ -1001,11 +999,21 @@ public class DataManipulationParser extends Parser{
             //... how good it is
             for (TechniqueSet t : techniquesToEvaluate) {
                 // System.out.println("Using " + t.getFeatureSet().getId() + " " + t.getFeatureSet().getConsoleString() + " " + t.getFeatureSet().getFeatureDescriptionString());
-                experiment.evaluate(t, dataset, -1);
+                
+                //.. if we've set the classboundary parameter, split the experiment in these subsections
+                if (numClasses != -999) {
+                    if (numClasses >0) experiment = experiment.getBoundaryInstances(true, numClasses);
+                    else experiment = experiment.getBoundaryInstances(false, Math.abs(numClasses));
+                }
+                
+                else experiment.evaluate(t, dataset, -1);
+                
+                //experiment.classification.printClassification();
                 WekaClassifier wc = experiment.train(t);
                 total += t.getMostRecentAverage();
             }
-            retString += "The internal accuracy of this classifier in leave-one-out was " + (total / techniquesToEvaluate.size());
+            if (numClasses != -999) retString += "The classifier has been trained ";
+            else retString += "The internal accuracy of this classifier in leave-one-out was " + (total / techniquesToEvaluate.size());
 
             return retString;
         } 
@@ -1113,81 +1121,24 @@ public class DataManipulationParser extends Parser{
             throw new Exception("You must connect the dataset with a trained classifier");
         
 
+        
         WekaClassifier classifier = (WekaClassifier) classifiers.get(0);
 
-        //..Classify the  
-         Prediction p = classifier.getLastPrediction(cs );
-         return p.toString();
+        //.. try synchronize, in case this is a realtime layer
+        try{
+            String layerName = cs.id;
+            System.out.println("synching " + layerName);
+            ctx.inputParser.parseInput("synchronize("+layerName+")");
+            //cs = (ChannelSet)((BiDAO)ctx.dataLayersDAO.get(layerName)).dataLayer;
+        }
+        catch(Exception e) {/* It's fine if this command failed*/}
+       
+        Prediction p = classifier.getLastPrediction(cs);
+        return p.toString();
+        
+        
     }
     
-    public String hincks(String[] parameters) throws Exception { 
-        float lowpass = 0;
-        float highpass = 0;
-        if (parameters.length > 1) {
-            lowpass = Float.parseFloat(parameters[0]);
-            highpass = Float.parseFloat(parameters[1]);
-        } else if (parameters.length > 0) {
-            lowpass = Float.parseFloat(parameters[0]);
-        }
-        ArrayList<ChannelSet> chanSets = getChanSets();
-        String retString = "";
-        for (ChannelSet cs : chanSets) {
-            retString += "Applied CalcOxy ";
-            //if (lowpass == 0) {
-            ChannelSet filteredSet = cs.movingAverage(10, true);
-            retString += "Applied MovingAverage, 10 readings back::";
-            //}
-
-            if (lowpass > 0 && highpass == 0) {
-                filteredSet = filteredSet.lowpass(lowpass, false);
-                retString += "Applied Lowpass; Removed frequencies oscillating at above " + lowpass + "hz ::";
-            } else if (highpass > 0 && lowpass == 0) {
-                filteredSet = filteredSet.highpass(highpass, false);
-                retString += "Applied Highpass; Removed frequencies oscillating below " + highpass + "hz ::";
-            } else if (lowpass > 0 && highpass > 0) {
-                filteredSet = filteredSet.bandpass(lowpass, highpass, false);
-                retString += "Applied Bandpass; kept frequencies oscillating between " + lowpass + " and " + highpass + "hz ::";
-            }
-
-            filteredSet = filteredSet.zScore(false);
-            retString += "Z scored the data, so that each value is replaced by the difference between "
-                    + " it and the channel's corresponding mean, divided by the standard deviation::";
-
-            //.. Split into an experiment - of course this is not perfectly generalizable, so condition name should be parameter               
-            Experiment e = super.getExperiment(filteredSet, "condition");
-            ArrayList<String> toKeep = new ArrayList();
-            toKeep.add("easy");
-            toKeep.add("hard");
-            toKeep.add("medium");
-            toKeep.add("rest");
-            e = e.removeAllClassesBut(toKeep);
-
-            //.. remove instances 10 percent larger than the average
-            int instLength = e.getMostCommonInstanceLength();
-            int origSize = e.matrixes.size();
-            //e = e.removeUnfitInstances(instLength, 0.1, false);
-            int trimmed = e.trimUnfitInstances(instLength);
-            int newSize = e.matrixes.size();
-            if (origSize != newSize) {
-                retString += "Experiment changed from " + origSize + " to " + newSize + " instances::";
-            }
-
-            //.. anchor it, setting start to zero
-            e = e.anchorToZero(false);
-            e.setParent(cs.getId()); //.. set parent to what we derived it from
-
-            e.setId(e.id + "-l" + lowpass + "-h" + highpass);
-
-            //.. make a new data access object, and add it to our stream
-            TriDAO pDAO = new TriDAO(e);
-
-            ctx.dataLayersDAO.addStream(e.id, pDAO);
-
-            retString += " Creating : " + e.getId() + " with " + e.matrixes.size() + " instances::"
-                    + super.getColorsMessage(e);
-        }
-        return retString;
-    }
     
     /**Apply a series of manipulations to the data that make sense on a series of
      * high-low cognitive workload inductions, using the imagent fNIRS
@@ -1234,10 +1185,10 @@ public class DataManipulationParser extends Parser{
             ArrayList<String> toKeep = new ArrayList();
             toKeep.add("easy");
             toKeep.add("hard");
-            toKeep.add("medium");  
-            toKeep.add("rest");
+          //  toKeep.add("medium");  
+            //toKeep.add("rest");
             e = e.removeAllClassesBut(toKeep);
-
+  
             //.. remove instances 10 percent larger than the average
             int instLength = e.getMostCommonInstanceLength();
             int origSize = e.matrixes.size();
@@ -1258,6 +1209,7 @@ public class DataManipulationParser extends Parser{
             TriDAO pDAO = new TriDAO(e);
 
             ctx.dataLayersDAO.addStream(e.id, pDAO);
+                        
 
             retString += " Creating : " + e.getId() + " with " + e.matrixes.size() + " instances::"
                     + super.getColorsMessage(e);

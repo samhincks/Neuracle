@@ -25,6 +25,12 @@ public class Prediction {
         this.instanceIndex = instanceIndex;
     }
     
+    public Prediction(String prediction, double confidence, int instanceIndex) {
+        this.prediction = prediction;
+        this.confidence = (float) confidence;
+        this.instanceIndex = instanceIndex;
+    }
+    
     /**For predictions on an instance that is not 100% the same class**/
     public Prediction(String prediction, String answer, double conditionPercentage, double confidence, double pctHigher, int instanceIndex) {
         this.prediction = prediction;
