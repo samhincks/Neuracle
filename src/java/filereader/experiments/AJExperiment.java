@@ -209,7 +209,7 @@ public class AJExperiment {
 
         ts.addTechnique(fs);
         ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.info, 220));
-        ts.addTechnique(new Transformation(Transformation.TransformationType.None));
+        ts.addTechnique(new Transformation(Transformation.TransformationType.none));
         ts.addTechnique(new PassFilter(PassFilter.FilterType.LowPass,0.2)); //. no filter
 
         return ts;

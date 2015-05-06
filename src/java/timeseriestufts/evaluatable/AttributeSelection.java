@@ -87,7 +87,6 @@ public class AttributeSelection extends Technique{
             Attribute t_attr = instances.attribute(i);
             double infogain  = evaluation.evaluateAttribute(i);
             infogainscores.put(t_attr, infogain);
-            System.out.println(t_attr.name());
         }
         return infogainscores;
         

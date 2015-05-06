@@ -118,11 +118,14 @@ public class TransformationParser extends Parser{
         command.action = "reload";
         commands.put(command.id, command);
         
-        // -- MERGE
+        // -- Clean
         command = new Command("clean");
         command.documentation = "With an experiment selected, remove any instances which are longer than the mode";
         command.action = "reload";
         commands.put(command.id, command);
+        
+        
+
     }
 
     public JSONObject execute(String command, String[] parameters,
@@ -182,7 +185,6 @@ public class TransformationParser extends Parser{
             c = commands.get("clean");
             c.retMessage = this.clean();
         }
-        
         if (c == null) {
             return null;
         }
@@ -467,5 +469,5 @@ public class TransformationParser extends Parser{
         }
         return retString;
     }
-    
+   
 }

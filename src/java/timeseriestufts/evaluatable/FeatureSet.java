@@ -36,15 +36,15 @@ public class FeatureSet extends Technique{
     /**Add the instances in another experiment to this infogain. If it already exists,
      then average with existing.  **/
     public void addExperimentToInfogain(weka.core.Instances instances) throws Exception {
-        HashMap<String, Double> infogaintemp = new HashMap();
+       HashMap<String, Double> infogaintemp = new HashMap();
         
         for (Map.Entry<weka.core.Attribute, Double> m : AttributeSelection.infoGainRanker(instances).entrySet()) {
             weka.core.Attribute attr = m.getKey();
             infogaintemp.put(attr.name(), m.getValue());
         }
         
-        if (infogain ==null) infogain = infogaintemp;
-        else {
+        if (infogain ==null) infogain = infogaintemp; 
+        else { 
             for (Map.Entry<String, Double> m : infogaintemp.entrySet()) {
                 String id = m.getKey();
                 

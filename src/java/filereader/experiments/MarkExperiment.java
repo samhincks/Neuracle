@@ -133,7 +133,7 @@ public class MarkExperiment {
         ts.addTechnique(fs);
         ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 150));
         ts.addTechnique(new PassFilter(PassFilter.FilterType.LowPass,0.1));
-        ts.addTechnique(new Transformation(Transformation.TransformationType.ZScore));
+        ts.addTechnique(new Transformation(Transformation.TransformationType.zscore));
         
         return ts;
     }

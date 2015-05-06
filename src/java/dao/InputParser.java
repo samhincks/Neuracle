@@ -193,7 +193,7 @@ public class InputParser {
     
     /**Return what is enumerated inside the parens, ie x, y and z from function(x,y,z)*
      * if no params return an empty array. */
-    public String [] getParameters(String input) throws Exception{
+    public static String [] getParameters(String input) throws Exception{
         String [] params;
         String betweenParen = getBetweenParen(input);
         if (betweenParen.equals("")) return new String[0];
@@ -204,7 +204,7 @@ public class InputParser {
     /** Input: aksdasl(xxxx,yy,xx)
      Return: xxx,yy,xx*
      * If there's nothign inbetween the parens return nothing*/ 
-    private String getBetweenParen(String input) throws Exception{
+    private static String getBetweenParen(String input) throws Exception{
         String[] values = input.split("\\(");
         if (values.length <2) return "";
         String betweenParen = values[1];
@@ -232,7 +232,7 @@ public class InputParser {
             Experiment realE = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
             ctx.addDataLayer("reale", new TriDAO(realE));
             ChannelSet cs = BesteExperiment.getChannelSet(13);
-            ctx.addDataLayer("realcs", new BiDAO(cs));
+            ctx.addDataLayer("input/bestemusic/bestemusic15-csv", new BiDAO(cs));
 
             //.. connect experiment and 
             ctx.setCurrentName("reale");
@@ -254,11 +254,19 @@ public class InputParser {
             
             if (test.equals("multiclasstrain")) {
                 response = ip.parseInput("train(-2)");
-                
             }
             
             if (test.equals("realtimeclass")) {
-                response = ip.parseInput("train(-2)"); //.. After this, the associated weka classifier is trained
+                ctx.setCurrentName("input/bestemusic/bestemusic15-csv");
+                response = ip.parseInput("manipulate(zscore)");
+                response = ip.parseInput("split(condition");
+                ctx.setCurrentName("input/bestemusic/bestemusic15-csvcondition");
+                
+                tDAO = (TriDAO) ctx.getCurrentDataLayer();
+                tDAO.addConnection(wc);
+                tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
+                tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
+                response = ip.parseInput("train"); //.. After this, the associated weka classifier is trained
 
                 //.. Having trained, now test
                 response = ip.parseInput("synchronize(realtime1)");

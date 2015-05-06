@@ -100,7 +100,7 @@ public class EvaluationInterface {
             
             e = e.removeAllClassesBut(keep);
            //  System.out.println(filename + " " +e.matrixes.size());
-            if (ts.getTransformation().type == Transformation.TransformationType.Anchor)
+            if (ts.getTransformation().type == Transformation.TransformationType.anchor)
                 e.anchorToZero(false);
             
            // e.printStream();
@@ -187,7 +187,7 @@ public class EvaluationInterface {
 
         ts.addTechnique(fs);
         ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 0.8f));
-        ts.addTechnique(new Transformation(Transformation.TransformationType.CalcOxy));
+        ts.addTechnique(new Transformation(Transformation.TransformationType.calcoxy));
         ts.addTechnique(new PassFilter());//PassFilter.FilterType.LowPass, 0.35));
 
         return ts;
@@ -206,7 +206,7 @@ public class EvaluationInterface {
 
         ts.addTechnique(fs);
         ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.info, 0.35f));
-        ts.addTechnique(new Transformation(Transformation.TransformationType.None));
+        ts.addTechnique(new Transformation(Transformation.TransformationType.none));
         ts.addTechnique(new PassFilter());//PassFilter.FilterType.LowPass, 0.35));
         return ts;
 
@@ -398,34 +398,34 @@ public class EvaluationInterface {
         ArrayList<TechniqueSet> ts = new ArrayList();
                 
          TechniqueSet a = getTechniqueSet();
-          a.resetTechnique(new Transformation(Transformation.TransformationType.Anchor));
+          a.resetTechnique(new Transformation(Transformation.TransformationType.anchor));
           ts.add(a);
           
            a = getTechniqueSet();
-          a.resetTechnique(new Transformation(Transformation.TransformationType.ZScore));
+          a.resetTechnique(new Transformation(Transformation.TransformationType.zscore));
           ts.add(a);
           
            a = getTechniqueSet();
-          a.resetTechnique(new Transformation(Transformation.TransformationType.MovingAverage, 10));
+          a.resetTechnique(new Transformation(Transformation.TransformationType.movingaverage, 10));
           ts.add(a);
           
             a = getTechniqueSet();
-          a.resetTechnique(new Transformation(Transformation.TransformationType.MovingAverage, 30));
+          a.resetTechnique(new Transformation(Transformation.TransformationType.movingaverage, 30));
           ts.add(a);
           
           
           a = getTechniqueSet();
-          a.resetTechnique(new Transformation(Transformation.TransformationType.MovingAverage, 50));
+          a.resetTechnique(new Transformation(Transformation.TransformationType.movingaverage, 50));
           ts.add(a);
           
           
           a = getTechniqueSet();
-          a.resetTechnique(new Transformation(Transformation.TransformationType.MovingAverage, 75));
+          a.resetTechnique(new Transformation(Transformation.TransformationType.movingaverage, 75));
           ts.add(a);
           
           
           a = getTechniqueSet();
-          a.resetTechnique(new Transformation(Transformation.TransformationType.MovingAverage, 100));
+          a.resetTechnique(new Transformation(Transformation.TransformationType.movingaverage, 100));
           ts.add(a);
           return ts;
 

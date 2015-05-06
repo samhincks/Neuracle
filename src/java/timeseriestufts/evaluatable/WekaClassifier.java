@@ -175,11 +175,19 @@ public class WekaClassifier  extends ClassificationAlgorithm{
    public Prediction getLastPrediction(ChannelSet cs) throws Exception {  
        int end =  cs.getFirstChannel().numPoints-1;
        int start = cs.getFirstChannel().numPoints - lastInstanceLength-1;
- 
+       
+       //.. get last instance, and make a new experiment out of it, since this is the sort of object which can be tested
        Instance instance = cs.getInstance(lastTrainedClassification.name,start,end);
        ArrayList<Instance> instances = new ArrayList();
        instances.add(instance);
        Experiment exp = new Experiment(cs.id,lastTrainedClassification, instances, cs.readingsPerSecond);
+       
+       //.. if the lastTechniqueTested has transformations associated with it, apply those 
+       if (lastTechniqueTested.getTransformations() != null) 
+           throw new Exception("HERE WE APPLY TRANSFORMATIONS!");
+       
+       else throw new Exception("NO TECHNIQUES ");
+       /*
        
        //.. retrieve the instances and since we know we only have one, simply classify it
        exp.extractAttributes(lastTechniqueTested.getFeatureSet());
@@ -197,7 +205,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
        double confidence = confidences[guess];
        double pctGreater = confidence / secondLargest;
        Prediction p = new Prediction(guessS, "unknown",  confidence, pctGreater, 0);
-       return p;
+       return p; */
    }
    
     

@@ -25,14 +25,14 @@ public class TechniqueSet extends Technique{
     public static TechniqueSet generate() throws Exception {
         TechniqueSet ts = new TechniqueSet("Test");
         //.. add ML, featureSet
-        ts.addTechnique(new WekaClassifier(WekaClassifier.MLType.libsvm)); 
+        ts.addTechnique(new WekaClassifier(WekaClassifier.MLType.lmt)); 
         FeatureSet fs = new FeatureSet("fs");
         fs.addFeaturesFromConsole("slope^mean", "*", "*");
 
         ts.addTechnique(fs);
         ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 3));
         ts.addTechnique(new PassFilter());
-        ts.addTechnique(new Transformation(Transformation.TransformationType.None));
+        ts.addTechnique(new Transformation(Transformation.TransformationType.none));
 
         return ts;
     }
@@ -43,6 +43,7 @@ public class TechniqueSet extends Technique{
     private AttributeSelection attributeSelection; //.. to be implemented
     private PassFilter filter;
     private Transformation transformation; 
+    private Transformations transformations; //.. An ordered set of manipulations applied to the channelset
 
     //. GLOBALS
     public ArrayList<String> subjects;
@@ -71,6 +72,8 @@ public class TechniqueSet extends Technique{
     public AttributeSelection getAttributeSelection(){return this.attributeSelection;}
     public PassFilter getFilter(){return this.filter;}
     public Transformation getTransformation(){return this.transformation;}
+    public Transformations getTransformations(){return this.transformations;}
+
 
     
     
@@ -108,6 +111,11 @@ public class TechniqueSet extends Technique{
         else if (t instanceof Transformation) {
             if (transformation!= null)return false; //.. if we've already set this value
             transformation =(Transformation)t;
+        }
+        
+        else if (t instanceof Transformations) {
+            if (transformations!= null)return false; //.. if we've already set this value
+            transformations =(Transformations)t;
         }
        
         //.. For example if we are adding a Filter or this class itself

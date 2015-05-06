@@ -15,6 +15,7 @@ import timeseriestufts.evaluatable.AttributeSelection;
 import timeseriestufts.evaluatable.Dataset;
 import timeseriestufts.evaluatable.FeatureSet;
 import timeseriestufts.evaluatable.TechniqueSet;
+import timeseriestufts.evaluatable.Transformations;
 import timeseriestufts.evaluatable.WekaClassifier;
 import timeseriestufts.evaluatable.performances.Predictions;
 import timeseriestufts.evaluation.crossvalidation.CrossValidation;
@@ -66,6 +67,9 @@ public class Experiment extends TridimensionalLayer<Instance>{
     
     //.. whether or not we've extracted the attributes already
     public boolean extracted = false; 
+    
+    public Transformations transformations; //.. A set of manipulations which may have been applied to the object that derived it, or to this experiments
+    
     /**Note Experiment not properly constructed after initialization. Must call makeInstances()*/
     /**Use this constructor if its the first time we evaluate this experiment*/
     public Experiment(String filename, Classification c, float readingsPerSec) throws Exception{
@@ -396,6 +400,9 @@ public class Experiment extends TridimensionalLayer<Instance>{
     /**Trains a classification algorithm on the experiment, with the machine learning 
      * properties specified in ts**/
     public WekaClassifier train(TechniqueSet ts) throws Exception {
+        //.. if either channelset or experiment has been manipulated, save this information for later
+        if (transformations != null) ts.addTechnique(this.transformations);
+        
         //.. set ts
         this.techniqueSet = ts;
         
@@ -702,7 +709,9 @@ public class Experiment extends TridimensionalLayer<Instance>{
         try{
             Experiment e = Experiment.generate(3,1,10);
             System.out.println("experiment has " + e.getMostCommonInstanceLength() + " readings in a typical channel");
-            int TEST =3;
+            int TEST =4;
+            
+            
             if (TEST ==0){
                 e.printStream();
                 System.out.println("xxxxxxxxxx");

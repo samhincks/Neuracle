@@ -18,6 +18,7 @@ import timeseriestufts.evaluatable.Dataset;
 import timeseriestufts.evaluatable.FeatureSet;
 import timeseriestufts.evaluatable.Technique;
 import timeseriestufts.evaluatable.TechniqueSet;
+import timeseriestufts.evaluatable.Transformation;
 import timeseriestufts.evaluatable.WekaClassifier;
 import timeseriestufts.evaluatable.performances.Performances;
 import timeseriestufts.evaluatable.performances.Prediction;
@@ -179,6 +180,15 @@ public class DataManipulationParser extends Parser{
         command.parameters = "LAG = distance to estimate causation between channels";
         commands.put(command.id, command);
         
+        //-- Manipulate
+        command = new Command("manipulate");
+        command.documentation = "manipulate(movingaverage(22)) applies a movingAverage, or any other valid transformation"
+                + " to the specified data. The data remembers that this manipulation has occurred, and associates it in the "
+                + " correct order for any machine learning algorithm ";
+        command.action = "reload";
+        command.parameters = "manipulate(command). Command can be {zscore, anchor, movingaverage, calcoxy, highpass, lowpass, bandpass, bwbandpass, none}";
+        commands.put(command.id, command);
+        
         
     }
 
@@ -218,7 +228,6 @@ public class DataManipulationParser extends Parser{
             c.retMessage = zScore(parameters);
             c.action = "reload";
         }
-        
           
         //.. addFeatures(*,*,*)
         else if (command.startsWith("addfeatures")) {
@@ -278,6 +287,11 @@ public class DataManipulationParser extends Parser{
             c.data = granger(parameters);
         }
 
+        else if (command.startsWith("manipulate")) {
+            c = commands.get("manipulate");
+            c.retMessage = this.manipulate(parameters);
+        }
+
 
         if (c == null) {
             return null;
@@ -285,6 +299,25 @@ public class DataManipulationParser extends Parser{
         return c.getJSONObject(ctx.getTutorial());
     }
 
+    
+    /**
+     * Manipulate the data according to the specified command
+     * @param parameters the command to apply
+     * @return
+     */
+    public String manipulate(String[] parameters) throws Exception{
+        ArrayList<ChannelSet> chanSets = getChanSets();
+        
+        Transformation t = super.getTransformationFromString(parameters[0]);
+        for (ChannelSet cs : chanSets) {
+            ChannelSet manipulated = cs.manipulate(t, true);
+            manipulated.setParent(cs.id);
+            BiDAO mDAO = new BiDAO(manipulated);
+            ctx.dataLayersDAO.addStream(manipulated.id, mDAO);
+        }
+
+        return "Modified " + chanSets.size();
+    }
    /** Computes the degree to which any pair of channels causally predicts the data at another
     * at a specific lag. 
     * @param parameters
@@ -1279,4 +1312,6 @@ public class DataManipulationParser extends Parser{
         return retString;
     }
     
+    
+
 }

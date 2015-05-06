@@ -172,7 +172,7 @@ public class BesteExperiment {
 
         ts.addTechnique(fs);
         ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 150));
-        ts.addTechnique(new Transformation(Transformation.TransformationType.None));
+        ts.addTechnique(new Transformation(Transformation.TransformationType.none));
         ts.addTechnique(new PassFilter());
 
         return ts;
@@ -209,7 +209,7 @@ public class BesteExperiment {
         ts.addTechnique(fs);
         ts.addTechnique(new AttributeSelection(ASType.none, 150));
         ts.addTechnique(new PassFilter(PassFilter.FilterType.LowPass, 1));
-        ts.addTechnique(new Transformation(Transformation.TransformationType.None));
+        ts.addTechnique(new Transformation(Transformation.TransformationType.none));
         
         return ts;
 

@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.evaluatable.FeatureSet;
+import timeseriestufts.evaluatable.Transformation;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.BidimensionalLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
@@ -43,6 +44,19 @@ public abstract class Parser {
     
     public abstract JSONObject execute(String command, String[] parameters, 
             DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception; 
+    
+    
+    /**Returns the transformation instruction from the string
+     * @param command eg. movingaverage(22)
+     * @return 
+     */
+    public Transformation getTransformationFromString(String command) throws Exception{
+        String name = command.split("\\(")[0];
+        String [] parameters = InputParser.getParameters(command);
+        Transformation t = new Transformation(name, parameters);       
+        return t;
+        
+    }
     
     
     /**
