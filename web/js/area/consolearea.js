@@ -8,6 +8,7 @@ function ConsoleArea() {
    this.streaming = false; //.. set to true if we are streaming
    this.streamInterval; 
    this.pings =[] //.. a hash of commands we are pinging at the server 
+   duplicatesAdded =0;//.. keep track of how many of the same command, eg classifylast we have created
    
    this.messageStack = []; //.. save all the users old messages. Retrieve with arrows. Delete if erroneous
    this.commands; //.. initialize this when we start. In other words, ping server
@@ -176,6 +177,11 @@ function ConsoleArea() {
             if (command.startsWith("classifylast")) javaInterface.postConnectionsToTechnique();
 
             //.. set an interval to repeat, and store it so that we can delete
+            if (this.pings[commandName] != null){ 
+                commandName = commandName +duplicatesAdded;
+                duplicatesAdded++;
+            }
+            
             this.pings[commandName] =  setInterval(function() {
                 $("#consoleInput").val(command);
                 javaInterface.postToConsole();

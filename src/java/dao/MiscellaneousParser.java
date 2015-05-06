@@ -290,7 +290,6 @@ public class MiscellaneousParser extends Parser{
     private String load(String [] parameters) throws Exception{
         String folderName = "GRProcessed";
         if (parameters.length >0)folderName = parameters[0];
-        
         String folder = ctx.getServletContext().getRealPath(folderName);
         File folderF = new File(folder);
         if (folderF == null) throw new Exception("Cannot find folder" + folder);
@@ -471,7 +470,8 @@ public class MiscellaneousParser extends Parser{
         
         int n=0;
         int seconds = 30;
-        int port = ctx.curPort;
+        Integer port = null;
+        if (ctx.curPort != null) port = ctx.curPort;
         if (parameters.length ==3) {
             n = Integer.parseInt(parameters[0]);
             if (n >2 || n <0) throw new Exception("Supported n-backs are 0,1,2");
@@ -493,7 +493,9 @@ public class MiscellaneousParser extends Parser{
         if (duration < 0) throw new Exception("Too short duration to play audio");
 
         AudioNBack nBack;
-        nBack = new AudioNBack(n, duration, new Client(port));        
+        if (ctx.curPort == null && parameters.length <3)
+            nBack = new AudioNBack(n, duration);
+        else nBack = new AudioNBack(n, duration, new Client(port));        
         
         if (!ctx.test) nBack.directory = ctx.getServletContext().getRealPath("WEB-INF/audio/") +"/";
 
@@ -502,7 +504,8 @@ public class MiscellaneousParser extends Parser{
         t.start();
         
         String retString = "Initialized " + n +"-back for " + seconds + "s";
-        retString += ". Broadcasting condition to " + port;
+        if (port != null)
+            retString += ". Broadcasting condition to " + port;
         
         return retString;    
     }  

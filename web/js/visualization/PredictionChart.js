@@ -24,7 +24,7 @@ function PredictionChart() {
     var recClass = "predRect";
     var calcY;
     var x; //.. same logic as calcY but I suck at programming
-   
+     
     function chart(s) {
         //.. if there is an optional parameter of selection
         if (arguments.length) {
@@ -84,7 +84,7 @@ function PredictionChart() {
                 .attr('class', 'd3-tip')
                 .offset([-10, 0])
                 .html(function(d) {
-                    return "<strong> " + d.guess+"</strong> <span style='color:lightcrimson'> : " + d.confidence + "</span>";
+                    return "<strong> " + d.answer+"</strong> <span style='color:lightcrimson'> : " + d.confidence + "</span>";
                 })
         svg.call(tip);
         

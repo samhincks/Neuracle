@@ -21,7 +21,7 @@ public class AudioNBack implements Runnable{
     private int kBack;
     private int length; //.. length to play in milliseconds
     private int sleepLength =1000;
-    private Client client;
+    private Client client = null;
     private String condition;
     public AudioNBack(int kBack, int length) {
         this.kBack = kBack;
@@ -70,7 +70,8 @@ public class AudioNBack implements Runnable{
     }
     private void play(String filename) {
         try {
-            nbackRunning = true;
+            if (client != null)
+                nbackRunning = true;
             int ticks =0;
             clip = AudioSystem.getClip();
             clip.open(AudioSystem.getAudioInputStream(new File(filename)));

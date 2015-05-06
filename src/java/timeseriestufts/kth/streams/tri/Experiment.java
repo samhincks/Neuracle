@@ -649,8 +649,8 @@ public class Experiment extends TridimensionalLayer<Instance>{
         ArrayList<String> values = new ArrayList(); 
         ArrayList<Instance> instances = new ArrayList();
         Experiment e;
-        int regLength = this.getMostCommonInstanceLength() -1;
-        int partLength = (int) Math.floor(regLength / parts) - 1;
+        int regLength = this.getLeastPointsInAChannel()-1;
+        int partLength = (int) Math.floor(regLength / parts) ;
 
         //.. divide each instance into separete parts
         if (reduce) {
@@ -672,21 +672,21 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 Instance a = matrixes.get(i);
                 Instance b = matrixes.get(i+1);
                 int position =0;
-                
                 //.. create a new instance for each sliding part
                 for (int j = 0; j < parts; j++) {
                     int end = position + regLength;
                     int spillOver = end - regLength;
-                    String conditionName =  ( (spillOver <=0) ? a.condition : a.condition +"-"+b.condition+j);
+                    String conditionName =  ( (spillOver <=0) ? a.condition : a.condition +j+"/"+parts+b.condition);
                     Instance aPart = a.getInstance(position, regLength, conditionName);
                     
                     //.. if we need some of B
-                    if (spillOver >0) aPart.appendChanSet(b.getChannelSetBetween(0, spillOver));
-                    
-                    //.. advance token add position, and add classification
-                    position+=partLength;
-                    instances.add(aPart);
-                    if (!(values.contains(conditionName))) values.add(conditionName);
+                    if (spillOver < b.getMinPoints()){
+                        if (spillOver >0) aPart.appendChanSet(b.getChannelSetBetween(0, spillOver));
+                        //.. advance token add position, and add classification
+                        position+=partLength;
+                        instances.add(aPart);
+                        if (!(values.contains(conditionName))) values.add(conditionName);
+                    }
                 }                
             }
         }
@@ -700,8 +700,8 @@ public class Experiment extends TridimensionalLayer<Instance>{
     
     public static void main(String [] args) {
         try{
-            Experiment e = Experiment.generate(2,4,6);
-            System.out.println("experiment has " + e.getMostCommonInstanceLength());
+            Experiment e = Experiment.generate(3,1,10);
+            System.out.println("experiment has " + e.getMostCommonInstanceLength() + " readings in a typical channel");
             int TEST =3;
             if (TEST ==0){
                 e.printStream();
@@ -710,7 +710,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 c.printStream();
                 System.out.println("xxxxxxxxxx");
             }
-            
+                 
             if (TEST ==1) {
                 //e.printStream();
                 ChannelSetSet css = e.getAveragedFourier(false);
@@ -721,11 +721,16 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 e.evaluate(TechniqueSet.generate(), Dataset.generate(), -1);
             }
             if (TEST ==3) {
-                e = e.getBoundaryInstances(true, 3);
+                //e.printStream();
+                System.out.println(e.matrixes.size());
+                System.out.println(e.getLeastPointsInAChannel());
+                e = e.getBoundaryInstances(false, 5);
                 //System.out.println("experiment has " + e.getMostCommonInstanceLength());
                 System.out.println(e.matrixes.size());
-                e.printInfo();
-              //  e.printInfo();
+                System.out.println("-------------");
+                System.out.println("-----------");
+               // e.printStream();
+               // e.printInfo();
             }
 
         }

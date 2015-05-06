@@ -249,15 +249,16 @@ public class InputParser {
             
             int TEST =8;
                 
-            String test = "multiclasstrain";
+            String test = "realtimeclass";
             JSONObject response = new JSONObject();
             
             if (test.equals("multiclasstrain")) {
-                response = ip.parseInput("train(-4)");
+                response = ip.parseInput("train(-2)");
+                
             }
             
             if (test.equals("realtimeclass")) {
-                response = ip.parseInput("train"); //.. After this, the associated weka classifier is trained
+                response = ip.parseInput("train(-2)"); //.. After this, the associated weka classifier is trained
 
                 //.. Having trained, now test
                 response = ip.parseInput("synchronize(realtime1)");
@@ -298,8 +299,8 @@ public class InputParser {
             if(test.equals("RPS")) {
                 ctx.setCurrentName("reale");
                 tDAO = (TriDAO) ctx.getCurrentDataLayer();
-                 JSONObject jo = tDAO.getJSON();
-                 System.out.println(jo);
+                JSONObject jo = tDAO.getJSON();
+                System.out.println(jo);
             }
             
             if (test.equals("LOAD")) {

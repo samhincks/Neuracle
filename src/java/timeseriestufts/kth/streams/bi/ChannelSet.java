@@ -473,7 +473,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         }
         return instance;
     }
-    
+      
     /**Return an instance between start and end.
      if markerStart= start, then the channelset hasn't been manipulated with at all.
      if its different then we use this info to find what condition we are from the markers

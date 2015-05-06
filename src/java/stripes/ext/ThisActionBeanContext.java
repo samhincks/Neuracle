@@ -46,7 +46,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public static Performances performances = new Performances();
     private static int fileReadSampling =1; //.. set to two and we read every other row from file
     private static boolean tutorial = false; //.. True if we're running a tutorial. 
-    public static int curPort =1553; //.. random number. this is used in an exchange between intercept label and nback
+    public static Integer curPort =null; //.. random number. this is used in an exchange between intercept label and nback
     public void printState() throws Exception{
         System.out.println("\t Datalayer " + currentDataLayer);
         System.out.println("\t Technique " + currentTechnique);

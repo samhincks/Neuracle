@@ -92,10 +92,10 @@ public class WekaClassifier  extends ClassificationAlgorithm{
         this.mlAlgorithm = mlAlgorithm;      
         this.id= mlAlgorithm.toString();
     }
+    
     public WekaClassifier(String mlAlgorithm) throws Exception {
         this.id = mlAlgorithm;
         this.mlAlgorithm = MLType.valueOf(mlAlgorithm);
-        
     }
     
     
@@ -494,7 +494,13 @@ public class WekaClassifier  extends ClassificationAlgorithm{
             TechniqueSet ts = TechniqueSet.generate();
             Dataset ds = Dataset.generate();
             
-            int TEST =1;
+            int TEST =13;
+            
+            if (TEST==13) {
+                
+                e.train(ts);
+            }
+            
             if (TEST == 12) {
                 AdaBoostM1 ab = new AdaBoostM1();
                 System.out.println(ab.getTechnicalInformation().getID());

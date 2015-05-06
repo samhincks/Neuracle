@@ -122,7 +122,7 @@ public class DataManipulationParser extends Parser{
         command.documentation = " With a 3D dataset (a collection of instances) selected and connected to\"\n" +
 "               + \" at least one of each TechniqueSet (feature set, attribute selection, machine learning, and settings," +
                 " trains a classifier which can be applied to any other arbitrary channelset, that is synchronized or not";
-        command.parameters = "train(4) divides each instance into four parts, train(-4) also creates four new instances for each instance, but preserves length (so that it overlaps with one after";
+        command.parameters = "train(4) divides each instance into four parts, train(-4) also creates four new instances for each instance, but preserves length (so that some instances overlap with what follows";
         command.tutorial = " Now you've trained the machine learning algorithm. Once again, you can see how internally accurate the analysis was, "
                 + " but this time, the machine learning algorithm remembers its knowledge, and you can link it to a livestream"
                 + " of data, or apply it to any loaded dataset, where the condition may be known or unknown. ::"
@@ -1185,8 +1185,10 @@ public class DataManipulationParser extends Parser{
             ArrayList<String> toKeep = new ArrayList();
             toKeep.add("easy");
             toKeep.add("hard");
-          //  toKeep.add("medium");  
-            //toKeep.add("rest");
+            toKeep.add("medium");  
+            toKeep.add("rest");
+            toKeep.add("baseline");
+
             e = e.removeAllClassesBut(toKeep);
   
             //.. remove instances 10 percent larger than the average

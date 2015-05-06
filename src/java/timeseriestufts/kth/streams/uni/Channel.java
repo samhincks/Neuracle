@@ -104,8 +104,15 @@ public class Channel extends UnidimensionalLayer  {
      * @return SynchedChannel
      */
     public Channel getSample(int start, int end, boolean stampinname) throws Exception { 
-        if (start > end || end > numPoints) throw new Exception("ChannelSet.getSample(): Illegal arguments" + start + "  > " + end + " or " + end + " > " + numPoints);
+        if (start > end ) throw new Exception("ChannelSet.getSample(): Illegal arguments" + start + "  > " + end);
+        
         //.. extract total and firstTimestamp
+        int oldEnd =end;
+        if (end > numPoints) end = numPoints-1;
+        if (end <= 0) 
+            throw new Exception("ChannelSet.getSample(): Illegal arguments. The channel has " + numPoints  + ". You requested"
+                    + start + " to " + oldEnd);
+        
         int total = end - start; //.. +1 since we include the middle frame
         
         
@@ -114,7 +121,7 @@ public class Channel extends UnidimensionalLayer  {
         //.. add each of the points the new channel
         for (int i = start; i < end; i++) {
             samplePoints[index] = super.getPointOrNull(i);
-            index++;
+            index++;  
         }
 
         Channel sample = new Channel(framesize, samplePoints);

@@ -32,6 +32,19 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
         }
         return largest;
     }
+    /**
+     * Returns the fewest number of points in the 1D channel with most points
+     */
+    public int getLeastPointsInAChannel() {
+        int smallest = -1;
+        for (BidimensionalLayer bd : matrixes) {
+            int minPoints = bd.minPoints();
+            if (smallest == -1 || minPoints < smallest) {
+                smallest = minPoints;
+            }
+        }
+        return smallest;
+    }
     
    
     /** Returns the total number of points
