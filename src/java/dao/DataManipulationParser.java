@@ -182,11 +182,11 @@ public class DataManipulationParser extends Parser{
         
         //-- Manipulate
         command = new Command("manipulate");
-        command.documentation = "manipulate(movingaverage(22)) applies a movingAverage, or any other valid transformation"
+        command.documentation = "manipulate(movingaverage,22) applies a movingAverage, or any other valid transformation"
                 + " to the specified data. The data remembers that this manipulation has occurred, and associates it in the "
                 + " correct order for any machine learning algorithm ";
         command.action = "reload";
-        command.parameters = "manipulate(command). Command can be {zscore, anchor, movingaverage, calcoxy, highpass, lowpass, bandpass, bwbandpass, none}";
+        command.parameters = "manipulate(command, ...). Command can be {zscore, anchor, movingaverage, calcoxy, highpass, lowpass, bandpass, bwbandpass, none}";
         commands.put(command.id, command);
         
         
@@ -307,7 +307,8 @@ public class DataManipulationParser extends Parser{
      */
     public String manipulate(String[] parameters) throws Exception{
         ArrayList<ChannelSet> chanSets = getChanSets(false);
-        Transformation t = super.getTransformationFromString(parameters[0]);
+        
+        Transformation t = new Transformation(parameters); 
         String retString = "";
         //.. try to get chansets, if thats what appears selected
         if (chanSets != null){

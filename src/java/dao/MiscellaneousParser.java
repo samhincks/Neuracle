@@ -12,6 +12,7 @@ import filereader.Markers;
 import filereader.TSTuftsFileReader;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -264,9 +265,16 @@ public class MiscellaneousParser extends Parser{
     private String loadFiles(String [] parameters ) throws Exception {
         String retMessage = "";
         for (String s : parameters) {
-            if (!(s.startsWith("/"))) s = "/"+s;
-            InputStream is  = ctx.getServletContext().getResourceAsStream(s);
-            
+            InputStream is;
+            try{
+                File initialFile = new File(s);
+                is = new FileInputStream(initialFile);
+            }
+            catch(Exception e) {
+                if (!(s.startsWith("/")))  s = "/" + s;
+                is = ctx.getServletContext().getResourceAsStream(s);
+           
+            }
             //.. extract name 
             String [] vals = s.split("/");
             String name = vals[vals.length-1];

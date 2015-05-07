@@ -13,6 +13,16 @@ public class Transformation extends Technique {
     public TransformationType type;
     public float [] params;
     
+    /**If initialized from console, first parameter is command name
+     * @param parameters 
+     */
+    public Transformation(String [] parameters) {
+        params = new float[parameters.length-1];
+        type = TransformationType.valueOf(parameters[0]);
+        for (int i =1; i < parameters.length; i++) {
+            params[i-1] = Float.parseFloat(parameters[i]);
+        }
+    }
     public Transformation(String name, String [] parameters) {
         params = new float[parameters.length];
         type = TransformationType.valueOf(name);

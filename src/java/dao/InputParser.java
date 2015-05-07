@@ -245,8 +245,6 @@ public class InputParser {
             tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
             tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
             
-            
-            
             int TEST =8;
                 
             String test = "realtimeclass";
@@ -257,26 +255,41 @@ public class InputParser {
             }
             
             if (test.equals("realtimeclass")) {
-                ctx.setCurrentName("input/bestemusic/bestemusic15-csv");
-                response = ip.parseInput("manipulate(zscore)");
+                response = ip.parseInput("loadfiles(web/hincks/test2.csv");
+                response = ip.parseInput("loadfiles(web/hincks/test3.csv");
+                response = ip.parseInput("loadfiles(web/hincks/test7.csv");
+                response = ip.parseInput("loadfiles(web/hincks/test8.csv");
+                response = ip.parseInput("loadfiles(web/hincks/test9.csv");
+
+
                 response = ip.parseInput("ls");
-                ctx.setCurrentName("input/bestemusic/bestemusic15-csvzscorenull");
+                System.out.println(response);
+
+                ctx.setCurrentName("test-2csvfs1:test9-csvfs1");
+               // response = ip.parseInput("manipulate(zscore)");
+                //ctx.setCurrentName("input/bestemusic/bestemusic15-csvzscorenull");
                 response = ip.parseInput("split(condition");
-                ctx.setCurrentName("input/bestemusic/bestemusic15-csvzscorenullcondition");
+
+                ctx.setCurrentName("input/bestemusic/bestemusic15-csvcondition");
+                response = ip.parseInput("keep(easy,hard)");
+
+                response = ip.parseInput("manipulate(lowpass, 0.1)");
+
                 
                 tDAO = (TriDAO) ctx.getCurrentDataLayer();
                 tDAO.addConnection(wc);
                 tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
                 tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
                 response = ip.parseInput("train"); //.. After this, the associated weka classifier is trained
-
+                response = ip.parseInput("evaluate");
+                
+                /*
                 //.. Having trained, now test
                 response = ip.parseInput("synchronize(realtime1)");
                 ctx.setCurrentName("realtime1");
                 BiDAO bDAO = (BiDAO) ctx.getCurrentDataLayer();
-                bDAO.addConnection(wc);
+                bDAO.addConnection(wc); */ 
                 
-                response = ip.parseInput("classifylast");
             }
             
             if (test.equals("MARKERVIZ")) {

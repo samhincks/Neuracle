@@ -46,17 +46,6 @@ public abstract class Parser {
             DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception; 
     
     
-    /**Returns the transformation instruction from the string
-     * @param command eg. movingaverage(22)
-     * @return 
-     */
-    public Transformation getTransformationFromString(String command) throws Exception{
-        String name = command.split("\\(")[0];
-        String [] parameters = InputParser.getParameters(command);
-        Transformation t = new Transformation(name, parameters);       
-        return t;
-        
-    }
     
     
     /**
