@@ -215,7 +215,27 @@ function DataLayer(jsonDL) {
         else 
             jsPlumb.draggable($(".surfaceElement"));
         
+        
+        //.. pulsing animation of streaming objects
+        if(jsonDL.streaming != null) {
+            var me = this;
+
+            this.blinkIn = function() {
+                $("#" + this.id).animate({
+                    opacity: 0.25,
+                    }, 3000, function() { me.blinkOut();});
+            }
+
+            this.blinkOut = function() {
+                $("#" + this.id).animate({
+                    opacity: 1,              
+                    }, 3000, function() { me.blinkIn();});
+            }
+            this.blinkIn();
+        }
     }
+    
+    
    
     
     this.getPosition = function() {

@@ -4,6 +4,7 @@
  */
 package stripes.action;
 
+import dao.datalayers.BiDAO;
 import dao.datalayers.MySqlDAO;
 import java.io.StringReader;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -37,13 +38,17 @@ public class DataLayersActionBean extends BaseActionBean{
                obj.put("parent", dl.getParent()); //.. get the name of the layer it was derived from
                obj.put("numchannels", dl.getChannelCount());
                obj.put("numpoints", dl.getCount());
+               
                if (ctx.getPerformances().predictionSets.containsKey(dl.getId()))
                    obj.put("performance", "true");
                else obj.put("performance", "false");
                
                //.. depending on type, place the layers type
-               if (dl instanceof BidimensionalLayer)
+               if (dl instanceof BidimensionalLayer) {
+                  BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(dl.id);
+                  if (bDAO.synchronizedWithDatabase) obj.put("streaming", true);  
                   obj.put("type", "2D");
+               }
 
                else if (dl instanceof TridimensionalLayer){
                    Experiment exp = (Experiment)dl;
