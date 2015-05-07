@@ -231,7 +231,7 @@ public class ExternalDataParser extends Parser{
        if(parameters.length >2) conToInt = true;
 
        String file ="";  
-       ArrayList<ChannelSet> chanSets = getChanSets();
+       ArrayList<ChannelSet> chanSets = getChanSets(true);
        for (ChannelSet cs : chanSets) {
             file = ctx.getServletContext().getRealPath("output/"+cs.id + suffix+".csv");
            cs.writeToFile(file, readEvery, conToInt);

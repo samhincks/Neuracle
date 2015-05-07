@@ -259,8 +259,10 @@ public class InputParser {
             if (test.equals("realtimeclass")) {
                 ctx.setCurrentName("input/bestemusic/bestemusic15-csv");
                 response = ip.parseInput("manipulate(zscore)");
+                response = ip.parseInput("ls");
+                ctx.setCurrentName("input/bestemusic/bestemusic15-csvzscorenull");
                 response = ip.parseInput("split(condition");
-                ctx.setCurrentName("input/bestemusic/bestemusic15-csvcondition");
+                ctx.setCurrentName("input/bestemusic/bestemusic15-csvzscorenullcondition");
                 
                 tDAO = (TriDAO) ctx.getCurrentDataLayer();
                 tDAO.addConnection(wc);
@@ -316,11 +318,6 @@ public class InputParser {
                 response = ip.parseInput("load(" + foldername);
             }
 
-            if (test.equals("LOAD")) {
-                String foldername = "GRProcessed";
-                response = ip.parseInput("load("+foldername);
-            }
-            
             
             if (TEST == 7) {
                 ChannelSet a1 = ChannelSet.generate(275000, 1000);

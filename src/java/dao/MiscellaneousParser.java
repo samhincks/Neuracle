@@ -206,7 +206,7 @@ public class MiscellaneousParser extends Parser{
         String retMessage = "Deleted all except ";
         ArrayList<String> toKeep = new ArrayList();
         try {
-            for (ChannelSet cs : super.getChanSets()) {
+            for (ChannelSet cs : super.getChanSets(true)) {
                 toKeep.add(cs.id);
                 retMessage += cs.id+",";
 
@@ -214,7 +214,7 @@ public class MiscellaneousParser extends Parser{
         } catch (Exception e) {  }
 
         try {
-            for (Experiment e : super.getExperiments()) {
+            for (Experiment e : super.getExperiments(true)) {
                 toKeep.add(e.id);
                 retMessage += e.id + ",";
 
@@ -236,7 +236,7 @@ public class MiscellaneousParser extends Parser{
         }
         String retMessage = "Deleted ";   
         try{
-            for (ChannelSet cs : super.getChanSets()) {
+            for (ChannelSet cs : super.getChanSets(true)) {
                 retMessage +=  cs.id +", ";
                 ctx.getDataLayers().removeStream(cs.id);
 
@@ -245,7 +245,7 @@ public class MiscellaneousParser extends Parser{
         catch(Exception e) {}
 
         try {
-            for (Experiment e : super.getExperiments()) {
+            for (Experiment e : super.getExperiments(true)) {
                 retMessage += e.id + ", ";
                 ctx.getDataLayers().removeStream(e.id);
             }

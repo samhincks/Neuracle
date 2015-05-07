@@ -86,25 +86,7 @@ function ConsoleArea() {
              return false;//.. return false as we still want to go to java
          }
         
-        /***THESE METHODS ARE ONLY FOR REALTIME VISUALIZATION AND LABELING **/
-         //.. This will initialize successive messages from the client to the console, to repeatedly request an update
-        /* if (userText.startsWith("streamsynch(")) {
-             if (this.streaming) {
-                this.displayMessage("A streaming procedure is already being run; terminate it with clearstream()", "systemmes", "redline");
-                return true;
-            }
-             var mes = userText.split("(");
-             var file = mes[1].split(")")[0];
-             
-             //.. callback that periodically issues a request to update; until what;
-             this.streamInterval = setInterval(function() {
-                this.streaming = true;
-                $("#consoleInput").val("synchronize("+file+",none");
-                javaInterface.postToConsole();
-            }, 300);
-            return true;
-         }*/ 
-         /**FIGURE OUT WHY I IMPLEMENTED BOTH STREAM AND STREAMSYNCH. CALLING BOTH MESSES IT ALL UP**/
+        //.. for realtime visualization, update stream repeatedly, and terminate it when I do another command
         else if (userText.startsWith("stream(") || userText == "stream") {
             if (this.streaming){
                 this.displayMessage("A streaming procedure is already being run; terminate it with clearstream()", "systemmes", "redline");
@@ -252,7 +234,23 @@ function ConsoleArea() {
          
         this.displayMessage(message, "systemmess", "secondline");
     };
+    
+    this.displayJSONObj = function(object) {
+        var div = $("<div></div>");
+        for (var i in object) {
+            var attr = object[i];
+            var bdo = this.getWord(i, "greyline");
+            div.append(bdo);
+            bdo = this.getWord(attr, "");
+            div.append(bdo);
+            div.append("</br></br>");
+        }
+        div.addClass("systemmess");
+        $("#pastmessages").append(div);
+        this.scrollToBottom();
+    }
 
+    
     /** A method for neatly presenting the information gain of attribtues to users **/
     this.displayAttributes = function(attributes) {
         var div = $("<div></div>");

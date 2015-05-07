@@ -113,6 +113,7 @@ function datalayerInit() {
             altKey = false;
     });
 
+    var altKey = false;
     var shiftKey = false; //.. for multi-selection
     //.. if a channel set is clicked
     $(".datalayer").mousedown(function(e) {
@@ -127,7 +128,8 @@ function datalayerInit() {
     //.. if a channel set is dbl-clicked
     $(".datalayer").dblclick(function(e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
-        javaInterface.postToDataLayer();
+        if (altKey) javaInterface.postToDataLayer("stats");
+        else javaInterface.postToDataLayer();
     });
 
     //.. When I release a datalayer, show what techniques I intersect

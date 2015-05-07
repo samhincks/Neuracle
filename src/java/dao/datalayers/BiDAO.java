@@ -199,6 +199,20 @@ public class BiDAO extends DataLayerDAO {
 
     }
     
+    /**When you double click an object return information about it. Add whatever here, 
+     * its mostly for debugging.
+     * @return
+     * @throws Exception 
+     */
+    public JSONObject getDebugJSON() throws Exception {
+        jsonObj = new JSONObject();
+        ChannelSet channelSet = (ChannelSet) dataLayer;
+        jsonObj.put("type", "debug");
+        jsonObj.put("id", channelSet.id);
+        if (channelSet.transformations != null)
+            jsonObj.put("manipulation", channelSet.transformations.transformations.size());
+        return jsonObj;
+    }
      
     /**
      * Return JavaScriptObject Notation of the datalayer

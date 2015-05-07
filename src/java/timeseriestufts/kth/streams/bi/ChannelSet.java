@@ -706,8 +706,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         if (transformations == null) transformations = new Transformations();
         transformations.addTransformation(ts);
         retSet.id = retSet.id + ts.getId();
+        retSet.transformations = transformations.getCopy(); //.. not a huge deal if we actually didnt need the deep copy
         return retSet;
-        
     }
 
     

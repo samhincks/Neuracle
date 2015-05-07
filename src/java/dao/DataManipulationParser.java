@@ -306,17 +306,37 @@ public class DataManipulationParser extends Parser{
      * @return
      */
     public String manipulate(String[] parameters) throws Exception{
-        ArrayList<ChannelSet> chanSets = getChanSets();
-        
+        ArrayList<ChannelSet> chanSets = getChanSets(false);
         Transformation t = super.getTransformationFromString(parameters[0]);
-        for (ChannelSet cs : chanSets) {
-            ChannelSet manipulated = cs.manipulate(t, true);
-            manipulated.setParent(cs.id);
-            BiDAO mDAO = new BiDAO(manipulated);
-            ctx.dataLayersDAO.addStream(manipulated.id, mDAO);
+        String retString = "";
+        //.. try to get chansets, if thats what appears selected
+        if (chanSets != null){
+            for (ChannelSet cs : chanSets) {
+                ChannelSet manipulated = (ChannelSet) cs.manipulate(t, true);
+                manipulated.setParent(cs.id);
+                BiDAO mDAO = new BiDAO(manipulated);
+                ctx.dataLayersDAO.addStream(manipulated.id, mDAO);
+            }
+            retString += "Modified " + chanSets.size();
         }
+        
+        //.. otherwise try to get Experiments
+        else {
+            ArrayList<Experiment> experiments = getExperiments(true);
+            if (experiments!= null) {
+                for (Experiment e : experiments) {
+                    Experiment manipulated = e.manipulate(t, true);
+                    manipulated.setParent(e.id);
+                    TriDAO mDAO = new TriDAO(manipulated);
+                    ctx.dataLayersDAO.addStream(manipulated.id, mDAO);
+                }
+                retString += "Modified " + experiments.size();
+            }
+            
+        }
+        
+        return retString;    
 
-        return "Modified " + chanSets.size();
     }
    /** Computes the degree to which any pair of channels causally predicts the data at another
     * at a specific lag. 
@@ -538,7 +558,7 @@ public class DataManipulationParser extends Parser{
      */
     private String filter(String input, String [] parameters) throws Exception {
         //.. chanSets will be 1 or more ChannelSets, each of which we will apply the filte to
-        ArrayList<ChannelSet> chanSets = getChanSets();
+        ArrayList<ChannelSet> chanSets = getChanSets(true);
         String retString = "";
 
         for (ChannelSet cs : chanSets) {
@@ -616,7 +636,7 @@ public class DataManipulationParser extends Parser{
      * @throws Exception 
      */
     private String calcOxy(String [] parameters) throws Exception{
-        ArrayList<ChannelSet> chanSets = getChanSets();
+        ArrayList<ChannelSet> chanSets = getChanSets(true);
 
         for (ChannelSet cs : chanSets) {
             ChannelSet filteredSet = cs.calcOxy(true,null,null); //.. we want a copy
@@ -634,7 +654,7 @@ public class DataManipulationParser extends Parser{
      * @throws Exception 
      */
     private String zScore(String[] parameters) throws Exception {
-        ArrayList<ChannelSet> chanSets = getChanSets();
+        ArrayList<ChannelSet> chanSets = getChanSets(true);
 
         for (ChannelSet cs : chanSets) { 
             ChannelSet filteredSet = cs.zScore(true); //.. we want a copy
@@ -971,7 +991,7 @@ public class DataManipulationParser extends Parser{
         }
 
         //.. for every selected experiment
-        for (Experiment exp : this.getExperiments()) {
+        for (Experiment exp : this.getExperiments(true)) {
             Experiment e = exp.anchorToZero(copy);
             if (copy) {
                 e.setId(exp.id + "start0");
@@ -1188,7 +1208,7 @@ public class DataManipulationParser extends Parser{
         } else if (parameters.length > 0) {
             lowpass = Float.parseFloat(parameters[0]);  
         }
-        ArrayList<ChannelSet> chanSets = getChanSets();
+        ArrayList<ChannelSet> chanSets = getChanSets(true);
         String retString = "";
         for (ChannelSet cs : chanSets) {
             ChannelSet filteredSet = cs.calcOxy(true, null, null); //.. we want a copy;
@@ -1266,7 +1286,7 @@ public class DataManipulationParser extends Parser{
         } else if (parameters.length > 0) {
             lowpass = Float.parseFloat(parameters[0]);
         }
-        ArrayList<ChannelSet> chanSets = getChanSets();
+        ArrayList<ChannelSet> chanSets = getChanSets(true);
         String retString = "";
         for (ChannelSet cs : chanSets) {
             

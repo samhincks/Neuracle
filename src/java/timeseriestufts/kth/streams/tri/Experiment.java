@@ -15,6 +15,7 @@ import timeseriestufts.evaluatable.AttributeSelection;
 import timeseriestufts.evaluatable.Dataset;
 import timeseriestufts.evaluatable.FeatureSet;
 import timeseriestufts.evaluatable.TechniqueSet;
+import timeseriestufts.evaluatable.Transformation;
 import timeseriestufts.evaluatable.Transformations;
 import timeseriestufts.evaluatable.WekaClassifier;
 import timeseriestufts.evaluatable.performances.Predictions;
@@ -703,6 +704,32 @@ public class Experiment extends TridimensionalLayer<Instance>{
 
         return e;
     }
+    
+    /** Apply a specific method for altering the data; used when transforming data in
+     * real time. Consider allowing for the copy parameter in the future 
+     * @param t the manipulation to apply
+     */
+    public Experiment manipulate(Transformation t, boolean copy) throws Exception{
+        ArrayList<Instance> instances = new ArrayList();
+        for (Instance ins : matrixes) {
+            if (!copy) ins.manipulate(t, copy);
+            else {
+                ChannelSet cs = ins.manipulate(t, copy);
+                Instance ins2 = new Instance(ins.condition, ins.realStart, ins.realEnd);
+                ins2.streams = cs.streams;
+                instances.add(ins2);
+            }
+        }
+        Experiment ret;
+        if (copy) ret =new Experiment(this.filename+t.getId(), this.classification, instances, this.readingsPerSec );
+        else ret = this;
+        
+        //.. add new transformation and return
+        if (ret.transformations == null) ret.transformations = new Transformations();
+        ret.transformations.addTransformation(t);
+        return ret;
+    }
+
     
     
     public static void main(String [] args) {

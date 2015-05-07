@@ -131,12 +131,10 @@ public class DataLayerActionBean extends BaseActionBean{
             DataLayerDAO dlGiver = ctx.dataLayersDAO.get(giver);         
             JSONObject jsonObj;
 
-            //.. if we want to see data
-            if (!prediction && !frequency && !correlation){ 
-                System.out.println("2d view");
-                jsonObj  = dlGiver.getJSON();
-            }
-            else if (correlation) {
+           
+            
+            //.. correlation
+            if (correlation) {
                 System.out.println("Corr view");
                 if (!(dlGiver instanceof BiDAO)) {
                     throw new Exception(); //.. fail silently
@@ -165,12 +163,17 @@ public class DataLayerActionBean extends BaseActionBean{
                 }
             }
           
+            //.. print stats about the dataset into the console
+            else if(stats){
+                if (dlGiver instanceof BiDAO)
+                    jsonObj = ((BiDAO) dlGiver).getDebugJSON();
+                else throw new Exception(); //.. fail silently, but add to this later
+            }
             
             //.. THE ONLY EFFECT WAS TO CHANGE THE CTX.CURRENTNAME. A BIT ANNOYING THAT THIS NEEDED TO USE THE BACKEND
             else { //.. STATS
-                throw new Exception();
-                //Performances p = ctx.getPerformances();
-                // jsonObj = dlGiver.getPerformanceJSON(p);
+                 jsonObj = dlGiver.getJSON();
+                
             }
             
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));

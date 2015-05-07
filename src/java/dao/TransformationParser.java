@@ -197,7 +197,7 @@ public class TransformationParser extends Parser{
      */
     private String clean() throws Exception {
         String retString = "";
-        ArrayList<Experiment> experiments = getExperiments();
+        ArrayList<Experiment> experiments = getExperiments(true);
         for (Experiment e : experiments) {
             Experiment e2 =  e.removeUnfitInstances(e.getMostCommonInstanceLength(), 0.1, true);
             ctx.addDataLayer(e2.id, new TriDAO(e2));
@@ -209,7 +209,7 @@ public class TransformationParser extends Parser{
      
     /**Merge a set of selected channels into one**/
     private String append(String [] parameters) throws Exception {
-        ArrayList<ChannelSet> chanSets = getChanSets();
+        ArrayList<ChannelSet> chanSets = getChanSets(true);
         if (chanSets.size() <=1) chanSets =super.getAllChanSets();
         ChannelSet cs = chanSets.get(0).getDeepCopy();
         
@@ -373,7 +373,7 @@ public class TransformationParser extends Parser{
         String retString = "";
 
         //.. remove listed classes from every experiment
-        for (Experiment exp : super.getExperiments()) {
+        for (Experiment exp : super.getExperiments(true)) {
             Experiment e = exp.removeAllClassesBut(new ArrayList(Arrays.asList(parameters)));
             e.setId(exp.getId() + e.classification.id);
             e.setParent(exp.getId()); //.. set parent to what we derived it from
@@ -406,7 +406,7 @@ public class TransformationParser extends Parser{
         labelName = labelName.replace("\"", "");
         
         //.. get all chansets
-        ArrayList<ChannelSet> chanSets = getChanSets();
+        ArrayList<ChannelSet> chanSets = getChanSets(true);
         String retString = "";
         for (ChannelSet cs : chanSets) {
             //.. In case there is a channelset which has labels, but not markers, add markers
@@ -442,7 +442,7 @@ public class TransformationParser extends Parser{
         labelName = labelName.replace("\"", "");
         
         //.. get all chansets
-        ArrayList<ChannelSet> chanSets = getChanSets();
+        ArrayList<ChannelSet> chanSets = getChanSets(true);
         String retString = "";
         for (ChannelSet cs : chanSets) {
            //.. In case there is a channelset which has labels, but not markers, add markers

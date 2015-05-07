@@ -183,11 +183,11 @@ public class WekaClassifier  extends ClassificationAlgorithm{
        Experiment exp = new Experiment(cs.id,lastTrainedClassification, instances, cs.readingsPerSecond);
        
        //.. if the lastTechniqueTested has transformations associated with it, apply those 
-       if (lastTechniqueTested.getTransformations() != null) 
-           throw new Exception("HERE WE APPLY TRANSFORMATIONS!");
-       
-       else throw new Exception("NO TECHNIQUES ");
-       /*
+       if (lastTechniqueTested.getTransformations() != null) {
+           for (Transformation t : lastTechniqueTested.getTransformations().transformations) {
+               exp.manipulate(t, false);
+           }
+       }
        
        //.. retrieve the instances and since we know we only have one, simply classify it
        exp.extractAttributes(lastTechniqueTested.getFeatureSet());
@@ -205,7 +205,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
        double confidence = confidences[guess];
        double pctGreater = confidence / secondLargest;
        Prediction p = new Prediction(guessS, "unknown",  confidence, pctGreater, 0);
-       return p; */
+       return p; 
    }
    
     

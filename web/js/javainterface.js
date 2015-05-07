@@ -103,10 +103,12 @@ function JavaInterface() {
             }
             else if (message =="correlation") {
                 $('#correlation').val(true);
-
             } 
             else if (message =="prediction") {
                 $('#prediction').val(true);
+            }
+            else if (message == "stats") {
+                $('#stats').val(true);
             }
         }
         var form = $('#content'); 
@@ -118,7 +120,6 @@ function JavaInterface() {
     this.returnFromDataLayer = function(xhr) {
         //$(".topRight").empty(); //.. clear any existing graph
         var JSONobj = eval('('+ xhr +')');  
-
         if (JSONobj.error != null)
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
         //.. otherwise no error, so we display the graph
@@ -128,6 +129,9 @@ function JavaInterface() {
 
         else if (JSONobj.predictions != null) {
             chartArea.displayChart(JSONobj.predictions);
+        }
+        else if (JSONobj.type == "debug"){
+            consoleArea.displayJSONObj(JSONobj);
         }
         else { //.. no error
             chartArea.displayChart(JSONobj);

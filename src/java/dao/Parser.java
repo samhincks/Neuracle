@@ -66,9 +66,10 @@ public abstract class Parser {
      * individual layers to the context, so we need to break the temporary 4d
      * abstraction right after anyway.
      */
-    protected ArrayList<Experiment> getExperiments() throws Exception {
+    protected ArrayList<Experiment> getExperiments(boolean moan) throws Exception {
         if (!(currentDataLayer instanceof Experiment || currentDataLayer instanceof MultiExperiment)) {
-            throw new Exception("The selected dataset must be a 3D-Experiment");
+            if (moan) throw new Exception("The selected dataset must be a 3D-Experiment");
+            else return null;
         }
         ArrayList<Experiment> retExperiments = new ArrayList();
 
@@ -92,9 +93,10 @@ public abstract class Parser {
      * If we know that currentDataLayer is either a Channelset or a
      * ChannelSetSet return an arraylist with each channelset.
      */
-    protected ArrayList<ChannelSet> getChanSets() throws Exception {
+    protected ArrayList<ChannelSet> getChanSets(boolean moan) throws Exception {
         if (!(currentDataLayer instanceof ChannelSet) && !(currentDataLayer instanceof ChannelSetSet)) {
-            throw new Exception("The selected dataset " + currentDataLayer.id +" must be a Channel Set or ChannelSetSet");
+            if (moan) throw new Exception("The selected dataset " + currentDataLayer.id +" must be a Channel Set or ChannelSetSet");
+            else return null;
         }
 
         //.. add all chansets to ChanSets
@@ -175,7 +177,6 @@ public abstract class Parser {
         String retString = "Created : " + e.getId() + " with " + e.matrixes.size() + " instances"
                 + "::" + getColorsMessage(e);
         return retString;
-        
     }
     
     protected String makeChannelSets(ChannelSet cs, String labelName) throws Exception {
