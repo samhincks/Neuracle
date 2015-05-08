@@ -457,6 +457,7 @@ public class Channel extends UnidimensionalLayer  {
         //.. if we want a copy, create a new instance channel with brand new points
         if (copy) {
             Channel ic = new Channel(this.framesize, this.numPoints);
+            ic.id = this.id;
             ic.addPoint(0);
 
             //.. add a copy of each of the following points, where the value is the difference to first

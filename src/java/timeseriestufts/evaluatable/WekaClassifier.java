@@ -60,6 +60,10 @@ import wlsvm.WLSVM;
  * adaboost 1575
  */
 public class WekaClassifier  extends ClassificationAlgorithm{
+
+    public static boolean isFavorite(MLType type) {
+        return (type == MLType.adaboost||type == MLType.smo || type == MLType.lmt || type == MLType.tnn);
+    }
     //.. Used if a classifier is trained, and saved, to be used for later, potentially realtime classification
     public int timesTrained =0;
     public TechniqueSet lastTechniqueTested;

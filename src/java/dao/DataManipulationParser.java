@@ -291,7 +291,7 @@ public class DataManipulationParser extends Parser{
             c = commands.get("manipulate");
             c.retMessage = this.manipulate(parameters);
         }
-
+  
 
         if (c == null) {
             return null;
@@ -783,14 +783,24 @@ public class DataManipulationParser extends Parser{
      */
     private void makeMLAlgorithm(String id, TechniquesDAO techniquesDAO) throws Exception {
         TechniqueDAO tDAO;
-        try {
-            tDAO = new TechniqueDAO(new WekaClassifier(id));
-        } catch (IllegalArgumentException e) {
-            throw new Exception("There is no machine learning algorithm titled " + id + " . For now, there is"
-                    + "jrip, j48, lmt, nb, tnn, smo, simple, logistic, adaboost");
+        if (id.equals("*")) {
+            for (WekaClassifier.MLType type : WekaClassifier.MLType.values()) {
+                if (WekaClassifier.isFavorite(type)) {
+                    tDAO = new TechniqueDAO(new WekaClassifier(type));
+                    try{ techniquesDAO.addTechnique(type.name(), tDAO); } catch(Exception e) {/*Its fine if we already have something*/};
+                }
+            }
         }
-
-        techniquesDAO.addTechnique(id, tDAO);
+        else {  
+            try {
+                tDAO = new TechniqueDAO(new WekaClassifier(id));
+                techniquesDAO.addTechnique(id, tDAO);
+                
+            } catch (IllegalArgumentException e) {
+                throw new Exception("There is no machine learning algorithm titled " + id + " . For now, there is"
+                        + "jrip, j48, lmt, nb, tnn, smo, simple, logistic, adaboost");
+            }
+        }
     }
     
      /**
@@ -993,7 +1003,7 @@ public class DataManipulationParser extends Parser{
 
         //.. for every selected experiment
         for (Experiment exp : this.getExperiments(true)) {
-            Experiment e = exp.anchorToZero(copy);
+            Experiment e = exp.manipulate(new Transformation(Transformation.TransformationType.anchor), false);
             if (copy) {
                 e.setId(exp.id + "start0");
                 e.setParent(exp.getId()); //.. set parent to what we derived it from
@@ -1215,7 +1225,7 @@ public class DataManipulationParser extends Parser{
             ChannelSet filteredSet = cs.calcOxy(true, null, null); //.. we want a copy;
             retString += "Applied CalcOxy ";
             //if (lowpass == 0) {
-            filteredSet = filteredSet.movingAverage(10, false);  
+             filteredSet = filteredSet.movingAverage(10, true);  
             retString += "Applied MovingAverage, 10 readings back::";
             //}
   
@@ -1239,9 +1249,9 @@ public class DataManipulationParser extends Parser{
             ArrayList<String> toKeep = new ArrayList();
             toKeep.add("easy");
             toKeep.add("hard");
-            toKeep.add("medium");  
-            toKeep.add("rest");
-            toKeep.add("baseline");
+            //toKeep.add("medium");    
+            //toKeep.add("rest");
+            //toKeep.add("baseline");
 
             e = e.removeAllClassesBut(toKeep);
   
@@ -1256,7 +1266,7 @@ public class DataManipulationParser extends Parser{
             }
 
             //.. anchor it, setting start to zero
-            e = e.anchorToZero(false);
+            e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false);
             e.setParent(cs.getId()); //.. set parent to what we derived it from
 
             e.setId(e.id + "-l" + lowpass + "-h" + highpass);
@@ -1317,8 +1327,8 @@ public class DataManipulationParser extends Parser{
             toKeep.add("meditation");
             toKeep.add("multiplication");
             e = e.removeAllClassesBut(toKeep);
-
-            e = e.anchorToZero(false);
+            
+            e = e.manipulate(new Transformation(Transformation.TransformationType.anchor),false);
             e.setParent(cs.getId()); //.. set parent to what we derived it from
 
             e.setId(e.id + "-l" + lowpass + "-h" + highpass);

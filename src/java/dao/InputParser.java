@@ -255,33 +255,15 @@ public class InputParser {
             }
             
             if (test.equals("realtimeclass")) {
-                response = ip.parseInput("loadfiles(web/hincks/test2.csv");
-                response = ip.parseInput("loadfiles(web/hincks/test3.csv");
-                response = ip.parseInput("loadfiles(web/hincks/test7.csv");
-                response = ip.parseInput("loadfiles(web/hincks/test8.csv");
-                response = ip.parseInput("loadfiles(web/hincks/test9.csv");
+                String name = getHincksAppended(ip, ctx);
+                ctx.setCurrentName(name);
+                response = ip.parseInput("manipulate(bandpass, 0.1, 1)");
 
-
-                response = ip.parseInput("ls");
-                System.out.println(response);
-
-                ctx.setCurrentName("test-2csvfs1:test9-csvfs1");
-               // response = ip.parseInput("manipulate(zscore)");
-                //ctx.setCurrentName("input/bestemusic/bestemusic15-csvzscorenull");
-                response = ip.parseInput("split(condition");
-
-                ctx.setCurrentName("input/bestemusic/bestemusic15-csvcondition");
-                response = ip.parseInput("keep(easy,hard)");
-
-                response = ip.parseInput("manipulate(lowpass, 0.1)");
-
-                
                 tDAO = (TriDAO) ctx.getCurrentDataLayer();
                 tDAO.addConnection(wc);
                 tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
                 tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
                 response = ip.parseInput("train"); //.. After this, the associated weka classifier is trained
-                response = ip.parseInput("evaluate");
                 
                 /*
                 //.. Having trained, now test
@@ -374,6 +356,31 @@ public class InputParser {
         }
 
     }
+    
+    public static String getHincksAppended(InputParser ip, ThisActionBeanContext ctx) throws Exception{
+        JSONObject response = ip.parseInput("loadfiles(web/hincks/test2.csv");
+        response = ip.parseInput("loadfiles(web/hincks/test3.csv");
+        response = ip.parseInput("loadfiles(web/hincks/test7.csv");
+        response = ip.parseInput("loadfiles(web/hincks/test8.csv");
+        response = ip.parseInput("loadfiles(web/hincks/test9.csv");
+
+        String name = "test2-csvfs1:test9-csvfs1:test7-csvfs1:test3-csvfs1:test8-csvfs1";
+        ctx.setCurrentName(name);
+               // response = ip.parseInput("manipulate(zscore)");
+        //ctx.setCurrentName("input/bestemusic/bestemusic15-csvzscorenull");
+        response = ip.parseInput("append");
+        name = "mergedtest2-csvfs1-test9-csvfs1-test7-csvfs1-test3-csvfs1-test8-csvfs1";
+        ctx.setCurrentName(name);
+        response = ip.parseInput("split(condition");
+        
+        name = name +"condition";
+        ctx.setCurrentName(name);
+
+        response = ip.parseInput("keep(easy,hard)");
+        name = name +"conditioneasyhard";
+        
+        return name;
+    }  
     
 
 }

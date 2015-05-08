@@ -289,35 +289,6 @@ public class Experiment extends TridimensionalLayer<Instance>{
     
     
 
-    /** Setting the start point of each instance to 0 to highlight differences from start
-     * rather than absolute values. 
-     * True = Return a new Experiment with new raw data
-     * False = Retain original copy
-     */
-    public Experiment anchorToZero(boolean copy) throws Exception{
-        //.. if we want a new experiment
-        if (copy) {
-            ArrayList<Instance> instances = new ArrayList(); //.. to add to experiment
-
-            //.. add a new instance with each anchored at 0
-            for (BidimensionalLayer bd : matrixes) {
-                Instance instance = (Instance)bd;
-                Instance newInstance = instance.anchorToZero(true);
-                instances.add(newInstance);
-            }
-
-            return new Experiment(filename, classification, instances,this.readingsPerSec);
-        }
-        
-        //.. else if we want to manipulate the same experiment, perhaps to save memory
-        else {
-            for (BidimensionalLayer bd : matrixes) {
-                Instance instance = (Instance)bd;
-                instance.anchorToZero(false);
-            }
-            return this;
-        }
-    }
     
     public void setTechniqueSet(TechniqueSet ts) {this.techniqueSet = ts;}
     
@@ -721,7 +692,12 @@ public class Experiment extends TridimensionalLayer<Instance>{
             }
         }
         Experiment ret;
-        if (copy) ret =new Experiment(this.filename+t.getId(), this.classification, instances, this.readingsPerSec );
+        String id = this.id + t.type.name();
+        if (t.params.length >0) id += t.params[0];
+        if (t.params.length >1) id += t.params[1];
+        if (t.params.length >2) id += t.params[2];
+
+        if (copy) ret =new Experiment(this.filename+id, this.classification, instances, this.readingsPerSec );
         else ret = this;
         
         //.. add new transformation and return
@@ -738,20 +714,13 @@ public class Experiment extends TridimensionalLayer<Instance>{
             System.out.println("experiment has " + e.getMostCommonInstanceLength() + " readings in a typical channel");
             int TEST =4;
             
-            
-            if (TEST ==0){
-                e.printStream();
-                System.out.println("xxxxxxxxxx");
-                Experiment c = e.anchorToZero(true);
-                c.printStream();
-                System.out.println("xxxxxxxxxx");
-            }
-                 
+              
             if (TEST ==1) {
                 //e.printStream();
                 ChannelSetSet css = e.getAveragedFourier(false);
                 css.printStream();
             }
+            
             if (TEST ==2) {
                 e =  Experiment.generate(2,4,6);
                 e.evaluate(TechniqueSet.generate(), Dataset.generate(), -1);

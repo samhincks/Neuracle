@@ -618,7 +618,28 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             return this;
         }
     }
-    
+    /**
+     * Return a new ChannelSet where each channel is anchored to zero
+     */
+    public ChannelSet anchorToZero(boolean copy) throws Exception {
+        //.. if we want a new raw points
+        if (copy) {
+            ChannelSet cs = getCopy(this.id + "zscore");
+            //.. apply anchor to each channel
+            for (Channel c : streams) {
+                Channel newC = c.anchorToZero(true);
+                cs.addStream(newC);
+            }
+            return cs;
+        } //.. if we want to conserve memory and manipulate this dataset directly
+        else {
+            //.. apply anchor to each channel
+            for (Channel c : streams) {
+                c.anchorToZero(false);
+            }
+            return this;
+        }
+    }
     
     public ChannelSet detrend(ChannelSet baseline, double maxDiff, boolean copy) throws Exception{
          if (copy) {
@@ -674,6 +695,9 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         return retSet;
     }
     
+    
+    
+    
     /** Apply the specified transformation to the channelset, save it to its own Transformations object
      * @param t the transformation to be applied
      * @param copy whether or not to make a copy (not always supported)
@@ -683,13 +707,13 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         ChannelSet retSet = this; //.. will be set to something else if copy = true
 
         if (ts.type== Transformation.TransformationType.bandpass) 
-            retSet = this.bandpass(ts.params[0], ts.params[1], copy);
+            retSet = this.bandpass(((ts.params.length > 0)?ts.params[0] :0.1f), ((ts.params.length > 1)?ts.params[1] :1f), copy);
         
         if (ts.type== Transformation.TransformationType.lowpass) 
-            retSet = this.lowpass(ts.params[0], copy);
+            retSet = this.lowpass(((ts.params.length > 0)?ts.params[0] :0.1f), copy);
         
         if (ts.type== Transformation.TransformationType.highpass) 
-            retSet = this.highpass(ts.params[0], copy);
+            retSet = this.highpass(((ts.params.length > 0)? ts.params[0] :1), copy);
         
         if (ts.type== Transformation.TransformationType.bwbandpass) 
             retSet = this.bwBandpass((int)ts.params[0],ts.params[1], ts.params[2]);
@@ -700,12 +724,22 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         if (ts.type== Transformation.TransformationType.calcoxy) 
             retSet = this.calcOxy(copy, null, null);
         
+        if (ts.type == Transformation.TransformationType.anchor) 
+            retSet = this.anchorToZero(copy);
+         
         if (ts.type== Transformation.TransformationType.movingaverage) 
-            retSet = this.movingAverage((int)ts.params[0], copy);
+            retSet = this.movingAverage(((ts.params.length > 0)? (int)ts.params[0] : 10), copy);
         
+        //.. save it so that we remember what has been applied
         if (transformations == null) transformations = new Transformations();
         transformations.addTransformation(ts);
-        retSet.id = retSet.id + ts.getId();
+        
+        //.. set id
+        retSet.id = retSet.id + ts.type.name();
+        if (ts.params.length >0) retSet.id += ts.params[0];
+        if (ts.params.length >1) retSet.id += ts.params[1];
+        if (ts.params.length >2) retSet.id += ts.params[2];
+
         retSet.transformations = transformations.getCopy(); //.. not a huge deal if we actually didnt need the deep copy
         return retSet;
     }

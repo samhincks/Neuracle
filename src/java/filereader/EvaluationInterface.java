@@ -101,7 +101,7 @@ public class EvaluationInterface {
             e = e.removeAllClassesBut(keep);
            //  System.out.println(filename + " " +e.matrixes.size());
             if (ts.getTransformation().type == Transformation.TransformationType.anchor)
-                e.anchorToZero(false);
+                 e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false);
             
            // e.printStream();
             Enumeration ene = e.getAmountOfEachCondition().elements();

@@ -137,32 +137,6 @@ public class Instance extends ChannelSet{
     }
     
     
-    
-    /**Return a new ChannelSet where each channel is anchored to zero
-     */
-     public Instance anchorToZero(boolean copy) throws Exception {
-         //.. if we want a new raw points
-         if (copy) {
-            Instance instance = new Instance(this.condition);
-
-            //.. apply anchor to each channel
-            for(Channel c : streams) {
-               Channel newC = c.anchorToZero(true);
-               instance.addStream(newC);
-           }
-
-           return instance;
-         }
-         //.. if we want to conserve memory and manipulate this dataset directly
-         else {
-            //.. apply anchor to each channel
-            for(Channel c : streams) {
-               c.anchorToZero(false);
-            }
-            return this;
-         }
-     }
-
      /**Return true if any part of this instance overlaps with start and end, that is
       if thisstart > start and thisend <end
       * if thisstart < end and this thisend < start
@@ -291,7 +265,7 @@ public class Instance extends ChannelSet{
             }
             System.out.println("");
         }
-        System.out.println(as+","+us+","+gs+","+cs);
+        System.out.println(as+","+us+","+gs+","+cs);  
     }
 
     

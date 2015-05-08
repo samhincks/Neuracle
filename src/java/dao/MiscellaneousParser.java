@@ -113,6 +113,13 @@ public class MiscellaneousParser extends Parser{
         command.parameters = "1. k-back. 2. durationInSeconds, 3. Port-num (optional)";
         commands.put(command.id, command);
         
+        
+        //-- Custom
+        command = new Command("custom");
+        command.documentation = "A set of procedures which I change to suit my current needs";
+        command.action = "reload";
+        commands.put(command.id, command);
+        
         command = new Command("tutorial");
         command.documentation = "Loads a sample file, and executes basic instructions on it";   
         command.action = "reload";
@@ -186,7 +193,10 @@ public class MiscellaneousParser extends Parser{
             c.retMessage = this.getLabels(parameters);
         }
         
-        //.. eventually we want to split it with a while loop that evaluates each datalayer of the split
+        else if (command.startsWith("custom")) {
+            c = commands.get("custom");
+            c.retMessage = this.custom(parameters);
+        }
         else if (command.startsWith("nback")) {
             c = commands.get("nback");
             c.retMessage = this.nBack(parameters);
@@ -535,4 +545,16 @@ public class MiscellaneousParser extends Parser{
                 + " if you have manually placed your folder inside build/web/input/foldername, then load(foldername) will open all files therein ";
                 
         }
+
+    private String custom(String[] parameters) throws Exception{
+        ctx.inputParser.parseInput("load(hincks)");   
+        ctx.inputParser.parseInput("append");
+        ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1");
+        ctx.inputParser.parseInput("hold");
+        ctx.inputParser.parseInput("split(condition)");
+        ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1condition");
+        ctx.inputParser.parseInput("keep(easy,hard)");
+        ctx.inputParser.parseInput("makeml(*)");            
+        return "loaded hincks";
+    }
 }
