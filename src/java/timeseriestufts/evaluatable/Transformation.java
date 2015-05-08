@@ -12,6 +12,7 @@ public class Transformation extends Technique {
     public static enum TransformationType{zscore, anchor, movingaverage, calcoxy, highpass, lowpass, bandpass, bwbandpass, none};
     public TransformationType type;
     public float [] params;
+    public boolean for3D =false;
     
     /**If initialized from console, first parameter is command name
      * @param parameters 

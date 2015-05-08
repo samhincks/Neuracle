@@ -37,6 +37,17 @@ public class TriDAO extends DataLayerDAO {
         this.setId(layer.getId());
     }
    
+    
+    public JSONObject getDebugJSON() throws Exception{
+        jsonObj = new JSONObject();
+        Experiment e = (Experiment) dataLayer;
+        jsonObj.put("type", "debug");
+        jsonObj.put("id", e.id);
+        if (e.transformations != null) {
+            jsonObj.put("manipulation", e.transformations.transformations.size());
+        }
+        return jsonObj;
+    }
      
      /**Return a JSON representation of an Experiment for visualization in D3.
       * Experiment.id,.type, .instances
@@ -224,4 +235,5 @@ public class TriDAO extends DataLayerDAO {
          return jsonObj;
 
      }
+
 }

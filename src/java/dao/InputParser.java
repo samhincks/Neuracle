@@ -247,11 +247,11 @@ public class InputParser {
             
             int TEST =8;
                 
-            String test = "realtimeclass";
+            String test = "makefs";
             JSONObject response = new JSONObject();
             
-            if (test.equals("multiclasstrain")) {
-                response = ip.parseInput("train(-2)");
+            if (test.equals("makefs")) {
+                response = ip.parseInput("makefs(slope^bestfit^smallest)");
             }
             
             if (test.equals("realtimeclass")) {

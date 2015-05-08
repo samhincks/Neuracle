@@ -341,7 +341,6 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             int markerStart = start + getRealStart();
             int markerEnd = getRealStart() + end;
             Tuple<String, Double> condTuple = theseMarkers.getConditionBetween(markerStart, markerEnd);
-            System.out.println("setting condition with " + condTuple.x);
             instance = new Instance(condTuple.x, start, end, condTuple.y);
         } else {
             instance = new Instance(null, start, end); //.. it has no condition, for instance if unlabeled data

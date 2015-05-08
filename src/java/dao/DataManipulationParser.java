@@ -716,12 +716,13 @@ public class DataManipulationParser extends Parser{
             }
             else { //.. featureset with all features
                 id = getFSId(parameters[0]) +"-"+getFSId(parameters[1]) +"-"+getFSId(parameters[2]);
+                id = id.replace("^","_");
                 FeatureSet fs = new FeatureSet(id);
                 TechniqueDAO tDAO = new TechniqueDAO(fs);
                 techniquesDAO.addTechnique(id, tDAO);
                 currentTechnique = tDAO.technique;
                 String ret = this.addFeatures(parameters);
-                  
+                 System.out.println(ret);
                 //.. Evaluate info gain on fresly created featureset
                 ArrayList<Experiment> exp = super.getAllExperiments();  
                 for (Experiment e : exp){
@@ -1027,7 +1028,7 @@ public class DataManipulationParser extends Parser{
      *
      * Bugs: multi-analysis. The retString classification accuracy doesnt owrk
      */
-    private String train(String[] parameters, DataLayerDAO dDAO, Performances performances) throws Exception {
+    private String train(String[] parameters, DataLayerDAO dDAO, Performances performances) throws Exception {       
         int numClasses =-999; //.. set to positive number 
         if (parameters.length >= 1) {
             numClasses = Integer.parseInt(parameters[0]);
@@ -1070,16 +1071,22 @@ public class DataManipulationParser extends Parser{
                     else experiment = experiment.getBoundaryInstances(false, Math.abs(numClasses));
                 }
                 
-                else experiment.evaluate(t, dataset, -1);
+               // else experiment.evaluate(t, dataset, -1);
+                
+                /*Let us examine what is known. experiment has transformations. Does t have it after I add it here? Let's see. Yes it does. 
+                I know it doesn't inside train. What are the possibilities:
+                 a) The object just gets destroyed*/
+                
                 
                 //experiment.classification.printClassification();
                 WekaClassifier wc = experiment.train(t);
+
                 total += t.getMostRecentAverage();
             }
             if (numClasses != -999) retString += "The classifier has been trained ";
-            else retString += "The internal accuracy of this classifier in leave-one-out was " + (total / techniquesToEvaluate.size());
+            //else retString += "The internal accuracy of this classifier in leave-one-out was " + (total / techniquesToEvaluate.size());
 
-            return retString;
+            return retString;    
         } 
         
         else if (currentDataLayer instanceof MultiExperiment) {
@@ -1191,7 +1198,6 @@ public class DataManipulationParser extends Parser{
         //.. try synchronize, in case this is a realtime layer
         try{
             String layerName = cs.id;
-            System.out.println("synching " + layerName);
             ctx.inputParser.parseInput("synchronize("+layerName+")");
             //cs = (ChannelSet)((BiDAO)ctx.dataLayersDAO.get(layerName)).dataLayer;
         }

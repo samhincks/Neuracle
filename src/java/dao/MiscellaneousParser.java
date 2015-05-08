@@ -554,7 +554,13 @@ public class MiscellaneousParser extends Parser{
         ctx.inputParser.parseInput("split(condition)");
         ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1condition");
         ctx.inputParser.parseInput("keep(easy,hard)");
-        ctx.inputParser.parseInput("makeml(*)");            
+        ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1conditionconditioneasyhard");
+        ctx.inputParser.parseInput("manipulate(zscore)");
+        //ctx.inputParser.parseInput("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1conditionconditioneasyhardzscoreconditioneasyhard"); 
+        //ctx.inputParser.parseInput("manipulate(anchor)");;
+       // ctx.inputParser.parseInput("makeml(*)");      
+        //ctx.inputParser.parseInput("makefs(slope^bestfit^smallest,*,*)");
+
         return "loaded hincks";
     }
 }

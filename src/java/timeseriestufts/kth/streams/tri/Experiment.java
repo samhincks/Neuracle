@@ -186,7 +186,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
         Fold [] folds;
         
         if (this.numFolds == this.matrixes.size()) //.. if we happen to have as many folds as matrixes, do leave one out
-                folds =crossValidation.leaveOneOut();
+            folds =crossValidation.leaveOneOut();
         else //.. precisely taylor folds for how many we want
             folds =crossValidation.calculateFolds();
         
@@ -371,27 +371,25 @@ public class Experiment extends TridimensionalLayer<Instance>{
 
     /**Trains a classification algorithm on the experiment, with the machine learning 
      * properties specified in ts**/
-    public WekaClassifier train(TechniqueSet ts) throws Exception {
+    public WekaClassifier train(TechniqueSet t) throws Exception {
         //.. if either channelset or experiment has been manipulated, save this information for later
-        if (transformations != null) ts.addTechnique(this.transformations);
-        
-        //.. set ts
-        this.techniqueSet = ts;
+        if (transformations != null) t.addTechnique(this.transformations);
+        this.techniqueSet = t;
         
         //.. extract features
         if(!extracted) 
-            this.extractAttributes(ts.getFeatureSet());
+            this.extractAttributes(t.getFeatureSet());
         
         //.. get instances from my instance objects, with all attributes extracted
         weka.core.Instances instances = getWekaInstances(true); //.. try to extract attribtues if specified
         double [] attrs = instances.attributeToDoubleArray(0);
         
         //.. retrieve classifier and train it, then remember what classifiers were applied
-        WekaClassifier wc = (WekaClassifier) ts.getClassifier();
+        WekaClassifier wc = (WekaClassifier) t.getClassifier();
         wc.buildClassifier(instances);
         wc.lastInstanceLength = this.getFirstInstance().getNumPointsAtZero();
         wc.lastTrainedClassification = this.classification;
-        wc.lastTechniqueTested = ts;
+        wc.lastTechniqueTested = t;
         wc.timesTrained++;
         wc.lastAsAlgosUsed = this.asAlgosApplied; //... ergh, I hope this works :/
 
@@ -692,16 +690,19 @@ public class Experiment extends TridimensionalLayer<Instance>{
             }
         }
         Experiment ret;
-        String id = this.id + t.type.name();
-        if (t.params.length >0) id += t.params[0];
-        if (t.params.length >1) id += t.params[1];
-        if (t.params.length >2) id += t.params[2];
+        String newId = this.id + t.type.name();
+        if (t.params.length >0) newId += t.params[0];
+        if (t.params.length >1) newId += t.params[1];
+        if (t.params.length >2) newId += t.params[2];
 
-        if (copy) ret =new Experiment(this.filename+id, this.classification, instances, this.readingsPerSec );
+        if (copy) { //.. why on earth does it only work with this wonky filename. Probably something on the front end, some hacking I'm using for derivation. Bad front end code, Sam
+            ret =new Experiment(this.filename+newId, this.classification, instances, this.readingsPerSec );
+        }
         else ret = this;
         
         //.. add new transformation and return
         if (ret.transformations == null) ret.transformations = new Transformations();
+        t.for3D = true;
         ret.transformations.addTransformation(t);
         return ret;
     }

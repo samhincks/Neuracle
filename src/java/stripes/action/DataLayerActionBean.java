@@ -167,6 +167,8 @@ public class DataLayerActionBean extends BaseActionBean{
             else if(stats){
                 if (dlGiver instanceof BiDAO)
                     jsonObj = ((BiDAO) dlGiver).getDebugJSON();
+                if (dlGiver instanceof TriDAO)
+                    jsonObj = ((TriDAO) dlGiver).getDebugJSON();
                 else throw new Exception(); //.. fail silently, but add to this later
             }
             
