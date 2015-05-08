@@ -550,8 +550,8 @@ public class MiscellaneousParser extends Parser{
         ctx.inputParser.parseInput("load(hincks)");   
         ctx.inputParser.parseInput("append");
         ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1");
-        ctx.inputParser.parseInput("hold");
-        ctx.inputParser.parseInput("split(condition)");
+        //ctx.inputParser.parseInput("hold");
+        ctx.inputParser.parseInput("split(condition)");  
         ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1condition");
         ctx.inputParser.parseInput("keep(easy,hard)");
         ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1conditionconditioneasyhard");

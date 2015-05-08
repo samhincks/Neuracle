@@ -107,7 +107,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
      * in parameter predictions. Apply the attribute selection algorithms append in
      asAlgosApplied**/
     public void test(Experiment testing, TechniqueSet ts, Predictions predictions,
-            ArrayList<weka.filters.supervised.attribute.AttributeSelection> asAlgosApplied) throws Exception  {
+            ArrayList<weka.filters.supervised.attribute.AttributeSelection> asAlgosApplied, float predictionThreshold) throws Exception  {
        
         //.. extract attributes
         testing.extractAttributes(ts.getFeatureSet());
@@ -138,7 +138,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                 predictions.addPrediction(guess, distribution, index);
             }
             //.. only classify if we have this condition
-            else if (testing.classification.hasCondition(myInstance.condition)) {
+            else if (testing.classification.hasCondition(myInstance.condition) && (predictionThreshold == -1 ||myInstance.conditionPercentage>predictionThreshold)) {
                 int guess = (int) classifier.classifyInstance(wInstance);
                 double[] distribution = classifier.distributionForInstance(wInstance);
                 //.. save the prediction
@@ -160,7 +160,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
      **/
     public Predictions testRealStream(Classification c, TechniqueSet ts, Dataset ds, ChannelSet stream, 
             int instanceLength, int everyK, 
-            ArrayList<weka.filters.supervised.attribute.AttributeSelection> asAlgosApplied) throws Exception{
+            ArrayList<weka.filters.supervised.attribute.AttributeSelection> asAlgosApplied, float predictionThreshold) throws Exception{
         if (instanceLength < 4) throw new Exception("Instance length must be longer than 4");
         if(everyK <1) throw new Exception("New-Instance-Sampling-rate cannot be less 1" );
         
@@ -176,7 +176,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                 if (t.for3D) streamingExperiment.manipulate(t, false);
             }
         }
-        test(streamingExperiment, ts, retPredictions, asAlgosApplied);
+        test(streamingExperiment, ts, retPredictions, asAlgosApplied, predictionThreshold);
         return retPredictions;
     }
    
@@ -537,7 +537,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                 pair.x.printInfo();
                 
                 WekaClassifier wc = pair.x.train(ts);
-                Predictions p  = wc.testRealStream(markers.getClassification(), ts, ds, pair.y, 10, 1, null);
+                Predictions p  = wc.testRealStream(markers.getClassification(), ts, ds, pair.y, 10, 1, null, .7f);
                 p.printPredictions();
             }
             else if (TEST ==2) {

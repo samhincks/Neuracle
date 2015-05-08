@@ -735,9 +735,11 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         
         //.. set id
         retSet.id = retSet.id + ts.type.name();
-        if (ts.params.length >0) retSet.id += ts.params[0];
-        if (ts.params.length >1) retSet.id += ts.params[1];
-        if (ts.params.length >2) retSet.id += ts.params[2];
+        if (ts.params != null) {
+            if (ts.params.length >0) retSet.id += ts.params[0];
+            if (ts.params.length >1) retSet.id += ts.params[1];
+            if (ts.params.length >2) retSet.id += ts.params[2];
+        }
 
         retSet.transformations = transformations.getCopy(); //.. not a huge deal if we actually didnt need the deep copy
         return retSet;

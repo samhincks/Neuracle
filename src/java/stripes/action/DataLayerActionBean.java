@@ -99,6 +99,10 @@ public class DataLayerActionBean extends BaseActionBean{
     public boolean getStats() { return stats;}
     public void setStats(boolean stats) {this.stats = stats;}
     
+    private static boolean debug =false;
+    public boolean getDebug() { return debug;}
+    public void setDebug(boolean debug) {this.debug = debug;}
+    
     private static boolean frequency =false;
     public boolean getFrequency() { return frequency;}
     public void setFrequency(boolean frequency) {this.frequency = frequency;}
@@ -132,10 +136,8 @@ public class DataLayerActionBean extends BaseActionBean{
             JSONObject jsonObj;
 
            
-            
             //.. correlation
             if (correlation) {
-                System.out.println("Corr view");
                 if (!(dlGiver instanceof BiDAO)) {
                     throw new Exception(); //.. fail silently
                 } else {
@@ -146,7 +148,6 @@ public class DataLayerActionBean extends BaseActionBean{
             
             //.. return a streaming view of the frequencies present in the data
             else if(frequency) {
-                System.out.println("freq view");
                 if (!(dlGiver instanceof TriDAO)) throw new Exception(); //.. fail silently
                 else{
                     TriDAO tDAO = (TriDAO) dlGiver;
@@ -161,21 +162,21 @@ public class DataLayerActionBean extends BaseActionBean{
                     Performances p = ctx.getPerformances();
                     jsonObj = dlGiver.getPerformanceJSON(p);   
                 }
-            }
+            }  
           
             //.. print stats about the dataset into the console
-            else if(stats){
+            else if(debug){
                 if (dlGiver instanceof BiDAO)
                     jsonObj = ((BiDAO) dlGiver).getDebugJSON();
-                if (dlGiver instanceof TriDAO)
+                else if (dlGiver instanceof TriDAO)
                     jsonObj = ((TriDAO) dlGiver).getDebugJSON();
+                
                 else throw new Exception(); //.. fail silently, but add to this later
             }
             
             //.. THE ONLY EFFECT WAS TO CHANGE THE CTX.CURRENTNAME. A BIT ANNOYING THAT THIS NEEDED TO USE THE BACKEND
             else { //.. STATS
                  jsonObj = dlGiver.getJSON();
-                
             }
             
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));

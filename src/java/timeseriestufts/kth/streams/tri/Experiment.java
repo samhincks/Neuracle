@@ -196,7 +196,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
              fold.training.extracted = extracted;
              WekaClassifier wc = fold.training.train(this.getTechniqueSet());
              
-             wc.test(fold.testing,this.getTechniqueSet(), predictions, fold.training.asAlgosApplied); 
+             wc.test(fold.testing,this.getTechniqueSet(), predictions, fold.training.asAlgosApplied, -1); 
              //System.out.println("Experiment.runCrossValidation() completed " +j);
 
         }
@@ -689,12 +689,14 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 instances.add(ins2);
             }
         }
-        Experiment ret;
-        String newId = this.id + t.type.name();
-        if (t.params.length >0) newId += t.params[0];
-        if (t.params.length >1) newId += t.params[1];
-        if (t.params.length >2) newId += t.params[2];
-
+        Experiment ret;  
+        String newId = this.id + t.type.name();  
+        if(t.params != null) {
+            if (t.params.length >0) newId += t.params[0];
+            if (t.params.length >1) newId += t.params[1];
+            if (t.params.length >2) newId += t.params[2];  
+        }
+  
         if (copy) { //.. why on earth does it only work with this wonky filename. Probably something on the front end, some hacking I'm using for derivation. Bad front end code, Sam
             ret =new Experiment(this.filename+newId, this.classification, instances, this.readingsPerSec );
         }

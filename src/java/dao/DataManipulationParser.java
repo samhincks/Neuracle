@@ -135,7 +135,7 @@ public class DataManipulationParser extends Parser{
         command.documentation =" With a 2D channelset selected and intersecting a trained machine learning "
                 + " algorithm, classifies the 2D channelset with an instance length matching that length"
                 + " in the training; if the machine learning algorithm supports confidence, also provides a confidence.";
-        command.parameters = "1[OPTIONAL] k = provide a new classification every kth reading";
+        command.parameters = "1[OPTIONAL] k = provide a new classification every kth reading, 2[OPTIONAL], threshold only classify if more than this proportion of the carved out instance actual belongs to that instance";
         command.tutorial = " The machine learning algorithm made a succession of classifications on the channelset. :: "
                 + "Hovering over this channel set, double click the p by it to see the a visualization of predictions made. "
                 + " In the chart, the length of the rectangles reflect how many readings back the classifier considered"
@@ -1157,13 +1157,15 @@ public class DataManipulationParser extends Parser{
         
         //.. By default, read every shuold be as long as there are instnces
         int readEvery = classifier.lastInstanceLength;
+        float threshold = 0.5f;
         if (parameters.length>0) readEvery = Integer.parseInt(parameters[0]);
+        if (parameters.length >1) threshold = Float.parseFloat(parameters[1]);
         if(cs.getMinPoints() < readEvery) throw new Exception("There is not enough space to create even one instance. Testing must be larger");
 
        //..Classify the  
        Predictions p = classifier.testRealStream(classifier.lastTrainedClassification,
                classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), 
-               performances), cs, classifier.lastInstanceLength, readEvery, classifier.lastAsAlgosUsed); 
+               performances), cs, classifier.lastInstanceLength, readEvery, classifier.lastAsAlgosUsed,threshold); 
         //.. Some time a very long time ago, I thought it would be OK to set this to null, and not 
        //.. remind myself that this would fuck up attribute selection. Today I paid the hard price for that. 
        

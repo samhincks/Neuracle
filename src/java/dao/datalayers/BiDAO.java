@@ -139,7 +139,7 @@ public class BiDAO extends DataLayerDAO {
         dataLayer.setId(name );
         //dataLayer.setStatsMap();
     }
-    
+      
     /**  
      Return a correlation matrix between each pairwise channel . 
      * Either SAX correlation 

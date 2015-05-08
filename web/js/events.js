@@ -128,7 +128,7 @@ function datalayerInit() {
     //.. if a channel set is dbl-clicked
     $(".datalayer").dblclick(function(e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
-        if (altKey) javaInterface.postToDataLayer("stats");
+        if (altKey) javaInterface.postToDataLayer("debug");
         else javaInterface.postToDataLayer();
     });
 

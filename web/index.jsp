@@ -34,6 +34,7 @@
                    <s:text name = "giver" id = "giver" style ="visibility:hidden"/> 
                    <s:text name = "receiver" id = "receiver" style ="visibility:hidden"/>     
                    <s:text name = "stats" id = "stats" style ="visibility:hidden"/> 
+                   <s:text name = "debug" id = "debug" style ="visibility:hidden"/> 
                    <s:text name = "frequency" id = "frequency" style ="visibility:hidden"/> 
                    <s:text name = "correlation" id = "correlation" style ="visibility:hidden"/> 
                    <s:text name = "prediction" id = "prediction" style ="visibility:hidden"/> 

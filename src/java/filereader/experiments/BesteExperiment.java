@@ -97,7 +97,7 @@ public class BesteExperiment {
                 Experiment e = pair.x;
                 e = e.removeInstancesByClass("baseline");
                 WekaClassifier wc = e.train(ts);
-                Predictions p = wc.testRealStream(e.classification, ts, ds, pair.y, e.minPoints(), 20, e.asAlgosApplied);
+                Predictions p = wc.testRealStream(e.classification, ts, ds, pair.y, e.minPoints(), 20, e.asAlgosApplied, -1);
                 ds.addPredictions(p);
                 ts.addPredictions(p);
             }

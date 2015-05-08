@@ -96,6 +96,8 @@ function JavaInterface() {
         $('#prediction').val(false);
         $('#merge').val(false); //.. so that we don't call a method that merges datalayers'
         $('#stats').val(false); 
+        $('#debug').val(false);
+
         
         if (arguments.length) {
             if (message == "frequency"){
@@ -107,8 +109,8 @@ function JavaInterface() {
             else if (message =="prediction") {
                 $('#prediction').val(true);
             }
-            else if (message == "stats") {
-                $('#stats').val(true);
+            else if (message == "debug") {
+                $('#debug').val(true);
             }
         }
         var form = $('#content'); 
