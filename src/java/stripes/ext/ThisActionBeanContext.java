@@ -1,6 +1,7 @@
 package stripes.ext; 
 
 import dao.InputParser;
+import dao.datalayers.BiDAO;
 import dao.datalayers.DataLayerDAO;
 import dao.datalayers.DataLayersDAO;
 import dao.datalayers.UserDAO;
@@ -31,9 +32,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
         inputParser = new InputParser(this);
     }
     public ThisActionBeanContext(boolean test) {
-
         inputParser = new InputParser(this);
-
         this.test = test;
     }
     public boolean test = false;
@@ -47,6 +46,8 @@ public class ThisActionBeanContext extends ActionBeanContext{
     private static int fileReadSampling =1; //.. set to two and we read every other row from file
     private static boolean tutorial = false; //.. True if we're running a tutorial. 
     public static Integer curPort =null; //.. random number. this is used in an exchange between intercept label and nback
+    
+    
     public void printState() throws Exception{
         System.out.println("\t Datalayer " + currentDataLayer);
         System.out.println("\t Technique " + currentTechnique);
@@ -98,7 +99,19 @@ public class ThisActionBeanContext extends ActionBeanContext{
             if (currentDataLayer.contains(":")) throw new Exception("Incompatible selection. Are the selected layers identical?");
             throw new Exception("The datalayer " + currentDataLayer +" is unrecognized");
         }
-
+    }
+    
+    /*Return oldest ancestory of a datalayer. Used, for instance, in external data parser so that
+      we can stream a synched datalayer, and have transfomrations applied to it as well*/
+    public DataLayerDAO getAncestorOf(String id) throws Exception{
+        DataLayerDAO dDAO = this.dataLayersDAO.get(id);
+        try {
+            DataLayerDAO parent = this.dataLayersDAO.get(dDAO.dataLayer.parent);
+            return getAncestorOf(parent.getId());
+        }
+        catch(Exception e) {
+            return dDAO;
+        }
     }
     
     /**Remove the specified datalayer. Confirmed to work**/
@@ -156,5 +169,6 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public boolean getTutorial() {
         return tutorial;
     }
+
 
 }

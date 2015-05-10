@@ -674,13 +674,44 @@ public class Experiment extends TridimensionalLayer<Instance>{
         return e;
     }
     
+    /** Return a new set of experiments where each part refers to a different part of the instance
+     **/
+    public ArrayList<Experiment> partition(int parts) throws Exception {
+        ArrayList<Experiment> ret = new ArrayList();
+        //.. create parts new ArrayLists 
+        for (int i = 0; i < parts; i++) {
+            Experiment e = new Experiment(this.filename, this.classification, this.readingsPerSec);
+            e.id = this.id +i+"-"+parts;
+            ret.add(e);
+        }
+        
+        for (Instance ins : matrixes) {
+            int partLength = ins.getMinPoints() / parts;
+            int curStart =0;
+            for (int i = 0; i < parts; i++) {
+               Instance sub = ins.getInstance(curStart, curStart +partLength, ins.condition );
+               ret.get(i).addMatrix(sub);
+               curStart += partLength;
+            }
+        }
+        
+        return ret;
+    }
+
+    
     /** Apply a specific method for altering the data; used when transforming data in
      * real time. Consider allowing for the copy parameter in the future 
      * @param t the manipulation to apply
      */
     public Experiment manipulate(Transformation t, boolean copy) throws Exception{
         ArrayList<Instance> instances = new ArrayList();
+        Instance lastInstance= null;
         for (Instance ins : matrixes) {
+            if (t.type == Transformation.TransformationType.subtract) { //.. calculate difference to previous instance
+                t.params = new float[1];
+                t.params[0] = (float) ((lastInstance ==null) ? ins.getMean() : lastInstance.getMean());   
+            }
+
             if (!copy) ins.manipulate(t, copy);
             else {
                 ChannelSet cs = ins.manipulate(t, copy);
@@ -688,6 +719,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
                 ins2.streams = cs.streams;
                 instances.add(ins2);
             }
+            lastInstance = ins; //.. only for the subtract transformation
         }
         Experiment ret;  
         String newId = this.id + t.type.name();  
@@ -717,7 +749,13 @@ public class Experiment extends TridimensionalLayer<Instance>{
             System.out.println("experiment has " + e.getMostCommonInstanceLength() + " readings in a typical channel");
             int TEST =4;
             
-              
+            
+            if (TEST ==4) {
+                ArrayList<Experiment> r = e.partition(4);
+                for(Experiment s : r) {
+                    System.out.println(s.getMostCommonInstanceLength());
+                }
+            }
             if (TEST ==1) {
                 //e.printStream();
                 ChannelSetSet css = e.getAveragedFourier(false);
@@ -744,9 +782,5 @@ public class Experiment extends TridimensionalLayer<Instance>{
         }
         catch(Exception e) {e.printStackTrace();}
     }
-
-
-
-
-    
 }
+

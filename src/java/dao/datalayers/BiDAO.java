@@ -27,6 +27,8 @@ import net.sourceforge.stripes.action.FileBean;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import timeseriestufts.evaluatable.Transformation;
+import timeseriestufts.evaluatable.Transformations;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.BidimensionalLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
@@ -327,7 +329,7 @@ public class BiDAO extends DataLayerDAO {
      * function will return only those points which were added in the last
      * refresh, structured as a JSON obj as below
      */
-    public JSONObject getLastUpdateJSON() throws Exception{
+    public JSONObject getLastUpdateJSON(Transformations transformations) throws Exception{
         jsonObj = new JSONObject();
         ChannelSet channelSet = (ChannelSet) dataLayer;
       
@@ -356,12 +358,22 @@ public class BiDAO extends DataLayerDAO {
             }
             int startingPoint = numPoints - this.addedInLastSynchronization;
             
+            
+            /**------- NEW WAY OF ADDING DATA: SUPPORTS MANIPULATION--------*/
+            ChannelSet cs = channelSet.getChannelSetBetween(startingPoint, numPoints);
+            if (transformations != null) {
+                for (Transformation t : transformations.transformations) {
+                    cs = cs.manipulate(t, true);
+                }
+            }
+                  
+            
             //.. add points at specified increments
-            for (int j = startingPoint; j < numPoints; j += pointsInc) {
+            for (int j = 0; j < cs.getMinPoints(); j += pointsInc) {
                 JSONArray timeData = new JSONArray(); //.. each channel's value at the timestamp
                 
-                for (int i = 0; i < channelSet.getChannelCount(); i++) {
-                    UnidimensionalLayer channel = channelSet.getChannel(i);
+                for (int i = 0; i < cs.getChannelCount(); i++) {
+                    UnidimensionalLayer channel = cs.getChannel(i);
                     Float p = channel.getPointOrNull(j);          
                     if (p!= null){   
                         JSONArray arr = new JSONArray();   
@@ -370,29 +382,26 @@ public class BiDAO extends DataLayerDAO {
                     }
                 }
                 
-                System.out.println(channelSet.markers.size());
                 //... Add numerically visualizable markers
-                int lastIndex =0;
-                for (int i = 0; i < channelSet.markers.size(); i++) {
-                    Markers m = channelSet.markers.get(i);
-                    int index; 
-                    try {                     
-                        String conName = m.saveLabels.channelLabels.get(j).value;
-                        index = m.getClassification().getIndex(conName);
+                if(cs.markers!= null){
+                    int lastIndex =0;
+                    for (int i = 0; i < cs.markers.size(); i++) {
+                        Markers m = cs.markers.get(i);
+                        int index; 
+                        try {                     
+                            String conName = m.saveLabels.channelLabels.get(j).value;
+                            index = m.getClassification().getIndex(conName);
+                        }
+
+                        //.. Not impossible that marker and data is a little out of synch, which is ok
+                        catch(Exception e ) {index = lastIndex;}  //.. just assign as the last one 
+                        JSONArray arr = new JSONArray();
+                        arr.put(index);
+                        timeData.put(arr);
                     }
-                    //.. Not impossible that marker and data is a little out of synch, which is ok
-                    catch(Exception e ) {index = lastIndex;}  //.. just assign as the last one 
-                    System.out.println("getting " + index);
-                    JSONArray arr = new JSONArray();
-                    arr.put(index);
-                    timeData.put(arr);
                 }
-                
                 values.put(timeData);    
-                
-                
             }  
-            
                 
             int mostPoints = channelSet.getMaxPoints();
             float maxTime = (mostPoints / channelSet.readingsPerSecond);
@@ -480,7 +489,6 @@ public class BiDAO extends DataLayerDAO {
         
         return jsonObj;
     } 
-    
     
      /**Read data from the database with the corresponding name, and synchronize with a
       * ChannelSet

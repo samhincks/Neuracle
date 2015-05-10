@@ -210,8 +210,14 @@ public class ExternalDataParser extends Parser{
         
         if (ctx.dataLayersDAO.streams.containsKey(filename)) {
             BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(filename);
-            bDAO.synchronizeWithDatabase(filename);  
-            return bDAO.getLastUpdateJSON();         
+            
+            //.. The selected datalayer may or may not be the actual thing which is synchronized with the database
+            //.. It could have transformations applied to it, in which case we need to find its oldest ancestor,
+            //.. synchronize with that, but apply the transformations specified in the layer selected
+            ChannelSet cs = (ChannelSet)bDAO.dataLayer;
+            BiDAO ancestor = (BiDAO) ctx.getAncestorOf(bDAO.getId());
+            ancestor.synchronizeWithDatabase(ancestor.getId());  
+            return ancestor.getLastUpdateJSON(cs.transformations);             
         } else {
             throw new Exception("Context does not contain datalayer " + filename);
         }   

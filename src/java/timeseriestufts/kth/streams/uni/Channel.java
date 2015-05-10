@@ -85,6 +85,44 @@ public class Channel extends UnidimensionalLayer  {
         this.sampleRate = HitachiRPS;
     }
     
+    /**Create a new Channel out of multiple channels. MAY NEED TO CREATE TWO NEW
+     * ONES HERE, ONE FOR IF I'M SYNCHED AND ONE IF IM NOT, BUT TEST HERE FIRST. RUNNING OUT OF STEAM
+     * @param channels 
+     */
+    public Channel(ArrayList<Channel> channels ) throws Exception{       
+        this.framesize = 1 / HitachiRPS;
+        this.sampleRate = HitachiRPS;
+         
+        //.. calculate length of longest
+        this.numPoints =0;
+        int largest =0;
+        for (Channel c : channels) {
+            if (c.numPoints > largest) 
+                largest = c.numPoints;
+        }
+        
+        data = new float[largest];
+        this.synchedWithDatabase = false;
+        
+        //.. average the value between each point, changing the actual value in this structure
+        for (int i = 0; i < largest; i++) {
+            float total =0;
+            int contributors =0;
+            for (Channel c:  channels){
+                Float thisPoint = c.getPointOrNull(i);
+                if (thisPoint!= null) {
+                    total += thisPoint;
+                    contributors++;
+                }
+            }
+            float avg =0;
+            if (contributors == 0) System.err.println("Error: numPoints = " + numPoints  + ". At " + i);
+            else  avg = total / contributors;
+            this.addPoint(avg);
+        } 
+        
+    }
+    
     /** Get the frame size, interval between readings 
      * @return framesize -- the interval between readings
      */
@@ -449,16 +487,17 @@ public class Channel extends UnidimensionalLayer  {
      * True = Returns a copy with new points.
      * False = Returns direct manipulation on this dataset
      */
-    public Channel anchorToZero(boolean copy) throws Exception{
-        
-        //.. get first point, set a copy to 0 and add it
-        Float fp = this.getFirstPoint();
+    public Channel anchor(boolean copy, Float first) throws Exception{
+        float fp;
+        if (first == null) 
+            fp = this.getFirstPoint();
+        else fp = first;
         
         //.. if we want a copy, create a new instance channel with brand new points
         if (copy) {
             Channel ic = new Channel(this.framesize, this.numPoints);
             ic.id = this.id;
-            ic.addPoint(0);
+            ic.addPoint(this.getFirstPoint() -fp);
 
             //.. add a copy of each of the following points, where the value is the difference to first
             for (int i = 1; i < numPoints; i++) {
@@ -471,7 +510,7 @@ public class Channel extends UnidimensionalLayer  {
         }
         else {
             //.. save first value then set it to 0
-            this.setPoint(0, 0);
+            this.setPoint(0,  this.getFirstPoint()-fp);
             
             //.. for each subsequent point set it as difference to first
             for (int i = 1; i < numPoints; i++) {
@@ -527,11 +566,12 @@ public class Channel extends UnidimensionalLayer  {
         return transformed;
     }
     
+  
     /**Adjust by the fluctation that was present in the a different sample (for instance baseline)
      y is corrected by x.
      Throw error if trial is too far off from baseline in length, otherwise pad
      **/
-    public  Channel detrend(float[] baseline, double maxDiff, boolean copy) throws Exception{ 
+    public Channel detrend(float[] baseline, double maxDiff, boolean copy) throws Exception{ 
         System.err.println("NO longer works if synchronized, you will have to implement a method to copy baseline to arraylist");
         SimpleRegression regression = new SimpleRegression();
         
@@ -988,7 +1028,7 @@ public class Channel extends UnidimensionalLayer  {
                 b.printStream();
             }
             if (TEST ==6) {
-                Channel a = c.anchorToZero(true);
+                Channel a = c.anchor(true, null);
                 c.printStream();
                 a.printStream();
             }

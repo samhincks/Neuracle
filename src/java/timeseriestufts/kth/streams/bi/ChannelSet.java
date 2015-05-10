@@ -618,15 +618,16 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         }
     }
     /**
-     * Return a new ChannelSet where each channel is anchored to zero
+     * Return a new ChannelSet where each channel is anchored to zero if second
+     * parameter is null
      */
-    public ChannelSet anchorToZero(boolean copy) throws Exception {
+    public ChannelSet anchor(boolean copy, Float firstPoint) throws Exception {
         //.. if we want a new raw points
         if (copy) {
             ChannelSet cs = getCopy(this.id + "zscore");
             //.. apply anchor to each channel
             for (Channel c : streams) {
-                Channel newC = c.anchorToZero(true);
+                Channel newC = c.anchor(true, firstPoint);
                 cs.addStream(newC);
             }
             return cs;
@@ -634,7 +635,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         else {
             //.. apply anchor to each channel
             for (Channel c : streams) {
-                c.anchorToZero(false);
+                c.anchor(false, firstPoint);
             }
             return this;
         }
@@ -688,6 +689,9 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         if (ts.getTransformation().type == Transformation.TransformationType.calcoxy)
             retSet = this.calcOxy(copy, null, null); //.. set 2nd parameter to empty if 830 comes first
         
+        if (ts.getTransformation().type == Transformation.TransformationType.averagedcalcoxy)
+            retSet = this.averagedCalcOxy(null, null); //.. set 2nd parameter to empty if 830 comes first
+        
         if (ts.getTransformation().type == Transformation.TransformationType.movingaverage)
             retSet = this.movingAverage((int)ts.getTransformation().params[0], copy);
         
@@ -709,7 +713,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             retSet = this.bandpass(((ts.params.length > 0)?ts.params[0] :0.1f), ((ts.params.length > 1)?ts.params[1] :1f), copy);
         
         if (ts.type== Transformation.TransformationType.lowpass) 
-            retSet = this.lowpass(((ts.params.length > 0)?ts.params[0] :0.1f), copy);
+            retSet = this.lowpass(((ts.params.length > 0)?ts.params[0] :0.3f), copy);
         
         if (ts.type== Transformation.TransformationType.highpass) 
             retSet = this.highpass(((ts.params.length > 0)? ts.params[0] :1), copy);
@@ -723,16 +727,25 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         if (ts.type== Transformation.TransformationType.calcoxy) 
             retSet = this.calcOxy(copy, null, null);
         
+        if (ts.type == Transformation.TransformationType.averagedcalcoxy) 
+            retSet = this.averagedCalcOxy(null, null);
+                
         if (ts.type == Transformation.TransformationType.anchor) 
-            retSet = this.anchorToZero(copy);
+            retSet = this.anchor(copy, null);
+        
+        if (ts.type == Transformation.TransformationType.subtract) {
+            retSet = this.anchor(copy,ts.params[0]);
+        }
          
         if (ts.type== Transformation.TransformationType.movingaverage) 
             retSet = this.movingAverage(((ts.params.length > 0)? (int)ts.params[0] : 10), copy);
         
-        //.. save it so that we remember what has been applied
-        if (transformations == null) transformations = new Transformations();
-        transformations.addTransformation(ts);
+        if (transformations != null) retSet.transformations = transformations.getCopy(); //.. not a huge deal if we actually didnt need the deep copy
         
+        //.. save it so that we remember what has been applied
+        if (retSet.transformations == null) retSet.transformations = new Transformations();
+        retSet.transformations.addTransformation(ts);
+          
         //.. set id
         retSet.id = retSet.id + ts.type.name();
         if (ts.params != null) {
@@ -741,11 +754,107 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             if (ts.params.length >2) retSet.id += ts.params[2];
         }
 
-        retSet.transformations = transformations.getCopy(); //.. not a huge deal if we actually didnt need the deep copy
         return retSet;
     }
+   
+
+    /**
+     * Average together sets that correspond to the same measurement but at a different distance, to simplify.Always create a  new channel
+     * @param sixNinetyCols
+     * @param eightThirtyCols
+     * @param copy
+     * @return
+     */
+    public ChannelSet averagedCalcOxy(ArrayList<Integer> sixNinetyCols, ArrayList<Integer> eightThirtyCols) throws Exception{
+        int quarter = this.streams.size() / 4;
+        
+        if (sixNinetyCols == null) {
+            sixNinetyCols = this.getImagentChannels(true);
+            eightThirtyCols = this.getImagentChannels(false);
+        }
+        
+        //.. Create a channelset with four new channels
+        //... a690, a830, b690, b830
+        ArrayList<Channel> a690Chans = new ArrayList();
+        ArrayList<Channel> b690Chans = new ArrayList();
+        ArrayList<Channel> a830Chans = new ArrayList();
+        ArrayList<Channel> b830Chans = new ArrayList();
+        int index =0;
+        
+        //.. collect channels 
+        for (Integer i : sixNinetyCols) {
+            if (index <quarter)
+                a690Chans.add(this.streams.get(i));
+            else
+                b690Chans.add(this.streams.get(i));
+            index++;
+        }      
+        index = 0;  
+        for (Integer i : eightThirtyCols) {
+            if (index < quarter) 
+                a830Chans.add(this.streams.get(i));
+            else 
+                b830Chans.add(this.streams.get(i));
+            index++;
+        }
+        
+        //.. The first appears to give slightly different data, then the others who show the same effect 
+        a690Chans.remove(0);
+        b690Chans.remove(0);
+        a830Chans.remove(0);
+        b830Chans.remove(0);
+
+        //.. Why is it 0, 8?
+        //.. create channels
+        Channel a690 = new Channel(a690Chans);
+        Channel b690 = new Channel(b690Chans);
+        Channel a830 = new Channel(a830Chans);  
+        Channel b830 = new Channel(b830Chans);
+        
+        ChannelSet cs = new ChannelSet();
+        cs.markers = this.markers;
+        cs.id = this.id +"averaged";
+        
+        //.. add streams in the order calc oxy will expect them 
+        cs.addStream(a690);
+        cs.addStream(a830);
+        cs.addStream(b690);
+        cs.addStream(b830);
+        
+        return cs.calcOxy(true, null, null);
+
+    }  
+    
+    
+    /**Get indexes for six ninety and eight thirty cols according to our device.
+     Currently, I'm not 100% sure but I think 830 comes before 690*/
+    private ArrayList<Integer> getImagentChannels(boolean sixNinety) throws Exception {
+        if (this.streams.size() % 2 != 0) 
+            throw new Exception("Double check columns, since # not divisible by two");
+        
+        int half = this.streams.size() / 2;
+        int quarter = this.streams.size() / 4;
 
     
+        ArrayList<Integer> ret = new ArrayList(); 
+        /**
+         * First four are 830, then 690
+         */
+        for (int i = 0; i < quarter; i++) {
+            if (sixNinety)
+                ret.add(i + quarter);
+            else ret.add(i);
+        }
+  
+        //.. PROBE B
+        for (int i = half; i < half + quarter; i++) {
+            if (sixNinety)
+                ret.add(i + quarter);
+            else ret.add(i);
+        }
+        
+        return ret; 
+    }
     /**Assume this is fNIRS data, and that the input is the intensity of reflected
      light at DC690 and DC830; apply the modified beer-lambert law to estimate the 
      quantity of oxygen. This amounts to combining corresponinding measurements when
@@ -765,28 +874,10 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
          * Then this repeats for probe B. 
          **/
         if (sixNinetyCols == null) {
-            sixNinetyCols = new ArrayList();
-            eightThirtyCols = new ArrayList();
-            
-            /**First four are 830, then 690*/
-            for (int i = 0; i < quarter; i++) {
-                sixNinetyCols.add(i+quarter);
-                eightThirtyCols.add(i );
-            }
-
-            //.. PROBE B
-            for (int i = half; i < half + quarter; i++) {
-                sixNinetyCols.add(i+quarter);
-                eightThirtyCols.add(i);
-            }
-            
+            sixNinetyCols = this.getImagentChannels(true);
+            eightThirtyCols = this.getImagentChannels(false);
         }
-        
-        /** So if these defaults are used then:
-         *  The snc[0] is ProbeA, 690, closest, 
-         *  and it corresponds to etc[0] which is ProbeA 690 Closest
-         *  At snc[4] it flips, and its Probe B
-         **/    
+         
         
         if (sixNinetyCols.size() != eightThirtyCols.size()) throw new Exception("CALCOXY: There must be as many of both columns");
         
@@ -811,9 +902,10 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 //.. HbO = (abs690*ed830-abs830*ed690)/den*1000; % concentration change (micromolar).
                 Channel HbOChan = new Channel(snCol.getFramesize(), snCol.getCount());
                 HbOChan.id ="HbO-";
+                
                 //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
-                if (i < quarter) HbOChan.id += i +"-A";
-                else HbOChan.id +=(i-quarter) + "-B";
+                if (i < quarter) HbOChan.id += "-A" +i;
+                else HbOChan.id += "-B" +(i-quarter);
                 
                 for (int j =0; j < minSize; j++) {
                     float hbO = Math.abs(snCol.getPoint(j)) * ed830 - Math.abs(etCol.getPoint(j))*ed690;
@@ -827,8 +919,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
               
                 HbChan.id = "Hb-";
                 //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
-                if (i < quarter) HbChan.id += (i) +"-A";
-                else HbChan.id += (i-quarter) +"-B";
+                if (i < quarter) HbChan.id +="A"+ (i);
+                else HbChan.id +=  "-B" +(i-quarter);
                 
                 for (int j = 0; j < minSize; j++) {
                     float hb = Math.abs(etCol.getPoint(j)) * eo690 - Math.abs(snCol.getPoint(j)) * eo830;
@@ -858,8 +950,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 //.. HbO = (abs690*ed830-abs830*ed690)/den*1000; % concentration change (micromolar).
                 snCol.id = "HbO-" +i;
                 //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
-                if (i < quarter) snCol.id += i +"-"+ "A";
-                else snCol.id += (i-quarter) +"B";
+                if (i < quarter) snCol.id +="A" + i;
+                else snCol.id += "B" + (i-quarter);
                 
                 for (int j = 0; j < minSize; j++) {
                     float hbO = Math.abs(snCol.getPoint(j)) * ed830 - Math.abs(etCol.getPoint(j)) * ed690;
@@ -870,8 +962,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 //.. Hb = (abs830 * eo690 - abs690 * eo830) / den * 1000; % concentration change(micromolar)
                 etCol.id = "Hb-";
                 //.. Probe A or B? This is not necessarily generalizable, but its true for our setup
-                if (i < quarter) etCol.id += i + "-A";
-                else etCol.id += (i-quarter)+ "-B";
+                if (i < quarter) etCol.id += "-A" +i  ;
+                else etCol.id += "-B" +(i-quarter);
                 
                 for (int j = 0; j < minSize; j++) {
                     float hb = Math.abs(etCol.getPoint(j)) * eo690 - Math.abs(snCol.getPoint(j)) * eo830;
@@ -892,8 +984,19 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             Markers markers = Markers.generate(3, 10);
             cs.addMarkers(markers);
 
-            int TEST = 7;
+            int TEST = 8;
             
+            //.. TEST CALCULATING OXY
+            if (TEST == 8) {
+                cs = Beste.getChannelSet();
+                Transformation t = new Transformation(Transformation.TransformationType.calcoxy);
+
+                ChannelSet cs2 = cs.manipulate(t, true);
+                cs2.printInfo();
+               
+                //cs2.printStream();
+                cs.writeToFile("output/oxy.csv", 1, false);
+            }            
             //.. Test applying and storing transformations, and the protocol for passing these between objects
             if (TEST==7) {
                 Transformation t = new Transformation(Transformation.TransformationType.movingaverage);
@@ -963,6 +1066,11 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             Tuple<String, Double> majority = first.getConditionBetween(getRealStart(), getRealEnd());
             System.out.println("    Majority condition on " + first.name + " is " + majority.x + " with " + majority.y);
         }
+        
+        for (Channel c : streams ) { 
+            System.out.println(c.id + ": " + c.getMean());
+        }
+        
     }
 
 

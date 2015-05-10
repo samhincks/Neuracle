@@ -401,31 +401,48 @@ public class TransformationParser extends Parser{
      * @throws Exception 
      */
     private String partition(String [] parameters) throws Exception {
-        String labelName = parameters[0];
-        labelName = labelName.replace(")", ""); //.. remove )
-        labelName = labelName.replace("\"", "");
+        String retString = "";
+        String param = "condition";
+        if (parameters.length >0){
+            param = parameters[0];
+            param = param.replace(")", ""); //.. remove )
+            param = param.replace("\"", "");
+        }
         
         //.. get all chansets
-        ArrayList<ChannelSet> chanSets = getChanSets(true);
-        String retString = "";
-        for (ChannelSet cs : chanSets) {
-            //.. In case there is a channelset which has labels, but not markers, add markers
-            //... the labels would be saved in the biDOA and this would only be used in conjunction with a DB
-            BiDAO biDAO = (BiDAO) ctx.getDataLayers().get(cs.id);
-            if (biDAO.labels != null) {
-                for (Labels l : biDAO.labels) {
-                    Markers m = new Markers(l);
+        ArrayList<ChannelSet> chanSets = getChanSets(false);
+        if (chanSets != null) {
+            for (ChannelSet cs : chanSets) {
+                //.. In case there is a channelset which has labels, but not markers, add markers
+                //... the labels would be saved in the biDOA and this would only be used in conjunction with a DB
+                BiDAO biDAO = (BiDAO) ctx.getDataLayers().get(cs.id);
+                if (biDAO.labels != null) {
+                    for (Labels l : biDAO.labels) {
+                        Markers m = new Markers(l);
 
-                    //.. INVARIANT: # of markers should equal number of rows in each col
-                    biDAO.addMarkers(m);
+                        //.. INVARIANT: # of markers should equal number of rows in each col
+                        biDAO.addMarkers(m);
+                    }
                 }
+
+                //.. make the ChannelSets layer
+                retString += makeChannelSets(cs, param);
             }
-
-            //.. make the ChannelSets layer
-            retString += makeChannelSets(cs, labelName);
-            
-            
-
+        }
+        else {
+            if (parameters.length ==0) param = "2";
+            ArrayList<Experiment> experiments = getExperiments(false);
+            for (Experiment exp : experiments) {
+                //.. param now means split into param chunks
+                ArrayList<Experiment> subExperiments = exp.partition(Integer.parseInt(param));
+                for (Experiment subE : subExperiments) {
+                    //.. make a new data access object, and add it to our stream
+                    TriDAO pDAO = new TriDAO(subE);
+                    ctx.dataLayersDAO.addStream(subE.id, pDAO);
+                    subE.setParent(exp.id);
+                }
+                retString += "Made " + subExperiments.size() + " new experiments";
+            }
         }
 
         return retString;

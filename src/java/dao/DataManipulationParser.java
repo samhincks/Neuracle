@@ -292,7 +292,6 @@ public class DataManipulationParser extends Parser{
             c.retMessage = this.manipulate(parameters);
         }
   
-
         if (c == null) {
             return null;
         }
@@ -1230,13 +1229,16 @@ public class DataManipulationParser extends Parser{
         ArrayList<ChannelSet> chanSets = getChanSets(true);
         String retString = "";
         for (ChannelSet cs : chanSets) {
-            ChannelSet filteredSet = cs.calcOxy(true, null, null); //.. we want a copy;
+            ChannelSet filteredSet =  cs.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);//cs.calcOxy(true, null, null); //.. we want a copy;;
+            //ChannelSet filteredSet =cs.calcOxy(true, null, null); //.. we want a copy;;
+
             retString += "Applied CalcOxy ";
             //if (lowpass == 0) {
              filteredSet = filteredSet.movingAverage(10, true);  
-            retString += "Applied MovingAverage, 10 readings back::";
+             retString += "Applied MovingAverage, 10 readings back::";
             //}
-  
+            
+            filteredSet = filteredSet.lowpass(0.3f, true);
             if (lowpass > 0 && highpass == 0) {
                 filteredSet = filteredSet.lowpass(lowpass, false);
                 retString += "Applied Lowpass; Removed frequencies oscillating at above " + lowpass + "hz ::";
@@ -1248,9 +1250,9 @@ public class DataManipulationParser extends Parser{
                 retString += "Applied Bandpass; kept frequencies oscillating between " + lowpass + " and " + highpass + "hz ::";
             }
      
-            filteredSet = filteredSet.zScore(false);
-            retString += "Z scored the data, so that each value is replaced by the difference between "
-                    + " it and the channel's corresponding mean, divided by the standard deviation::";
+           // filteredSet = filteredSet.zScore(false);
+           // retString += "Z scored the data, so that each value is replaced by the difference between "
+             //       + " it and the channel's corresponding mean, divided by the standard deviation::";
 
             //.. Split into an experiment - of course this is not perfectly generalizable, so condition name should be parameter               
             Experiment e = super.getExperiment(filteredSet, "condition");
@@ -1259,7 +1261,7 @@ public class DataManipulationParser extends Parser{
             toKeep.add("hard");
             //toKeep.add("medium");    
             //toKeep.add("rest");
-            //toKeep.add("baseline");
+            //toKeep.add("baseline");  
 
             e = e.removeAllClassesBut(toKeep);
   
@@ -1275,6 +1277,8 @@ public class DataManipulationParser extends Parser{
 
             //.. anchor it, setting start to zero
             e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false);
+            //e = e.manipulate(new Transformation(Transformation.TransformationType.subtract), false);
+
             e.setParent(cs.getId()); //.. set parent to what we derived it from
 
             e.setId(e.id + "-l" + lowpass + "-h" + highpass);

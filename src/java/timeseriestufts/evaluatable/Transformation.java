@@ -9,7 +9,7 @@ package timeseriestufts.evaluatable;
  * @author samhincks
  */
 public class Transformation extends Technique {
-    public static enum TransformationType{zscore, anchor, movingaverage, calcoxy, highpass, lowpass, bandpass, bwbandpass, none};
+    public static enum TransformationType{zscore, anchor, movingaverage, calcoxy, highpass, lowpass, bandpass, bwbandpass, none, averagedcalcoxy, subtract};
     public TransformationType type;
     public float [] params;
     public boolean for3D =false;
@@ -54,4 +54,5 @@ public class Transformation extends Technique {
         params[0] = a;
         params[1] = b;
     }
+   
 }

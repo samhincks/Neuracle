@@ -98,7 +98,7 @@ function ConsoleArea() {
             this.streamInterval= setInterval(function() {
                 $("#consoleInput").val(userText);
                 javaInterface.postToConsole();
-            }, 50); //.. less than 50 and there are errors
+            }, 100); //.. less than 50 and there are errors
             return false;
          }
          
