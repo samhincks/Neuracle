@@ -579,16 +579,18 @@ public class MiscellaneousParser extends Parser{
     private String custom(String[] parameters) throws Exception{
         ctx.inputParser.parseInput("load(hincks)");
         ctx.inputParser.parseInput("append");
-        ctx.inputParser.parseInput("append");
+       // ctx.inputParser.parseInput("hold");
          ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1");
-         ctx.inputParser.parseInput("imagent");
+         ctx.inputParser.parseInput("realtime");
        // ctx.inputParser.parseInput("manipulate(averagedcalcoxy");
        // ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1averagedaveragedcalcoxy");
+        // ctx.inputParser.parseInput("makeml(lmt)");
+        // ctx.inputParser.parseInput("makefs(bestfit,*,*)");
 
         //ctx.inputParser.parseInput("split(condition)");
         //ctx.inputParser.parseInput("keep(easy,hard)");
   
-        return "bajs";
+        return "custom";
     }
     
     private String manipulateTest() throws Exception {
@@ -596,12 +598,14 @@ public class MiscellaneousParser extends Parser{
         ctx.inputParser.parseInput("append");
         
         ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1");
-        //ctx.inputParser.parseInput("hold");
-        ctx.inputParser.parseInput("split(condition)");
-        ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1condition");
-        ctx.inputParser.parseInput("keep(easy,hard)");
-        ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1conditionconditioneasyhard");
-        ctx.inputParser.parseInput("manipulate(zscore)");
+        ctx.inputParser.parseInput("hold");
+        ctx.inputParser.parseInput("realtime");
+
+        //ctx.inputParser.parseInput("split(condition)");
+        //ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1condition");
+        //ctx.inputParser.parseInput("keep(easy,hard)");
+       // ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1conditionconditioneasyhard");
+       // ctx.inputParser.parseInput("manipulate(zscore)");
         //ctx.inputParser.parseInput("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1conditionconditioneasyhardzscoreconditioneasyhard"); 
         //ctx.inputParser.parseInput("manipulate(anchor)");;
         // ctx.inputParser.parseInput("makeml(*)");      

@@ -209,6 +209,7 @@ public class ExternalDataParser extends Parser{
         if (currentDataLayer.id == null) throw new Exception("Must select a datalayer");
         String filename = currentDataLayer.id; 
         
+        if (parameters.length >0) filename = parameters[0];
         if (ctx.dataLayersDAO.streams.containsKey(filename)) {
             BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(filename);
             
@@ -222,7 +223,7 @@ public class ExternalDataParser extends Parser{
         } else {
             throw new Exception("Context does not contain datalayer " + filename);
         }   
-    }
+    }  
     
     /**Write the channelset to the file.  
      * @param parameters   

@@ -25,6 +25,7 @@ import timeseriestufts.evaluatable.performances.Prediction;
 import timeseriestufts.evaluatable.performances.Predictions;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
+import timeseriestufts.kth.streams.bi.ChannelSet.Tuple;
 import timeseriestufts.kth.streams.quad.MultiExperiment;
 import timeseriestufts.kth.streams.tri.ChannelSetSet;
 import timeseriestufts.kth.streams.tri.Experiment;
@@ -102,7 +103,7 @@ public class DataManipulationParser extends Parser{
                + " at least one of each TechniqueSet (feature set, attribute selection, machine learning, and settings,"
                + " evaluates the dataset by creating a machine learning algorithm on different partitions of the data"
                + " and evaluating it on unseen instances ::";
-        command.parameters = "1[OPTIONAL] fodls =  The number of folds for the crossfold validation";
+        command.parameters = "The threshold to display confidence values";
         command.debug = "Unclear if numFolds still works";
         command.tutorial = "The number above reflects the classification accuracy. Trained on all but one trial and repeated"
                 + " for every trial, what percent of the time did the machine learning algorithm guess correctly?"
@@ -159,20 +160,14 @@ public class DataManipulationParser extends Parser{
                 + " ultimate putting it into the best visualizable form";
         commands.put(command.id, command);
         
-        command = new Command("imagent");
-        command.documentation = " Applies a range of data-manipulations to the selected datasets, "
-                + " ultimate putting it into the best visualizable form, customizedd for the glassroutes experiment";
-        command.tutorial = "This provides a good opportunity to consider the scientific meaning in the dataset. Remember that "
-                + " our condition-grouped object now refers to the data from more than just one participant. ::"
-                + " Double click the instance-object and see if you agree with the following statements. "
-                + "(a) Probe A appears better than Probe B:: (b) The oxy and deoxy channels tend to be negatively correlated ::"
-                + " Then, if you like, double click the C on the parent object, wait 30 seconds for it to compute, and consider"
-                + " the relationship between channels in this new layer. ;;"
-                + " As a last step in the tutorial, see if you can confirm what we just saw in  "
-                + " these visualizations by evaluating the information gain of attributes in a new featureset. :: Type makefs(slope, *,*), "
-                + " then double click on this newly created featurset object to see ranking of their information gain";  
+        command = new Command("realtime");
+        command.documentation = " Applies a range of data-manipulations and simplifications to the selected datasets, "
+                + " ripe for realtime classificatoin";
         commands.put(command.id, command);
         
+        command = new Command("realtime");
+        command.documentation = "";
+        commands.put(command.id, command);
         
         //-- granger 
         command = new Command("granger");
@@ -271,6 +266,12 @@ public class DataManipulationParser extends Parser{
         else if (command.startsWith("imagent")) {
             c = commands.get("imagent");
             c.retMessage = imagent(parameters);
+            c.action = "reload";
+        }
+        
+        else if (command.startsWith("realtime")) {
+            c = commands.get("realtime");
+            c.retMessage = realtime(parameters);
             c.action = "reload";
         }
    
@@ -817,9 +818,9 @@ public class DataManipulationParser extends Parser{
 
         //.. Get parameters if any -- how many folds. by default: -1, leave one out
         int numFolds = -1;
-        if (parameters.length > 0) {
-            numFolds = Integer.parseInt(parameters[0]);
-        }  
+        float threshold = 0.75f;
+        if (parameters.length > 0) threshold = Float.parseFloat(parameters[0]);
+        
 
         //.. Add technique description to return string
         String retString = "Evaluating an experiment... ";
@@ -844,15 +845,21 @@ public class DataManipulationParser extends Parser{
             Dataset dataset = getDatasetForEvaluations(experiment.id, performances);
 
             double total = 0;
+            double confTotal = 0;
+            int thresholdGuesses =0;
 
             //.. finally, evaluate each techniqueset
             for (TechniqueSet t : techniquesToEvaluate) {
                 System.out.println("Using " + t.getFeatureSet().getId() + " " + t.getFeatureSet().getConsoleString() + " " + t.getFeatureSet().getFeatureDescriptionString());
 
                 experiment.evaluate(t, dataset, numFolds);
+                Tuple<Integer, Double> tup = t.getMostRecentAverage(0.75f);
+                confTotal += tup.y;
+                thresholdGuesses += tup.x;
                 total += t.getMostRecentAverage();
             }
-            retString += "::Across all, %CORR: " + (total / techniquesToEvaluate.size());
+            retString += "::The average accuracy with leave-one-instance-out validation was " + (total / techniquesToEvaluate.size());
+            retString += "::And, if we only considered predictions with  " + threshold+ " confidence, it was " + (confTotal / techniquesToEvaluate.size() +", making " + thresholdGuesses + " predictions at that level.");
             if (experiment.test) retString += ":: The percentage above reflects the average classification accuracy"
                     + " when the classifier was trained on all but one instance, which it used as a testing case, repeating"
                     + " this procedure once for each instance. The likely poor score reflects the fact that this data is in fact random"
@@ -1211,6 +1218,42 @@ public class DataManipulationParser extends Parser{
     }
     
     
+    public String realtime(String [] parameters) throws Exception {
+        ArrayList<ChannelSet> chanSets = getChanSets(true);
+        String retString = "";
+        for (ChannelSet cs : chanSets) {
+            Experiment e = super.getExperiment(cs, "condition");
+            ArrayList<String> toKeep = new ArrayList();
+            toKeep.add("easy");
+            toKeep.add("hard");
+            e = e.removeAllClassesBut(toKeep);
+
+            //.. remove instances 10 percent larger than the average
+            int instLength = e.getMostCommonInstanceLength();
+            int origSize = e.matrixes.size();
+            int trimmed = e.trimUnfitInstances(instLength);
+           
+            //.. anchor it, setting start to zero
+            e = e.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);
+            //e = e.manipulate(new Transformation(Transformation.TransformationType.movingaverage, 15), false);
+            e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false);
+            e = e.manipulate(new Transformation(Transformation.TransformationType.lowpass, 0.3f), false);
+
+
+            e.setParent(cs.getId()); //.. set parent to what we derived it from
+
+
+            //.. make a new data access object, and add it to our stream
+            TriDAO pDAO = new TriDAO(e);
+
+            ctx.dataLayersDAO.addStream(e.id, pDAO);
+
+            retString += " Creating : " + e.getId() + " with " + e.matrixes.size() + " instances::"
+                    + super.getColorsMessage(e);
+        }
+        return retString;
+    }
+    
     /**Apply a series of manipulations to the data that make sense on a series of
      * high-low cognitive workload inductions, using the imagent fNIRS
      * @param parameters
@@ -1249,7 +1292,7 @@ public class DataManipulationParser extends Parser{
                 filteredSet = filteredSet.bandpass(lowpass, highpass, false);
                 retString += "Applied Bandpass; kept frequencies oscillating between " + lowpass + " and " + highpass + "hz ::";
             }
-     
+       
            // filteredSet = filteredSet.zScore(false);
            // retString += "Z scored the data, so that each value is replaced by the difference between "
              //       + " it and the channel's corresponding mean, divided by the standard deviation::";

@@ -3,7 +3,7 @@
 function DataLayers() {
     this.dls =  new Array(); //.. all available datalayers
     var selected = new Array(); //.. a single datalayer that is selected (has a blue square around it)
-
+    this.lastSelectedId ="";
     //.. get this Datalayer by id; return null if it doesn't exist'
     this.getDLById = function(id) {
         for(var i =0; i< this.dls.length; i++) {
@@ -40,8 +40,11 @@ function DataLayers() {
         }
     }
     
+    
+    
     //.. add the selected to class to target element; remove from all others
     this.selectLayer = function(layerId) {
+        this.lastSelectedId = layerId;
         //.. remove all other 
         for(var i =0; i< this.dls.length; i++) {  
             var dl = this.dls[i]; 

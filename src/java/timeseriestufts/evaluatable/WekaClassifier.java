@@ -173,7 +173,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
         
         if (ts.getTransformations() != null) {
             for (Transformation t : lastTechniqueTested.getTransformations().transformations) {
-                if (t.for3D) streamingExperiment.manipulate(t, false);
+                if (t.for3D) streamingExperiment =streamingExperiment.manipulate(t, true);
             }
         }
         test(streamingExperiment, ts, retPredictions, asAlgosApplied, predictionThreshold);
@@ -195,10 +195,10 @@ public class WekaClassifier  extends ClassificationAlgorithm{
        //.. if the lastTechniqueTested has transformations associated with it, apply those 
        if (lastTechniqueTested.getTransformations() != null) {
            for (Transformation t : lastTechniqueTested.getTransformations().transformations) {
-               if(t.for3D) exp.manipulate(t, false);
-           }
+               if(t.for3D) exp = exp.manipulate(t, true);
+           }  
        }
-         
+       
        //.. retrieve the instances and since we know we only have one, simply classify it
        exp.extractAttributes(lastTechniqueTested.getFeatureSet());
        weka.core.Instances wInstances =exp.getWekaInstances(false);

@@ -33,15 +33,15 @@ public class TechniquesDAO {
          td = getDefaultAttributeSelection();
          techniques.put(td.getId(), td);
      }
-     
+       
      
      private TechniqueDAO getDefaultFeatureSet() throws Exception {
-          FeatureSet fs = new FeatureSet("defaultFS");
-          fs.addFeaturesFromConsole("mean^slope", "*", "WHOLE");
-          TechniqueDAO td = new TechniqueDAO(fs);
+          FeatureSet fs = new FeatureSet("bestfit");
+          fs.addFeaturesFromConsole("bestfit", "*", "*");
+          TechniqueDAO td = new TechniqueDAO(fs);   
           return td;
      }
-     
+       
       private TechniqueDAO getDefaultAttributeSelection()  {
           AttributeSelection as = new AttributeSelection(ASType.none, 3);
           TechniqueDAO td = new TechniqueDAO(as);
@@ -49,10 +49,10 @@ public class TechniquesDAO {
      }
     
      private TechniqueDAO getDefaultML() {
-         WekaClassifier classifier = new WekaClassifier(WekaClassifier.MLType.smo);
+         WekaClassifier classifier = new WekaClassifier(WekaClassifier.MLType.lmt);
          TechniqueDAO td = new TechniqueDAO(classifier);
          return td;
-     } 
+     }  
      
       private TechniqueDAO getAdditionalML() throws Exception {
          ClassificationAlgorithm classifier = new WekaClassifier(WekaClassifier.MLType.jrip);

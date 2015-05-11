@@ -22,7 +22,7 @@ function JavaInterface() {
         if (JSONobj.tutorial != "")
             consoleArea.displayMessage(JSONobj.tutorial, "systemmess", "orangeline");
         
-
+  
         
         //.. is there some action to complete here? A new dataset to reload
         if(JSONobj.action != null) {

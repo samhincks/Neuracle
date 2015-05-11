@@ -51,6 +51,11 @@ public abstract class Evaluatable {
        if (predictions == null) return 0;
        return this.predictions.get(this.predictions.size()-1).getPctCorrect();
    }
+    /**Return most average above specific threshold */
+    public Tuple<Integer, Double> getMostRecentAverage(double threshold) {
+        if (predictions == null) return null;
+        return this.predictions.get(this.predictions.size() - 1).getPctCorrect(threshold);
+    }
    
    /**Returns the average of all the performances collected*/
    public double getAverage() {

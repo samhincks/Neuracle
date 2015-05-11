@@ -96,7 +96,7 @@ function ConsoleArea() {
             this.streaming = true;
              //.. callback that periodically issues a request to update; until what;
             this.streamInterval= setInterval(function() {
-                $("#consoleInput").val(userText);
+                $("#consoleInput").val(userText +"(" + datalayerArea.datalayers.lastSelectedId);
                 javaInterface.postToConsole();
             }, 100); //.. less than 50 and there are errors
             return false;

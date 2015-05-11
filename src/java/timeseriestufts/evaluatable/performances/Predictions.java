@@ -51,6 +51,19 @@ public class Predictions {
         return correct/total;
     }
     
+    public Tuple<Integer,Double> getPctCorrect(double threshold) {
+        if (predictions == null) return null;
+        int total = 0;
+        double correct =0;
+        for (Prediction p : predictions) {
+            if (p.confidence > threshold) {
+                total++;
+                if(p.isCorrect()) correct++;
+            }
+        }
+        return new Tuple(total, correct/total);
+    }
+    
     /**Make a Prediction object out of the parts of a Weka prediction: 
      * guess, answer, and array of confidences
      */
