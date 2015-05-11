@@ -1184,7 +1184,7 @@ public class SMO
   protected static double m_Del = 1000 * Double.MIN_VALUE;
 
   /** Whether logistic models are to be fit */
-  protected boolean m_fitLogisticModels = true; //.. this has a major impact on classification. It gives you distribution  
+  protected boolean m_fitLogisticModels = true; //.. this has a major impact on classification. It gives you distribution
 
   /** The number of folds for the internal cross-validation */
   protected int m_numFolds = -1;

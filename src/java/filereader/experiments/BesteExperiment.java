@@ -190,9 +190,12 @@ public class BesteExperiment {
             testMusicFile(ds, ts, filename);
         
         }
-                System.setOut(out);
+         System.setOut(out);
 
-        System.out.println("Average = " + ts.getAverage());
+       Tuple<Integer, Integer> avg =ts.getAverage(0.95f);
+       float av = (float) avg.x / (float) avg.y;
+        System.out.println(avg.x + " " + avg.y);
+        System.out.println("Average = " + av);
     }
     
     
@@ -205,10 +208,10 @@ public class BesteExperiment {
         FeatureSet fs = new FeatureSet("fs");
         //fs.addFeaturesFromConsole("slope^mean^absmean^largest^smallest^sax-cmkfd^sax-lcbom", "*", "*");
 
-        fs.addFeaturesFromConsole("slope", "*", "*");
+        fs.addFeaturesFromConsole("slope^mean^bestfit", "*", "*");
         ts.addTechnique(fs);
         ts.addTechnique(new AttributeSelection(ASType.none, 150));
-        ts.addTechnique(new PassFilter(PassFilter.FilterType.LowPass, 1));
+        ts.addTechnique(new PassFilter(PassFilter.FilterType.LowPass, 0.3f));
         ts.addTechnique(new Transformation(Transformation.TransformationType.none));
         
         return ts;

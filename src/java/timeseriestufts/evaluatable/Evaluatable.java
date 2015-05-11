@@ -52,7 +52,7 @@ public abstract class Evaluatable {
        return this.predictions.get(this.predictions.size()-1).getPctCorrect();
    }
     /**Return most average above specific threshold */
-    public Tuple<Integer, Double> getMostRecentAverage(double threshold) {
+    public Tuple<Integer, Integer> getMostRecentAverage(double threshold) {
         if (predictions == null) return null;
         return this.predictions.get(this.predictions.size() - 1).getPctCorrect(threshold);
     }
@@ -70,6 +70,22 @@ public abstract class Evaluatable {
        
        return totalCorrect / totalGuesses;
    }
+   
+       /**
+     * Returns the average of all the performances collected
+     */
+    public Tuple<Integer,Integer> getAverage(float threshold) {
+        if (predictions == null) return null;
+        int totalCorrect = 0;
+        int totalGuesses = 0;
+        for (Predictions p : predictions) {
+            Tuple<Integer, Integer> tup = p.getPctCorrect(threshold);
+            totalGuesses+=tup.y;
+            totalCorrect += tup.x;
+        }
+
+        return new Tuple(totalCorrect,totalGuesses);
+    }
    
    public double getAverageWhereAnswerWasNot(String exclude) throws Exception{
        if (predictions == null) {

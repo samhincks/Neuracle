@@ -844,20 +844,20 @@ public class DataManipulationParser extends Parser{
             Dataset dataset = getDatasetForEvaluations(experiment.id, performances);
 
             double total = 0;
-            double confTotal = 0;
-            int thresholdGuesses =0;
+            double threshTotal = 0;
+            int threshCorrect =0;
 
             //.. finally, evaluate each techniqueset
             for (TechniqueSet t : techniquesToEvaluate) {
                 System.out.println("Using " + t.getFeatureSet().getId() + " " + t.getFeatureSet().getConsoleString() + " " + t.getFeatureSet().getFeatureDescriptionString());
                 experiment.evaluate(t, dataset, numFolds);
-                Tuple<Integer, Double> tup = t.getMostRecentAverage(threshold);
-                confTotal += tup.y;
-                thresholdGuesses += tup.x;
+                Tuple<Integer, Integer> tup = t.getMostRecentAverage(threshold);
+                threshCorrect += tup.x;
+                threshTotal += tup.y;
                 total += t.getMostRecentAverage();
             }
             retString += "::The average accuracy with leave-one-instance-out validation was " + (total / techniquesToEvaluate.size());
-            retString += "::And, if we only considered predictions with  " + threshold+ " confidence, it was " + (confTotal / techniquesToEvaluate.size() +", making " + thresholdGuesses + " predictions at that level.");
+            retString += "::And, if we only considered predictions with  " + threshold+ " confidence, it was " + ((threshCorrect / threshTotal)  +", making " + threshTotal + " predictions at that level.");
             if (experiment.test) retString += ":: The percentage above reflects the average classification accuracy"
                     + " when the classifier was trained on all but one instance, which it used as a testing case, repeating"
                     + " this procedure once for each instance. The likely poor score reflects the fact that this data is in fact random"

@@ -522,7 +522,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                 toKeep.add("easy"); toKeep.add("hard");
                 exp =exp.removeAllClassesBut(toKeep);
                 exp.evaluate(ts, ds, TEST);
-                Tuple<Integer, Double> tup = ts.getMostRecentAverage(0.5f);
+                Tuple<Integer, Integer> tup = ts.getMostRecentAverage(0.5f);
                 System.out.println(tup.x + " : " + tup.y);
             }
             
