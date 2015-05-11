@@ -104,7 +104,6 @@ public class DataManipulationParser extends Parser{
                + " evaluates the dataset by creating a machine learning algorithm on different partitions of the data"
                + " and evaluating it on unseen instances ::";
         command.parameters = "The threshold to display confidence values";
-        command.debug = "Unclear if numFolds still works";
         command.tutorial = "The number above reflects the classification accuracy. Trained on all but one trial and repeated"
                 + " for every trial, what percent of the time did the machine learning algorithm guess correctly?"
                 + " :: Let's try it again with some new classification techniques:: Type makeml(lmt) to create a logistic modeling tree machine learning"
@@ -851,9 +850,8 @@ public class DataManipulationParser extends Parser{
             //.. finally, evaluate each techniqueset
             for (TechniqueSet t : techniquesToEvaluate) {
                 System.out.println("Using " + t.getFeatureSet().getId() + " " + t.getFeatureSet().getConsoleString() + " " + t.getFeatureSet().getFeatureDescriptionString());
-
                 experiment.evaluate(t, dataset, numFolds);
-                Tuple<Integer, Double> tup = t.getMostRecentAverage(0.75f);
+                Tuple<Integer, Double> tup = t.getMostRecentAverage(threshold);
                 confTotal += tup.y;
                 thresholdGuesses += tup.x;
                 total += t.getMostRecentAverage();

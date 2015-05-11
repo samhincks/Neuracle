@@ -5,6 +5,7 @@
 
 package timeseriestufts.evaluatable;
 import filereader.Markers;
+import filereader.experiments.BesteExperiment;
 import java.io.IOException;  
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -27,7 +28,6 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.LibSVM;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.functions.MultilayerPerceptron;
-import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.RegSMO;
 import weka.classifiers.functions.SimpleLogistic;
 import weka.classifiers.functions.supportVector.Kernel;
@@ -61,8 +61,9 @@ import wlsvm.WLSVM;
  */
 public class WekaClassifier  extends ClassificationAlgorithm{
 
-    public static boolean isFavorite(MLType type) {
-        return (type == MLType.adaboost||type == MLType.smo || type == MLType.lmt || type == MLType.tnn);
+    public static boolean isFavorite(MLType type) {  
+        return true;
+       // return (type == MLType.adaboost||type == MLType.smo || type == MLType.lmt || type == MLType.simple || type == MLType.tnn);
     }
     //.. Used if a classifier is trained, and saved, to be used for later, potentially realtime classification
     public int timesTrained =0;
@@ -415,13 +416,13 @@ public class WekaClassifier  extends ClassificationAlgorithm{
     private void buildLibSVM() throws Exception {
         libsvm = new LibSVM();
         libsvm.setOptions(weka.core.Utils.splitOptions("-K 1 -G 10"));
-        PrintStream out = System.out;
-        System.setOut(new PrintStream(new OutputStream() {  @Override public void write(int arg0) throws IOException { }}));
-        
+       // PrintStream out = System.out;
+        //System.setOut(new PrintStream(new OutputStream() {  @Override public void write(int arg0) throws IOException { }}));
+        libsvm.setProbabilityEstimates(true);
        // libsvm.setClassifier(new LibSVM());
         //libsvm.addCVParameter("G 0.001 1 100");
         libsvm.buildClassifier(data);
-        System.setOut(out);
+        //System.setOut(out);
     }  
     
     /*SMO Parameters: 
@@ -442,6 +443,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
         String rbf = "\"weka.classifiers.functions.supportVector.RBFKernel -C 250007 -G 0.5\"";
         String puk = "\"weka.classifiers.functions.supportVector.Puk\"";
         String kernel = poly;
+        
        // smo.setOptions(weka.core.Utils.splitOptions("-C 1 -L 0.0010 -P 0.0 E-12 -N 0 -V -1 -W 1 -K " +kernel));
         smo.buildClassifier(data);
      }
@@ -515,8 +517,13 @@ public class WekaClassifier  extends ClassificationAlgorithm{
             int TEST =13;
             
             if (TEST==13) {
-                
-                e.train(ts);
+                Experiment exp = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
+                ArrayList<String> toKeep = new ArrayList();
+                toKeep.add("easy"); toKeep.add("hard");
+                exp =exp.removeAllClassesBut(toKeep);
+                exp.evaluate(ts, ds, TEST);
+                Tuple<Integer, Double> tup = ts.getMostRecentAverage(0.5f);
+                System.out.println(tup.x + " : " + tup.y);
             }
             
             if (TEST == 12) {
