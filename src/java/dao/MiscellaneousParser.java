@@ -113,6 +113,12 @@ public class MiscellaneousParser extends Parser{
         command.parameters = "1. k-back. 2. durationInSeconds, 3. Port-num (optional)";
         commands.put(command.id, command);
         
+        //-- slope
+        command = new Command("stat");
+        command.documentation = "Returns the stat at the the last x readings";
+        command.parameters = "0. stat = slope, secondder, or bestfit, 1. datalayername, 2. channelIndex 3. readingsBack ";
+        command.action = "stat";
+        commands.put(command.id, command);
         
         //-- Custom
         command = new Command("custom");
@@ -201,7 +207,10 @@ public class MiscellaneousParser extends Parser{
             c = commands.get("nback");
             c.retMessage = this.nBack(parameters);
         }
-        
+        else if (command.startsWith("stat")) {
+            c = commands.get("stat");
+            c.retMessage = this.stat(parameters);
+        }
         else if (command.startsWith("tutorial")) {
             c = commands.get("tutorial");
             c.retMessage = this.tutorial();
@@ -527,6 +536,27 @@ public class MiscellaneousParser extends Parser{
         
         return retString;    
     }  
+    
+    private String stat(String [] parameters) throws Exception{
+        DataLayer dl = this.currentDataLayer;
+        int channel = 3; 
+        int readingsBack = 40;
+        String stat = "slope";
+        if (parameters.length >0) stat = parameters[0];
+        if (parameters.length >1) dl = ctx.getDataLayers().get(parameters[1]).dataLayer;
+        if (parameters.length >2) channel = Integer.parseInt(parameters[2]);
+        if (parameters.length >3) readingsBack = Integer.parseInt(parameters[3]);
+        
+        if (dl instanceof ChannelSet) {
+            ChannelSet cs = (ChannelSet) dl;
+            Channel c = cs.streams.get(channel);
+            Channel sub = c.getSample(c.numPoints - readingsBack-1, c.numPoints-1, true);
+            if (stat.equals("slope")) return sub.getSlope()+"";
+            if (stat.equals("bestfit")) return sub.getBestFit()+"";
+            if (stat.equals("secondder")) return sub.getSecondDerivative() +"";
+        }
+        throw new Exception("Must be a channelset");
+    }
     
     /**Run a tutorial for the user to familiarize them with basic commands
      * @return

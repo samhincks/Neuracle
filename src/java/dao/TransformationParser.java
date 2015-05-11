@@ -99,8 +99,8 @@ public class TransformationParser extends Parser{
         //-- PARTITION
         command = new Command("partition");
         command.documentation = "With a raw channel set selected, partition it into "
-                + "a new channelset for each trial";
-        command.parameters = "conditionName = the condition to partition on";
+                + "a new channelset for each trial. Or if an experiment is selected, partition into different parts of the instance";
+        command.parameters = "conditionName = the condition to partition on, if channelset. #partitions if experiment";
         command.action = "reload";
         commands.put(command.id, command);
         
