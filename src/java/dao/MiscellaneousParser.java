@@ -516,7 +516,7 @@ public class MiscellaneousParser extends Parser{
             
         }     
         
-        int duration = seconds * 1000 - 7000; //.. since it takes 3000 to introduce it
+        int duration = seconds * 1000 -2000; 
         if (duration < 0) throw new Exception("Too short duration to play audio");
 
         AudioNBack nBack;

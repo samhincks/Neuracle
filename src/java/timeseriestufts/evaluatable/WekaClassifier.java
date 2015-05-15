@@ -108,7 +108,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
      * in parameter predictions. Apply the attribute selection algorithms append in
      asAlgosApplied**/
     public void test(Experiment testing, TechniqueSet ts, Predictions predictions,
-            ArrayList<weka.filters.supervised.attribute.AttributeSelection> asAlgosApplied, float predictionThreshold) throws Exception  {
+            ArrayList<weka.filters.supervised.attribute.AttributeSelection> asAlgosApplied, float predictionThreshold, boolean testEvery) throws Exception  {
        
         //.. extract attributes
         testing.extractAttributes(ts.getFeatureSet());
@@ -129,22 +129,21 @@ public class WekaClassifier  extends ClassificationAlgorithm{
             weka.core.Instance wInstance = (weka.core.Instance) wEnumeration.nextElement();
             Instance myInstance = testing.matrixes.get(index);
             Classifier classifier = getClassifier();
-
-            //.. if its conditionless, classify regardless 
-            if (myInstance.condition == null) {
-                int guess = (int) classifier.classifyInstance(wInstance);
-                double[] distribution = classifier.distributionForInstance(wInstance);
-                
-                //.. save the prediction
-                predictions.addPrediction(guess, distribution, index);
-            }
+             
             //.. only classify if we have this condition
-            else if (testing.classification.hasCondition(myInstance.condition) && (predictionThreshold == -1 ||myInstance.conditionPercentage>predictionThreshold)) {
+            if (myInstance.condition != null  &&testing.classification.hasCondition(myInstance.condition) && (predictionThreshold == -1 ||myInstance.conditionPercentage>predictionThreshold)) {
                 int guess = (int) classifier.classifyInstance(wInstance);
                 double[] distribution = classifier.distributionForInstance(wInstance);
                 //.. save the prediction
                 predictions.addPrediction(guess, (int) wInstance.classValue(),
                         myInstance.conditionPercentage, distribution, index);
+            }
+            else if (testEvery) {
+                int guess = (int) classifier.classifyInstance(wInstance);
+                double[] distribution = classifier.distributionForInstance(wInstance);    
+                
+                //.. save the prediction
+                predictions.addPrediction(guess, distribution, index);
             }
             index++;
         }
@@ -161,15 +160,16 @@ public class WekaClassifier  extends ClassificationAlgorithm{
      **/
     public Predictions testRealStream(Classification c, TechniqueSet ts, Dataset ds, ChannelSet stream, 
             int instanceLength, int everyK, 
-            ArrayList<weka.filters.supervised.attribute.AttributeSelection> asAlgosApplied, float predictionThreshold) throws Exception{
-        if (instanceLength < 4) throw new Exception("Instance length must be longer than 4");
+            ArrayList<weka.filters.supervised.attribute.AttributeSelection> asAlgosApplied, 
+            float predictionThreshold, boolean testEvery) throws Exception{
+        if (instanceLength < 4) throw  new Exception("Instance length must be longer than 4");
         if(everyK <1) throw new Exception("New-Instance-Sampling-rate cannot be less 1" );
         
         //.. make Predictions object to save stats
         Predictions retPredictions = new Predictions(ds, ts, c, instanceLength,everyK);
 
         //.. Retrieve our instance-packed version of the stream and get weka version of it
-        Experiment streamingExperiment = stream.getMovingExperiment(c, instanceLength, everyK);
+        Experiment streamingExperiment = stream.getMovingExperiment(c, instanceLength, everyK, testEvery);
         streamingExperiment.setTechniqueSet(ts);
         
         if (ts.getTransformations() != null) {
@@ -177,7 +177,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                 if (t.for3D) streamingExperiment =streamingExperiment.manipulate(t, true);
             }
         }
-        test(streamingExperiment, ts, retPredictions, asAlgosApplied, predictionThreshold);
+        test(streamingExperiment, ts, retPredictions, asAlgosApplied, predictionThreshold, testEvery);
         return retPredictions;
     }
    
@@ -544,7 +544,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                 pair.x.printInfo();
                 
                 WekaClassifier wc = pair.x.train(ts);
-                Predictions p  = wc.testRealStream(markers.getClassification(), ts, ds, pair.y, 10, 1, null, .7f);
+                Predictions p  = wc.testRealStream(markers.getClassification(), ts, ds, pair.y, 10, 1, null, .7f, false);
                 p.printPredictions();
             }
             else if (TEST ==2) {

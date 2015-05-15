@@ -134,14 +134,14 @@ public class DataLayerActionBean extends BaseActionBean{
             ctx.setCurrentName(giver);
             DataLayerDAO dlGiver = ctx.dataLayersDAO.get(giver);         
             JSONObject jsonObj;
-
+            dlGiver.performances = ctx.getPerformances(); //.. fine if its null
            
             //.. correlation
             if (correlation) {
                 if (!(dlGiver instanceof BiDAO)) {
                     throw new Exception(); //.. fail silently
                 } else {
-                    BiDAO bDAO = (BiDAO) dlGiver;
+                    BiDAO bDAO = (BiDAO) dlGiver;  
                     jsonObj = bDAO.getCorrelationJSON();
                 }
             }

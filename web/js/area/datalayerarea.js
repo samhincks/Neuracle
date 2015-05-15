@@ -165,7 +165,11 @@ function DatalayerArea(selection) {
                 //.. add images and art 
                 newLayer.drawArt();
                 newLayer.displayTooltips();
-                newLayer.toggleCTooltip(dl.performance);               
+                newLayer.toggleCTooltip(dl.performance);    
+                
+                //.. finally, instantitate the listeners
+                 datalayerInit("#"+newLayer.id); //.. relaod the drag/drop properties
+
             }
             
             else { //.. Even if we're not redrwaing the layer, potentially add an extra button

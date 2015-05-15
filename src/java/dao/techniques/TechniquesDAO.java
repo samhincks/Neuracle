@@ -35,7 +35,7 @@ public class TechniquesDAO {
      }
        
      
-     private TechniqueDAO getDefaultFeatureSet() throws Exception {
+     private TechniqueDAO getDefaultFeatureSet() throws Exception { 
           FeatureSet fs = new FeatureSet("bestfit");
           fs.addFeaturesFromConsole("bestfit", "*", "*");
           TechniqueDAO td = new TechniqueDAO(fs);   
@@ -49,7 +49,7 @@ public class TechniquesDAO {
      }
     
      private TechniqueDAO getDefaultML() {
-         WekaClassifier classifier = new WekaClassifier(WekaClassifier.MLType.lmt);
+         WekaClassifier classifier = new WekaClassifier(WekaClassifier.MLType.smo);
          TechniqueDAO td = new TechniqueDAO(classifier);
          return td;
      }  

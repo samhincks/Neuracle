@@ -186,8 +186,7 @@ public class Instance extends ChannelSet{
         }
         
         //.. then set value of class and return
-        if (condition != null)
-            wekaInstance.setValue(getNumAttributes(), condition);
+        try{ wekaInstance.setValue(getNumAttributes(), condition); }catch(Exception e ) {/*Fine if we dont have or dont know this condition*/}
         return wekaInstance;
     }
 

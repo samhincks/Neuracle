@@ -70,7 +70,6 @@ function JavaInterface() {
         else {
             datalayerArea.addDatalayers(JSONobj.datalayers);
             datalayerArea.removeDatalayers(JSONobj.datalayers);
-            datalayerInit(); //.. relaod the drag/drop properties
         }
     }
      /**Retrieve all techniques and their names*/

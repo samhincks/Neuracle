@@ -1,4 +1,4 @@
-
+    
 package dao;
 
 import dao.datalayers.BiDAO;
@@ -7,8 +7,8 @@ import dao.datalayers.QuadDAO;
 import dao.datalayers.TriDAO;
 import dao.techniques.TechniqueDAO;
 import dao.techniques.TechniquesDAO;
-import java.util.ArrayList;
-import java.util.Hashtable; 
+import java.util.ArrayList;  
+import java.util.Hashtable;     
 import org.json.JSONArray;
 import org.json.JSONObject;
 import stripes.ext.ThisActionBeanContext;
@@ -28,7 +28,7 @@ import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.bi.ChannelSet.Tuple;
 import timeseriestufts.kth.streams.quad.MultiExperiment;
 import timeseriestufts.kth.streams.tri.ChannelSetSet;
-import timeseriestufts.kth.streams.tri.Experiment;
+import timeseriestufts.kth.streams.tri.Experiment;  
 import timeseriestufts.kth.streams.uni.Channel;
 import timeseriestufts.kth.streams.uni.FrequencyDomain;
 
@@ -63,7 +63,7 @@ public class DataManipulationParser extends Parser{
                 + "If I say filter.movingaverage(1), it should 'almost' take away the pulse, but"
                 + " I need to say filter.movingaverage(0.005) ";
         commands.put(command.id, command);
-        
+          
         //-- calcoxy 
         command = new Command("calcoxy");
         command.documentation = " With a 2D channelset selected, multiply 690 and 830 cols"
@@ -164,8 +164,19 @@ public class DataManipulationParser extends Parser{
                 + " ripe for realtime classificatoin";
         commands.put(command.id, command);
         
-        command = new Command("realtime");
-        command.documentation = "";
+        
+        command = new Command("imagent");
+        command.documentation = " Applies a range of data-manipulations to the selected datasets, "
+                + " ultimate putting it into the best visualizable form, customizedd for the glassroutes experiment";
+        command.tutorial = "This provides a good opportunity to consider the scientific meaning in the dataset. Remember that "
+                + " our condition-grouped object now refers to the data from more than just one participant. ::"
+                + " Double click the instance-object and see if you agree with the following statements. "
+                + "(a) Probe A appears better than Probe B:: (b) The oxy and deoxy channels tend to be negatively correlated ::"
+                + " Then, if you like, double click the C on the parent object, wait 30 seconds for it to compute, and consider"
+                + " the relationship between channels in this new layer. ;;"
+                + " As a last step in the tutorial, see if you can confirm what we just saw in  "
+                + " these visualizations by evaluating the information gain of attributes in a new featureset. :: Type makefs(slope, *,*), "
+                + " then double click on this newly created featurset object to see ranking of their information gain";  
         commands.put(command.id, command);
         
         //-- granger 
@@ -1147,7 +1158,6 @@ public class DataManipulationParser extends Parser{
     }
     
     private String classify(String [] parameters, DataLayerDAO dDAO, Performances performances) throws Exception{
-        
         if(!(currentDataLayer instanceof ChannelSet)) throw new Exception("The command classify only "
                 + "applies to 2D Channelsets " + currentDataLayer.id + " doesn't fit that bill");
         ChannelSet cs = (ChannelSet) currentDataLayer; 
@@ -1161,21 +1171,33 @@ public class DataManipulationParser extends Parser{
         
         //.. By default, read every shuold be as long as there are instnces
         int readEvery = classifier.lastInstanceLength;
-        float threshold = 0.5f;
+        float threshold = -1;
+        boolean getEvery = false; //.. true if we ask to only get specific threshold. This makes so we get evrey instance
         if (parameters.length>0) readEvery = Integer.parseInt(parameters[0]);
         if (parameters.length >1) threshold = Float.parseFloat(parameters[1]);
+        if (threshold < 0) getEvery = true;
         if(cs.getMinPoints() < readEvery) throw new Exception("There is not enough space to create even one instance. Testing must be larger");
 
+         
        //..Classify the  
        Predictions p = classifier.testRealStream(classifier.lastTrainedClassification,
                classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), 
-               performances), cs, classifier.lastInstanceLength, readEvery, classifier.lastAsAlgosUsed,threshold); 
+               performances), cs, classifier.lastInstanceLength, readEvery, classifier.lastAsAlgosUsed,threshold, getEvery); 
         //.. Some time a very long time ago, I thought it would be OK to set this to null, and not 
        //.. remind myself that this would fuck up attribute selection. Today I paid the hard price for that. 
        
        p.setId(dDAO.getId());//.. this is an exception, since here we actualyl do want to set the id
        performances.addNewPredictionsSet(p); 
-       return "Successfully classified this dataset, and made " + p.predictions.size() + " predictions, saved in" + performances.getPredictionSet(dDAO.getId()).getId();
+       String ret = "Successfully classified this dataset, and made " + p.predictions.size() + " predictions , each of length " +classifier.lastInstanceLength +
+               " . The data I'm predicting has " + cs.getMinPoints() + " points. ";
+       if (getEvery) ret +=  " We read all the data, regardless of if it pertained to something we had trained on or not ";
+       if (threshold > -1) ret+= " We only included an isntance if pertained to more than " + threshold + " of that actual condition";
+      
+       
+       //.. New feature: add the predictions to the channelset as markers 
+       if (getEvery) cs.addMarkers(p.getMarkers(readEvery));
+       
+       return ret;
     }
     
     /**Predicts the last K readings of the dataset, and returns confidence and value if possible.
@@ -1229,7 +1251,7 @@ public class DataManipulationParser extends Parser{
             //.. remove instances 10 percent larger than the average
             int instLength = e.getMostCommonInstanceLength();
             int origSize = e.matrixes.size();
-            int trimmed = e.trimUnfitInstances(instLength);
+            //int trimmed = e.trimUnfitInstances(instLength);
            
             //.. anchor it, setting start to zero
             e = e.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);
@@ -1377,7 +1399,7 @@ public class DataManipulationParser extends Parser{
  
             Experiment e = filteredSet.splitByLabel("Condition");
             ArrayList<String> toKeep = new ArrayList();
-            toKeep.add("meditation");
+            toKeep.add("meditation"); 
             toKeep.add("multiplication");
             e = e.removeAllClassesBut(toKeep);
             

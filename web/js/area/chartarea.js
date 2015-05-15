@@ -29,7 +29,9 @@ function ChartArea(id, descArea) {
         }
         
         else if(JSONobj.type == "channelset") {
-            this.displayChannelSet(JSONobj);
+            if(JSONobj.data.classifiers==null)this.displayClassificationSet(JSONobj); //. I like this one more for now
+                //this.displayChannelSet(JSONobj);
+            else this.displayClassificationSet(JSONobj);
         }
         
         else if(JSONobj.type == "correlation") {
@@ -51,6 +53,22 @@ function ChartArea(id, descArea) {
         corChart.data(JSONobj.data).width(width).height(height)(selection);
     }
     
+    this.displayClassificationSet = function(JSONobj) {
+        $(selection).children().remove();
+        d3.selectAll('.line-graph').remove(); //.. remove if it exists already
+        data = JSONobj.data;
+        var actualMaxPoints = JSONobj.actualNumPoints;
+        var readingsPerSec = JSONobj.readingsPerSec;
+        var maxInSeconds = (actualMaxPoints / readingsPerSec);
+        data["maxTime"] = maxInSeconds;
+        var width = $(selection).width() - border;
+        var height = $(selection).height() - border;
+        
+        var chart = ClassificationChart();
+        chart.maxTime(maxInSeconds).width(width).height(height).data(data)(selection);
+
+        //this.writeMarkerVals(JSONobj.data.markerNames);
+    }
     this.displayChannelSet = function(JSONobj) {
         $(selection).children().remove();
         d3.selectAll('.line-graph').remove(); //.. remove if it exists already
@@ -60,8 +78,23 @@ function ChartArea(id, descArea) {
         var maxInSeconds = (actualMaxPoints / readingsPerSec);
         data["maxTime"] = maxInSeconds;
         streamChart = new LineGraph({containerId: 'topRight', data: data});
+        console.log(JSONobj);
+        //this.writeMarkerVals(JSONobj.data.markerNames);
     }
     
+    this.writeMarkerVals = function(JSONarr) {
+        var msg = "";
+        for (var k =0; k <JSONarr.length; k++) {
+            var arr2 = JSONarr[k];
+            for (var i =0; i < arr2.length; i++) {
+                var ob = arr2[i];
+                msg += ob.condition + " : " + ob.index + "  | ";
+            }
+            consoleArea.displayMessage(msg);
+            msg ="";  
+        }
+        
+    }
     
     this.displayExperiment = function(JSONobj) {
         $(selection).children().remove();

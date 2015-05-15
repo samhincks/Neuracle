@@ -22,7 +22,8 @@ public abstract class DataLayerDAO {
     public boolean add = false;
     public DataLayer dataLayer;
     public ArrayList<TechniqueDAO> tDAOs = new ArrayList(); //.. Techniques that inform evaluation
-    
+    public Performances performances = null;
+
     
     public String getId() {
         return dataLayer.getId();
@@ -112,8 +113,7 @@ public abstract class DataLayerDAO {
          
            JSONArray subVals = new JSONArray();
         
-            /**ERROR: each fold performance is what it should be, we get 20. We want the average over one condition, a set of 10
-             */
+            //.. ERROR: each fold performance is what it should be, we get 20. We want the average over one condition, a set of 10
             for (Predictions f : d.getGroupedPerformances()) {
                 JSONObject subPerformance = new JSONObject();
                 subPerformance.put("value", f.getPctCorrect()); 
@@ -126,29 +126,72 @@ public abstract class DataLayerDAO {
                 pObj.put("subValues", subVals);
             
             jsonObj.put("performance", pObj);
-         }
+        }
          
-         //.. THIS SHould only be true for a 2d channelset, where we have applied classify()
-         //.. [{"guess":"a","answer":"a","confidence":0.3333333333333333}
-         if (pred != null) { 
-              JSONArray predictions = new JSONArray();      
-              JSONObject predObj = new JSONObject();
-              predObj.put("classes", pred.classification.getJSON());
-              predObj.put("length", pred.instanceLenth);
-              predObj.put("every", pred.everyK);
-              for (Prediction pr : pred.predictions) {
-                  JSONObject prediction = new JSONObject();
-                  
-                  prediction.put("guess",pr.prediction);
-                  prediction.put("answer", pr.answer);
-                  prediction.put("confidence", pr.confidence);
-                  prediction.put("percentage", pr.conditionPercentage);
-                  predictions.put(prediction);
-              }
-                 
-              predObj.put("predictions", predictions);
-              jsonObj.put("predictions", predObj);
-         }
-         return jsonObj;
+        jsonObj.put("predictions", getClassificationsOld());
+        return jsonObj;
+    }
+    
+    public JSONObject getClassifications(double scale)  throws Exception{
+        Predictions pred = performances.getPredictionSet(this.getId());
+        JSONObject predObj = null;
+        if (pred != null) {
+            JSONArray predictions = new JSONArray();
+            predObj = new JSONObject();
+            predObj.put("classes", pred.classification.getJSON());
+            predObj.put("length", pred.instanceLenth /scale);
+            predObj.put("every", pred.everyK /scale);
+            predObj.put("name", pred.techniqueSet.getClassifier().getId());
+            String predictingClass =null;
+            if(pred.classification.values.size() ==2){
+               if(pred.classification.hasCondition("hard")) {
+                    predObj.put("binaryClass", "hard");
+                    predictingClass ="hard";
+                }
+               else {
+                   predictingClass = pred.classification.values.get(0);
+                   predObj.put("binaryClass", predictingClass);
+               }
+            }
+            int position = 0;
+            for (Prediction pr : pred.predictions) {
+                JSONObject prediction = new JSONObject();
+                prediction.put("value", pr.prediction);
+                prediction.put("answer", pr.answer);
+                prediction.put("confidence", pr.confidence);
+                prediction.put("start", position);
+
+                position += pred.everyK/scale;
+                if (predictingClass != null) { //.. if its a binary prediction, set confidence to inverse if prediction is differnt
+                    if (!(pr.prediction.equals(predictingClass)))prediction.put("confidence",1- pr.confidence);
+                }
+                predictions.put(prediction);
+            }
+
+            predObj.put("classifications", predictions);
+        }
+        return predObj;
+    }
+    public JSONObject getClassificationsOld()  throws Exception{
+        Predictions pred = performances.getPredictionSet(this.getId());
+        JSONObject predObj = null;
+        if (pred != null) {
+            JSONArray predictions = new JSONArray();
+            predObj = new JSONObject();
+            predObj.put("classes", pred.classification.getJSON());
+            predObj.put("length", pred.instanceLenth);
+            predObj.put("every", pred.everyK);
+            for (Prediction pr : pred.predictions) {
+                JSONObject prediction = new JSONObject();
+                prediction.put("guess", pr.prediction);
+                prediction.put("answer", pr.answer);
+                prediction.put("confidence", pr.confidence);
+                prediction.put("percentage", pr.conditionPercentage);
+                predictions.put(prediction);
+            }
+
+            predObj.put("predictions", predictions);
+        }
+        return predObj;
     }
 }

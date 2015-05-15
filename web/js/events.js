@@ -91,8 +91,10 @@ function init() {
 }
 
 
-function datalayerInit() {
-    $('.datalayer').mouseenter(function(e) {
+//.. 
+function datalayerInit(datalayer) {
+    if (arguments.length == 0) datalayer =".datalayer";
+    $(datalayer).mouseenter(function(e) {
         $('#giver').val(e.currentTarget.id); //.. e.target.id gives you a bug sometimes 
     });
 
@@ -116,7 +118,7 @@ function datalayerInit() {
     var altKey = false;
     var shiftKey = false; //.. for multi-selection
     //.. if a channel set is clicked
-    $(".datalayer").mousedown(function(e) {
+    $(datalayer).mousedown(function(e) {
         /// $(".ui-tooltip").tooltip('close'); // doesnt work 
         if (!shiftKey)
             datalayerArea.datalayers.selectLayer(e.currentTarget.id);
@@ -126,20 +128,22 @@ function datalayerInit() {
     });
 
     //.. if a channel set is dbl-clicked
-    $(".datalayer").dblclick(function(e) { //.. change to .experiment
+    $(datalayer).dblclick(function(e) { //.. change to .experiment
         datalayerArea.datalayers.selectLayer(e.currentTarget.id);
         if (altKey) javaInterface.postToDataLayer("debug");
         else javaInterface.postToDataLayer();
     });
 
     //.. When I release a datalayer, show what techniques I intersect
-    $(".datalayer").mouseup(function(e) {
+    $(datalayer).mouseup(function(e) {
         datalayerArea.highlightIntersectedTechniques();
         datalayerArea.datalayers.unselectAll();
         datalayerArea.boundsCheck();
     });
+
     
 }
+
 
 function individualTechniqueInit(id, type) {
     //.. if a technique is click (do essentially same as if channel is

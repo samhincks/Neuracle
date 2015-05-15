@@ -8,6 +8,7 @@ import filereader.ChannelSetFromStringsMaker;
 import filereader.Label;
 import filereader.Labels;
 import filereader.Markers;
+import filereader.Markers.Trial;
 import filereader.TSTuftsFileReader;
 import java.awt.Point;      
 import java.io.File;  
@@ -29,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import timeseriestufts.evaluatable.Transformation;
 import timeseriestufts.evaluatable.Transformations;
+import timeseriestufts.evaluatable.performances.Performances;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.BidimensionalLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
@@ -49,7 +51,6 @@ public class BiDAO extends DataLayerDAO {
     public int curPos = 0; //.. DELETE THIS LATER
     public Hashtable<String,String> curLabels = null; //.. when data is streamed in
     public ArrayList<Labels> labels = null; //.. a collection of labels describing condition of corresponding points
-    
     
     public BiDAO(ArrayList<DataLayer> channels) {
         this.channels = channels;
@@ -215,7 +216,118 @@ public class BiDAO extends DataLayerDAO {
             jsonObj.put("manipulation", channelSet.transformations.transformations.size());
         return jsonObj;
     }
-     
+    private JSONObject getChannels(ChannelSet channelSet, int MAXPOINTS, int MAXCHANNELS, int FIRST) throws Exception {
+        JSONArray values = new JSONArray();
+        JSONObject data = new JSONObject();
+        data.put("start", 1);
+
+        //.. only show some channels if we have absurdly many, and only 
+        //... show so many points if we have absurdly many
+        int numChannels = channelSet.getChannelCount();
+        int chanInc = 1;
+        if (numChannels > MAXCHANNELS) chanInc = numChannels / MAXCHANNELS;
+
+        //.. Condense the data, setting maximum points to stream
+        int numPoints;
+
+        //.. add id of each column as label, then add to the data obj
+        JSONArray names = new JSONArray();
+
+        //.. Create each channel
+        for (int i = 0; i < numChannels; i += chanInc) { //.. We are really toying here, I dont like it
+            UnidimensionalLayer channel = channelSet.getChannel(i);
+            names.put(channel.id);
+
+            //.. Add each point in data to JSONArray
+            //... BUT DO NOT ADD MORE THAN MAX POINTS
+            int pointsInc = 1;
+            numPoints = channel.numPoints;
+            if (numPoints > MAXPOINTS) {
+                pointsInc = numPoints / MAXPOINTS;
+            }
+            data.put("step", pointsInc);
+            data.put("end", numPoints);
+
+            JSONArray channelData = new JSONArray();
+
+            //.. add points at specified increments
+            for (int j = 0; j < numPoints; j += pointsInc) { //. 0, numPoints, change later
+                float p = channel.getPointOrNull(j);
+                channelData.put(p);
+            }
+            values.put(channelData);
+        }
+        data.put("names", names);
+        data.put("values", values);
+        return data;
+    }
+    
+    
+    public void addMarkers(ChannelSet channelSet, JSONObject data, double scale) throws Exception {
+        JSONArray markerNames = new JSONArray();
+        JSONArray values = new JSONArray();
+        JSONArray names = data.getJSONArray("names");
+        
+        //... Add numerically visualizable markers
+        for (int i = 0; i < channelSet.markers.size(); i++) {
+            JSONObject js = new JSONObject();
+            Markers m = channelSet.markers.get(i);
+            JSONArray trials = new JSONArray();
+            for (Trial t : m.trials) {
+                JSONObject trial = new JSONObject();
+                trial.put("start", t.start / scale);
+                trial.put("name", m.name);
+                trial.put("value", t.name);
+                trial.put("length", t.getLength() / scale);
+                trials.put(trial);
+            }
+            js.put("data", trials);
+            js.put("name", m.name);
+            values.put(js);
+        }
+        
+        data.put("markers", values);
+        data.put("markerNames", markerNames);
+     }
+    
+    public JSONObject getJSON() throws Exception  {    
+        jsonObj = new JSONObject();
+        ChannelSet channelSet = (ChannelSet) dataLayer;
+        if (this.synchronizedWithDatabase) synchronizeWithDatabase(this.id);
+        
+        try {
+            jsonObj.put("id", getId());
+            int MAXPOINTS =300;
+            jsonObj.put("data", getChannels(channelSet, MAXPOINTS, 16, 0));
+            
+            int numPoints = channelSet.getMinPoints();
+            double scale = 1;
+            if (MAXPOINTS < numPoints) scale = numPoints / MAXPOINTS;
+            addMarkers(channelSet, jsonObj.getJSONObject("data"), scale);
+
+            //.. data for properly aligning x axis
+            int mostPoints = channelSet.getMaxPoints();
+            jsonObj.put("actualNumPoints", mostPoints);
+            jsonObj.put("readingsPerSec", channelSet.readingsPerSecond);
+            jsonObj.put("type", "channelset");
+            
+            //.. if possible, get classifications on this layer
+           /* JSONObject perf = null;
+            if (performances != null){
+                perf = super.getClassifications(scale);
+                JSONArray arr = new JSONArray(); //.. We should be able to get multiple
+                arr.put(perf);
+                if(perf!=null)
+                    jsonObj.getJSONObject("data").put("classifiers", arr);
+            } */
+            
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObj;
+    }
+
     /**
      * Return JavaScriptObject Notation of the datalayer
      * --Notation for movingLinegraph-- 
@@ -227,8 +339,8 @@ public class BiDAO extends DataLayerDAO {
      * "values":[[2,4,6,7][1,2,3,4], ] // array of array of channels
 
      * @return JSONObject
-     */
-     public JSONObject getJSON() throws Exception  {    
+     */ 
+     public JSONObject getJSON2() throws Exception  {    
       jsonObj = new JSONObject();
       ChannelSet channelSet = (ChannelSet)dataLayer;
       if (this.synchronizedWithDatabase) synchronizeWithDatabase(this.id);
@@ -286,6 +398,7 @@ public class BiDAO extends DataLayerDAO {
                 values.put(channelData);
             }
 
+            JSONArray markerNames = new JSONArray();
             //... Add numerically visualizable markers
             for (int i=0; i< channelSet.markers.size(); i++ ) {
                 JSONArray channelData = new JSONArray();
@@ -309,9 +422,20 @@ public class BiDAO extends DataLayerDAO {
                 }
                 values.put(channelData);  
                 names.put(m.name);
+                
+                //.. add mapping between number and condition in markernames array
+                JSONArray markerVals = new JSONArray();
+                for (String s : m.getClassification().values) {
+                    JSONObject classification = new JSONObject();
+                    classification.put("condition", s);
+                    classification.put("index", m.getClassification().getIndex(s));
+                    markerVals.put(classification);
+                }
+                markerNames.put(markerVals);
             }
             
             data.put("names", names);
+            data.put("markerNames", markerNames);
             
             //.. save this array
             data.put("values", values);

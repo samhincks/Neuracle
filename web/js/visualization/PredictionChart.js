@@ -95,7 +95,10 @@ function PredictionChart() {
            .attr("width", x(length)) //. scale based on how many elements
            .attr("height", function(d) {return 10})
            .attr("class", "corSquare")
-           .style("fill", function(d) { return ((d.guess == d.answer) ? "green" : "red")})
+           .style("fill", function(d) { 
+               if (d.answer == null) return "grey";
+               if (d.answer == d.guess) return "green";
+               return "red";})
            .attr("opacity", function(d) {return (d.confidence)})
            .attr("id", function(d,i) {return recClass +i})
            .on("mouseover",  tip.show)

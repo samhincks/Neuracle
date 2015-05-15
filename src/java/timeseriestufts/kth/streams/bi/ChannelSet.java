@@ -358,18 +358,18 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
      * uses of this class, there will be only one instance inside and it will
      * have a a majority class *
      */
-    public Experiment getMovingExperiment(Classification c, int instanceLength, int everyK) throws Exception {
+    public Experiment getMovingExperiment(Classification c, int instanceLength, int everyK, boolean getEvery) throws Exception {
         ArrayList<Instance> myInstances = new ArrayList();
         //.. starting at instanceLength and advancing by everyK, build a new Instance and classify it
         for (int i = instanceLength; i < this.minPoints(); i += everyK) {
             int start = i - instanceLength, end = i;
 
             //.. get Instance between i and instancelength back
-            Instance myInstance = this.getInstance(c.name, start, end);
-            if (myInstance.condition == null || c.hasCondition(myInstance.condition)) {
+            Instance myInstance = this.getInstance (c.name, start, end);
+            if (myInstance.condition == null ||getEvery || c.hasCondition(myInstance.condition)) {
                 myInstances.add(myInstance);
             }
-        }
+        }  
         return new Experiment("testingStream", c, myInstances, this.readingsPerSecond);
     }
     /**

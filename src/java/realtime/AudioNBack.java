@@ -84,8 +84,10 @@ public class AudioNBack implements Runnable{
                 int duration  = ticks*sleepLength;
                 if (duration>length) {
                     clip.close();
-                    client.sendMessage("next");
-                    client.disconnect();
+                    if(client != null){
+                        client.sendMessage("next");
+                        client.disconnect();
+                    }
                     nbackRunning = false;
                     return;
                 }

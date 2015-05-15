@@ -43,7 +43,6 @@ public class Client {
     public static void main(String[] args) {
         try{
             Client c = new Client(LabelInterceptorTask.LABELPORT);
-            c.sendMessage("slicka min fitta\n");
             c.disconnect();
         }
         catch(Exception e ) {e.printStackTrace();}

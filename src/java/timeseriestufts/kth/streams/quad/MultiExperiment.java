@@ -71,7 +71,7 @@ public class MultiExperiment extends QuaddimensionalLayer{
             Predictions predictions = new Predictions(testingE.getDataSet(), ts, testingE.classification);
                
             WekaClassifier wc = allTraining.train(ts);
-            wc.test(testingE,ts, predictions, allTraining.asAlgosApplied, -1);
+            wc.test(testingE,ts, predictions, allTraining.asAlgosApplied, -1, false);
             System.out.println("-");
             //.. save the stats, then forget about them in the experiment
             ts.addPredictions(predictions);

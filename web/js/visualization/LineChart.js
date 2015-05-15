@@ -158,7 +158,6 @@ function LineChart() {
        svg.append("g")
            .attr("class", "y axis")
            .attr("transform", "translate(" + (margin.left-5) + ",0)")
-
            .call(yAxis);
         chart.hasTransitioned = false;
 

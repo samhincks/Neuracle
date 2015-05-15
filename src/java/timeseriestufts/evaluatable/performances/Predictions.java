@@ -4,6 +4,9 @@
  */
 package timeseriestufts.evaluatable.performances;
 
+import filereader.Label;
+import filereader.Labels;
+import filereader.Markers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import timeseriestufts.evaluatable.Dataset;
@@ -24,14 +27,14 @@ public class Predictions {
     private String id;
     
     public Predictions(Dataset dataset, TechniqueSet ts, Classification c) throws Exception{
-        this.id =dataset.getId() + ts.getId() + c.id;
+        this.id =dataset.getId() + ts.getId() + ((c==null) ? "" :c.id);
         this.dataset =dataset;
         this.techniqueSet = ts;
         this.classification = c;
         predictions = new ArrayList();
     }
     public Predictions(Dataset dataset, TechniqueSet ts, Classification c, int instanceLength, int everyK) throws Exception{
-        this.id =dataset.getId() + ts.getId() + c.id;
+        this.id =dataset.getId() + ts.getId() + ((c==null) ? "" :c.id);
         this.dataset =dataset;
         this.techniqueSet = ts;
         this.classification = c;
@@ -176,9 +179,24 @@ public class Predictions {
         return predictions.size();
     }
 
+    
+    /**Convert predictions to a markers objects **/
+    public Markers getMarkers(int numOfEach) {
+        Labels labels = new Labels("predictions");
+        int added =0;
+        for (Prediction p : this.predictions) {
+            for (int i = 0; i < numOfEach; i++) {
+                Label l = new Label(this.id, p.prediction, added);
+                added++;
+                labels.addLabel(l);
+            }
+        }
+        return new Markers(labels);  
+    }
+
     /**Return the total number of occurences (not guesses) of this condition.**/
-    public int getNumInstancesOf(String condition) {
-        int total = 0;
+    public int getNumInstancesOf(String condition) {    
+        int total = 0;  
         for (Prediction p : predictions) {
             if (p.answer.equals(condition))
                 total++;
