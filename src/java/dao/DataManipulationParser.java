@@ -8,7 +8,7 @@ import dao.datalayers.TriDAO;
 import dao.techniques.TechniqueDAO;
 import dao.techniques.TechniquesDAO;
 import filereader.Markers;  
-import java.util.ArrayList;       
+import java.util.ArrayList;         
 import java.util.Hashtable;             
 import org.json.JSONArray;
 import org.json.JSONObject;

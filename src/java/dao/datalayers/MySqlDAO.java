@@ -18,10 +18,10 @@ public class MySqlDAO {
     public void connSQL() {
             String url = "jdbc:mysql://localhost:3306/newttt?characterEncoding=latin1";
             String username = "root";
-            //String password = "fnirs196"; // loading drive to connet to the database 
+            String password = "fnirs196"; // loading drive to connet to the database 
             try { 
                     Class.forName("com.mysql.jdbc.Driver" ); 
-                    conn = DriverManager.getConnection(url,username,"");//, password ); 
+                    conn = DriverManager.getConnection(url,username,password);//, password ); 
                     }
             //catch drive exception
              catch ( ClassNotFoundException cnfex ) {

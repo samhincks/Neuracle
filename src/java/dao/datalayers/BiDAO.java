@@ -270,6 +270,7 @@ public class BiDAO extends DataLayerDAO {
         
         //... Add numerically visualizable markers
         for (int i = 0; i < channelSet.markers.size(); i++) {
+            System.out.println("BiDAO:addMarkers: when do we add teh extra marker? " + channelSet.markers.size());
             JSONObject js = new JSONObject();
             Markers m = channelSet.markers.get(i);
             JSONArray trials = new JSONArray();
@@ -739,7 +740,8 @@ public class BiDAO extends DataLayerDAO {
      */
     public void addMarkers(Markers markers) {
         ChannelSet cs = (ChannelSet) dataLayer;
-        cs.addMarkers(markers);
+        if (!(cs.hasMarkersWithName(markers.name))) //.. adding this because in some circumstances it gives the bidao two markers o9bejcts
+             cs.addMarkers(markers);
     }
 
     /**Set the current label of data streamed in, so that any fresh data

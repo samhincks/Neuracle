@@ -38,7 +38,6 @@ public class LabelInterceptorTask implements Runnable{
     public LabelInterceptorTask(int port,
             String dbName, String labelName, TransformationParser tp, int pingDelay) throws Exception{
         this.port = port;
-        
         this.tp = tp;
         this.dbName = dbName;
         this.labelName = labelName;

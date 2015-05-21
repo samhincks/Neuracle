@@ -308,7 +308,7 @@ public class TransformationParser extends Parser{
             if (bDAO.synchronizedWithDatabase) {
                 bDAO.synchronizeWithDatabase(filename);
             }
-
+            
             //.. the channelset associated with this object may or may not have markers, associated with it
             Labels labels = bDAO.getLabelsWithName(labelName);
 
@@ -468,7 +468,6 @@ public class TransformationParser extends Parser{
             if (biDAO.labels != null) {
                 for (Labels l : biDAO.labels) {
                     Markers m = new Markers(l);
-
                     //.. INVARIANT: # of markers should equal number of rows in each col
                     biDAO.addMarkers(m);
                 }
