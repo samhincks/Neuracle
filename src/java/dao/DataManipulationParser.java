@@ -7,8 +7,9 @@ import dao.datalayers.QuadDAO;
 import dao.datalayers.TriDAO;
 import dao.techniques.TechniqueDAO;
 import dao.techniques.TechniquesDAO;
-import java.util.ArrayList;  
-import java.util.Hashtable;     
+import filereader.Markers;  
+import java.util.ArrayList;       
+import java.util.Hashtable;             
 import org.json.JSONArray;
 import org.json.JSONObject;
 import stripes.ext.ThisActionBeanContext;
@@ -1195,7 +1196,10 @@ public class DataManipulationParser extends Parser{
       
        
        //.. New feature: add the predictions to the channelset as markers 
-       if (getEvery) cs.addMarkers(p.getMarkers(readEvery));
+       if (getEvery) {
+           Markers m =  p.getMarkers(readEvery);
+           cs.addMarkers(m);  
+       }
        
        return ret;
     }

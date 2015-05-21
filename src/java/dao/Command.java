@@ -6,7 +6,7 @@ import org.json.JSONObject;
  *  An object which mediates command information between server and client. 
  * @author samhincks  
  */                    
-public class Command {                   
+public class Command {                     
     public String id;                     
     public String parameters =""; 
     public String debug ="";
@@ -15,7 +15,7 @@ public class Command {
     public String action = null;
     public JSONObject data =null;
     public String tutorial = null;
- 
+   
     public Command(String id) {
         this.id = id;
     }    

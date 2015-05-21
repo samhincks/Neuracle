@@ -191,7 +191,11 @@ public class Predictions {
                 labels.addLabel(l);
             }
         }
-        return new Markers(labels);  
+        Markers m = new Markers(labels);  
+        m.classificationResults = true;
+        m.offset =this.instanceLenth;
+        m.name = this.techniqueSet.getName();
+        return m;
     }
 
     /**Return the total number of occurences (not guesses) of this condition.**/

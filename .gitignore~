@@ -1,0 +1,8 @@
+*.swp
+*.swo
+*.class
+*.war
+
+/dist/
+/build/
+/input

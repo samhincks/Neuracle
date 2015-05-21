@@ -21,11 +21,12 @@ function JavaInterface() {
         
         if (JSONobj.tutorial != "")
             consoleArea.displayMessage(JSONobj.tutorial, "systemmess", "orangeline");
-
+        
+  
         
         //.. is there some action to complete here? A new dataset to reload
         if(JSONobj.action != null) {
-             if (JSONobj.action.id == "reload") {
+            if (JSONobj.action.id == "reload") {
                 javaInterface.postToDataLayers(); //.. just get the names of the datalayers
                 //.. And then clean some of the lines
             }
@@ -69,7 +70,6 @@ function JavaInterface() {
         else {
             datalayerArea.addDatalayers(JSONobj.datalayers);
             datalayerArea.removeDatalayers(JSONobj.datalayers);
-            datalayerInit(); //.. relaod the drag/drop properties
         }
     }
      /**Retrieve all techniques and their names*/
@@ -96,6 +96,8 @@ function JavaInterface() {
         $('#prediction').val(false);
         $('#merge').val(false); //.. so that we don't call a method that merges datalayers'
         $('#stats').val(false); 
+        $('#debug').val(false);
+
         
         if (arguments.length) {
             if (message == "frequency"){
@@ -103,10 +105,12 @@ function JavaInterface() {
             }
             else if (message =="correlation") {
                 $('#correlation').val(true);
-
             } 
             else if (message =="prediction") {
                 $('#prediction').val(true);
+            }
+            else if (message == "debug") {
+                $('#debug').val(true);
             }
         }
         var form = $('#content'); 
@@ -118,7 +122,6 @@ function JavaInterface() {
     this.returnFromDataLayer = function(xhr) {
         //$(".topRight").empty(); //.. clear any existing graph
         var JSONobj = eval('('+ xhr +')');  
-
         if (JSONobj.error != null)
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
         //.. otherwise no error, so we display the graph
@@ -128,6 +131,9 @@ function JavaInterface() {
 
         else if (JSONobj.predictions != null) {
             chartArea.displayChart(JSONobj.predictions);
+        }
+        else if (JSONobj.type == "debug"){
+            consoleArea.displayJSONObj(JSONobj);
         }
         else { //.. no error
             chartArea.displayChart(JSONobj);

@@ -73,13 +73,30 @@
         stroke-width: 7px;
         opacity: 0.4;
     }
+    .classificationline {
+        fill: none;
+        stroke-width: 2px;
+        opacity: 0.4;
+    }
+    .classificationline:hover {
+        opacity:0.7;
+    }
+     .confidenceline:hover {
+        opacity:0.7;
+    }
+    .confidenceline {
+        fill: none;
+        //stroke-width: 3px;
+        opacity: 0.7;
+    }
+  
     .meanline{
         stroke-width: 3px;
         opacity: 0.4;
         fill:none;
        stroke-dasharray:3 3
-
     }
+    
     .d3line:hover {
         opacity:0.9;
     }

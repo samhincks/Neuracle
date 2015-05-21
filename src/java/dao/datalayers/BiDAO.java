@@ -10,7 +10,7 @@ import filereader.Labels;
 import filereader.Markers;
 import filereader.Markers.Trial;
 import filereader.TSTuftsFileReader;
-import java.awt.Point;      
+import java.awt.Point;        
 import java.io.File;  
 import java.io.InputStream;     
 import java.sql.ResultSet;
@@ -278,11 +278,13 @@ public class BiDAO extends DataLayerDAO {
                 trial.put("start", t.start / scale);
                 trial.put("name", m.name);
                 trial.put("value", t.name);
+                trial.put("offset", m.offset /scale);//.. if the start is always offset by a little, for instance when we classify
                 trial.put("length", t.getLength() / scale);
                 trials.put(trial);
             }
             js.put("data", trials);
             js.put("name", m.name);
+            js.put("classifications", m.classificationResults);
             values.put(js);
         }
         
@@ -294,7 +296,7 @@ public class BiDAO extends DataLayerDAO {
         jsonObj = new JSONObject();
         ChannelSet channelSet = (ChannelSet) dataLayer;
         if (this.synchronizedWithDatabase) synchronizeWithDatabase(this.id);
-        
+          
         try {
             jsonObj.put("id", getId());
             int MAXPOINTS =300;
@@ -320,6 +322,7 @@ public class BiDAO extends DataLayerDAO {
                 if(perf!=null)
                     jsonObj.getJSONObject("data").put("classifiers", arr);
             } */
+            
             
         } catch (JSONException e) {
             e.printStackTrace();

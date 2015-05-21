@@ -50,7 +50,9 @@ public class TechniqueSet extends Technique{
     public String currentFileName = "default"; //.. the name of the current subject being mined, though a build merges many
     public double average =0; //.. the average over every single performance
    
-    
+    public String getName() {
+        return classifier.id ;//+ " " + featureSet.getConsoleString();
+    }
     public TechniqueSet (String id) {
         this.id = id;
     }
@@ -63,7 +65,7 @@ public class TechniqueSet extends Technique{
         //.. Make an id out of the various algorithms id's. 
         //... This is a critical step as it ensure a TechniqueSet will be unique within a session
         //.... in other words, we don't wind up creating two TechniqueSets which are the same in function but have different ids
-        this.id = c.id +f.id+a.id; 
+        this.id = c.id +f.id+a.id;   
     }
     
     /*---Get methods for featureset. We don't want them set outside the class**/

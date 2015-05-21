@@ -16,11 +16,12 @@ import timeseriestufts.kth.streams.bi.ChannelSet.Tuple;
  * @author samhincks
  */
 public class Markers {
-
     public String name;
     public ArrayList<Trial> trials;
     public Labels saveLabels;
+    public boolean classificationResults = false;
     private Classification classification = null; //.. set with first get
+    public int offset =0;
     
     public Markers(Labels labels) {
         this.saveLabels = labels;

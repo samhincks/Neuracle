@@ -895,7 +895,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 Channel snCol = streams.get(sixNinetyCols.get(i));
                 Channel etCol = streams.get(eightThirtyCols.get(i));
                 
-                int minSize =0;
+                int minSize =0;  
                 if (snCol.getCount() > etCol.getCount()) minSize = etCol.getCount();
                 else minSize = snCol.getCount();
                 

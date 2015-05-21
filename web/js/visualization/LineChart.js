@@ -36,6 +36,8 @@ function LineChart() {
     var color = d3.scale.category10();  /*d3.scale.ordinal()
         .domain([0, 1, 2])
         .range(["#6699CC", "#BDAEAC"]);*/ //.. Blue and brown, for Tufts publications
+    color = d3.scale.ordinal()
+            .range(["#31A354", "#3182BD", "#756BB1", "#636363", "#637939", "#7B4173"]);
     var max, min; //.. the maximum and minimum values of the dataset
     
     
@@ -316,7 +318,6 @@ function LineChart() {
                  .duration(transitionLength)
                  .call(yAxis);
          
-         console.log("transitioning");
          //.. Next redraw all data, so that it transitions to this new scale
          for (var property in drawn){
              svg.selectAll("#area" + property)

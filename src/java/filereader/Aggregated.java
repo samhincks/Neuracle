@@ -12,7 +12,7 @@ import timeseriestufts.evaluatable.TechniqueSet;
 /** A temporary class for evaluating data
  * @author samhincks
  */
-public class Aggregated extends EvaluationInterface{
+public class Aggregated extends EvaluationInterface{   
     
    public static void main(String[] args)   {
         try {
