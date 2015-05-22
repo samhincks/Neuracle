@@ -23,6 +23,7 @@ import timeseriestufts.kth.streams.tri.Experiment;
 /**Holds all features that we want to extract in this particular setup
  */
 public class FeatureSet extends Technique{
+
     public HashMap<String, FeatureDescription> featureDescriptions;
     public HashMap<String, Double> infogain; //.. info gain of all attributes
     public int infogainsAdded = 0; //.. increment each time we add new
@@ -32,7 +33,14 @@ public class FeatureSet extends Technique{
     public FeatureSet(String id)  {       
         this.id = id;
     }
-    
+        
+    public static String getAvailableStats() {
+        String ret = "";
+        for (Statistic.Stat t : Statistic.Stat.values()){ 
+            ret += t.name() +", ";
+        }
+        return ret;
+    }
     /**Add the instances in another experiment to this infogain. If it already exists,
      then average with existing.  **/
     public void addExperimentToInfogain(weka.core.Instances instances) throws Exception {

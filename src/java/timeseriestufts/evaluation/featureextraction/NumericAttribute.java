@@ -102,7 +102,6 @@ public class NumericAttribute extends TSAttribute {
                 numValue = channel.getBestFitIntercept();
                 break;
              
-             
              case freq :
                  FrequencyDomain freq = channel.getFrequencyDomain();
                  numValue = freq.getMagAtFreq(stat.getFreqIndex());

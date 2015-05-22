@@ -93,9 +93,9 @@ public class DataManipulationParser extends Parser{
         //--MAKE 
         command = new Command("make");
         command.documentation = "Make a new technique, a part of a method, for how a classifier should be built on this data ";
-        command.parameters =  "MAKEFS(statistic,channel,window) --> makes a new feature set. See ADDFEATURES::"
-                + "MAKEAS(cfs or info, numAttributes) --> makes a new attribute selection::"
-                + "MAKEML(name) --> makes a new machine learnign algorithm::";
+        command.parameters =  "MAKEFS(statistic,channel,window) --> makes a new feature set: " + FeatureSet.getAvailableStats() +";;"
+                + "MAKEAS(cfs or info, numAttributes) --> makes a new attribute selection;;"
+                + "MAKEML(name) --> makes a new machine learnign algorithm: " + WekaClassifier.getAvailableMLs() +"";
         commands.put(command.id, command);
         
         //--EVALUATE 

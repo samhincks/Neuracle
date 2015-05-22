@@ -4,7 +4,7 @@ import dao.datalayers.BiDAO;
 import dao.datalayers.DataLayerDAO;
 import dao.datalayers.DataLayersDAO;
 import dao.datalayers.MySqlDAO;
-import dao.datalayers.QuadDAO;    
+import dao.datalayers.QuadDAO;      
 import dao.datalayers.TriDAO;
 import dao.datalayers.UserDAO;
 import dao.techniques.TechniqueDAO;

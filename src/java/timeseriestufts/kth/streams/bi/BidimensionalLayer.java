@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.uni.Channel;
 import timeseriestufts.kth.streams.uni.UnidimensionalLayer;
-import timeseriestufts.kth.streams.tri.Experiment;
+import timeseriestufts.kth.streams.tri.Experiment;  
 
 /** A collection of UnidimensionalLayers 
  * @author Sam Hincks

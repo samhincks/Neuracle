@@ -75,6 +75,13 @@ public class WekaClassifier  extends ClassificationAlgorithm{
 
 
     public static enum MLType {jrip, j48, lmt, nb, tnn, smo, simple, logistic,adaboost, libsvm, multilayer, cvsmo, gridsmo};
+    public static String getAvailableMLs() {
+        String ret ="";
+        for (MLType m : MLType.values() ) {
+            ret+= m.name() +",";
+        }
+        return ret;
+    }
     public MLType mlAlgorithm;
     public WekaData wekaData; // we may want to know filters etc
     private J48 j48;

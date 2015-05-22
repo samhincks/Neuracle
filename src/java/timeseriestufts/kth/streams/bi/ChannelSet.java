@@ -842,7 +842,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
          */
         for (int i = 0; i < quarter; i++) {
             if (sixNinety)
-                ret.add(i + quarter);
+                ret.add(i + quarter);      
             else ret.add(i);
         }
   
