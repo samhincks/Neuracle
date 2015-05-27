@@ -42,7 +42,8 @@ public class ConsoleActionBean extends DataLayerActionBean {
             if (this.getTechnique()!=null){
                 ctx.setCurrentTechnique(technique);
             }
-            
+           if (consoleInput == null || consoleInput.equals("")) return new StreamingResolution("text", "Enter tab to see all available commands");
+
             //.. if this is an evaluation command, set the technique parameters
             if (connections != null && (consoleInput.startsWith("evaluate") 
                     || consoleInput.startsWith("train")
@@ -50,7 +51,7 @@ public class ConsoleActionBean extends DataLayerActionBean {
                 setTechniqueParams();
             }
             System.out.println("parsing " + consoleInput);
-            jsonObj = inputParser.parseInput(consoleInput);
+                jsonObj = inputParser.parseInput(consoleInput);
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));
         }
         catch(Exception e) {

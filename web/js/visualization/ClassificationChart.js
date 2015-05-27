@@ -201,6 +201,7 @@ function ClassificationChart() {
             //.on("mouseover", tip.show)
             .on("mousedown", function (d,i ) { //.. remember what pairs have been overlapped. 
                     var id = d.name+"-"+d.value;
+                    consoleArea.displayMessage(d.value);
                     var rects = d3.selectAll("."+id);
                     if (rects.style("opacity") > 0.5){ //.. if its not selected
                         rects.style("opacity", 0.4);
@@ -241,17 +242,20 @@ function ClassificationChart() {
         }
         
         //.. get labels extracted from the instance object
-        var firstAligned = chart.getLabels(first);
+        var firstAligned = chart.getLabels(first); //.. a succession of labels corresponding to the instances
         var secondAligned = chart.getLabels(second);
         var correct =0;
         var total =0;
+        //.. compute the situations in which the firstAligned is its condition and second condition is its condition
         for (var i in firstAligned) {
             if (firstAligned[i] == firstCondition) {
-                if (firstCondition == secondAligned[i]) correct++;                
+                if (secondCondition == secondAligned[i]) correct++;        
                 total++;
             } 
+
         }
         var accuracy = (correct / total) *100;
+        if (total == 0) accuracy = 0;
         consoleArea.displayMessage("When " + firstName + " had value " + firstCondition + ", " + secondName + " had value " + secondCondition + " " + accuracy  + "% of the time." );
     }
     /*Return an instance label for each point of every instance*/
@@ -263,7 +267,6 @@ function ClassificationChart() {
                 ret.push(instance.value);
             }
         }
-        console.log(ret);
         return ret;
     }
     
@@ -345,10 +348,16 @@ function ClassificationChart() {
           return chart;
     }
     
-    chart.data = function(_) {
-        if (!arguments.length)
-            return data;
-        data = _;
+    chart.data = function(d, removeNumbers) {
+        data = d;
+        if (removeNumbers) {
+            for (var i in data.markers) {
+                var m = data.markers[i];
+                for (var k in m.data) {
+                   m.data[k].value = m.data[k].value.replace(/[0-9]/g, '');
+                }
+            }
+        }
         return chart;
     }
     //.. set the width of the chart
@@ -424,6 +433,8 @@ function ClassificationChart() {
         markers.data.push(last);
         return markers;
     }
+      
+    
     
    
     
@@ -474,7 +485,7 @@ function ClassificationChart() {
             marker.offset =0;
             marker.name = "condition2";
             marker.start = i*marker.length;
-            if (i% 2 ==0) marker.value = "easy";
+            if (i% 2 ==0) marker.value = "medium";
             else marker.value ="hard";
             s.data.push(marker);
         }

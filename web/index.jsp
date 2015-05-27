@@ -25,7 +25,7 @@
 
     </head>
     
-    <body class ="unselectable" id ="doc">   
+    <body id ="doc">   
         <div id ="timemine"> 
              <!--Default location for selectable data layers-->
              <div id ="topLeft" class ="component">
@@ -84,7 +84,7 @@
                           <input id = "userinput" ></input> 
                   </div> 
                 </div>  
-                 <s:form beanclass ="stripes.action.ConsoleActionBean" id = "consoleForm" class ="unselectable"> 
+                 <s:form beanclass ="stripes.action.ConsoleActionBean" id = "consoleForm"> 
                        <!--A message to the console--> 
                        <s:text name = "consoleInput" id = "consoleInput" style ="visibility:hidden"/> 
                        <s:text name = "connections" id = "connections" style = "visibility:hidden"/>

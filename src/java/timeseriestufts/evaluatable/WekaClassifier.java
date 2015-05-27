@@ -146,17 +146,18 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                         myInstance.conditionPercentage, distribution, index);
             }
             else if (testEvery) {
+                System.out.println("WC: test" + myInstance.attributes.attributeList.size() + " , " + myInstance.condition);
                 int guess = (int) classifier.classifyInstance(wInstance);
                 double[] distribution = classifier.distributionForInstance(wInstance);    
                 
                 //.. save the prediction
                 predictions.addPrediction(guess, distribution, index);
-            }
+            }      
             index++;
-        }
+        }     
        
-    }
-    
+    }   
+      
     /**Make predictions on a channelset by building a new instance at specified points
      * Predictions will be stored in TechniqueSet and Dataset
      * the mlAlgorithm specified by mlAlgorithm must be trained

@@ -392,7 +392,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
         wc.lastTechniqueTested = t;
         wc.timesTrained++;
         wc.lastAsAlgosUsed = this.asAlgosApplied; //... ergh, I hope this works :/
-
+        
         //.. return it, trained
         return wc;
     }
@@ -670,7 +670,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
         
         Classification c = new Classification(values, this.classification.name);
         e = new Experiment(this.filename, c, instances,this.readingsPerSec);
-
+        e.transformations = this.transformations;
         return e;
     }
     
@@ -729,8 +729,8 @@ public class Experiment extends TridimensionalLayer<Instance>{
             if (t.params.length >2) newId += t.params[2];  
         }
   
-        if (copy) { //.. why on earth does it only work with this wonky filename. Probably something on the front end, some hacking I'm using for derivation. Bad front end code, Sam
-            ret =new Experiment(this.filename+newId, this.classification, instances, this.readingsPerSec );
+        if (copy) {
+            ret =new Experiment(/*this.filename+*/newId, this.classification, instances, this.readingsPerSec );
         }
         else ret = this;
         

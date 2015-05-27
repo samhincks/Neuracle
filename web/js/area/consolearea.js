@@ -65,7 +65,8 @@ function ConsoleArea() {
            this.messageStack.push(userText);
        
         //.. remove the text
-       $("#userinput").val("");   
+       $("#userinput").val("");  
+       this.upped =0; 
        this.scrollToBottom();
     }
     

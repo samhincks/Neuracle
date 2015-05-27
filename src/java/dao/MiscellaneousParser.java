@@ -318,6 +318,7 @@ public class MiscellaneousParser extends Parser{
         String folderName = "GRProcessed";
         if (parameters.length >0)folderName = parameters[0];
         String folder = ctx.getServletContext().getRealPath(folderName);
+        if (folder == null) return "No such folder "  + folderName + " in " + ctx.getServletContext().getRealPath("GRProcessed");
         File folderF = new File(folder);
         if (folderF == null) throw new Exception("Cannot find folder" + folder);
         File[] listOfFiles = folderF.listFiles();  
@@ -331,7 +332,6 @@ public class MiscellaneousParser extends Parser{
                 super.addFile(fileName);
                 filesRead++;
             }
-          
             
         }
         
@@ -580,7 +580,7 @@ public class MiscellaneousParser extends Parser{
         ctx.inputParser.parseInput("load(hincks)");
         ctx.inputParser.parseInput("append");
        // ctx.inputParser.parseInput("hold");
-         ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1");
+         ctx.setCurrentName("mergedtest2-csvfs1-test3-csvfs1-test9-csvfs1-test7-csvfs1-test8-csvfs1");
          ctx.inputParser.parseInput("realtime");
        // ctx.inputParser.parseInput("manipulate(averagedcalcoxy");
        // ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1averagedaveragedcalcoxy");

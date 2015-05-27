@@ -30,7 +30,7 @@ from time import sleep
 #DEVICE = 'CMS50D'
 #DEVICE = 'fNIRS'
 DEVICE = 'Imagent'
-#DEVICE = 'Fake'
+DEVICE = 'Fake'
 
 """
 Time format info
@@ -86,7 +86,7 @@ else:
 def readFromFake():
     while True:
         conn = pymysql.connect(host='127.0.0.1', port=3306,
-                    user='root', db='newttt')
+                    user='root', db='newttt', passwd = 'fnirs196')
         cur=conn.cursor()   
         
 
@@ -236,7 +236,7 @@ def main():
         print("connected to: " + ser.portstr)
 
     conn = pymysql.connect(host='127.0.0.1', port=3306,
-            user='root',db='newttt')
+            user='root',db='newttt', passwd ='fnirs196')
     cur=conn.cursor() 
     
     if DEVICE == "CMS50D":

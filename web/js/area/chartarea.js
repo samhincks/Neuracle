@@ -65,7 +65,7 @@ function ChartArea(id, descArea) {
         var height = $(selection).height() - border;
         
         var chart = ClassificationChart();
-        chart.maxTime(maxInSeconds).width(width).height(height).data(data)(selection);
+        chart.maxTime(maxInSeconds).width(width).height(height).data(data,true)(selection);
 
         //this.writeMarkerVals(JSONobj.data.markerNames);
     }

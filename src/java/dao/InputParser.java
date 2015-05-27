@@ -16,7 +16,7 @@ import filereader.experiments.BesteExperiment;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.StringReader; 
+import java.io.StringReader;   
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -247,7 +247,7 @@ public class InputParser {
             
             int TEST =8;
                 
-            String test = "makefs";
+            String test = "realtimeclass";
             JSONObject response = new JSONObject();
             
             if (test.equals("makefs")) {
@@ -255,22 +255,34 @@ public class InputParser {
             }
             
             if (test.equals("realtimeclass")) {
-                String name = getHincksAppended(ip, ctx);
-                ctx.setCurrentName(name);
-                response = ip.parseInput("manipulate(bandpass, 0.1, 1)");
-
+                /*String name = getHincksAppended(ip, ctx);
+                ctx.setCurrentName(name); */
+                ctx.setCurrentName("reale");
+              
+                /*NEW NAMES APPEAR TO WORK, BUT I OUGHT TO REMOVE THE CONDITION PART**/
+                response = ip.parseInput("manipulate(averagedcalcoxy)"); 
+                System.out.println(ip.parseInput("ls"));
+                ctx.setCurrentName("input/bestemusic/bestemusic15-csvconditionbaselineeasyresthardaveragedcalcoxyconditionbaselineeasyresthard");
+               
+                //.. add techniwues
                 tDAO = (TriDAO) ctx.getCurrentDataLayer();
                 tDAO.addConnection(wc);
                 tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
                 tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
-                response = ip.parseInput("train"); //.. After this, the associated weka classifier is trained
                 
+                response = ip.parseInput("train(-2)"); 
+                ctx.setCurrentName("input/bestemusic/bestemusic15-csv");
+                BiDAO bDAO = (BiDAO)ctx.getCurrentDataLayer();
+                bDAO.addConnection(wc);
+                response = ip.parseInput("classify(22)"); 
+
+  
                 /*
                 //.. Having trained, now test
                 response = ip.parseInput("synchronize(realtime1)");
                 ctx.setCurrentName("realtime1");
                 BiDAO bDAO = (BiDAO) ctx.getCurrentDataLayer();
-                bDAO.addConnection(wc); */ 
+                bDAO.addConnection(wc);  */
                 
             }
             

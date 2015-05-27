@@ -194,7 +194,7 @@ public class Predictions {
         Markers m = new Markers(labels);  
         m.classificationResults = true;
         m.offset =this.instanceLenth;
-        m.name = this.techniqueSet.getName();
+        m.name = this.techniqueSet.getName() + "every"+numOfEach;
         return m;
     }
 

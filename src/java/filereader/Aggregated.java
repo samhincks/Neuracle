@@ -7,7 +7,7 @@ import filereader.experiments.EvanVis;
 import filereader.experiments.AJExperiment;
 import java.util.ArrayList;
 import timeseriestufts.evaluatable.PassFilter;
-import timeseriestufts.evaluatable.TechniqueSet;
+import timeseriestufts.evaluatable.TechniqueSet;  
 
 /** A temporary class for evaluating data
  * @author samhincks
@@ -17,7 +17,7 @@ public class Aggregated extends EvaluationInterface{
    public static void main(String[] args)   {
         try {
             Aggregated ag = new Aggregated();
-            ag.evaluateSingles();
+            ag.evaluateSingles();    
            // ag.evaluateCross();
         } catch (Exception e) {
             e.printStackTrace();

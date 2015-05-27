@@ -327,7 +327,8 @@ public class DataManipulationParser extends Parser{
                 ChannelSet manipulated = (ChannelSet) cs.manipulate(t, true);
                 manipulated.setParent(cs.id);
                 BiDAO mDAO = new BiDAO(manipulated);
-                ctx.dataLayersDAO.addStream(manipulated.id, mDAO);
+                mDAO.setId(mDAO.getId() + t.getId());
+                ctx.dataLayersDAO.addStream(mDAO.getId(), mDAO);
             }
             retString += "Modified " + chanSets.size();
         }
@@ -340,7 +341,8 @@ public class DataManipulationParser extends Parser{
                     Experiment manipulated = e.manipulate(t, true);
                     manipulated.setParent(e.id);
                     TriDAO mDAO = new TriDAO(manipulated);
-                    ctx.dataLayersDAO.addStream(manipulated.id, mDAO);
+                    mDAO.setId(manipulated.id); //.. still dont know why it gets the full name
+                    ctx.dataLayersDAO.addStream(mDAO.getId(), mDAO);  
                 }
                 retString += "Modified " + experiments.size();
             }
@@ -1089,14 +1091,9 @@ public class DataManipulationParser extends Parser{
                 
                // else experiment.evaluate(t, dataset, -1);
                 
-                /*Let us examine what is known. experiment has transformations. Does t have it after I add it here? Let's see. Yes it does. 
-                I know it doesn't inside train. What are the possibilities:
-                 a) The object just gets destroyed*/
-                
-                
                 //experiment.classification.printClassification();
                 WekaClassifier wc = experiment.train(t);
-
+                
                 total += t.getMostRecentAverage();
             }
             if (numClasses != -999) retString += "The classifier has been trained ";
@@ -1178,14 +1175,12 @@ public class DataManipulationParser extends Parser{
         if (parameters.length >1) threshold = Float.parseFloat(parameters[1]);
         if (threshold < 0) getEvery = true;
         if(cs.getMinPoints() < readEvery) throw new Exception("There is not enough space to create even one instance. Testing must be larger");
-
-         
+    
        //..Classify the  
        Predictions p = classifier.testRealStream(classifier.lastTrainedClassification,
                classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), 
                performances), cs, classifier.lastInstanceLength, readEvery, classifier.lastAsAlgosUsed,threshold, getEvery); 
-        //.. Some time a very long time ago, I thought it would be OK to set this to null, and not 
-       //.. remind myself that this would fuck up attribute selection. Today I paid the hard price for that. 
+        
        
        p.setId(dDAO.getId());//.. this is an exception, since here we actualyl do want to set the id
        performances.addNewPredictionsSet(p); 
