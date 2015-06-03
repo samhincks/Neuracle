@@ -517,7 +517,7 @@ function ClassificationChart() {
     return chart; //.. return a function which has configuration properties width and height
 }
 
-test();
+//test();
 function test() {
     var chart = ClassificationChart();
     var obj = chart.getTestData();

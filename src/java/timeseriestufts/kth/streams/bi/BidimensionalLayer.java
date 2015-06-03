@@ -222,9 +222,10 @@ public abstract class BidimensionalLayer<T extends UnidimensionalLayer> extends 
     public void appendToStream(int index, float value) {
         UnidimensionalLayer u = streams.get(index);
         u.addPoint(value);
-    }
+    }  
     
     public void delete() {
+        if (streams == null) return;
         for (UnidimensionalLayer u : streams) {
             u.delete();
         }
