@@ -30,7 +30,7 @@ from time import sleep
 #DEVICE = 'CMS50D'
 #DEVICE = 'fNIRS'
 DEVICE = 'Imagent'
-DEVICE = 'Fake'
+#DEVICE = 'Fake'
 
 """
 Time format info
@@ -86,7 +86,7 @@ else:
 def readFromFake():
     while True:
         conn = pymysql.connect(host='127.0.0.1', port=3306,
-                    user='root', db='newttt', passwd = 'fnirs196')
+                    user='root', db='newttt')
         cur=conn.cursor()   
         
 
@@ -104,7 +104,6 @@ def readFromImagent():
     count=1
     output = str('')
     s = ""
-    
     while True:
         for line in ser.read():
             cha = chr(line)
@@ -161,7 +160,7 @@ def readFromfNIRS():
                     
     #Connct to the DB newttt
                     conn = pymysql.connect(host='127.0.0.1', port=3306,
-                            user='root', passwd='fnirs196', db='newttt')
+                            user='root', db='newttt')
                     cur=conn.cursor()   
                              
     #Insert the data to the Table REALTIME            
@@ -177,7 +176,7 @@ def readFromfNIRS():
 def addChunkToDB(host, port, user, pw, db, chunk):
     for i in range(len(chunk)):
         chunk[i] = str(chunk[i])
-    conn = pymysql.connect(host=host, port=port, user=user, passwd=pw, db=db)
+    conn = pymysql.connect(host=host, port=port, user=user, db=db)
     cur=conn.cursor()   
                  
     #Insert the data to the Table REALTIME            
@@ -236,7 +235,7 @@ def main():
         print("connected to: " + ser.portstr)
 
     conn = pymysql.connect(host='127.0.0.1', port=3306,
-            user='root',db='newttt', passwd ='fnirs196')
+            user='root',db='newttt')
     cur=conn.cursor() 
     
     if DEVICE == "CMS50D":

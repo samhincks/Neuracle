@@ -21,7 +21,7 @@ public class MySqlDAO {
             String password = "fnirs196"; // loading drive to connet to the database 
             try { 
                     Class.forName("com.mysql.jdbc.Driver" ); 
-                    conn = DriverManager.getConnection(url,username,password);//, password ); 
+                    conn = DriverManager.getConnection(url,username,"");//, password ); 
                     }
             //catch drive exception
              catch ( ClassNotFoundException cnfex ) {
@@ -34,7 +34,7 @@ public class MySqlDAO {
                      System.err.println( "Cannot connect to database" );
                      sqlex.printStackTrace(); 
              }
-	}
+	}  
 
 	// disconnect to MySQL
 	public void deconnSQL() {
@@ -44,7 +44,7 @@ public class MySqlDAO {
 		} catch (Exception e) {
 			System.out.println("Problems with closing the database:");
 			e.printStackTrace();
-		}
+		}  
 	}
 
 	// execute selection language

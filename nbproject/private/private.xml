@@ -30,6 +30,8 @@
         <group>
             <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/DataManipulationParser.java</file>
             <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/evaluatable/WekaClassifier.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/kth/streams/bi/BidimensionalLayer.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/visualization/ClassificationChart.js</file>
             <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/InputParser.java</file>
         </group>
     </open-files>

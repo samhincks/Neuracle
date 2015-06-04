@@ -292,7 +292,6 @@ public class MiscellaneousParser extends Parser{
             catch(Exception e) {
                 if (!(s.startsWith("/")))  s = "/" + s;
                 is = ctx.getServletContext().getResourceAsStream(s);
-           
             }
             //.. extract name 
             String [] vals = s.split("/");

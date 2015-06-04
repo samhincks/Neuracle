@@ -240,9 +240,11 @@ public class ExternalDataParser extends Parser{
 
        String file ="";  
        ArrayList<ChannelSet> chanSets = getChanSets(true);
-       for (ChannelSet cs : chanSets) {
-            file = ctx.getServletContext().getRealPath("output/"+cs.id + suffix+".csv");
-           cs.writeToFile(file, readEvery, conToInt);
+       for (ChannelSet cs : chanSets) {  
+            file = ctx.getServletContext().getRealPath("");
+            file += "/output/" +cs.id +"suffix"+".csv";
+            if (file !=null) cs.writeToFile(file, readEvery, conToInt);
+            else return "Cannot find folder: build/web/output/" +" "+ ctx.getServletContext().getRealPath(""); 
        }
        
        return "Successfully wrote " + chanSets.size() + " file(s) to " + file;
@@ -250,3 +252,4 @@ public class ExternalDataParser extends Parser{
     
 
 }
+    
