@@ -157,7 +157,7 @@ public abstract class Parser {
                 catch (Exception ex){
                     //.. This is fine. A valiant effort to add more information to the featureset
                     //.. if the extra datalayer pertained to the same experiment as the first..
-                        
+                          
                  }
             }
         }
@@ -167,7 +167,7 @@ public abstract class Parser {
                 + "::" + getColorsMessage(e);
         return retString;
     }
-    
+      
     protected String makeChannelSets(ChannelSet cs, String labelName) throws Exception {
         ArrayList<ChannelSet> channelSets  = cs.partitionByLabel(labelName);
         String retString ="";

@@ -283,11 +283,11 @@ public class Channel extends UnidimensionalLayer  {
         float [] signal = new float[numPoints];
         
         //.. add each point to an array of floats
-        for (int i =0; i < numPoints; i++){
+        for (int i =0; i < numPoints; i++){   
             signal[i] = super.getPointOrNull(i);
         }
         bp.process(signal);
-        
+            
         //.. If shuold be a copy then create a new channel
         if (copy){
              Channel sc = new Channel(this.framesize, numPoints);

@@ -159,7 +159,7 @@ public class MiscellaneousParser extends Parser{
         }
         
         else if (command.startsWith("delete")) {
-            c = commands.get("delete");
+            c = commands.get("delete");   
             c.action = "reload";
             c.retMessage = delete(parameters);// "Removing " + currentDataLayer.id ; 
         }

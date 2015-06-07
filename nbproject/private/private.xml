@@ -2,18 +2,18 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="4">
         <file>
-            <url>src/java/timeseriestufts/kth/streams/tri/Experiment.java</url>
-            <bookmark id="3">
+            <url>src/java/dao/DataManipulationParser.java</url>
+            <bookmark id="4">
                 <name/>
-                <line>732</line>
+                <line>1102</line>
                 <key/>
             </bookmark>
         </file>
         <file>
-            <url>src/java/dao/DataManipulationParser.java</url>
-            <bookmark id="4">
+            <url>src/java/timeseriestufts/kth/streams/tri/Experiment.java</url>
+            <bookmark id="3">
                 <name/>
-                <line>1094</line>
+                <line>732</line>
                 <key/>
             </bookmark>
         </file>
@@ -29,10 +29,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/DataManipulationParser.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/evaluatable/WekaClassifier.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/kth/streams/bi/BidimensionalLayer.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/visualization/ClassificationChart.js</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/InputParser.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/ExternalDataParser.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/datalayerarea.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/labeler.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/consolearea.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/MiscellaneousParser.java</file>
         </group>
     </open-files>
 </project-private>

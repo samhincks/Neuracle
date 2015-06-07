@@ -46,6 +46,8 @@ public class AudioNBack implements Runnable{
         } else if (kBack ==1){
             playIntro(directory + "1back.wav");
         }
+        else if (kBack ==-1)
+            System.out.println("Skipping intro");
         else
             playIntro(directory + "2back.wav");
         int randFile = (int) (Math.random() * files.length);
@@ -66,7 +68,7 @@ public class AudioNBack implements Runnable{
         }
         catch(Exception e) {
             e.printStackTrace();
-        }
+        }  
     }
     private void play(String filename) {
         try {
@@ -87,16 +89,16 @@ public class AudioNBack implements Runnable{
                     if(client != null){
                         client.sendMessage("next");
                         client.disconnect();
-                    }
+                    }    
                     nbackRunning = false;
-                    return;
-                }
+                    return;    
+                }  
                 
-                if (client!=null) {
+                if (client!=null) {  
                     client.sendMessage(condition);
                 }
-                ticks++;
-            }
+                ticks++;  
+            }  
             client.disconnect();
             clip.close();
         }

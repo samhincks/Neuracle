@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Random;
 import org.json.JSONObject;
+import realtime.AudioNBack;
+import realtime.Client;
 import realtime.LabelInterceptorTask;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.kth.streams.DataLayer;
@@ -323,8 +325,24 @@ public class TransformationParser extends Parser{
                 }
                 bDAO.addLabels(labels);
             }
-            bDAO.setStreamedLabel(labelName, labelValue);
-            return "Added " + labelName + " " + labelValue;
+            String [] vals = labelValue.split("%");
+            String name = vals[0];
+            bDAO.setStreamedLabel(labelName, name);//.. for launching the nback we pass along this something after %
+            if (labelValue.startsWith("easy") || labelValue.startsWith("hard")) {
+                try{
+                    int time =  Integer.parseInt(labelValue.split("%")[1]);
+                    AudioNBack nBack;
+                    time -=1000;
+                    nBack = new AudioNBack(-1, time);
+                    if (!ctx.test) nBack.directory = ctx.getServletContext().getRealPath("WEB-INF/audio/") +"/";
+
+                    //.. Initialize nBack and run it for specified duration. It will complain if theres not a server running
+                    Thread t = new Thread(nBack);
+                    t.start();
+                }catch (Exception e ) { throw new Exception (e.getMessage() );}//.. if anything went wrong here that's fine. A good faith effort to start the audio}
+                   
+            }
+            return "Current label: " + labelName + " " + name;
         } else {
             throw new Exception("Could not find " + filename);
         }

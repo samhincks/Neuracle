@@ -18,7 +18,6 @@ function Labeler()
      **/
     this.initiateLabeling = function(filename,conditionName,conditions,
         trialLength, trialsOfEach,restLength) {
-            console.log(trialLength);
         this.trialLength  = parseInt(trialLength * 1000);
         this.restLength = parseInt(restLength * 1000);
         this.iterations =0;
@@ -28,7 +27,7 @@ function Labeler()
         this.fileName = filename;
         
         consoleArea.displayMessage("Initiating labeling protocol for a total of " +this.trialsToDo 
-                +"trials on " +this.fileName + " for " + trialLength + "s with rest of " + restLength + "s", "systemmes", "blackline");
+                +" trials on " +this.fileName + " for " + trialLength + "s with rest of " + restLength + "s", "systemmess", "blackline");
         self = this;
         this.labelCondition();
     }
@@ -36,8 +35,13 @@ function Labeler()
     /**Alternate conditions and rest, ping the server each time the label switches, 
      * which alternates how data will be labeled**/
     this.labelCondition = function() {
-        var message = "label(" + self.fileName + "," + self.conditionName + ","+self.conditions[self.iterations%self.conditions.length]+")";
+        var curCondition = self.conditions[self.iterations%self.conditions.length];
+        if (curCondition == "easy" || curCondition == "hard") 
+            curCondition += "%" + (self.trialLength);
+           
+        var message = "label(" + self.fileName + "," + self.conditionName + ","+curCondition+")";
         $("#consoleInput").val(message);
+        //consoleArea.displayMessage("Prepare for " + curCondition, "systemmess", "greenline");
         javaInterface.postToConsole();
         
         self.iterations++;
@@ -45,8 +49,8 @@ function Labeler()
             setTimeout(self.labelRest, self.trialLength);
         else{
             setTimeout(self.labelJunkAndEnd, self.trialLength);
-            consoleArea.displayMessage("Experiment Complete", "systemmes", "greenline");
-        }
+            consoleArea.displayMessage("Last trial!", "systemmess", "greenline");
+        }  
     }
     
     this.labelJunkAndEnd = function() {

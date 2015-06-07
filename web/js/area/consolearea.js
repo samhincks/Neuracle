@@ -105,32 +105,41 @@ function ConsoleArea() {
          
          //.. For periodically updating what the current label is of a synchronized
          //... dataset
-         else if(userText.startsWith("streamlabel(")) {
-            if (!this.streaming){
-                consoleArea.displayMessage("Must first apply a procedure for synchronizing the database using stream(dbname)", "systemmes", "redline");
-                return true;
-            }
+         else if(userText.startsWith("streamlabel")) {
+          //  if (!this.streaming){
+            //    consoleArea.displayMessage("Must first apply a procedure for synchronizing the database using stream(dbname)", "systemmess", "redline");
+              //  return true;
+            //}
              
             var mes = userText.split("("); //.. will be parameters (100,200)
-            var params = mes[1].split(",");
+            var params = new Array();
+            if (mes.length >1) params  = mes[1].split(",");
             
-            if (params.length != 4) {
-                this.displayMessage("There ought to be 4 parameters: filename, conditionName, valA%valB%valC, [seconds]%[#trialsOfEach]%[secondsOfRest]", "systemmess", "redline" );
-                return false;
+            if (params.length ==0) {
+               params = new Array();
+               params[0] = "easy%rest"
+               params[1] = "30%1%5";
+               params[2] = "realtime1";
+               params[3] = "condition";
             }
+            if (params.length ==2) {
+               params[2] = "realtime1";
+               params[3] = "condition";            
+           }   
             
-            var filename = params[0];
-            var conditionName = params[1];
-            var conditions = params[2].split("%");
-            var timing = params[3].split("%");
+           
+            var filename = params[2];
+            var conditionName = params[3];
+            var conditions = params[0].split("%"); //.. error if trailing %  
+            var timing = params[1].split("%");
             var trialLength = parseInt(timing[0]);
             var trialsOfEach = parseInt(timing[1]);
             var restLength = parseInt(timing[2]);
             labeler = new Labeler();
             labeler.initiateLabeling(filename,conditionName,conditions,trialLength,trialsOfEach,restLength); 
-            return false;
+            return true;
          }
-         
+           
          else if(userText.startsWith("clearstream")){
              this.streaming = false;
              clearInterval(this.streamInterval); 

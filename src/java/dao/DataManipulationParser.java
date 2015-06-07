@@ -196,6 +196,14 @@ public class DataManipulationParser extends Parser{
         commands.put(command.id, command);
         
         
+        // ONLY ON THE FRONT-END
+        //-- Manipulate
+        command = new Command("streamlabel");
+        command.documentation = "Alters the current label being broadcasted o specified dataset ";
+        command.parameters = "4 parameters: valA%valB%valC, [seconds]%[#trialsOfEach]%[secondsOfRest], filename, conditionName";
+        commands.put(command.id, command);
+           
+        
     }
 
     public JSONObject execute(String command, String[] parameters,
@@ -1240,28 +1248,36 @@ public class DataManipulationParser extends Parser{
     public String realtime(String [] parameters) throws Exception {
         ArrayList<ChannelSet> chanSets = getChanSets(true);
         String retString = "";
+        
         for (ChannelSet cs : chanSets) {
             Experiment e = super.getExperiment(cs, "condition");
             ArrayList<String> toKeep = new ArrayList();
-            toKeep.add("easy");
-            toKeep.add("hard");
+            if (parameters.length >0) {
+                for (int i = 0; i < parameters.length; i++) {
+                    toKeep.add(parameters[i]);
+                }
+            }
+            else {
+                toKeep.add("easy");
+                toKeep.add("hard");
+            }
             e = e.removeAllClassesBut(toKeep);
 
             //.. remove instances 10 percent larger than the average
             int instLength = e.getMostCommonInstanceLength();
             int origSize = e.matrixes.size();
-            //int trimmed = e.trimUnfitInstances(instLength);
+            //int trimmed = e.trimUnfitInstances(instLength);         
            
             //.. anchor it, setting start to zero
             e = e.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);
             //e = e.manipulate(new Transformation(Transformation.TransformationType.movingaverage, 15), false);
             e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false);
-            e = e.manipulate(new Transformation(Transformation.TransformationType.lowpass, 0.3f), false);
-
+            e = e.manipulate(new Transformation(Transformation.TransformationType.lowpass, 0.05f), false);
+   
 
             e.setParent(cs.getId()); //.. set parent to what we derived it from
-
-
+  
+  
             //.. make a new data access object, and add it to our stream
             TriDAO pDAO = new TriDAO(e);
 
@@ -1291,16 +1307,16 @@ public class DataManipulationParser extends Parser{
         ArrayList<ChannelSet> chanSets = getChanSets(true);
         String retString = "";
         for (ChannelSet cs : chanSets) {
-            ChannelSet filteredSet =  cs.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);//cs.calcOxy(true, null, null); //.. we want a copy;;
-            //ChannelSet filteredSet =cs.calcOxy(true, null, null); //.. we want a copy;;
-
-            retString += "Applied CalcOxy ";
+           // ChannelSet filteredSet =  cs.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);//cs.calcOxy(true, null, null); //.. we want a copy;;
+            ChannelSet filteredSet =cs.calcOxy(true, null, null); //.. we want a copy;;
+  
+            retString += "Applied CalcOxy ";  
             //if (lowpass == 0) {
-             filteredSet = filteredSet.movingAverage(10, true);  
+             filteredSet = filteredSet.movingAverage(10, true);    
              retString += "Applied MovingAverage, 10 readings back::";
-            //}
+            //}     
             
-            filteredSet = filteredSet.lowpass(0.3f, true);
+            filteredSet = filteredSet.lowpass(0.3f, true);  
             if (lowpass > 0 && highpass == 0) {
                 filteredSet = filteredSet.lowpass(lowpass, false);
                 retString += "Applied Lowpass; Removed frequencies oscillating at above " + lowpass + "hz ::";
@@ -1418,5 +1434,5 @@ public class DataManipulationParser extends Parser{
     }
     
     
-
+  
 }
