@@ -35,8 +35,8 @@ public class TechniquesActionBean extends BaseActionBean{
                 
                 if (t.technique instanceof ClassificationAlgorithm) {
                     obj.put("type","Classifier"); 
-                    WekaClassifier wc = (WekaClassifier) t.technique;
-                    obj.put("trained", wc.timesTrained);
+                    ClassificationAlgorithm c = (ClassificationAlgorithm) t.technique;
+                    obj.put("trained", c.timesTrained);
                 }
                 else if (t.technique instanceof FeatureSet)
                     obj.put("type","FeatureSet"); 

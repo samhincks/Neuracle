@@ -65,9 +65,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
         return true;
        // return (type == MLType.adaboost||type == MLType.smo || type == MLType.lmt || type == MLType.simple || type == MLType.tnn);
     }
-    //.. Used if a classifier is trained, and saved, to be used for later, potentially realtime classification
-    public int timesTrained =0;
-    public TechniqueSet lastTechniqueTested;
+    
     public Classification lastTrainedClassification;
     public int lastInstanceLength;
     //---------------------------
@@ -201,11 +199,11 @@ public class WekaClassifier  extends ClassificationAlgorithm{
        instances.add(instance);
        Experiment exp = new Experiment(cs.id,lastTrainedClassification, instances, cs.readingsPerSecond);
        
-       //.. if the lastTechniqueTested has transformations associated with it, apply those 
+       //.. if the techiqueTested has transformations associated with it, apply those 
        if (lastTechniqueTested.getTransformations() != null) {
            for (Transformation t : lastTechniqueTested.getTransformations().transformations) {
                if(t.for3D) exp = exp.manipulate(t, true);
-           }  
+           }    
        }
        
        //.. retrieve the instances and since we know we only have one, simply classify it

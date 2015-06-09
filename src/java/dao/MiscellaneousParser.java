@@ -5,6 +5,7 @@ import dao.datalayers.BiDAO;
 import dao.datalayers.DataLayerDAO;
 import dao.datalayers.DataLayersDAO;
 import dao.datalayers.MySqlDAO;
+import dao.datalayers.TriDAO;
 import dao.techniques.TechniqueDAO;
 import filereader.Label;
 import filereader.Labels;
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 import realtime.AudioNBack;
 import realtime.Client;
 import stripes.ext.ThisActionBeanContext;
+import timeseriestufts.evaluatable.TechniqueSet;
 import timeseriestufts.evaluation.experiment.Classification;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
@@ -167,9 +169,7 @@ public class MiscellaneousParser extends Parser{
             c = commands.get("hold");
             c.action = "reload";
             c.retMessage = hold();// "Removing " + currentDataLayer.id ; 
-           
-            currentDataLayer = null;
-            
+            currentDataLayer = null;            
         }
         else if (command.startsWith("loadfiles")) {
             c = commands.get("loadfiles");
@@ -186,7 +186,6 @@ public class MiscellaneousParser extends Parser{
             c= commands.get("register");
             c.retMessage = this.register(parameters);
         }
-        
         
         else if (command.startsWith("login")) {
             c = commands.get("login");
@@ -576,27 +575,31 @@ public class MiscellaneousParser extends Parser{
         }
 
     private String custom(String[] parameters) throws Exception{
-        ctx.inputParser.parseInput("load(hincks)");
-        ctx.inputParser.parseInput("append");
-       // ctx.inputParser.parseInput("hold");
-         ctx.setCurrentName("mergedtest2-csvfs1-test3-csvfs1-test9-csvfs1-test7-csvfs1-test8-csvfs1");
-         ctx.inputParser.parseInput("realtime");
-       // ctx.inputParser.parseInput("manipulate(averagedcalcoxy");
-       // ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1averagedaveragedcalcoxy");
-        // ctx.inputParser.parseInput("makeml(lmt)");
-        // ctx.inputParser.parseInput("makefs(bestfit,*,*)");
-
-        //ctx.inputParser.parseInput("split(condition)");
-        //ctx.inputParser.parseInput("keep(easy,hard)");
-  
+        manipulateTest();
         return "custom";
     }
+    private void slopeClassifier() throws Exception { 
+        ctx.inputParser.parseInput("load(baseline)");
+        ctx.setCurrentName("baseline2-csvfs1");
+        ctx.inputParser.parseInput("manipulate(averagedcalcoxy)");
+        ctx.inputParser.parseInput("synchronize)");
+        ctx.setCurrentName("realtime1");
+        ctx.inputParser.parseInput("makeml(slope)");
+
+    }
     
-    private String manipulateTest() throws Exception {
+     private String loadData()  throws Exception {
+         ctx.inputParser.parseInput("load(hincks)");
+         ctx.inputParser.parseInput("append");
+         ctx.setCurrentName("mergedtest2-csvfs1-test3-csvfs1-test9-csvfs1-test7-csvfs1-test8-csvfs1");
+         ctx.inputParser.parseInput("manipulate(averagedcalcoxy)");
+         return "";
+     }
+     private String manipulateTest() throws Exception {
         ctx.inputParser.parseInput("load(hincks)");
         ctx.inputParser.parseInput("append");
         
-        ctx.setCurrentName("mergedtest8-csvfs1-test3-csvfs1-test9-csvfs1-test2-csvfs1-test7-csvfs1");
+        ctx.setCurrentName("mergedtest2-csvfs1-test3-csvfs1-test9-csvfs1-test7-csvfs1-test8-csvfs1");
         ctx.inputParser.parseInput("hold");
         ctx.inputParser.parseInput("realtime");
 

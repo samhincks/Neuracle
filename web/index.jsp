@@ -126,11 +126,26 @@
         <script type="text/javascript" src="js/area/objects/techniques.js"></script> 
         <script type="text/javascript" src="js/area/consolearea.js"></script> 
         <script type="text/javascript" src="js/area/objects/labeler.js"></script> 
+        <script type="text/javascript" src="js/area/objects/outputparser.js"></script> 
+
         
         <!--INTERFACE -->
         <script type="text/javascript" src="js/javainterface.js"></script> 
         <script type="text/javascript" src="js/events.js"></script> 
         
+        <audio id="0A" src="audio/A0.wav" preload="auto"></audio>
+        <audio id="0B" src="audio/A1.wav" preload="auto"></audio>
+        <audio id="0C" src="audio/A2.wav" preload="auto"></audio>
+        <audio id="1A" src="audio/B0.wav" preload="auto"></audio>
+        <audio id="1B" src="audio/B1.wav" preload="auto"></audio>
+        <audio id="1C" src="audio/B2.wav" preload="auto"></audio>
+        <audio id="2A" src="audio/C0.wav" preload="auto"></audio>
+        <audio id="2B" src="audio/B1.wav" preload="auto"></audio>
+        <audio id="2C" src="audio/C2.wav" preload="auto"></audio>
+        <audio id="3A" src="audio/D0.wav" preload="auto"></audio>
+        <audio id="3B" src="audio/D1.wav" preload="auto"></audio>
+        <audio id="3C" src="audio/D2.wav" preload="auto"></audio>
+
 
          
     </body>

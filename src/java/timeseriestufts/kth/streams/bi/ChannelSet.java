@@ -38,7 +38,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     public float readingsPerSecond;
     public boolean test = false;//.. set to true if we fabricated this as a sample -- will change display message
     public Transformations transformations;
-    
+      
     public ChannelSet() {
         streams = new ArrayList();
         this.readingsPerSecond = Channel.HitachiRPS; 
@@ -617,6 +617,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             return this;
         }
     }
+    
+   
     /**
      * Return a new ChannelSet where each channel is anchored to zero if second
      * parameter is null
@@ -639,6 +641,21 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             }
             return this;
         }
+    }
+    
+    /**
+     * Return a new ChannelSet where each channel is anchored to zero if second
+     * parameter is null
+     */
+    public ChannelSet trimFirst(int firstPoint) throws Exception {
+        ChannelSet cs = getCopy(this.id + "trim");
+        //.. apply anchor to each channel
+        for (Channel c : streams) {
+            Channel newC = c.getSample(firstPoint, c.numPoints, false);
+            cs.addStream(newC);
+        }
+        return cs;
+        
     }
     
     public ChannelSet detrend(ChannelSet baseline, double maxDiff, boolean copy) throws Exception{
@@ -708,39 +725,52 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
      */
     public ChannelSet manipulate(Transformation ts, boolean copy) throws Exception{
         ChannelSet retSet = this; //.. will be set to something else if copy = true
-
         if (ts.type== Transformation.TransformationType.bandpass) 
             retSet = this.bandpass(((ts.params.length > 0)?ts.params[0] :0.1f), ((ts.params.length > 1)?ts.params[1] :1f), copy);
         
-        if (ts.type== Transformation.TransformationType.lowpass) 
-            retSet = this.lowpass(((ts.params.length > 0)?ts.params[0] :0.3f), copy);
+        else if (ts.type== Transformation.TransformationType.lowpass) {
+            if(!copy)throw new Exception("lowpass currently bugged when copy = false");
+            float cutoff = (ts.params.length > 0)?ts.params[0] :0.3f;
+            retSet = this.lowpass(cutoff, copy);
+            //.. lowpass filters mess with the first n readings, depending on the cutoff. Trim off that many radings
+            int trim =0;
+            if (cutoff >= 0.5) trim = 15;
+            else if (cutoff >= 0.3f) trim = 20;
+            else if (cutoff >=0.1f) trim = 46;
+            else throw new Exception("Filtering at frequency " + cutoff + " not yet supported. You must figure out trim values");
+            //.. Trim
+            //retSet = retSet.trimFirst((trim));
+        }
         
-        if (ts.type== Transformation.TransformationType.highpass) 
+        else if (ts.type== Transformation.TransformationType.highpass) 
             retSet = this.highpass(((ts.params.length > 0)? ts.params[0] :1), copy);
         
-        if (ts.type== Transformation.TransformationType.bwbandpass) 
+        else if (ts.type== Transformation.TransformationType.bwbandpass) 
             retSet = this.bwBandpass((int)ts.params[0],ts.params[1], ts.params[2]);
         
-        if (ts.type== Transformation.TransformationType.zscore) 
+        else if (ts.type== Transformation.TransformationType.zscore) 
             retSet = this.zScore(copy);
         
-        if (ts.type== Transformation.TransformationType.calcoxy) 
+        else if (ts.type== Transformation.TransformationType.calcoxy) 
             retSet = this.calcOxy(copy, null, null);
         
-        if (ts.type == Transformation.TransformationType.averagedcalcoxy) 
+        else if (ts.type == Transformation.TransformationType.averagedcalcoxy) 
             retSet = this.averagedCalcOxy(null, null);
                 
-        if (ts.type == Transformation.TransformationType.anchor) 
+        else if (ts.type == Transformation.TransformationType.anchor) 
             retSet = this.anchor(copy, null);
         
-        if (ts.type == Transformation.TransformationType.subtract) {
+        else if (ts.type == Transformation.TransformationType.subtract) //.. doesnt give as good visualization as anchor
             retSet = this.anchor(copy,ts.params[0]);
-        }
+        
+        
+        else if (ts.type == Transformation.TransformationType.trimfirst) 
+            retSet = this.trimFirst((ts.params.length > 0)? (int)ts.params[0] : 100);
          
-        if (ts.type== Transformation.TransformationType.movingaverage) 
+        else if (ts.type== Transformation.TransformationType.movingaverage) 
             retSet = this.movingAverage(((ts.params.length > 0)? (int)ts.params[0] : 10), copy);
         
-        if (transformations != null) retSet.transformations = transformations.getCopy(); //.. not a huge deal if we actually didnt need the deep copy
+        else if (transformations != null) retSet.transformations = transformations.getCopy(); //.. not a huge deal if we actually didnt need the deep copy
         
         //.. save it so that we remember what has been applied
         if (retSet.transformations == null) retSet.transformations = new Transformations();

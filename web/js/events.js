@@ -9,6 +9,7 @@ var javaInterface = new JavaInterface();
 var plumbTechniques = new PlumbTechniques();
 var plumb = new Plumb();
 var datalayerArea = new DatalayerArea("#content");
+var outputParser = new OutputParser();
 var address =  "http://localhost:8080/Neuracle/" 
 //var address = "http://sensormining.herokuapp.com/"; //.. the address of the back-end
 

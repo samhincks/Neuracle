@@ -16,6 +16,7 @@ import edu.hawaii.jmotif.logic.sax.alphabet.NormalAlphabet;
 import filereader.TSTuftsFileReader;
 import filereader.experiments.AJExperiment;
 import filereader.experiments.Beste;
+import filereader.experiments.BesteExperiment;
 import java.util.ArrayList;
 import java.util.Random;
 import org.JMathStudio.DataStructure.Vector.Vector;
@@ -287,7 +288,6 @@ public class Channel extends UnidimensionalLayer  {
             signal[i] = super.getPointOrNull(i);
         }
         bp.process(signal);
-            
         //.. If shuold be a copy then create a new channel
         if (copy){
              Channel sc = new Channel(this.framesize, numPoints);
@@ -309,6 +309,7 @@ public class Channel extends UnidimensionalLayer  {
         }
     }
     
+ 
     /** Return a new Channel with original copies of the data that is a lowpass filtered version 
      * at a specified cutoff point. Only passes frequences lower than specified amount
      * UNTESTED; I have not verified that this works as intended. 
@@ -328,7 +329,7 @@ public class Channel extends UnidimensionalLayer  {
             signal[i] = super.getPointOrNull(i);
         }
         lp.process(signal);
-        
+
         if (copy) {    
             Channel sc = new Channel(this.framesize, this.numPoints);
             sc.setId(id+"lp"+freq);
@@ -345,7 +346,7 @@ public class Channel extends UnidimensionalLayer  {
             }
             return this;
         }
-    }
+    }   
     
     /** Return a new Channel with original copies of the data that is a highpass filtered version.
      * It passes frequencies above cutoff point and attenuates those beneath.
@@ -368,6 +369,7 @@ public class Channel extends UnidimensionalLayer  {
             index++; 
         }
         hp.process(signal);
+
         if (copy){
              Channel sc = new Channel(this.framesize, this.numPoints);
              sc.setId(id+"bp"+freq);
@@ -521,6 +523,8 @@ public class Channel extends UnidimensionalLayer  {
         }
     }
     
+   
+    
     /**Return the frequency domain representation of this channel, 3 channels
      * where magnitudeChannel holds the normalized magnitidues at the frequencies
      * in frequencyChannel and phaseChannel holds the phase.  
@@ -658,6 +662,7 @@ public class Channel extends UnidimensionalLayer  {
     
     public Channel bwBandpass(int order, float fl, float fh) throws Exception{
         IIRFilter iirFilter = IIRFilterMaker.butterWorthBandPass(order, fl, fh);
+        iirFilter = IIRFilterMaker.butterWorthLowPass(1, 0.1f);
         Vector v = new Vector(numPoints);
         for (int i=0; i < numPoints; i++) {
             v.setElement(super.getPoint(i), i);
@@ -691,51 +696,7 @@ public class Channel extends UnidimensionalLayer  {
         }
         return channel;
     }
-    
-     public static Channel generate(int numReadings) {
-         Random r = new Random();
-        int Low = 1;
-        int High = 100000;
-        int id = r.nextInt(High-Low) + Low;
-         
-         if (numReadings == -1) {
-             Channel c = new Channel(1, 128);
-             int MIN_RATE =16;
-             for (int i = 0; i < c.data.length; i++) {
-                  float point =(float) (Math.sin(i * Math.PI * 2 / MIN_RATE) + 0.0
-                          * Math.sin(i * Math.PI * 4 / MIN_RATE) + 0.0
-                          * Math.sin(i * Math.PI * 15.3 / MIN_RATE));
-                  
-                 // point = (float) (point *hamming(i, 128));
-                  c.addPoint(point);
-                  //if (i %255 ==0)System.out.println(c.getPointOrNull(i));
-             }
-             c.id = id +"";
-             return c;
-         }
-         
-         
-         ///. if 0, then generate actual readings
-         if (numReadings ==0) {
-             Channel c = new Channel(1, 30); 
-             c.addPoint(1);c.addPoint(2);c.addPoint(3);c.addPoint(4);c.addPoint(5);
-             c.addPoint(4);c.addPoint(3);c.addPoint(2);c.addPoint(1);c.addPoint(0);
-             c.addPoint(1);c.addPoint(2);c.addPoint(3);c.addPoint(4);c.addPoint(5);
-             c.addPoint(4);c.addPoint(3);c.addPoint(2);c.addPoint(1);c.addPoint(0);
-             c.addPoint(1);c.addPoint(2);c.addPoint(3);c.addPoint(4);c.addPoint(5);
-             c.addPoint(4);c.addPoint(3);c.addPoint(2);c.addPoint(1);c.addPoint(0);
-             c.id = id +"";
-             return c;
-         }
-         
-        //.. contrive an instance channel
-        Channel c = new Channel(1, numReadings);
-        for(int i=0; i< numReadings; i++) {
-             c.addPoint((float)Math.random()*10);
-        }
-        c.id = id +"";
-        return c;
-    }
+
     /** Return a new channel where each point is the difference it and the previous
      **/ 
     public Channel getCopyAsDifferenceFromLast() throws Exception{
@@ -960,7 +921,24 @@ public class Channel extends UnidimensionalLayer  {
             Channel b = generate(numPoints);
             
             int TEST =-1; //.. we have our datalayer, now set what we want to test
-            String test = "granger";
+            String test = "anchor";
+            
+            //.. test if the anchor command works like subtract
+            if (test.equals("anchor")) {
+                Experiment realE = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
+                Channel ch = realE.matrixes.get(3).streams.get(0);
+                Channel ch2 = realE.matrixes.get(4).streams.get(0);
+                Channel ch3 = ch2.anchor(true, (float)ch.getMean());
+                ch3.printStream();
+
+            }
+            
+            if (test.equals("filter")) {
+                Experiment realE = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
+                Channel ch = realE.matrixes.get(1).streams.get(0);
+                ch = ch.bwBandpass(2, 0.1f, 0.5f);
+                ch.getSample(0,30,true).printStream();
+            }
             
             if (test.equals("rrintervalPerfSinusoid")) {
                 ArrayList<Integer> peaks = c.getPeaks(true);
@@ -1141,7 +1119,51 @@ public class Channel extends UnidimensionalLayer  {
         catch (Exception e) {e.printStackTrace();} 
         
     }
-
+    
+     public static Channel generate(int numReadings) {
+         Random r = new Random();
+        int Low = 1;
+        int High = 100000;
+        int id = r.nextInt(High-Low) + Low;
+         
+         if (numReadings == -1) {
+             Channel c = new Channel(1, 128);
+             int MIN_RATE =16;
+             for (int i = 0; i < c.data.length; i++) {
+                  float point =(float) (Math.sin(i * Math.PI * 2 / MIN_RATE) + 0.0
+                          * Math.sin(i * Math.PI * 4 / MIN_RATE) + 0.0
+                          * Math.sin(i * Math.PI * 15.3 / MIN_RATE));
+                  
+                 // point = (float) (point *hamming(i, 128));
+                  c.addPoint(point);
+                  //if (i %255 ==0)System.out.println(c.getPointOrNull(i));
+             }
+             c.id = id +"";
+             return c;
+         }
+         
+         
+         ///. if 0, then generate actual readings
+         if (numReadings ==0) {
+             Channel c = new Channel(1, 30); 
+             c.addPoint(1);c.addPoint(2);c.addPoint(3);c.addPoint(4);c.addPoint(5);
+             c.addPoint(4);c.addPoint(3);c.addPoint(2);c.addPoint(1);c.addPoint(0);
+             c.addPoint(1);c.addPoint(2);c.addPoint(3);c.addPoint(4);c.addPoint(5);
+             c.addPoint(4);c.addPoint(3);c.addPoint(2);c.addPoint(1);c.addPoint(0);
+             c.addPoint(1);c.addPoint(2);c.addPoint(3);c.addPoint(4);c.addPoint(5);
+             c.addPoint(4);c.addPoint(3);c.addPoint(2);c.addPoint(1);c.addPoint(0);
+             c.id = id +"";
+             return c;
+         }
+         
+        //.. contrive an instance channel
+        Channel c = new Channel(1, numReadings);
+        for(int i=0; i< numReadings; i++) {
+             c.addPoint((float)Math.random()*10);
+        }
+        c.id = id +"";
+        return c;
+    }
     
     
 }

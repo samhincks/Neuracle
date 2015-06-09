@@ -266,11 +266,10 @@ public class BiDAO extends DataLayerDAO {
     public void addMarkers(ChannelSet channelSet, JSONObject data, double scale) throws Exception {
         JSONArray markerNames = new JSONArray();
         JSONArray values = new JSONArray();
-        JSONArray names = data.getJSONArray("names");
+        JSONArray names = data.getJSONArray("names");       
         
         //... Add numerically visualizable markers
         for (int i = 0; i < channelSet.markers.size(); i++) {
-            System.out.println("BiDAO:addMarkers: when do we add teh extra marker? " + channelSet.markers.size());
             JSONObject js = new JSONObject();
             Markers m = channelSet.markers.get(i);
             JSONArray trials = new JSONArray();

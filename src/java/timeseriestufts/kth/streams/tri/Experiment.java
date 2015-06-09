@@ -386,7 +386,6 @@ public class Experiment extends TridimensionalLayer<Instance>{
         
         //.. retrieve classifier and train it, then remember what classifiers were applied
         WekaClassifier wc = (WekaClassifier) t.getClassifier();
-        wc.buildClassifier(instances);
         wc.lastInstanceLength = this.getFirstInstance().getNumPointsAtZero();
         wc.lastTrainedClassification = this.classification;
         wc.lastTechniqueTested = t;
@@ -714,8 +713,17 @@ public class Experiment extends TridimensionalLayer<Instance>{
 
             if (!copy) ins.manipulate(t, copy);
             else {
+                int oldStart = ins.realStart;
+                int oldEnd = ins.realEnd;
                 ChannelSet cs = ins.manipulate(t, copy);
-                Instance ins2 = new Instance(ins.condition, ins.realStart, ins.realEnd);
+                int lengthDiff = (oldEnd - oldStart) - cs.streams.get(0).numPoints; 
+               // System.out.println(oldStart + " , " + oldEnd + " , " + cs.streams.get(0).numPoints + " , " + lengthDiff);
+  
+                Instance ins2;
+                if (lengthDiff == 0)
+                     ins2 = new Instance(ins.condition, ins.realStart, ins.realEnd);
+                else //. we applied the trim command and must document this
+                    ins2 = new Instance(ins.condition, oldStart + lengthDiff, oldEnd );
                 ins2.streams = cs.streams;
                 instances.add(ins2);
             }

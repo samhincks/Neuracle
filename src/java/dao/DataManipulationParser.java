@@ -17,6 +17,7 @@ import timeseriestufts.evaluatable.AttributeSelection;
 import timeseriestufts.evaluatable.ClassificationAlgorithm;
 import timeseriestufts.evaluatable.Dataset;
 import timeseriestufts.evaluatable.FeatureSet;
+import timeseriestufts.evaluatable.StreamingClassifier;
 import timeseriestufts.evaluatable.Technique;
 import timeseriestufts.evaluatable.TechniqueSet;
 import timeseriestufts.evaluatable.Transformation;
@@ -815,10 +816,14 @@ public class DataManipulationParser extends Parser{
         }
         else {  
             try {
-                tDAO = new TechniqueDAO(new WekaClassifier(id));
+                if (id.equals("slope")) {
+                    tDAO = new TechniqueDAO(new StreamingClassifier(id));
+                }
+                else tDAO = new TechniqueDAO(new WekaClassifier(id));
                 techniquesDAO.addTechnique(id, tDAO);
                 
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {                
+                
                 throw new Exception("There is no machine learning algorithm titled " + id + " . For now, there is"
                         + "jrip, j48, lmt, nb, tnn, smo, simple, logistic, adaboost");
             }
@@ -1046,7 +1051,21 @@ public class DataManipulationParser extends Parser{
         return retString;
     }
     
-    
+    /**If its a streaming classifier, train on a channelset**/
+    private String trainOnChannelSet(String [] parameters, DataLayerDAO dDAO, ChannelSet cs) throws Exception {
+        int leap =10; //.. set to positive number 
+        int window =100;
+        if (parameters.length > 0) window = Integer.parseInt(parameters[0]);
+        if (parameters.length > 1) leap =  Integer.parseInt(parameters[1]);
+        
+        for (ClassificationAlgorithm c : dDAO.getClassifiers()) { 
+            if (!(c instanceof StreamingClassifier)) throw new Exception("Can only train a slope-classifier on a channelset");
+            StreamingClassifier sc = (StreamingClassifier) c;
+            sc.train(cs, leap, window, cs.transformations);
+        }
+        return "Successfully trained a slope-classifier on " + cs.id + " Type repeat(classifylast, x) to make it return the probability of observing"
+                + " streaming values";
+    }
     /**
      * Handle train(), when the selected element is an Experiment.
      * evaluate(5) for evaluation across 5 folds Assume Techniques have been
@@ -1059,7 +1078,9 @@ public class DataManipulationParser extends Parser{
         if (parameters.length >= 1) {
             numClasses = Integer.parseInt(parameters[0]);
         }
-        
+        if (currentDataLayer instanceof ChannelSet) {
+            return trainOnChannelSet(parameters, dDAO, (ChannelSet)currentDataLayer);
+        }
         if (!(currentDataLayer instanceof Experiment || currentDataLayer instanceof MultiExperiment)) {
             throw new Exception("You must split the data into instances first, e.g. (split(labelName)");
         }
@@ -1163,6 +1184,7 @@ public class DataManipulationParser extends Parser{
         return "Unexpected evaluation failure. Actually, unreachable statement";
     }
     
+   
     private String classify(String [] parameters, DataLayerDAO dDAO, Performances performances) throws Exception{
         if(!(currentDataLayer instanceof ChannelSet)) throw new Exception("The command classify only "
                 + "applies to 2D Channelsets " + currentDataLayer.id + " doesn't fit that bill");
@@ -1206,7 +1228,29 @@ public class DataManipulationParser extends Parser{
        
        return ret;
     }
-    
+     
+    /** Returns the probability of observing the given last values.
+     *  Only works on a streaming object
+     **/
+    private String getStreamingSlope(ChannelSet cs, StreamingClassifier streamingClassifier) throws Exception {
+        //.. try synchronize, in case this is a realtime layer
+        try {
+            String layerName = cs.id;
+            ctx.inputParser.parseInput("synchronize(" + layerName + ")");
+            //cs = (ChannelSet)((BiDAO)ctx.dataLayersDAO.get(layerName)).dataLayer;
+        } catch (Exception e) {}/* It's fine if this command failed*/
+  
+        String [] probabilities = streamingClassifier.getLastSlopes(cs);
+        
+        String ret = "probabilities: ";
+        for (int i = 0; i < probabilities.length; i++) {
+           ret += probabilities[i];
+           if (i!= probabilities.length -1) ret+=",";
+            
+        } 
+        return  ret;
+        
+    }
     /**Predicts the last K readings of the dataset, and returns confidence and value if possible.
      * If this is used in conjunction with a database, synchronize with database first. 
      **/
@@ -1227,7 +1271,10 @@ public class DataManipulationParser extends Parser{
             throw new Exception("You must connect the dataset with a trained classifier");
         
 
-        
+        if (classifiers.get(0) instanceof StreamingClassifier) {
+            return getStreamingSlope(cs, (StreamingClassifier) classifiers.get(0));
+        }
+
         WekaClassifier classifier = (WekaClassifier) classifiers.get(0);
 
         //.. try synchronize, in case this is a realtime layer
@@ -1260,21 +1307,15 @@ public class DataManipulationParser extends Parser{
             else {
                 toKeep.add("easy");
                 toKeep.add("hard");
-            }
+            }    
             e = e.removeAllClassesBut(toKeep);
 
-            //.. remove instances 10 percent larger than the average
-            int instLength = e.getMostCommonInstanceLength();
-            int origSize = e.matrixes.size();
-            //int trimmed = e.trimUnfitInstances(instLength);         
-           
             //.. anchor it, setting start to zero
             e = e.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);
             //e = e.manipulate(new Transformation(Transformation.TransformationType.movingaverage, 15), false);
-            e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false);
-            e = e.manipulate(new Transformation(Transformation.TransformationType.lowpass, 0.05f), false);
-   
-
+            //e = e.manipulate(new Transformation(Transformation.TransformationType.subtract, 25), true);
+            e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false); //. wierd if anchor comes before?
+            e = e.manipulate(new Transformation(Transformation.TransformationType.lowpass, 0.3f), true);
             e.setParent(cs.getId()); //.. set parent to what we derived it from
   
   
@@ -1431,8 +1472,5 @@ public class DataManipulationParser extends Parser{
                     + super.getColorsMessage(e);
         }
         return retString;
-    }
-    
-    
-  
+    } 
 }

@@ -16,8 +16,9 @@ function JavaInterface() {
         if (JSONobj.error != null){
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
         }
-        else if(JSONobj.content != "")
-            consoleArea.displayMessage(JSONobj.content, "systemmess", "blueline");
+        else if(JSONobj.content != ""){
+            outputParser.parseOutput(JSONobj.content);
+        }
         
         if (JSONobj.tutorial != "")
             consoleArea.displayMessage(JSONobj.tutorial, "systemmess", "orangeline");
