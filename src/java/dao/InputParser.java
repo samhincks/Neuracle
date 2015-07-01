@@ -270,19 +270,20 @@ public class InputParser {
                 tDAO.addConnection(new TechniqueDAO(ts.getFeatureSet()));
                 tDAO.addConnection(new TechniqueDAO(ts.getAttributeSelection()));
                 
-                response = ip.parseInput("train(-2)"); 
+                response = ip.parseInput("train()"); 
                 ctx.setCurrentName("input/bestemusic/bestemusic15-csv");
                 BiDAO bDAO = (BiDAO)ctx.getCurrentDataLayer();
                 bDAO.addConnection(wc);
-                response = ip.parseInput("classify(22)"); 
-
-  
-                /*
+    
+                
                 //.. Having trained, now test
                 response = ip.parseInput("synchronize(realtime1)");
                 ctx.setCurrentName("realtime1");
-                BiDAO bDAO = (BiDAO) ctx.getCurrentDataLayer();
-                bDAO.addConnection(wc);  */
+                bDAO = (BiDAO) ctx.getCurrentDataLayer();
+                bDAO.addConnection(wc);  
+                
+                response = ip.parseInput("classifylast()"); 
+
                 
             }
             

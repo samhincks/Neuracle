@@ -144,7 +144,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                         myInstance.conditionPercentage, distribution, index);
             }
             else if (testEvery) {  
-                System.out.println("WC: test" + myInstance.attributes.attributeList.size() + " , " + myInstance.condition);
+                System.out.println("WC:" + myInstance.attributes.attributeList.size() + " , " + myInstance.condition);
                 int guess = (int) classifier.classifyInstance(wInstance);
                 double[] distribution = classifier.distributionForInstance(wInstance);      
                   
@@ -180,9 +180,10 @@ public class WekaClassifier  extends ClassificationAlgorithm{
         
         if (ts.getTransformations() != null) {
             for (Transformation t : lastTechniqueTested.getTransformations().transformations) {
-                if (t.for3D) streamingExperiment =streamingExperiment.manipulate(t, true);
+                if (t.for3D)  streamingExperiment =streamingExperiment.manipulate(t, true);
             }
         }
+
         test(streamingExperiment, ts, retPredictions, asAlgosApplied, predictionThreshold, testEvery);
         return retPredictions;
     }
@@ -204,7 +205,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
            for (Transformation t : lastTechniqueTested.getTransformations().transformations) {
                if(t.for3D) exp = exp.manipulate(t, true);
            }    
-       }
+       }  
        
        //.. retrieve the instances and since we know we only have one, simply classify it
        exp.extractAttributes(lastTechniqueTested.getFeatureSet());
@@ -520,7 +521,7 @@ public class WekaClassifier  extends ClassificationAlgorithm{
             TechniqueSet ts = TechniqueSet.generate();
             Dataset ds = Dataset.generate();
             
-            int TEST =13;
+            int TEST =2;
             
             if (TEST==13) {
                 Experiment exp = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");

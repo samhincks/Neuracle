@@ -1362,6 +1362,7 @@ public class SMO
    * @throws Exception in case of an error
    */
   public double[] distributionForInstance(Instance inst) throws Exception {
+      
     // Filter instance
     if (!m_checksTurnedOff) {
       m_Missing.input(inst);

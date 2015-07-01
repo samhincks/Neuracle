@@ -575,7 +575,7 @@ public class MiscellaneousParser extends Parser{
         }
 
     private String custom(String[] parameters) throws Exception{
-        vizTest();
+        loadData();
         return "custom";
     }
     
@@ -606,13 +606,13 @@ public class MiscellaneousParser extends Parser{
         ctx.inputParser.parseInput("synchronize)");
         ctx.setCurrentName("realtime1");
         ctx.inputParser.parseInput("makeml(slope)");
-    }
+    }  
     
      private String loadData()  throws Exception {
          ctx.inputParser.parseInput("load(hincks)");
          ctx.inputParser.parseInput("append");
          ctx.setCurrentName("mergedtest2-csvfs1-test3-csvfs1-test9-csvfs1-test7-csvfs1-test8-csvfs1");
-         ctx.inputParser.parseInput("manipulate(averagedcalcoxy)");
+         ctx.inputParser.parseInput("realtime");
          return "";
      }
      private String manipulateTest() throws Exception {

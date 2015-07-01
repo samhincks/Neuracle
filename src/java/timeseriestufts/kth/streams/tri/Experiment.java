@@ -203,7 +203,6 @@ public class Experiment extends TridimensionalLayer<Instance>{
              Fold fold = folds[j];
              fold.training.extracted = extracted;
              WekaClassifier wc = fold.training.train(this.getTechniqueSet());
-             
              wc.test(fold.testing,this.getTechniqueSet(), predictions, fold.training.asAlgosApplied, -1, false); 
              //System.out.println("Experiment.runCrossValidation() completed " +j);
 
@@ -394,6 +393,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
         
         //.. retrieve classifier and train it, then remember what classifiers were applied
         WekaClassifier wc = (WekaClassifier) t.getClassifier();
+        wc.buildClassifier(instances);
         wc.lastInstanceLength = this.getFirstInstance().getNumPointsAtZero();
         wc.lastTrainedClassification = this.classification;
         wc.lastTechniqueTested = t;
@@ -747,6 +747,7 @@ public class Experiment extends TridimensionalLayer<Instance>{
   
         if (copy) {
             ret =new Experiment(/*this.filename+*/newId, this.classification, instances, this.readingsPerSec );
+            ret.transformations = this.transformations;
         }
         else ret = this;
         
