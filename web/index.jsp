@@ -112,9 +112,6 @@
         <script type="text/javascript" src="js/visualization/PredictionChart.js"></script> 
         <script type="text/javascript" src="js/visualization/ClassificationChart.js"></script> 
 
-        <script type="text/javascript" src="js/visualization/Heatmap.js"></script> 
-
-
 
 
         <!--AREAS-->

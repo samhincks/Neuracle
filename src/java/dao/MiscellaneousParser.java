@@ -575,8 +575,29 @@ public class MiscellaneousParser extends Parser{
         }
 
     private String custom(String[] parameters) throws Exception{
-        manipulateTest();
+        vizTest();
         return "custom";
+    }
+    
+    private void vizTest() throws Exception {
+        ctx.inputParser.parseInput("load(viz)");
+        ctx.inputParser.parseInput("append");
+        ctx.setCurrentName("mergedrealtime1viz-csvfs1-realtime1viz2-csvfs1");
+        //ctx.inputParser.parseInput("hold");
+        ctx.inputParser.parseInput("realtime(vizeasy,vizhard)");
+
+
+    }
+    private void pluckTest() throws Exception {
+        ctx.inputParser.parseInput("load(grprocessed)");
+        ctx.inputParser.parseInput("append");
+        ctx.setCurrentName("merged13-csvfs1-05-csvfs1-04-csvfs1-14-csvfs1-01-csvfs1-08-csvfs1-09-csvfs1-10-csvfs1-02-csvfs1-16-csvfs1-18-csvfs1-03-csvfs1-15-csvfs1-06-csvfs1-07-csvfs1-11-csvfs1-12-csvfs1-19-csvfs1");
+        ctx.inputParser.parseInput("hold");
+        ctx.inputParser.parseInput("realtime");
+      //  ctx.setCurrentName("merged13-csvfs1-05-csvfs1-04-csvfs1-14-csvfs1-01-csvfs1-08-csvfs1-09-csvfs1-10-csvfs1-02-csvfs1-16-csvfs1-18-csvfs1-03-csvfs1-15-csvfs1-06-csvfs1-07-csvfs1-11-csvfs1-12-csvfs1-19-csvfs1conditioneasyhardaveragedcalcoxyconditioneasyhardlowpass0-3conditioneasyhard");;
+        //ctx.inputParser.parseInput("hold");  
+        //ctx.inputParser.parseInput("pluck");
+
     }
     private void slopeClassifier() throws Exception { 
         ctx.inputParser.parseInput("load(baseline)");
@@ -585,7 +606,6 @@ public class MiscellaneousParser extends Parser{
         ctx.inputParser.parseInput("synchronize)");
         ctx.setCurrentName("realtime1");
         ctx.inputParser.parseInput("makeml(slope)");
-
     }
     
      private String loadData()  throws Exception {

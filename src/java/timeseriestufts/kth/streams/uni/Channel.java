@@ -570,6 +570,26 @@ public class Channel extends UnidimensionalLayer  {
         return transformed;
     }
     
+    /**Subtract the values of channel c from this one**/
+    public Channel subtract(Channel c, boolean copy) throws Exception {
+        Channel chan = this;
+        if (copy) {
+            chan =new Channel(this.framesize, this.numPoints);
+            chan.setId(id + "subtract");
+        }
+
+        //.. add the filtered points to the new synched channel
+        for (int i = 0; i < numPoints; i++) {
+            Float thisPoint = super.getPointOrNull(i);
+            Float otherPoint = c.getPointOrNull(i);
+            if (otherPoint != null && thisPoint != null) {
+                if (!copy)chan.setPoint(i, thisPoint - otherPoint);
+                if (copy) chan.addPoint(thisPoint - otherPoint);
+            }
+        }
+        
+        return chan;
+    }
   
     /**Adjust by the fluctation that was present in the a different sample (for instance baseline)
      y is corrected by x.
@@ -916,17 +936,33 @@ public class Channel extends UnidimensionalLayer  {
  
     public static void main(String [] args) {
         try{ 
-            int numPoints = 100;
+            int numPoints = 10;
             Channel c = generate(numPoints);
             Channel b = generate(numPoints);
             
-            int TEST =-1; //.. we have our datalayer, now set what we want to test
-            String test = "anchor";
+            Experiment realE = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
+            Channel ch = realE.matrixes.get(3).streams.get(0);
             
+            int TEST =-1; //.. we have our datalayer, now set what we want to test
+            String test = "subtract";
+            
+            if (test.equals("subtract")) {
+                c.printStream();
+                b.printStream();
+                c = c.subtract(b,true);
+                c.printStream();
+            }
+            if (test.equals("fourier")) {
+                 //c = c.zScore(true);
+               //  c.printStream();
+               // ch.printStream();
+                Complex [] transformed = c.FFT();
+                FrequencyDomain fd = new FrequencyDomain(c.numPoints);
+                fd.complexToFreq(transformed);
+                fd.print();
+            }
             //.. test if the anchor command works like subtract
             if (test.equals("anchor")) {
-                Experiment realE = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
-                Channel ch = realE.matrixes.get(3).streams.get(0);
                 Channel ch2 = realE.matrixes.get(4).streams.get(0);
                 Channel ch3 = ch2.anchor(true, (float)ch.getMean());
                 ch3.printStream();
@@ -934,8 +970,8 @@ public class Channel extends UnidimensionalLayer  {
             }
             
             if (test.equals("filter")) {
-                Experiment realE = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
-                Channel ch = realE.matrixes.get(1).streams.get(0);
+                 realE = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
+                 ch = realE.matrixes.get(1).streams.get(0);
                 ch = ch.bwBandpass(2, 0.1f, 0.5f);
                 ch.getSample(0,30,true).printStream();
             }
@@ -1015,14 +1051,7 @@ public class Channel extends UnidimensionalLayer  {
                 System.out.println(sax);
             }
             //.. test fourier transform
-            if (TEST ==8) {
-                 //c = c.zScore(true);
-               //  c.printStream();
-                Complex [] transformed = c.FFT();
-                FrequencyDomain fd = new FrequencyDomain(c.numPoints);
-                fd.complexToFreq(transformed);
-                //fd.print();
-            }
+            
             
             if (TEST ==86) {
                 String filename = "input/sinWave1at4hzp3at12hz.csv";
@@ -1030,7 +1059,7 @@ public class Channel extends UnidimensionalLayer  {
                 TSTuftsFileReader f = new TSTuftsFileReader();
                 ChannelSet cs = f.readData(",", filename, 1);
                 //cs.printStream();
-                Channel ch = cs.getFirstChannel();
+                 ch = cs.getFirstChannel();
                 Complex[] transformed = ch.FFT();
                 FrequencyDomain fd = new FrequencyDomain(1);
                 fd.complexToFreq(transformed);

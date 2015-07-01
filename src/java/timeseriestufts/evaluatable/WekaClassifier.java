@@ -143,13 +143,13 @@ public class WekaClassifier  extends ClassificationAlgorithm{
                 predictions.addPrediction(guess, (int) wInstance.classValue(),
                         myInstance.conditionPercentage, distribution, index);
             }
-            else if (testEvery) {
+            else if (testEvery) {  
                 System.out.println("WC: test" + myInstance.attributes.attributeList.size() + " , " + myInstance.condition);
                 int guess = (int) classifier.classifyInstance(wInstance);
-                double[] distribution = classifier.distributionForInstance(wInstance);    
-                
+                double[] distribution = classifier.distributionForInstance(wInstance);      
+                  
                 //.. save the prediction
-                predictions.addPrediction(guess, distribution, index);
+                predictions.addPrediction(guess, distribution, index);  
             }      
             index++;
         }     

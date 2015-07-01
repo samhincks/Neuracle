@@ -13,7 +13,7 @@ public class Label {
 
     public Label(String name, String value, int index) {
         this.name = name.trim();
-        this.name = this.name.toLowerCase();
+        this.name = this.name.toLowerCase(); 
         this.value = value.trim();
         this.value= this.value.toLowerCase();
     }

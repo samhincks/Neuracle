@@ -11,14 +11,14 @@ import filereader.Markers;
 import java.util.ArrayList;         
 import java.util.Hashtable;             
 import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.JSONObject;  
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.evaluatable.AttributeSelection;
 import timeseriestufts.evaluatable.ClassificationAlgorithm;
 import timeseriestufts.evaluatable.Dataset;
 import timeseriestufts.evaluatable.FeatureSet;
 import timeseriestufts.evaluatable.StreamingClassifier;
-import timeseriestufts.evaluatable.Technique;
+import timeseriestufts.evaluatable.Technique;  
 import timeseriestufts.evaluatable.TechniqueSet;
 import timeseriestufts.evaluatable.Transformation;
 import timeseriestufts.evaluatable.WekaClassifier;
@@ -1308,14 +1308,15 @@ public class DataManipulationParser extends Parser{
                 toKeep.add("easy");
                 toKeep.add("hard");
             }    
-            e = e.removeAllClassesBut(toKeep);
+            e = e.removeAllClassesBut(toKeep);  
+            if (e.matrixes.isEmpty()) throw new Exception("No conditions left");
 
             //.. anchor it, setting start to zero
             e = e.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);
-            //e = e.manipulate(new Transformation(Transformation.TransformationType.movingaverage, 15), false);
+            e = e.manipulate(new Transformation(Transformation.TransformationType.movingaverage, 15), false);
             //e = e.manipulate(new Transformation(Transformation.TransformationType.subtract, 25), true);
             e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false); //. wierd if anchor comes before?
-            e = e.manipulate(new Transformation(Transformation.TransformationType.lowpass, 0.3f), true);
+            e = e.manipulate(new Transformation(Transformation.TransformationType.lowpass, 0.1f), true); 
             e.setParent(cs.getId()); //.. set parent to what we derived it from
   
   

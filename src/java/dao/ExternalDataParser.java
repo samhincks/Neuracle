@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
+import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.uni.Channel;
 
 /**
@@ -239,15 +240,27 @@ public class ExternalDataParser extends Parser{
        if(parameters.length >2) conToInt = true;
 
        String file ="";  
-       ArrayList<ChannelSet> chanSets = getChanSets(true);
-       for (ChannelSet cs : chanSets) {  
+       ArrayList<ChannelSet> chanSets = getChanSets(false);  
+       if (chanSets != null) for (ChannelSet cs : chanSets) {  
             file = ctx.getServletContext().getRealPath("");
             file += "/output/" +cs.id +suffix+".csv";
             if (file !=null) cs.writeToFile(file, readEvery, conToInt);
             else return "Cannot find folder: build/web/output/" +" "+ ctx.getServletContext().getRealPath(""); 
        }
+       
+       ArrayList<Experiment> es = getExperiments(false);
+       if (es != null) for (Experiment e : es) {
+           file = ctx.getServletContext().getRealPath("");
+           file += "/output/" + suffix + ".csv";
+           if (file != null) {
+               e.writeToFile(file, readEvery, conToInt);
+           } else {
+               return "Cannot find folder: build/web/output/" + " " + ctx.getServletContext().getRealPath("");
+           }
+
+       }
          
-       return "Successfully wrote " + chanSets.size() + " file(s) to " + file;
+       return "Successfully wrote  to  file";
     }
       
            

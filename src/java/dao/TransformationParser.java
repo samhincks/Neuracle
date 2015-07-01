@@ -21,8 +21,10 @@ import realtime.AudioNBack;
 import realtime.Client;
 import realtime.LabelInterceptorTask;
 import stripes.ext.ThisActionBeanContext;
+import timeseriestufts.evaluatable.FeatureSet;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
+import timeseriestufts.kth.streams.bi.ChannelSet.Tuple;
 import timeseriestufts.kth.streams.quad.MultiExperiment;
 import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.tri.TridimensionalLayer;
@@ -106,6 +108,14 @@ public class TransformationParser extends Parser{
         command.action = "reload";
         commands.put(command.id, command);
         
+        //-- PLUCK
+        command = new Command("pluck");
+        command.documentation = "With a 3D dataset selected, divide it into two new groups: one with all the "
+                + "instances which exceed a feature-value, and one where it does not";
+        command.parameters = "1. statistic, 2. channel, 3. slope, 4 a cut-off value";
+        command.action = "reload";
+        commands.put(command.id, command);
+        
         // -- MERGE
         command = new Command("append");
         command.documentation = "With multiple channels selected, append into a single datalayer";
@@ -176,6 +186,11 @@ public class TransformationParser extends Parser{
         else if (command.startsWith("partition")) {
             c = commands.get("partition");
             c.retMessage = this.partition(parameters);
+        }
+        
+        else if (command.startsWith("pluck")) {
+            c = commands.get("pluck");
+            c.retMessage = this.pluck(parameters);
         }
         
         else if (command.startsWith("append")) {
@@ -330,10 +345,10 @@ public class TransformationParser extends Parser{
             bDAO.setStreamedLabel(labelName, name);//.. for launching the nback we pass along this something after %
             if (labelValue.startsWith("easy") || labelValue.startsWith("hard")) {
                 try{
-                    int time =  Integer.parseInt(labelValue.split("%")[1]);
+                    int time =  Integer.parseInt(labelValue.split("%")[1]);  
                     AudioNBack nBack;
                     time -=1000;
-                    nBack = new AudioNBack(-1, time);
+                    nBack = new AudioNBack(-1, time);  
                     if (!ctx.test) nBack.directory = ctx.getServletContext().getRealPath("WEB-INF/audio/") +"/";
 
                     //.. Initialize nBack and run it for specified duration. It will complain if theres not a server running
@@ -409,6 +424,50 @@ public class TransformationParser extends Parser{
                     + " this random dataset. You can also use machine learning to evaluate any differences. ;; "
                     + " Drag the red, blue, and green circles so that they intersect the most recently created "
                     + " instance-grouped dataset. Then type evaluate .";
+        }
+        return retString;
+    }
+    
+    /**Partition into two experiments: one with all instance that exceed a particular feature threshold, one which does not**/
+    private String pluck(String [] parameters) throws Exception {
+        String stat = "slope";
+        String chan = "15";
+        String window = "SECONDHALF";
+        float cutOff = 0;  
+        
+        //.. get optional parameters
+        if (parameters.length == 1) {
+            cutOff = Float.parseFloat(parameters[0]);
+        }   
+        if (parameters.length >1) {
+            cutOff = Float.parseFloat(parameters[0]);
+            stat = parameters[1];
+            chan = parameters[2];
+            window = parameters[3];
+        }
+        
+        //.. get feature descriptions
+        FeatureSet fs = new FeatureSet("temp");
+        fs.addFeaturesFromConsole(stat, chan, window);
+        
+        String retString = "Plucking out instances that meet " + fs.getConsoleString();
+        //.. for each selected experiment
+        ArrayList<Experiment> es = super.getExperiments(false);
+        for (Experiment e : es) {
+            Tuple<Experiment,Experiment> t = e.pluck( fs, new float[]{cutOff}); //.. currently we only support one feature descritpions
+            
+            if (t.x.matrixes.size() >0) {
+                TriDAO pDAO = new TriDAO(t.x);
+                ctx.dataLayersDAO.addStream(t.x.id, pDAO);
+                t.x.setParent(e.id);
+            }
+            if (t.y.matrixes.size() > 0) {
+                TriDAO pDAO = new TriDAO(t.y);
+                ctx.dataLayersDAO.addStream(t.y.id, pDAO);
+                t.y.setParent(e.id);
+            }
+            
+            retString += "There were " + t.x.matrixes.size() + " which had feature > " + cutOff + " and " + t.y.matrixes.size() + " which did not.";
         }
         return retString;
     }

@@ -4,6 +4,9 @@
  */
 package timeseriestufts.kth.streams.tri;
 
+import filereader.Label;
+import filereader.Labels;
+import filereader.Markers;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -13,6 +16,8 @@ import java.util.Iterator;
 import java.util.Map;
 import timeseriestufts.evaluatable.AttributeSelection;
 import timeseriestufts.evaluatable.Dataset;
+import timeseriestufts.evaluatable.FeatureDescription;
+import timeseriestufts.evaluatable.FeatureDescription.Statistic;
 import timeseriestufts.evaluatable.FeatureSet;
 import timeseriestufts.evaluatable.TechniqueSet;
 import timeseriestufts.evaluatable.Transformation;
@@ -22,8 +27,11 @@ import timeseriestufts.evaluatable.performances.Predictions;
 import timeseriestufts.evaluation.crossvalidation.CrossValidation;
 import timeseriestufts.evaluation.crossvalidation.Fold;
 import timeseriestufts.evaluation.experiment.Classification;
+import timeseriestufts.evaluation.featureextraction.FeatureFactory;
+import timeseriestufts.evaluation.featureextraction.NumericAttribute;
 import timeseriestufts.kth.streams.bi.BidimensionalLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
+import timeseriestufts.kth.streams.bi.ChannelSet.Tuple;
 import timeseriestufts.kth.streams.bi.Instance;
 import timeseriestufts.kth.streams.uni.Channel;
 import timeseriestufts.kth.streams.uni.FrequencyDomain;
@@ -748,15 +756,108 @@ public class Experiment extends TridimensionalLayer<Instance>{
         ret.transformations.addTransformation(t);
         return ret;
     }
-
+    
+    /**
+     * Return a tuple of ChannelSets, one with instances meeting specified
+     * condition, one where it doesn't.
+     *
+     * @param fd
+     * @param cutOff
+     * @return
+     */
+    public Tuple<Experiment,Experiment> pluck( FeatureSet fs, float[] cutOffs) throws Exception{
+        Experiment e = new Experiment(this.id +"-in", this.classification, this.readingsPerSec);
+        Experiment e2 = new Experiment(this.id +"-out", this.classification, this.readingsPerSec);
+        
+        //.. bin every instance
+        for (Instance ins : this.matrixes) {
+           FeatureFactory ff = new FeatureFactory(ins, fs);
+           ff.generateAttributes();
+           if (cutOffs.length != ff.attributes.attributeList.size()) throw new Exception("Thresholds must match feature descriptions. There are " + cutOffs.length + " and " + ff.attributes.attributeList.size() + " thresholds" );
+           ff.attributes.extract();
+           
+           //.. decide which bin to place element in
+           boolean in = true;
+           int index =0;
+           for (timeseriestufts.evaluation.featureextraction.Attribute a : ff.attributes.attributeList) {
+               if ( !(a instanceof NumericAttribute)) throw new Exception (a.name + " is not a numeric attribute.");
+               NumericAttribute na = (NumericAttribute) a;
+               if (na.numValue  < cutOffs[index]) in =false; //.. witness refuted, so place in out!
+               index++;
+           }
+           
+           //.. place in in or out depending on how it compared to thresholds
+           if (in) e.addMatrix(ins);
+           else e2.addMatrix(ins);
+        }
+        return new Tuple(e,e2);
+    }
+    
+    /**Flips the Experiment back into a channelset, undoes split**/
+    public ChannelSet toChannelSet() throws Exception{
+        Labels labels = new Labels("condition");
+        ChannelSet cs = new ChannelSet();
+        
+        //.. for each channel, great a master set of channels
+        for (int i = 0; i < this.matrixes.get(0).streams.size(); i++) {
+            int labNum =0;
+            ArrayList<Channel> channels = new ArrayList();
+            for (Instance ins : this.matrixes) {
+                channels.add(ins.streams.get(i));
+                
+                //.. add labels if this is the first channel
+                if (i == 0) {
+                    for (int j = 0; j <  ins.streams.get(0).numPoints; j++) {
+                        Label l = new Label("condition", ins.condition, labNum);
+                        labels.addLabel(l);
+                        labNum++;
+                    }
+                }
+            }
+            ArrayList<Float> data = new ArrayList();
+            double framesize =1;
+            for (Channel c : channels) {
+                float [] d = c.getData();
+                framesize = c.getFramesize();
+                for (int j = 0; j < d.length; j++) {
+                    data.add(d[j]);
+                }
+            }
+            Channel c = new Channel(framesize,data); //.. paste all channels together
+            cs.addStream(c);
+        }
+        cs.addMarkers(new Markers(labels));
+        
+        return cs;
+    }
+    
+    public void writeToFile(String filename, int writeEvery, boolean labelToInt) throws Exception{
+        ChannelSet cs = this.toChannelSet(); 
+        cs.writeToFile(filename, writeEvery, labelToInt);
+    }
     
     
     public static void main(String [] args) {
         try{
-            Experiment e = Experiment.generate(3,1,10);
+            Experiment e = Experiment.generate(2,2,2); //.. multiple channels for one instance works, but not multiple instances
             System.out.println("experiment has " + e.getMostCommonInstanceLength() + " readings in a typical channel");
-            int TEST =4;
+            int TEST =6;
             
+            if (TEST ==6) {
+                //e.printStream();
+               ChannelSet cs = e.toChannelSet();
+                System.out.println(cs.markers.get(0).saveLabels.channelLabels.size());
+                e.writeToFile("bajs", 1, true);
+              // cs.printStream();
+            }
+            if (TEST ==5) {
+                FeatureSet fs = new FeatureSet("bajs");
+                fs.addFeaturesFromConsole("slope", "0", "0:2^2:4");
+                float [] cutOffs = {-29f, -29f};
+                Tuple<Experiment, Experiment> t = e.pluck(fs, cutOffs);
+                System.out.println(t.x.matrixes.size());
+                System.out.println(t.y.matrixes.size());
+            }
             
             if (TEST ==4) {
                 ArrayList<Experiment> r = e.partition(4);
@@ -790,5 +891,6 @@ public class Experiment extends TridimensionalLayer<Instance>{
         }
         catch(Exception e) {e.printStackTrace();}
     }
+
 }
 

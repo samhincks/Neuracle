@@ -122,9 +122,8 @@ public class FrequencyDomain {
         }
     }
     public void print() {
-       magnitudeChannel.printStream();
-       // frequencyChannel.printStream();
-
+      // magnitudeChannel.printStream();
+       frequencyChannel.printStream();
     }
      
      private class Triple  {
@@ -168,7 +167,10 @@ public class FrequencyDomain {
                     //System.out.print(e.matrixes.get(i).condition+",");
                     FrequencyDomain fd = new FrequencyDomain(Channel.HitachiRPS);
                     fd.complexToFreq(b1.FFT());
+                    fd.print();
+                    
                     test.addPoint(fd.getPulse());
+                    break;
                    // fd.print();
                 // System.out.println("XXXXXXXXXXXXXXXXX");
                 }

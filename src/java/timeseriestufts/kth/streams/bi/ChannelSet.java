@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import timeseriestufts.evaluatable.FeatureDescription;
 import timeseriestufts.evaluatable.PassFilter;
 import timeseriestufts.evaluatable.TechniqueSet;
 import timeseriestufts.evaluatable.Transformation;
@@ -105,7 +106,6 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         
         return (Channel)streams.get(index);
     }
-
     
     /***Return a simple copy with a new name*/
     public ChannelSet getCopy(String id) throws Exception{
@@ -120,6 +120,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             cs.transformations = this.transformations.getCopy();
         return cs;
     }
+    
     /***Return a simple copy, and specify realStart / realEnd,
      so that it remembers in its new instance where its being referred to
      and the markers still make sense*/
@@ -237,11 +238,10 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             }
             retSets.add(cs);
         }
-
+ 
         return retSets;
-
     }
-
+    
     /**
      * Return two-part array, first is Experiment second is ChannelSet, the idea
      * being that you'll train the data on Experiment and then test on moving
@@ -377,10 +377,10 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
      * @param writeEvery : compress the file by making this larger
      */
     public void writeToFile(String filename, int writeEvery, boolean labelToInt) throws Exception {
+        if (writeEvery < 1) throw new Exception("must write at least 1");
         File f = new File(filename);
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
         int numPoints = this.getMinPoints();
-
         //.. Write out the column ids
         for (int i = 0; i < streams.size(); i++) {
             bw.write(streams.get(i).id);
@@ -404,7 +404,6 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
 
         //.. Write out each point, but omit points if specified
         for (int i = 0; i < numPoints; i += writeEvery) {
-
             //.. write out each column
             for (int j = 0; j < streams.size(); j++) {
                 bw.write(String.valueOf(streams.get(j).getPoint(i)));
@@ -597,6 +596,25 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
          return this;
     }
     
+    public ChannelSet normalize(boolean copy) throws Exception {
+        if (copy) {
+            ChannelSet cs = getCopy(this.id + "zscore");
+
+            for (Channel c : streams) {
+                Channel c2 = c.normalize(true);
+                cs.addStream(c2);
+            }
+
+            return cs;
+        } else {
+            for (UnidimensionalLayer u : streams) {
+                Channel thisChan = (Channel) u;
+                thisChan.normalize(false);
+            }
+            return this;
+        }
+    }
+    
     public ChannelSet zScore(boolean copy) throws Exception{
        if (copy) {
            ChannelSet cs = getCopy(this.id + "zscore");
@@ -613,7 +631,6 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 Channel thisChan = (Channel) u;
                 thisChan.zScore(false);
             }
-
             return this;
         }
     }
@@ -729,7 +746,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             retSet = this.bandpass(((ts.params.length > 0)?ts.params[0] :0.1f), ((ts.params.length > 1)?ts.params[1] :1f), copy);
         
         else if (ts.type== Transformation.TransformationType.lowpass) {
-            if(!copy)throw new Exception("lowpass currently bugged when copy = false");
+          //  if(!copy)throw new Exception("lowpass currently bugged when copy = false");
             float cutoff = (ts.params.length > 0)?ts.params[0] :0.3f;
             retSet = this.lowpass(cutoff, copy);
             //.. lowpass filters mess with the first n readings, depending on the cutoff. Trim off that many radings
@@ -737,10 +754,23 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             if (cutoff >= 0.5) trim = 15;
             else if (cutoff >= 0.3f) trim = 20;
             else if (cutoff >=0.1f) trim = 46;
-            else throw new Exception("Filtering at frequency " + cutoff + " not yet supported. You must figure out trim values");
-            //.. Trim
-            //retSet = retSet.trimFirst((trim));
+           //else throw new Exception("Filtering at frequency " + cutoff + " not yet supported. You must figure out trim values");
+            //.. Trim  
+            //retSet = retSet.trimFirst((trim));  
         }
+            
+        else if (ts.type == Transformation.TransformationType.subtractchannel) {
+            int subtractIndex = 0;
+            int [] fromIndexes = {1,2,3};
+            if (ts.params != null && ts.params.length >0) {
+                subtractIndex = (int)ts.params[0];
+                for (int i = 1; i < ts.params.length; i++) {
+                    fromIndexes[i-1] = (int)ts.params[i];
+                }
+            }
+            retSet = this.subtractChannel(subtractIndex, fromIndexes);
+        }
+           
         
         else if (ts.type== Transformation.TransformationType.highpass) 
             retSet = this.highpass(((ts.params.length > 0)? ts.params[0] :1), copy);
@@ -885,6 +915,23 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         
         return ret; 
     }
+    
+    
+    /**Subtract specified channel from the all others. For now, always copy**/
+    private ChannelSet subtractChannel(int subtractIndex, int[] fromIndexes) throws Exception{
+        String s = this.id +subtractIndex +"";
+        ChannelSet cs = getCopy("subtracted");
+        Channel c = this.streams.get(subtractIndex);
+        cs.streams = this.streams; //.. so actually not a real copy now
+        for (int i = 0; i < fromIndexes.length; i++) {
+            Channel a = cs.streams.get(fromIndexes[i]);
+            a= a.subtract(c, true);
+            cs.streams.set(fromIndexes[i], a);
+            s+= fromIndexes[i];
+        }
+        cs.setId(s);
+        return cs;
+    }
     /**Assume this is fNIRS data, and that the input is the intensity of reflected
      light at DC690 and DC830; apply the modified beer-lambert law to estimate the 
      quantity of oxygen. This amounts to combining corresponinding measurements when
@@ -1014,10 +1061,19 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             Markers markers = Markers.generate(3, 10);
             cs.addMarkers(markers);
 
-            int TEST = 8;
+            int TEST = 9;  
             
+            if (TEST ==9) {
+                cs = Beste.getChannelSet();
+                cs.normalize(false);
+                Transformation t = new Transformation(Transformation.TransformationType.subtractchannel);
+               // cs.getChannel(1).getSample(100, 1000, true).printStream();
+                
+                cs.manipulate(t, true);
+                cs.getChannel(1).getSample(100,1000, true).printStream();
+            }
             //.. TEST CALCULATING OXY
-            if (TEST == 8) {
+            if (TEST == 8) {  
                 cs = Beste.getChannelSet();
                 Transformation t = new Transformation(Transformation.TransformationType.calcoxy);
 
@@ -1102,6 +1158,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         }
         
     }
+
 
 
  

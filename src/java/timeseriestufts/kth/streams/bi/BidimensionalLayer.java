@@ -85,11 +85,16 @@ public abstract class BidimensionalLayer<T extends UnidimensionalLayer> extends 
      */
     @Override
     public int getCount() {
-        int total =0;
-        for (T u : streams){
-            total += u.numPoints;
+        try {
+            int total =0;
+            for (T u : streams){
+                total += u.numPoints;
+            }
+            return total;
         }
-        return total;
+        catch (NullPointerException n) {
+            return 0;
+        }
     }
     
    /**Returns sum of all values

@@ -216,6 +216,8 @@ public class BiDAO extends DataLayerDAO {
             jsonObj.put("manipulation", channelSet.transformations.transformations.size());
         return jsonObj;
     }
+    
+    
     private JSONObject getChannels(ChannelSet channelSet, int MAXPOINTS, int MAXCHANNELS, int FIRST) throws Exception {
         JSONArray values = new JSONArray();
         JSONObject data = new JSONObject();

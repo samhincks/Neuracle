@@ -224,7 +224,7 @@ public class FeatureDescription extends Technique{
             String timeString ="";
             while (incStart <= 1) {
               //  if (((1/incStart) == (int)(1/incStart))) //.. 
-                    timeString += FSTimeWindow.getWithInc(incStart);
+                timeString += FSTimeWindow.getWithInc(incStart);
                 incStart += minInc;
                 incStart = roundTwoDecimals(incStart);
                 if (/*((1/incStart) == (int)(1/incStart)) &&*/ incStart <= 1) timeString += "^";

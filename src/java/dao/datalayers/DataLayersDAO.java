@@ -161,7 +161,9 @@ public class DataLayersDAO {
             if(!ids.contains(e.getKey()))
                toDelete.add(e.getKey());
         }
+        System.out.println("Will delete " + ids.size());     
         for (String s : toDelete) {
+            System.out.println("trying to remove " + s);
             removeStream(s);
         }
 

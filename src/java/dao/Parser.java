@@ -46,8 +46,6 @@ public abstract class Parser {
             DataLayer currentDataLayer, TechniqueDAO techDAO) throws Exception; 
     
     
-    
-    
     /**
      * For multi-selection operations, it is most often a pain in the butt to
      * define a new operation to operate on the higher dimension object rather

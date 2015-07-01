@@ -14,8 +14,8 @@ import weka.core.Attribute;
 import weka.core.Instances;      
 import weka.filters.Filter;      
             
-/**   
- *  
+/**     
+ *    
  * @author samhincks
  */  
 public class AttributeSelection extends Technique{

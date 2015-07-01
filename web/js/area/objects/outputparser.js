@@ -24,10 +24,15 @@ function OutputParser() {
                         consoleArea.displayMessage(i + ":" + slope + "," + prob, "systemmess", "blueline");
                 }
             }
+           
             consoleArea.displayMessage("")
 
         }
-       else consoleArea.displayMessage(content, "systemmess", "blueline");
+         
+        if (content.startsWith("Current")) {
+            document.getElementById("0A").play();
+        }
+        consoleArea.displayMessage(content, "systemmess", "blueline");
     }
      
     

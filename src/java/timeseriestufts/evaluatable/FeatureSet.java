@@ -306,11 +306,5 @@ public class FeatureSet extends Technique{
             
         }
         catch(Exception e) {e.printStackTrace();}
-    }
-
-    
-    
-  
-    
-    
+    }   
 }

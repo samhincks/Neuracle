@@ -69,7 +69,7 @@ public class SignalProcessing {
         double out = 0.54 - 0.46 * Math.cos(2 * Math.PI * (double) n / (N - 1));
         return out;
     }
-    public static void main(String[] args) {
+    public static void main(String[] args) {  
         Channel.main(args);
     }
 	

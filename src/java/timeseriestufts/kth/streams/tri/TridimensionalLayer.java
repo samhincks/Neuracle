@@ -127,7 +127,8 @@ public abstract class TridimensionalLayer<T extends BidimensionalLayer> extends 
     
     @Override
     public int getChannelCount() {
-        return matrixes.get(0).streams.size();
+        try{ return matrixes.get(0).streams.size(); }
+        catch(NullPointerException e) {return 0;}
     }
     
     
