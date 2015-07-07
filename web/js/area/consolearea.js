@@ -147,9 +147,9 @@ function ConsoleArea() {
          }
          
          //.. repeat(classifyLast(), 200) shoots the command classifyLast to the server every 200ms
-         else if (userText.startsWith("repeat(")) {
-            var mes = userText.split("("); //.. will be parameters (100,200)
-            var params = mes[1].split(",");
+         else if (userText.startsWith("repeat:")) {
+            var mes = userText.split(":"); //.. will be parameters (100,200)
+            var params = mes[1].split(";");
             var command = params[0];
             command = command.replace(")","")
             var commandName = command.split("(")[0];

@@ -42,8 +42,9 @@ public class Client {
   
     public static void main(String[] args) {
         try{
-            Client c = new Client(LabelInterceptorTask.LABELPORT);
-            c.disconnect();
+            Client c = new Client(50001);
+            c.sendMessage("bajs");
+            //c.disconnect();
         }
         catch(Exception e ) {e.printStackTrace();}
     }

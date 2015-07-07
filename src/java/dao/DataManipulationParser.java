@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;             
 import org.json.JSONArray;
 import org.json.JSONObject;  
+import realtime.Client;
+import realtime.Server;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.evaluatable.AttributeSelection;
 import timeseriestufts.evaluatable.ClassificationAlgorithm;
@@ -1255,7 +1257,12 @@ public class DataManipulationParser extends Parser{
      * If this is used in conjunction with a database, synchronize with database first. 
      **/
     private String classifyLast(String [] parameters, DataLayerDAO dDAO) throws Exception{
-
+        Integer port = null;
+        if (parameters.length >0) {
+            port = Integer.parseInt(parameters[0]);
+            System.out.println("CLASSIFYING TO PORT!! " + port);
+        }
+        
         if (!(currentDataLayer instanceof ChannelSet)) {
             throw new Exception("The command classify only "
                     + "applies to 2D Channelsets " + currentDataLayer.id + " doesn't fit that bill");
@@ -1285,10 +1292,15 @@ public class DataManipulationParser extends Parser{
         }
         catch(Exception e) {/* It's fine if this command failed*/}
        
-        Prediction p = classifier.getLastPrediction(cs);
-        return p.toString();
+        Prediction p = classifier.getLastPrediction(cs);  
         
-        
+        if (port != null) {
+            //.. Send a message to the client on its message sender thread
+            Server s = ctx.getfNIRSClient(port);
+            boolean sent =s.sendMessage(p.toString());
+            if (!(sent)) return "Failed to send message, since server hasn't opened";
+        }
+        return p.toString();            
     }
     
     

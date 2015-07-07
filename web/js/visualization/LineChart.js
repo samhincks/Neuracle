@@ -36,8 +36,8 @@ function LineChart() {
     var color = d3.scale.category10();  /*d3.scale.ordinal()
         .domain([0, 1, 2])
         .range(["#6699CC", "#BDAEAC"]);*/ //.. Blue and brown, for Tufts publications
-    color = d3.scale.ordinal()
-            .range(["#31A354", "#3182BD", "#756BB1", "#636363", "#637939", "#7B4173"]);
+   // color = d3.scale.ordinal()
+     //       .range(["#31A354", "#3182BD", "#756BB1", "#636363", "#637939", "#7B4173"]);
     var max, min; //.. the maximum and minimum values of the dataset
     
     

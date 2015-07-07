@@ -10,6 +10,8 @@ import dao.techniques.TechniquesDAO;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.ValidationError;
+import realtime.Client;
+import realtime.Server;
 import timeseriestufts.evaluatable.performances.Performances;
 import timeseriestufts.kth.streams.DataLayer;
 
@@ -46,7 +48,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
     private static int fileReadSampling =1; //.. set to two and we read every other row from file
     private static boolean tutorial = false; //.. True if we're running a tutorial. 
     public static Integer curPort =null; //.. random number. this is used in an exchange between intercept label and nback
-    
+    private static Server fnirsServer;
     
     public void printState() throws Exception{
         System.out.println("\t Datalayer " + currentDataLayer);
@@ -168,6 +170,16 @@ public class ThisActionBeanContext extends ActionBeanContext{
        
     public boolean getTutorial() {
         return tutorial;
+    }
+
+    public Server getfNIRSClient(int port) throws Exception {
+        if (fnirsServer == null) {
+            fnirsServer = new Server(port);
+            Thread t  = new Thread(fnirsServer);
+            t.start(); //.. opens it up and waits until theres a connection
+            Thread.sleep(500);
+        }
+        return fnirsServer;
     }
 
 

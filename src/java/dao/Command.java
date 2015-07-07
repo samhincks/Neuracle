@@ -6,19 +6,19 @@ import org.json.JSONObject;
  *  An object which mediates command information between server and client. 
  * @author samhincks  
  */                    
-public class Command {                     
-    public String id;                     
-    public String parameters =""; 
+public class Command {                            
+    public String id;                           
+    public String parameters ="";      
     public String debug ="";
     public String retMessage =""; //.. populated when the command is executed
     public String documentation =""; //.. populated when the command is executed
     public String action = null;
     public JSONObject data =null;  
-    public String tutorial = null;  
+    public String tutorial = null;    
        
-    public Command(String id) {   
-        this.id = id; 
-    }    
+    public Command(String id) {        
+        this.id = id;       
+    }            
     
     /** Returns the JSON representation of the command object
      * @param showTut , set to true if you want to add the tutorial data too

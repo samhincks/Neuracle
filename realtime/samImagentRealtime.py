@@ -231,6 +231,10 @@ def readFromCMS50D():
                 aligned = False
 
 def main():
+    if sys.argv[1] =="2":
+        DEVICE = "Fake"
+    else:
+        DEVICE = "Imagent"
     if (DEVICE != "Fake"):
         print("connected to: " + ser.portstr)
 
