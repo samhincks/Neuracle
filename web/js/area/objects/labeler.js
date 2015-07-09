@@ -14,6 +14,7 @@ function Labeler()
     this.fileName;
     var self;
     this.feedback = false;
+    
     //.. used by console area to know if we're awaiting user feedback
     this.awaitingFeedback = false;
     this.num =1; //.. I hate myself a little because of this, but I cant figure out how to give function's input in setTimeout
@@ -71,7 +72,6 @@ function Labeler()
         self.awaitingFeedback = true;
         //.. we need to deactivate our nbackevaluator here too. Now we shouldnt need this
         //if (self.num ==1 &&nbackEvaluator != null) nbackEvaluator.deactivate();
-       
         
         if (self.num == 1){
             consoleArea.displayMessage("How would you describe your own cognitive workload that trial? (1=low, 2=medium, 3=high)", "systemmess", "blueline");

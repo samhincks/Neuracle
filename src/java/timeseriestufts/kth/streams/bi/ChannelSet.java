@@ -106,7 +106,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         
         return (Channel)streams.get(index);
     }
-    
+      
     /***Return a simple copy with a new name*/
     public ChannelSet getCopy(String id) throws Exception{
         ChannelSet cs = new ChannelSet();

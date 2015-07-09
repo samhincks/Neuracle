@@ -269,7 +269,7 @@ public class TransformationParser extends Parser{
         String[] values = baseline.split(":");
         int start = Integer.parseInt(values[0]);
         String retMessage = "Assigning labels to channelset ";
-
+       
         int end=-1; //.. where to stop
         if (values.length > 1) 
             end = Integer.parseInt(values[1]);
@@ -289,6 +289,7 @@ public class TransformationParser extends Parser{
             retMessage += bDAO.getId() +"  ";
         }
         
+            
         return retMessage;
     }
     
@@ -342,11 +343,11 @@ public class TransformationParser extends Parser{
             BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(filename);
             if (bDAO.synchronizedWithDatabase) {
                 bDAO.synchronizeWithDatabase(filename);
-            }
+            }  
             
             //.. the channelset associated with this object may or may not have markers, associated with it
             Labels labels = bDAO.getLabelsWithName(labelName);
-
+  
             //.. if there is no markers yet, we need instantiate it and populate it with 
             //... # of reading corresponding to number of values, so that the new ones are in synch
             if (labels == null) {
@@ -387,6 +388,16 @@ public class TransformationParser extends Parser{
 
                 }catch (Exception e ) { throw new Exception (e.getMessage() );}//.. if anything went wrong here that's fine. A good faith effort to start the audio}
             }
+            
+            //.. Back up the file
+            // WRITE BACKUP HERE. 
+            String file = ctx.getServletContext().getRealPath("");
+            file += "/output/backup.csv";
+            if (file != null) {
+                ChannelSet cs = (ChannelSet)bDAO.dataLayer;
+                cs.writeToFile(file, 1, false);
+            }
+
             return retString + "Starting: " + name;
         } else {
             throw new Exception("Could not find " + filename);
@@ -472,7 +483,7 @@ public class TransformationParser extends Parser{
             //.. we probably have fewer of this than the other one, so we will junkify until we get the trial thats k back,
             //.. then make it that condition corresponding to the trial, then junkify the rest to
             if (thisSize < otherSize) {
-                
+                    
                 //.. add junk up until the start of the trial we are padding as
                 int startPadding = otherTrial.start - thisSize;
                 for (int i = 0; i < startPadding; i++) {

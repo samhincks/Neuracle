@@ -53,7 +53,6 @@ function Evaluator(seqNum, con) { // streamlabel(easy,15%1%1)
             consoleArea.displayMessage(":)", "systemmess", "greenline");
             this.correct++;
         }
-          
         
         //.. a little bit of hack because I'm nto a great programmer, only matters in interruption mode
         else if (this.numInterrupted>0) {
@@ -82,20 +81,23 @@ function Evaluator(seqNum, con) { // streamlabel(easy,15%1%1)
     
     //.. turn off any interval
     this.deactivate = function() {
-        if (this.guesses.length >0){
+        if (this.active){
             var total = this.correct + this.wrong;
-            var accuracy = this.correct / total;
+            var accuracy =0;
+            if (total >0)
+                accuracy = this.correct / total;
             consoleArea.displayMessage("Accuracy: " +accuracy, "systemmess", "blueline");
             
             //.. save the accuracy in this trial to the backend
             var label = "zero";
             if (accuracy > 0.99) label ="hundred";
-            if (accuracy > 0.75) label = "eighty";
-            if (accuracy > 0.5)label = "sixty";
+            else if (accuracy > 0.75) label = "seventyfive";
+            else if (accuracy > 0.5)label = "fifty";
+            else if (total == 0) label = "noguesses"
             else label = "lessThanFifty";
 
             //.. ship it off
-            var mess = "retrolabel(accuracy" + self.num + ",condition," + label + ",1,realtime1)";
+            var mess = "retrolabel(accuracy,condition," + label + ",1,realtime1)";
             $("#consoleInput").val(mess);
             javaInterface.postToConsole();
         }
