@@ -135,6 +135,10 @@ public class MiscellaneousParser extends Parser{
                 + " Then, with the file selected, type split(condition) to group the data by common conditions";
         commands.put(command.id, command);   
         
+        command = new Command("interruptnback");
+        command.documentation = "Stalls the current nback";
+        commands.put(command.id, command);
+        
     }
     
     public JSONObject execute(String command, String [] parameters,
@@ -213,6 +217,10 @@ public class MiscellaneousParser extends Parser{
         else if (command.startsWith("tutorial")) {
             c = commands.get("tutorial");
             c.retMessage = this.tutorial();
+        }
+        else if (command.startsWith("interruptnback")) {
+            c = commands.get("interruptnback");
+            c.retMessage = this.interruptNback(parameters);
         }
         
         if (c ==null) return null;
@@ -517,9 +525,12 @@ public class MiscellaneousParser extends Parser{
         int duration = seconds * 1000 -2000; 
         if (duration < 0) throw new Exception("Too short duration to play audio");
 
+        //.. initialize nback
         AudioNBack nBack;
+        int NUMFILES =4;//.. err, little messy.
+        int sequence = (int) (Math.random() * NUMFILES);
         if (ctx.curPort == null && parameters.length <3)
-            nBack = new AudioNBack(n, duration);
+            nBack = new AudioNBack(n, duration, sequence);  
         else nBack = new AudioNBack(n, duration, new Client(port));        
         
         if (!ctx.test) nBack.directory = ctx.getServletContext().getRealPath("WEB-INF/audio/") +"/";
@@ -528,10 +539,10 @@ public class MiscellaneousParser extends Parser{
         Thread t = new Thread(nBack);
         t.start();
         
-        String retString = "Initialized " + n +"-back for " + seconds + "s";
+        String retString = "Initialized " + n +"back for " + seconds + "s.";
         if (port != null)
-            retString += ". Broadcasting condition to " + port;
-        
+            retString += ". Broadcasting condition to " + port; 
+        retString += "Sequence: " +sequence;   
         return retString;    
     }  
     
@@ -572,8 +583,16 @@ public class MiscellaneousParser extends Parser{
                 + " be text -- a name for the trial. Subsequent rows with the same name belong to the same trial. Alternatively, "
                 + " if you have manually placed your folder inside build/web/input/foldername, then load(foldername) will open all files therein ";
                 
-        }
-
+    }
+    
+    /*Interrupts any ongoing nback*/
+    private String interruptNback(String [] parameters) {
+        int duration = -1; //.. shut it off
+        if (parameters.length >0) duration = Integer.parseInt(parameters[0]);
+        ctx.getNback().interrupt(duration);
+        return "Pausing for " + duration/1000 + "s... please start over";
+    }
+ 
     private String custom(String[] parameters) throws Exception{
         loadData();
         return "custom";
@@ -635,4 +654,5 @@ public class MiscellaneousParser extends Parser{
 
         return "loaded hincks";
     }
+
 }

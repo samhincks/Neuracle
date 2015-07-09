@@ -3,6 +3,7 @@
  *file is evoked. The function init() is always called. The function reinit() is
  *called everytime we load a new datalayer: it is where we set the bulk of our listeners
  ***/
+var nbackEvaluator = new Evaluator(-1);
 var consoleArea = new ConsoleArea();
 var chartArea = new ChartArea("#topRight");
 var javaInterface = new JavaInterface();

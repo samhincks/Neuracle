@@ -24,14 +24,27 @@ function OutputParser() {
                         consoleArea.displayMessage(i + ":" + slope + "," + prob, "systemmess", "blueline");
                 }
             }
-           
             consoleArea.displayMessage("")
+        }
+        
+        ///.. start a new condition, so deactivate any running nback evaluator
+        if (content.startsWith("Starting")) {
+            nbackEvaluator.deactivate();
+        }
+        
+        //.. initializing a new label, play sound etc.
+        if (content.startsWith("Initializing")) {
+            document.getElementById("0A").play();
+            
+            //.. Not only starting a new label, but its the nback
+            if (content.startsWith("Initializing nback")) {
+                var seqNum = content.split("-")[1];
+                var condition = content.split("Starting:")[1].trim(); //.. extract the condition
+                nbackEvaluator = new Evaluator(seqNum, condition);
+            }
 
         }
-         
-        if (content.startsWith("Current")) {
-            document.getElementById("0A").play();
-        }
+       
         consoleArea.displayMessage(content, "systemmess", "blueline");
     }
      

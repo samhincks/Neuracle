@@ -124,6 +124,8 @@
         <script type="text/javascript" src="js/area/consolearea.js"></script> 
         <script type="text/javascript" src="js/area/objects/labeler.js"></script> 
         <script type="text/javascript" src="js/area/objects/outputparser.js"></script> 
+        <script type="text/javascript" src="js/area/objects/evaluator.js"></script> 
+
 
         
         <!--INTERFACE -->

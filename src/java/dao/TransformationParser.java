@@ -314,6 +314,8 @@ public class TransformationParser extends Parser{
      * trigger it. Makes so that data coming in receives the input label*
      */
     public String label(String [] parameters) throws Exception {
+        String retString ="";
+        
         if (parameters.length < 3) throw new Exception("Command requires three parameters. filename, curLabelName, curLabelValue");
         //.. In this new way of doing things, we are going to need to have created a Markers object,
         //.. which would always have a Markers object that was set equal to the number of datapoints
@@ -333,7 +335,6 @@ public class TransformationParser extends Parser{
             //... # of reading corresponding to number of values, so that the new ones are in synch
             if (labels == null) {
                 labels = new Labels(labelName);
-
                 //.. bring it up to date with junk values 
                 for (int i = 0; i < bDAO.getNumReadings()-1; i++) {
                     labels.addLabel(new Label(labelName, "junk", i));
@@ -343,21 +344,34 @@ public class TransformationParser extends Parser{
             String [] vals = labelValue.split("%");
             String name = vals[0];
             bDAO.setStreamedLabel(labelName, name);//.. for launching the nback we pass along this something after %
+           
+            //.. a little hack: start an nback if its one of these conditions
             if (labelValue.startsWith("easy") || labelValue.startsWith("hard")) {
                 try{
-                    int time =  Integer.parseInt(labelValue.split("%")[1]);  
+                    //.. split up input
+                    int time =  Integer.parseInt(labelValue.split("%")[1]); 
+                    String condition = labelValue.split("%")[0];
+                    
+                    //.. initialize nback, remembering what file we play
                     AudioNBack nBack;
                     time -=1000;
-                    nBack = new AudioNBack(-1, time);  
+                    int NUMFILES = 4;//.. err, little messy.
+                    int sequence = (int) (Math.random() * NUMFILES);
+                    nBack = new AudioNBack(-1, time,sequence);  
+                    
                     if (!ctx.test) nBack.directory = ctx.getServletContext().getRealPath("WEB-INF/audio/") +"/";
 
                     //.. Initialize nBack and run it for specified duration. It will complain if theres not a server running
                     Thread t = new Thread(nBack);
                     t.start();
+                    retString += "Initializing nback sequence-" + nBack.sequence + "-"+condition+"::";
+                    
+                    //.. finally, save the nback, so that we can interrupt it
+                    ctx.setNback(nBack);
+
                 }catch (Exception e ) { throw new Exception (e.getMessage() );}//.. if anything went wrong here that's fine. A good faith effort to start the audio}
-                   
             }
-            return "Current label: " + labelName + " " + name;
+            return retString + "Starting: " + name;
         } else {
             throw new Exception("Could not find " + filename);
         }

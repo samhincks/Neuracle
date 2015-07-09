@@ -75,6 +75,10 @@ function ConsoleArea() {
      *Otherwise, decide how to handle the user's input in javascript */ 
     this.parseLocally = function(userText) {
         userText = userText.trim();
+        if (nbackEvaluator.active && !(userText.startsWith("interrupt"))) {
+            nbackEvaluator.guess(userText);
+            return true;
+        }
         if(userText.startsWith("view.")){
             this.parseViewMessage(userText);
             return true; //.. parse it locally only
