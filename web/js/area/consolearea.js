@@ -249,7 +249,7 @@ function ConsoleArea() {
      this.introduce = function() {
         var message = "Welcome - This is an interface for evaluating trial-based timeseries datasets, and for training "
         + " machine learning algorithms to broadcast meaningful classifications across a port in realtime;; "
-        + " If you have no idea how to begin and no data to work with, simply type tutorial";
+        + " Please type selfcalibrate in the console and hit enter...";
          
         this.displayMessage(message, "systemmess", "secondline");
     };

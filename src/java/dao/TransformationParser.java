@@ -221,7 +221,7 @@ public class TransformationParser extends Parser{
         if (c == null) {
             return null;
         }
-        return c.getJSONObject(ctx.getTutorial());
+        return c.getJSONObject(ctx.getTutorial(), ctx.getSelfCalibrate());
     }
     
     /**Remove instances which are too long or too short
@@ -693,3 +693,4 @@ public class TransformationParser extends Parser{
     }
    
 }
+  

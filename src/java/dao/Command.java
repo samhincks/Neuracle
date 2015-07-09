@@ -15,6 +15,7 @@ public class Command {
     public String action = null;
     public JSONObject data =null;  
     public String tutorial = null;    
+    public String selfcalibrate = null;
        
     public Command(String id) {        
         this.id = id;       
@@ -25,7 +26,7 @@ public class Command {
      * @return
      * @throws Exception 
      */
-    public JSONObject getJSONObject(boolean showTut) throws Exception{
+    public JSONObject getJSONObject(boolean showTut, boolean showSelf) throws Exception{
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("content", retMessage);
         jsonObj.put("id", id);
@@ -40,6 +41,10 @@ public class Command {
         }  
         if (tutorial != null && showTut)
             jsonObj.put("tutorial", tutorial);
+        
+        if (selfcalibrate != null && showSelf){
+            jsonObj.put("selfcalibrate", selfcalibrate);
+        }
         return jsonObj;
     }
 }

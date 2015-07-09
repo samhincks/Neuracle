@@ -48,6 +48,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public static Performances performances = new Performances();
     private static int fileReadSampling =1; //.. set to two and we read every other row from file
     private static boolean tutorial = false; //.. True if we're running a tutorial. 
+    private static boolean  selfCalibrate = false;
     public static Integer curPort =null; //.. random number. this is used in an exchange between intercept label and nback
     private static Server fnirsServer;
     private static AudioNBack nback; //.. so that we can interrupt an nback we've begun
@@ -168,6 +169,13 @@ public class ThisActionBeanContext extends ActionBeanContext{
 
     public void setTutorial(boolean b) {
         tutorial = b;
+    }
+    public void setSelfCalibrate(boolean b) {
+        selfCalibrate = b;
+    }
+    
+    public boolean getSelfCalibrate() {
+        return selfCalibrate;
     }
        
     public boolean getTutorial() {

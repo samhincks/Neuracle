@@ -30,6 +30,11 @@ function OutputParser() {
         ///.. start a new condition, so deactivate any running nback evaluator
         if (content.startsWith("Starting")) {
             nbackEvaluator.deactivate();
+            console.log(content);
+            if(content.startsWith("Starting: junk")) {
+                 $("#consoleInput").val("selfcalibrate2");
+                javaInterface.postToConsole();
+            }
         }
         
         //.. initializing a new label, play sound etc.

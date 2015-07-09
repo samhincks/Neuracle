@@ -132,6 +132,9 @@ public class DataManipulationParser extends Parser{
                 + " but this time, the machine learning algorithm remembers its knowledge, and you can link it to a livestream"
                 + " of data, or apply it to any loaded dataset, where the condition may be known or unknown. ::"
                 + " Drag the trained machine learning algorithm to the original ungrouped file and type classify() ";
+        command.selfcalibrate = "Now you've trained the machine learning algorithm, and you it up with the livestream of data in the original set."
+                + " Drag the trained machine learning algorithm to the original ungrouped (subtly blinking) file ::"
+                + " Type repeat:classifylast(50003);3000 to broadcast your cognitive workload over port 50003 every 3 seconds (you may copy-paste). Then alert the experimenter of your completion";
         commands.put(command.id, command);
         
         //-- CLASSIFY 
@@ -166,6 +169,10 @@ public class DataManipulationParser extends Parser{
         command = new Command("realtime");
         command.documentation = " Applies a range of data-manipulations and simplifications to the selected datasets, "
                 + " ripe for realtime classificatoin";
+        command.selfcalibrate = "If you're curios, you can double click this freshly created object to view averaged data for the two trials. When you're done, drag"
+                + " this object so that it intersects the tiny circular objects to its right. When it's fully intersected with these circles (which represent"
+                + " choices of pattern recognition technique), you a green border should appear around it.:: "
+                + " Type train() to teach the machine learning algorithm the unique patterns of your brain.  ";
         commands.put(command.id, command);
         
         
@@ -318,7 +325,7 @@ public class DataManipulationParser extends Parser{
         if (c == null) {
             return null;
         }
-        return c.getJSONObject(ctx.getTutorial());
+        return c.getJSONObject(ctx.getTutorial(), ctx.getSelfCalibrate());
     }
 
     

@@ -42,6 +42,14 @@ public class ExternalDataParser extends Parser{
                 + " if it already exists";
         command.action ="reload";
         command.parameters = "1. tablename = the name of the remote database table";
+        command.selfcalibrate = "Great! Double click on this object to get an up-to-date visualization of activation patterns."
+                + " It's difficult to draw any conclusions here, but it's amusing to consider that your brain is now processing information about itself! :: "
+                + " We are about to study your brain at work and at relative rest. We will alternate between easy and hard editions of the cognitive workload induction task known as the nback"
+                + " First you will do the 0-back for thirty seconds, and simply repeat the number that is spoken. You will then rest for twenty seconds, before starting the 2-back, where you type "
+                + " the number that was uttered two numbers ago. So, if we start off by saying 3, you say nothing. If we then say 5, you again say nothing. But when we say our third number, 4, then "
+                + " you say 3, the first number, because this was the number stated two numbers ago. This will continue for thirty seconds. The console will tell you when what condition starts and periodically ask"
+                + " for your personal opinion about your mental state in the previous trial. We will track and reward your accuracy. Good luck!::"
+                + " Type streamlabel(easy%hard, 30%10%20) exactly to initiate 10 thirty-second 0-backs and 10 thirty-second 2-backs with 20-second rest. (You may copy-paste)"; 
         command.debug = "Works, but a new feature, so not entirely sure";
         commands.put(command.id, command);
          
@@ -58,6 +66,8 @@ public class ExternalDataParser extends Parser{
         command = new Command("write");
         command.documentation = "Write the selected dataset to a file with the same name as its id";
         command.parameters = "1. suffix, 2. readEvery (write only every kth reading). 3. Make condition an integer";
+        command.selfcalibrate = "Now we want to organize the data into two groups: one for the 0-back trials and one for the 2-back trials::"
+                + " Type realtime(easy,hard) to apply a series of manipulations to your data. ";
         commands.put(command.id, command);
     }
 
@@ -97,7 +107,7 @@ public class ExternalDataParser extends Parser{
         if (c == null) {
             return null;
         }
-        return c.getJSONObject(ctx.getTutorial());
+        return c.getJSONObject(ctx.getTutorial(), ctx.getSelfCalibrate());
     }
 
     /**Save the selected dataset to a database 

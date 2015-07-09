@@ -156,6 +156,13 @@ public class InputParser {
                 c.retMessage = "Files will only record every " + readevery +"th reading";
             }
         } 
+        
+        else if (command.startsWith("selfcalibrate2")) {
+            c = new Command("selfcalibrate2");
+            c.retMessage = "Nice work, you are done with the annoying part of the experiment! Knowing your cognitive profile, we now want to build a machine learning"
+                    + " algorithm that predicts your cognitive workload in realtime. But first, lets save the data::"
+                    + " Type write(participantxxxxx) where xxxxx corresponds to the participant number written on a sheet of paper to your left";
+        }
         else if(command.startsWith("rthelp")){   
             c = new Command("rthelp");
             c.retMessage =" Do the following in order::" 
@@ -181,13 +188,13 @@ public class InputParser {
             for (JSONObject com : transformationParser.getCommands()){commands.put(com);}
             for (JSONObject com : dataParser.getCommands()){commands.put(com);}
             for (JSONObject com : mlParser.getCommands()){commands.put(com);}
-            return c.getJSONObject(ctx.getTutorial());
+            return c.getJSONObject(ctx.getTutorial(), ctx.getSelfCalibrate());
         }
 
         if (c == null) {
             return null;
         }
-        return c.getJSONObject(ctx.getTutorial());
+        return c.getJSONObject(ctx.getTutorial(), ctx.getSelfCalibrate());
     }
     
     

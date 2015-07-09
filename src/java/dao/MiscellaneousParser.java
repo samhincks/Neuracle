@@ -133,8 +133,17 @@ public class MiscellaneousParser extends Parser{
         command.action = "reload";
         command.tutorial = "Double click on one of the files in the topleft corner to view the raw-data."
                 + " Then, with the file selected, type split(condition) to group the data by common conditions";
-        commands.put(command.id, command);   
+        commands.put(command.id, command);  
         
+        command = new Command("selfcalibrate");
+        command.documentation = "Demonstrates how to self-calibrate a cognitive workload detection algorithm. ";   
+        command.action = "reload";
+        command.selfcalibrate = "Welcome! As a first step, we want to load realtime "
+                + "measurements of oxygenation changes in the frontal lobe "
+                + "of your brain. You will see a rectangular representation of this dataset in the top left corner "
+                + " of the screen.:: Type synchronize() in the console. ";
+        commands.put(command.id, command);
+
         command = new Command("interruptnback");
         command.documentation = "Stalls the current nback";
         commands.put(command.id, command);
@@ -218,13 +227,19 @@ public class MiscellaneousParser extends Parser{
             c = commands.get("tutorial");
             c.retMessage = this.tutorial();
         }
+        
+        else if (command.startsWith("selfcalibrate")) {
+            c = commands.get("selfcalibrate");
+            c.retMessage = this.selfCalibrate();
+        }
+        
         else if (command.startsWith("interruptnback")) {
             c = commands.get("interruptnback");
             c.retMessage = this.interruptNback(parameters);
         }
         
         if (c ==null) return null;
-        return c.getJSONObject(ctx.getTutorial());
+        return c.getJSONObject(ctx.getTutorial(), ctx.getSelfCalibrate());
     }
     
     
@@ -583,6 +598,13 @@ public class MiscellaneousParser extends Parser{
                 + " be text -- a name for the trial. Subsequent rows with the same name belong to the same trial. Alternatively, "
                 + " if you have manually placed your folder inside build/web/input/foldername, then load(foldername) will open all files therein ";
                 
+    }
+    private String selfCalibrate() throws Exception {
+        ctx.setSelfCalibrate(true);
+        return " As a first step, we want to load realtime "
+                + "measurements of oxygenation changes in the frontal lobe "
+                + "of your brain. You will see a rectangular representation of this dataset in the top left corner "
+                + " of the screen.:: Type synchronize() in the console.";
     }
     
     /*Interrupts any ongoing nback*/
