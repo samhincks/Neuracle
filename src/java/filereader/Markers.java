@@ -190,6 +190,10 @@ public class Markers {
         Markers m = new Markers(this.saveLabels.getCopy());
         return m;
     }
+
+    public Trial getKthLastTrial(int numBack) {
+        return this.trials.get(this.trials.size()-1-numBack);
+    }
     
     public static class Trial { //.. wait, why is this static? just so I can access it form Generate?
         public String name;
@@ -233,6 +237,8 @@ public class Markers {
                 String [] conditions = {"easy:30", "rest:10", "hard:30"};
                 Markers m = Markers.make(100, 1222, 1444, conditions);
                 m.printTrials();
+                Trial t = m.getKthLastTrial(0);
+                System.out.println(t.end);
             }
             if (TEST ==0) {
                 Trial t = new Trial("bajs", 10); t.end = 30;

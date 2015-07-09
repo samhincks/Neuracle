@@ -52,13 +52,8 @@ function Labeler()
         self.iterations++;
         self.num =1;
         
-        //.. no feedback between trials, so pause and continue with loop
-        if (self.feedback == false) 
-            self.restOrJunk(self.trialLength);
-        
-        //.. solicit feedback, then move on
-        else 
-            setTimeout(self.solicitFeedback, self.trialLength + self.FEEDBACKDELAY);
+        //.. initiate rest
+        self.restOrJunk(self.trialLength);
     }
   
    //.. rest or junk, depending on iteration
@@ -74,8 +69,9 @@ function Labeler()
     //..  Query user's reported mental load, then go on. 
     this.solicitFeedback = function() {
         self.awaitingFeedback = true;
-        //.. we need to deactivate our nbackevaluator here too.
-        if (self.num ==1 &&nbackEvaluator != null) nbackEvaluator.deactivate();
+        //.. we need to deactivate our nbackevaluator here too. Now we shouldnt need this
+        //if (self.num ==1 &&nbackEvaluator != null) nbackEvaluator.deactivate();
+       
         
         if (self.num == 1){
             consoleArea.displayMessage("How would you describe your own cognitive workload that trial? (1=low, 2=medium, 3=high)", "systemmess", "blueline");
@@ -89,18 +85,19 @@ function Labeler()
     //.. from console area  - parse the feedback, and send it to the backend
     this.parseFeedback = function(input) {
          this.awaitingFeedback =false;
-         
+        
+        var conValue = null;
         //.. if its valid input, send a message to the back end saying -- whatever was the label,
         //... add a new label feedback1, if it doesnt exist, and make so that it has this value for as many back as the last trial
         if (input == "1") {
-            
+           conValue = "one";
         }
         else if (input =="2") {
-            
+            conValue = "two";
         }
         else if (self.num == 1 && input == "3") {
-            
-        }
+            conValue = "three"; 
+       }
         else {
             if (self.num ==1){
                 consoleArea.displayMessage("Please enter 1, 2 or 3", "systemmess", "redline");
@@ -115,6 +112,13 @@ function Labeler()
             return;
         }
         
+        //.. if its a sensible response ship it off to the back-end
+        if (conValue != null) {
+            var mess  = "retrolabel(feedback"+self.num+",condition,"+conValue+",1,realtime1)";
+            $("#consoleInput").val(mess);
+            javaInterface.postToConsole();
+        }
+        
         //.. if theres a feedback2, then collect that
         if(self.num ==1){
             self.num =2;
@@ -123,7 +127,8 @@ function Labeler()
         
         //.. otherwise continue with normal labeling procedure
         else if (self.num ==2){
-            this.restOrJunk(self.FEEDBACKDELAY/4);
+            if (self.iterations < self.trialsToDo)
+                setTimeout(self.labelCondition,self.FEEDBACKDELAY/4);
         }
             
     }
@@ -132,13 +137,21 @@ function Labeler()
         var message = "label(" + self.fileName + "," + self.conditionName + ",junk)";
         $("#consoleInput").val(message);
         javaInterface.postToConsole();
+        if (self.feedback) {
+            setTimeout(self.solicitFeedback, self.FEEDBACKDELAY);
+        }
     }
     
     this.labelRest = function() {
         var message = "label("+self.fileName +","+ self.conditionName+",rest)";
         $("#consoleInput").val(message);
         javaInterface.postToConsole();
-        setTimeout(self.labelCondition, self.restLength);
+        
+        //.. no feedback between trials, so pause and continue with loop
+        if (self.feedback == false) 
+            setTimeout(self.labelCondition, self.restLength);
+        else
+            setTimeout(self.solicitFeedback, self.FEEDBACKDELAY);
     }
     
     

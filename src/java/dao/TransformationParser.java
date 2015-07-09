@@ -12,6 +12,7 @@ import dao.techniques.TechniqueDAO;
 import filereader.Label;
 import filereader.Labels;
 import filereader.Markers;
+import filereader.Markers.Trial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -71,6 +72,14 @@ public class TransformationParser extends Parser{
                 + " to this location, future data pushed into specified database is labeled accordingly";
         command.parameters = "1. Dataset, 2. Labelname, 3. PortNum";
         commands.put(command.id, command);
+        
+        
+        command = new Command("retrolabel");
+        command.documentation = "Retroactively set the value of some existing or non-existing condition to a specific value, matching the length"
+                + " of the trial in another condition k trials back";
+        command.parameters = "1. newConditionName, 2. oldConditionName, 3. value, 4. kConditionsBack, 5=filename";
+        commands.put(command.id, command);
+        
         
         //-- KEEP
         command = new Command("keep");
@@ -165,6 +174,12 @@ public class TransformationParser extends Parser{
             c.retMessage = this.interceptLabel(parameters);
         }
         
+        else if (command.startsWith("retrolabel")) {
+            c = commands.get("retrolabel");
+            c.retMessage = this.retroLabel(parameters);
+        }
+
+        
         //... Makes a new experiment with only these instances
         else if (command.startsWith("keep")) {
             c = commands.get("keep");
@@ -202,6 +217,7 @@ public class TransformationParser extends Parser{
             c = commands.get("clean");
             c.retMessage = this.clean();
         }
+        
         if (c == null) {
             return null;
         }
@@ -410,6 +426,94 @@ public class TransformationParser extends Parser{
         return "Initialized label interception at port " + port + " . " +dbName + "'s " + labelName + " will "
                 + " potentially alter label based on the message every " + pingDelay + " ms. It will "
                 + " shut down if it receives end";
+    }
+    
+    /*Retroactively label a potentially streaming file, to have some new value for some potentially new condition.
+    e.g retrolabel(skit, condition, kuke, 0, realtime1)*/
+    private String retroLabel(String [] parameters) throws Exception {
+        String thisCondition = parameters[0];
+        String otherCondition = parameters[1];
+        String conValue = parameters[2];
+        int numBack = Integer.parseInt(parameters[3]);
+        String fileName = parameters[4];
+        
+        //.. get appropriate dataset
+        BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(fileName);
+        ChannelSet cs = (ChannelSet)bDAO.dataLayer;
+        
+        //.. get markers and labels
+        Markers otherMarkers = cs.getMarkersWithName(otherCondition);
+        Labels theseLabels; 
+        int otherSize = otherMarkers.saveLabels.channelLabels.size();
+        Trial otherTrial  =otherMarkers.getKthLastTrial(numBack);
+        
+        //.. if this is the first time we see this condition, make a copy of the old ones,
+        if (!(cs.hasMarkersWithName(thisCondition))) {
+            ///.. create a new label for each position in the old markers
+            theseLabels = new Labels(thisCondition);
+            for (int i = 0; i < otherSize; i++) {
+                theseLabels.addLabel(new Label(thisCondition, "junk", i));
+            }
+            
+            //.. and alter those which we wnat to alter
+            for (int s = otherTrial.start; s < otherTrial.end; s++) {
+                Label l = theseLabels.channelLabels.get(s);
+                l.value = conValue;
+            }
+            //.. finally add the markers
+            cs.addMarkers(new Markers(theseLabels));
+        }
+        
+        //.. I wonder if this is thread safe :/ 
+        //.. we have to preserve what was already there, and update to be as long as our markers
+        else {
+            theseLabels = cs.getMarkersWithName(thisCondition).saveLabels;
+            int thisSize = theseLabels.channelLabels.size();
+            //.. we probably have fewer of this than the other one, so we will junkify until we get the trial thats k back,
+            //.. then make it that condition corresponding to the trial, then junkify the rest to
+            if (thisSize < otherSize) {
+                
+                //.. add junk up until the start of the trial we are padding as
+                int startPadding = otherTrial.start - thisSize;
+                for (int i = 0; i < startPadding; i++) {
+                    theseLabels.addLabel(new Label(thisCondition, "junk", thisSize +i));
+                }
+                
+                if (startPadding < 0) throw new Exception("Start padding is 0");
+                
+                //..  update size
+                thisSize = theseLabels.channelLabels.size();
+                
+                if (thisSize > otherSize) throw new Exception("now we're bigger than the old one");
+                
+                //.. then add whatever we want the condition to be
+                for (int i = 0; i < otherTrial.getLength(); i++) {
+                    theseLabels.addLabel(new Label(thisCondition, conValue , thisSize + i));
+                }
+                
+                //.. update size
+                thisSize = theseLabels.channelLabels.size();
+                int sizeDifference = otherSize - thisSize;
+
+                if (sizeDifference <0) throw new Exception (" after adding trial we're bigger than the old");
+                
+                //.. finally pad the end to be as large
+                for (int i = 0; i < sizeDifference; i++) {
+                    theseLabels.addLabel(new Label(thisCondition, "junk", thisSize + i));
+                }
+                
+                //.. and then add these new markers, replacing the old ones 
+                Markers m = new Markers(theseLabels);
+                cs.removeMarkerWithName(theseLabels.labelName);
+                cs.addMarkers(m);
+                return "Registered " + conValue + " to " + theseLabels.labelName;
+            }
+            else
+                throw new Exception ("How can we be ahead of the other markers? Some bug");
+            
+        }
+        return "Registered " + conValue + " to " + theseLabels.labelName;
+        
     }
     
     /**

@@ -84,7 +84,20 @@ function Evaluator(seqNum, con) { // streamlabel(easy,15%1%1)
     this.deactivate = function() {
         if (this.guesses.length >0){
             var total = this.correct + this.wrong;
-            consoleArea.displayMessage("Accuracy: " +this.correct / total, "systemmess", "blueline");
+            var accuracy = this.correct / total;
+            consoleArea.displayMessage("Accuracy: " +accuracy, "systemmess", "blueline");
+            
+            //.. save the accuracy in this trial to the backend
+            var label = "zero";
+            if (accuracy > 0.99) label ="hundred";
+            if (accuracy > 0.75) label = "eighty";
+            if (accuracy > 0.5)label = "sixty";
+            else label = "lessThanFifty";
+
+            //.. ship it off
+            var mess = "retrolabel(accuracy" + self.num + ",condition," + label + ",1,realtime1)";
+            $("#consoleInput").val(mess);
+            javaInterface.postToConsole();
         }
         this.active = false;
         clearInterval(this.inter);

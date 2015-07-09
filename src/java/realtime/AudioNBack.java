@@ -43,6 +43,7 @@ public class AudioNBack implements Runnable{
         this.kBack = kBack;
         this.length = length;
         this.sequence = sequence;
+        this.length = this.length -2000;
     }
     
     public AudioNBack(int kBack, int length, Client client) {
