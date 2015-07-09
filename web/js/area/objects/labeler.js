@@ -13,11 +13,17 @@ function Labeler()
     this.conditionName;
     this.fileName;
     var self;
+    this.feedback = false;
+    //.. used by console area to know if we're awaiting user feedback
+    this.awaitingFeedback = false;
+    this.num =1; //.. I hate myself a little because of this, but I cant figure out how to give function's input in setTimeout
     
-    /**Initiate the labeling, and display helpful messages to the conesole
-     **/
+   //.. constants
+    this.FEEDBACKDELAY = 4000; //.. a little delay so that nback input doesnt become feedback input
+    
+    /**Initiate the labeling, and display helpful messages to the conesole**/
     this.initiateLabeling = function(filename,conditionName,conditions,
-        trialLength, trialsOfEach,restLength) {
+        trialLength, trialsOfEach,restLength,feedback) {
         this.trialLength  = parseInt(trialLength * 1000);
         this.restLength = parseInt(restLength * 1000);
         this.iterations =0;
@@ -25,11 +31,11 @@ function Labeler()
         this.conditions= conditions;
         this.conditionName = conditionName;
         this.fileName = filename;
-        
+        this.feedback = feedback;
         consoleArea.displayMessage("Initiating labeling protocol for a total of " +this.trialsToDo 
                 +" trials on " +this.fileName + " for " + trialLength + "s with rest of " + restLength + "s", "systemmess", "blackline");
         self = this;
-        this.labelCondition();
+        this.labelCondition(this.feedback);
     }
     
     /**Alternate conditions and rest, ping the server each time the label switches, 
@@ -38,19 +44,88 @@ function Labeler()
         var curCondition = self.conditions[self.iterations%self.conditions.length];
         if (curCondition == "easy" || curCondition == "hard") 
             curCondition += "%" + (self.trialLength);
-           
+        
+        //.. send message to backend
         var message = "label(" + self.fileName + "," + self.conditionName + ","+curCondition+")";
         $("#consoleInput").val(message);
-        //consoleArea.displayMessage("Prepare for " + curCondition, "systemmess", "greenline");
         javaInterface.postToConsole();
-        
         self.iterations++;
-        if (self.iterations < self.trialsToDo) 
-            setTimeout(self.labelRest, self.trialLength);
-        else{
-            setTimeout(self.labelJunkAndEnd, self.trialLength);
+        self.num =1;
+        
+        //.. no feedback between trials, so pause and continue with loop
+        if (self.feedback == false) 
+            self.restOrJunk(self.trialLength);
+        
+        //.. solicit feedback, then move on
+        else 
+            setTimeout(self.solicitFeedback, self.trialLength + self.FEEDBACKDELAY);
+    }
+  
+   //.. rest or junk, depending on iteration
+   this.restOrJunk = function(delay) {
+        if (self.iterations < self.trialsToDo)
+            setTimeout(self.labelRest, delay);
+        else {
+            setTimeout(self.labelJunkAndEnd, delay);
             consoleArea.displayMessage("Last trial!", "systemmess", "greenline");
         }  
+    }
+    
+    //..  Query user's reported mental load, then go on. 
+    this.solicitFeedback = function() {
+        self.awaitingFeedback = true;
+        //.. we need to deactivate our nbackevaluator here too.
+        if (self.num ==1 &&nbackEvaluator != null) nbackEvaluator.deactivate();
+        
+        if (self.num == 1){
+            consoleArea.displayMessage("How would you describe your own cognitive workload that trial? (1=low, 2=medium, 3=high)", "systemmess", "blueline");
+        }
+        if (self.num ==2) {
+            consoleArea.displayMessage("How would you describe your mental engagement that trial? (1=focused, 2=distracted)", "systemmess", "blueline");
+        }
+        
+    }
+    
+    //.. from console area  - parse the feedback, and send it to the backend
+    this.parseFeedback = function(input) {
+         this.awaitingFeedback =false;
+         
+        //.. if its valid input, send a message to the back end saying -- whatever was the label,
+        //... add a new label feedback1, if it doesnt exist, and make so that it has this value for as many back as the last trial
+        if (input == "1") {
+            
+        }
+        else if (input =="2") {
+            
+        }
+        else if (self.num == 1 && input == "3") {
+            
+        }
+        else {
+            if (self.num ==1){
+                consoleArea.displayMessage("Please enter 1, 2 or 3", "systemmess", "redline");
+                self.num =2;
+                this.solicitFeedback();
+            }
+            if (self.num ==2) {
+                consoleArea.displayMessage("Please enter 1, 2 or 3", "systemmess", "redline");
+                self.num =1;
+                this.labelRest();
+            }
+            return;
+        }
+        
+        //.. if theres a feedback2, then collect that
+        if(self.num ==1){
+            self.num =2;
+            setTimeout(self.solicitFeedback, self.FEEDBACKDELAY/4);;
+        }
+        
+        //.. otherwise continue with normal labeling procedure
+        else if (self.num ==2){
+            this.restOrJunk(self.FEEDBACKDELAY/4);
+        }
+            
     }
     
     this.labelJunkAndEnd = function() {

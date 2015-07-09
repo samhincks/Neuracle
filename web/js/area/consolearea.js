@@ -9,7 +9,7 @@ function ConsoleArea() {
    this.streamInterval; 
    this.pings =[] //.. a hash of commands we are pinging at the server 
    duplicatesAdded =0;//.. keep track of how many of the same command, eg classifylast we have created
-   
+   var labeler = new Labeler();
    this.messageStack = []; //.. save all the users old messages. Retrieve with arrows. Delete if erroneous
    this.commands; //.. initialize this when we start. In other words, ping server
    
@@ -20,7 +20,7 @@ function ConsoleArea() {
    this.displayMessage = function(message, primaryClass, secondaryClass) {
         if (arguments.length ==1) {primaryClass = "systemmess"; secondaryClass = "blueline";}
         if (message ==null)return;
-        
+
        ///.. ;; denotes splitting into new message
         var splitByNewMessage = message.split(";;");
         for (var i = 0; i < splitByNewMessage.length; i++) {
@@ -75,6 +75,13 @@ function ConsoleArea() {
      *Otherwise, decide how to handle the user's input in javascript */ 
     this.parseLocally = function(userText) {
         userText = userText.trim();
+        
+        //.. if this is the end of a streamlabel query
+        if (labeler.awaitingFeedback) {
+            labeler.parseFeedback(userText);
+            return true;
+        }
+        //.. redirect all input to seeing if theyre getting the right nback response
         if (nbackEvaluator.active && !(userText.startsWith("interrupt"))) {
             nbackEvaluator.guess(userText);
             return true;
@@ -110,15 +117,12 @@ function ConsoleArea() {
          //.. For periodically updating what the current label is of a synchronized
          //... dataset
          else if(userText.startsWith("streamlabel")) {
-          //  if (!this.streaming){
-            //    consoleArea.displayMessage("Must first apply a procedure for synchronizing the database using stream(dbname)", "systemmess", "redline");
-              //  return true;
-            //}
-             
+            //.. get the two possible set of parameters
             var mes = userText.split("("); //.. will be parameters (100,200)
             var params = new Array();
             if (mes.length >1) params  = mes[1].split(",");
             
+            //.. full set
             if (params.length ==0) {
                params = new Array();
                params[0] = "easy%rest"
@@ -126,12 +130,13 @@ function ConsoleArea() {
                params[2] = "realtime1";
                params[3] = "condition";
             }
+            
             if (params.length ==2) {
                params[2] = "realtime1";
                params[3] = "condition";            
-           }   
+            }   
             
-           
+           //.. extract parameters for the labeler
             var filename = params[2];
             var conditionName = params[3];
             var conditions = params[0].split("%"); //.. error if trailing %  
@@ -140,7 +145,7 @@ function ConsoleArea() {
             var trialsOfEach = parseInt(timing[1]);
             var restLength = parseInt(timing[2]);
             labeler = new Labeler();
-            labeler.initiateLabeling(filename,conditionName,conditions,trialLength,trialsOfEach,restLength); 
+            labeler.initiateLabeling(filename,conditionName,conditions,trialLength,trialsOfEach,restLength,true); 
             return true;
          }
            
