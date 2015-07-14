@@ -15,7 +15,7 @@ public class Command {
     public String action = null;
     public JSONObject data =null;  
     public String tutorial = null;    
-    public String selfcalibrate = null;
+    public String selfcalibrate = null;  
        
     public Command(String id) {        
         this.id = id;       

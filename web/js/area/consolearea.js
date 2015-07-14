@@ -145,7 +145,12 @@ function ConsoleArea() {
             var trialsOfEach = parseInt(timing[1]);
             var restLength = parseInt(timing[2]);
             labeler = new Labeler();
-            labeler.initiateLabeling(filename,conditionName,conditions,trialLength,trialsOfEach,restLength,true); 
+            
+            //.. a little hacky: if we dont want feedback, then we do streamlabel2, but nobody else needs to know that
+            var feedback = true;
+            if(userText.startsWith("streamlabel2")) feedback =false;
+            
+            labeler.initiateLabeling(filename,conditionName,conditions,trialLength,trialsOfEach,restLength,feedbak); 
             return true;
          }
            

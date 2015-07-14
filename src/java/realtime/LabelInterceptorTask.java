@@ -40,30 +40,32 @@ public class LabelInterceptorTask implements Runnable{
         this.port = port;
         this.tp = tp;
         this.dbName = dbName;
-        this.labelName = labelName;
+        this.labelName = labelName;    
         this.pingDelay = pingDelay;
     }
     
     @Override
     public void run() {
         try {
+            System.out.println("Runnign on " + port);
             this.socket = new ServerSocket(port);
+            this.socket.setReuseAddress(true);
             connectionSocket = socket.accept();
-            inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+            inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));            
             getMessage();
         }
         catch(Exception e) {
             e.printStackTrace(); 
         }
-
     }
     public void getMessage( ){
         try {
             String clientSentence = inFromClient.readLine();
+            System.out.println("received + " + clientSentence);
             if (clientSentence == null) {
                 Thread.sleep(pingDelay);
                 getMessage();
-            }
+            }  
             else if(clientSentence.equals("next")) {
                 String[] parameters = new String[]{dbName, labelName, "rest"};
                 tp.label(parameters);
@@ -75,9 +77,9 @@ public class LabelInterceptorTask implements Runnable{
                 return;
             } else {
                 String[] parameters = new String[]{dbName, labelName, clientSentence};
-                tp.label(parameters);
-            }
-
+                System.out.println(clientSentence);
+                tp.label(parameters);  
+            }  
             Thread.sleep(pingDelay);
             getMessage();
         } catch (Exception e) {

@@ -67,7 +67,7 @@ public class ExternalDataParser extends Parser{
         command.documentation = "Write the selected dataset to a file with the same name as its id";
         command.parameters = "1. suffix, 2. readEvery (write only every kth reading). 3. Make condition an integer";
         command.selfcalibrate = "Now we want to organize the data into two groups: one for the 0-back trials and one for the 2-back trials::"
-                + " Type realtime(easy,hard) to apply a series of manipulations to your data. ";
+                + "Double click on the rectangular object in the top-left, then Type realtime(easy,hard) to apply a series of manipulations to your data. ";
         commands.put(command.id, command);
     }
 

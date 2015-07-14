@@ -13,6 +13,10 @@ import filereader.Label;
 import filereader.Labels;
 import filereader.Markers;
 import filereader.Markers.Trial;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -173,6 +177,8 @@ public class TransformationParser extends Parser{
             c = commands.get("interceptlabel");
             c.retMessage = this.interceptLabel(parameters);
         }
+        
+        
         
         else if (command.startsWith("retrolabel")) {
             c = commands.get("retrolabel");
@@ -395,7 +401,10 @@ public class TransformationParser extends Parser{
             file += "/output/backup.csv";
             if (file != null) {
                 ChannelSet cs = (ChannelSet)bDAO.dataLayer;
-                cs.writeToFile(file, 1, false);
+                try{
+                     cs.writeToFile(file, 1, false);
+                }
+                catch(Exception e) {System.err.println("Ddidnt backup");}
             }
 
             return retString + "Starting: " + name;
@@ -430,10 +439,9 @@ public class TransformationParser extends Parser{
         int pingDelay =1000;
         label(new String []{dbName, labelName, "junk"});
         LabelInterceptorTask lt = new LabelInterceptorTask(port, dbName, labelName, this,pingDelay );
-
         Thread t = new Thread(lt);
         t.start();
-
+       
         return "Initialized label interception at port " + port + " . " +dbName + "'s " + labelName + " will "
                 + " potentially alter label based on the message every " + pingDelay + " ms. It will "
                 + " shut down if it receives end";
