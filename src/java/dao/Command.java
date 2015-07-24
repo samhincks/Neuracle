@@ -2,13 +2,13 @@ package dao;
 
 import org.json.JSONObject;  
 
-/**      
+/**        
  *  An object which mediates command information between server and client. 
  * @author samhincks  
  */                    
-public class Command {                            
+public class Command {                              
     public String id;                           
-    public String parameters ="";      
+    public String parameters ="";        
     public String debug ="";
     public String retMessage =""; //.. populated when the command is executed
     public String documentation =""; //.. populated when the command is executed
@@ -19,8 +19,8 @@ public class Command {
        
     public Command(String id) {        
         this.id = id;       
-    }            
-    
+    }              
+      
     /** Returns the JSON representation of the command object
      * @param showTut , set to true if you want to add the tutorial data too
      * @return

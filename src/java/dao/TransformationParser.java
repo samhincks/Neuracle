@@ -338,8 +338,8 @@ public class TransformationParser extends Parser{
      */
     public String label(String [] parameters) throws Exception {
         String retString ="";
-        
         if (parameters.length < 3) throw new Exception("Command requires three parameters. filename, curLabelName, curLabelValue");
+       
         //.. In this new way of doing things, we are going to need to have created a Markers object,
         //.. which would always have a Markers object that was set equal to the number of datapoints
         String filename = parameters[0];
@@ -435,9 +435,14 @@ public class TransformationParser extends Parser{
         }
         if (!(Parser.available(port))) throw new Exception("Port " + port + " is not available");
         
+        //.. set the current port to this - but what if we do it twice (I think it's fine since we're only using it to pop the port for better interaction
         ctx.curPort = port;
-        int pingDelay =1000;
+        int pingDelay =1000; //.. this has got to be how often we read from the port
+        
+        //.. label everything retroactively as junk for this label. 
         label(new String []{dbName, labelName, "junk"});
+        
+        //.. open a port in a new thread to repeatedly check if theres a new way to label incoming data
         LabelInterceptorTask lt = new LabelInterceptorTask(port, dbName, labelName, this,pingDelay );
         Thread t = new Thread(lt);
         t.start();

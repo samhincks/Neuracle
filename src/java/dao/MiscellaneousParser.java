@@ -138,10 +138,6 @@ public class MiscellaneousParser extends Parser{
         command = new Command("selfcalibrate");
         command.documentation = "Demonstrates how to self-calibrate a cognitive workload detection algorithm. ";   
         command.action = "reload";
-        command.selfcalibrate = "Welcome! As a first step, we want to load realtime "
-                + "measurements of oxygenation changes in the frontal lobe "
-                + "of your brain. You will see a rectangular representation of this dataset in the top left corner "
-                + " of the screen.:: Type synchronize() in the console. ";
         commands.put(command.id, command);
 
         command = new Command("interruptnback");
@@ -603,8 +599,8 @@ public class MiscellaneousParser extends Parser{
         ctx.setSelfCalibrate(true);
         return " As a first step, we want to load realtime "
                 + "measurements of oxygenation changes in the frontal lobe "
-                + "of your brain. You will see a rectangular representation of this dataset in the top left corner "
-                + " of the screen.:: Type synchronize() in the console.";
+                + "of your brain. :: Type synchronize() in the console. You will see a rectangular representation of this dataset in the top left corner "
+                + " of the screen.";
     }
     
     /*Interrupts any ongoing nback*/
@@ -614,9 +610,12 @@ public class MiscellaneousParser extends Parser{
         ctx.getNback().interrupt(duration);
         return "Pausing for " + duration/1000 + "s... please start over";
     }
- 
+     
     private String custom(String[] parameters) throws Exception{
         loadData();
+        ctx.inputParser.parseInput("synchronize");
+        ctx.inputParser.parseInput("interceptlabel(realtime1,task, 1327)");
+        ctx.inputParser.parseInput("interceptlabel(realtime1,event,1444)");
         return "custom";
     }
     

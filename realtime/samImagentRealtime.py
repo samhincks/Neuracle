@@ -29,7 +29,7 @@ from time import sleep
 
 #DEVICE = 'CMS50D'
 #DEVICE = 'fNIRS'
-DEVICE = 'Imagent'
+#DEVICE = 'Imagent'
 DEVICE = 'Fake'
 
 """
@@ -234,13 +234,15 @@ def main():
     if sys.argv[1] =="2":
         DEVICE = "Fake"
     else:
-        DEVICE = "Imagent"
-    if (DEVICE != "Fake"):
-        print("connected to: " + ser.portstr)
+        DEVICE = "Imagent"  
+  
 
     conn = pymysql.connect(host='127.0.0.1', port=3306,
             user='root',db='newttt')
     cur=conn.cursor() 
+
+    if (DEVICE != "Fake"):
+        print("connected to: " + ser.portstr)
     
     if DEVICE == "CMS50D":
         tableName = "REALTIME"

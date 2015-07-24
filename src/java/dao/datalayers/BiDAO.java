@@ -663,7 +663,6 @@ public class BiDAO extends DataLayerDAO {
         //... advance rs cursor to point of length of column, then add whatever else is there
         else {
             int curPoints = cs.getNumPointsAtZero();
-            if(meta.getColumnCount() != 2) System.out.println("NOT 2 .. :" + meta.getColumnCount());
 
             //.. for each column in the database
             for (int i =1; i < meta.getColumnCount()+1; i++) { //..  first is just row#

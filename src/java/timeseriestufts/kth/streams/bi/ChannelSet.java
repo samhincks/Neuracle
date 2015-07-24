@@ -333,7 +333,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         ///... so we need to express it as a percentage
         ChannelSet sample = this.getChannelSetBetween(start, end);
         Instance instance;
-        if (!(this.markers == null || this.markers.isEmpty())) {
+        if (!(this.markers == null || this.markers.isEmpty()) && this.hasMarkersWithName(conditionName)) {
             //.. get the majority condition between start and end as a tuple, where 2nd part is pctange
             Markers theseMarkers = getMarkersWithName(conditionName);
 

@@ -150,7 +150,7 @@ function ConsoleArea() {
             var feedback = true;
             if(userText.startsWith("streamlabel2")) feedback =false;
             
-            labeler.initiateLabeling(filename,conditionName,conditions,trialLength,trialsOfEach,restLength,feedbak); 
+            labeler.initiateLabeling(filename,conditionName,conditions,trialLength,trialsOfEach,restLength,feedback); 
             return true;
          }
            

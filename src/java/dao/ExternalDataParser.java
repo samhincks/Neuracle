@@ -9,7 +9,7 @@ import dao.techniques.TechniqueDAO;
 import filereader.Label;
 import filereader.Labels;
 import filereader.Markers;
-import java.sql.ResultSet;
+import java.sql.ResultSet;  
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.UUID;
@@ -44,7 +44,7 @@ public class ExternalDataParser extends Parser{
         command.parameters = "1. tablename = the name of the remote database table";
         command.selfcalibrate = "Great! Double click on this object to get an up-to-date visualization of activation patterns."
                 + " It's difficult to draw any conclusions here, but it's amusing to consider that your brain is now processing information about itself! :: "
-                + " We are about to study your brain at work and at relative rest. We will alternate between easy and hard editions of the cognitive workload induction task known as the nback"
+                + " We are about to study your brain at work and at relative rest. We will alternate between easy and hard editions of the cognitive workload induction task known as the nback. "
                 + " First you will do the 0-back for thirty seconds, and simply repeat the number that is spoken. You will then rest for twenty seconds, before starting the 2-back, where you type "
                 + " the number that was uttered two numbers ago. So, if we start off by saying 3, you say nothing. If we then say 5, you again say nothing. But when we say our third number, 4, then "
                 + " you say 3, the first number, because this was the number stated two numbers ago. This will continue for thirty seconds. The console will tell you when what condition starts and periodically ask"
