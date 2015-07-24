@@ -7,11 +7,13 @@ import dao.datalayers.DataLayersDAO;
 import dao.datalayers.UserDAO;
 import dao.techniques.TechniqueDAO;
 import dao.techniques.TechniquesDAO;
+import java.util.ArrayList;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.ValidationError;
 import realtime.AudioNBack;
 import realtime.Client;
+import realtime.LabelInterceptorTask;
 import realtime.Server;
 import timeseriestufts.evaluatable.performances.Performances;
 import timeseriestufts.kth.streams.DataLayer;
@@ -52,6 +54,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
     public static Integer curPort =null; //.. random number. this is used in an exchange between intercept label and nback
     private static Server fnirsServer;
     private static AudioNBack nback; //.. so that we can interrupt an nback we've begun
+    private static ArrayList<LabelInterceptorTask> lts;
     
     public void printState() throws Exception{
         System.out.println("\t Datalayer " + currentDataLayer);
@@ -198,6 +201,15 @@ public class ThisActionBeanContext extends ActionBeanContext{
             Thread.sleep(500);
         }
         return fnirsServer;
+    }
+
+    public ArrayList<LabelInterceptorTask> getLabelInterceptorTasks() {
+       return lts;
+    }
+
+    public void addLabelInterceptorTask(LabelInterceptorTask lt) {
+        if (lts == null) lts = new ArrayList();
+        lts.add(lt);
     }
 
 

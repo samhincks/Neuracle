@@ -34,6 +34,8 @@ public class LabelInterceptorTask implements Runnable{
     String labelName;
     ThisActionBeanContext ctx;
     int pingDelay;
+    boolean open = false;
+
 
     public LabelInterceptorTask(int port,
             String dbName, String labelName, TransformationParser tp, int pingDelay) throws Exception{
@@ -51,7 +53,9 @@ public class LabelInterceptorTask implements Runnable{
             this.socket = new ServerSocket(port);
             this.socket.setReuseAddress(true);
             connectionSocket = socket.accept();
-            inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));            
+            inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));   
+            open = true;
+
             getMessage();
         }
         catch(Exception e) {
@@ -83,15 +87,19 @@ public class LabelInterceptorTask implements Runnable{
             Thread.sleep(pingDelay);
             getMessage();
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();    
         }
     }
     
     
-    public void disconnect() throws Exception {
-        this.socket.close();
-        connectionSocket.close();
-        inFromClient.close();
+    public boolean disconnect() throws Exception {
+        if (open){
+            this.socket.close();
+            connectionSocket.close();
+            inFromClient.close();
+            return true;
+        }
+        return false;
 
     }
     

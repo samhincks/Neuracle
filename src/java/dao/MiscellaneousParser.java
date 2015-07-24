@@ -128,6 +128,12 @@ public class MiscellaneousParser extends Parser{
         command.action = "reload";
         commands.put(command.id, command);
         
+        
+        command = new Command("custom2");
+        command.documentation = "A set of procedures which I change to suit my current needs";
+        command.action = "reload";
+        commands.put(command.id, command);
+        
         command = new Command("tutorial");
         command.documentation = "Loads a sample file, and executes basic instructions on it";   
         command.action = "reload";
@@ -207,6 +213,10 @@ public class MiscellaneousParser extends Parser{
             c.retMessage = this.getLabels(parameters);
         }
         
+        else if (command.startsWith("custom2")) {
+            c = commands.get("custom2");
+            c.retMessage = this.custom2(parameters);
+        }
         else if (command.startsWith("custom")) {
             c = commands.get("custom");
             c.retMessage = this.custom(parameters);
@@ -611,6 +621,11 @@ public class MiscellaneousParser extends Parser{
         return "Pausing for " + duration/1000 + "s... please start over";
     }
      
+     private String custom2(String[] parameters) throws Exception{
+        ctx.inputParser.parseInput("interceptlabel(realtime1,task, 1327)");
+        ctx.inputParser.parseInput("interceptlabel(realtime1,event,1444)");
+        return "custom2";
+    }
     private String custom(String[] parameters) throws Exception{
         loadData();
         ctx.inputParser.parseInput("synchronize");

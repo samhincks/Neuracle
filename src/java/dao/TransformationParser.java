@@ -77,6 +77,10 @@ public class TransformationParser extends Parser{
         command.parameters = "1. Dataset, 2. Labelname, 3. PortNum";
         commands.put(command.id, command);
         
+        command = new Command("closeinterceptors");
+        command.documentation = "Closes any open interceptor tasks";
+        commands.put(command.id, command);
+        
         
         command = new Command("retrolabel");
         command.documentation = "Retroactively set the value of some existing or non-existing condition to a specific value, matching the length"
@@ -176,6 +180,10 @@ public class TransformationParser extends Parser{
         else if (command.startsWith("interceptlabel")) {
             c = commands.get("interceptlabel");
             c.retMessage = this.interceptLabel(parameters);
+        }
+        else if (command.startsWith("closeinterceptors")) {
+            c = commands.get("closeinterceptors");
+            c.retMessage = this.closeInterceptors();
         }
         
         
@@ -336,7 +344,7 @@ public class TransformationParser extends Parser{
      * below method, typically called by a callback, but a user could also
      * trigger it. Makes so that data coming in receives the input label*
      */
-    public String label(String [] parameters) throws Exception {
+    public  String label(String [] parameters) throws Exception {
         String retString ="";
         if (parameters.length < 3) throw new Exception("Command requires three parameters. filename, curLabelName, curLabelValue");
        
@@ -447,9 +455,21 @@ public class TransformationParser extends Parser{
         Thread t = new Thread(lt);
         t.start();
        
+        ctx.addLabelInterceptorTask(lt);
+       
         return "Initialized label interception at port " + port + " . " +dbName + "'s " + labelName + " will "
                 + " potentially alter label based on the message every " + pingDelay + " ms. It will "
                 + " shut down if it receives end";
+    }
+    
+    private String closeInterceptors() throws Exception{
+        ArrayList<LabelInterceptorTask> lts = ctx.getLabelInterceptorTasks();
+        if (lts == null) return "Nothing to close";
+        int disconnected =0;
+        for (LabelInterceptorTask l : lts) {
+           if(l.disconnect()) disconnected++;
+        }
+        return "Closed " + disconnected + " interceptors";
     }
     
     /*Retroactively label a potentially streaming file, to have some new value for some potentially new condition.

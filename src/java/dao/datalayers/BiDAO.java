@@ -622,12 +622,12 @@ public class BiDAO extends DataLayerDAO {
      /**Read data from the database with the corresponding name, and synchronize with a
       * ChannelSet
       **/
-    public int synchronizeWithDatabase(String databaseName) throws Exception{
+    public synchronized int synchronizeWithDatabase(String databaseName) throws Exception{
         if (!(dataLayer instanceof ChannelSet || dataLayer ==null)) throw new Exception("Must be channelset");
         ChannelSet cs = (ChannelSet) dataLayer;
         this.synchronizedWithDatabase = true;
         this.id = databaseName;
-        this.addedInLastSynchronization =0;
+        this.addedInLastSynchronization =0;  
         this.numSynchronizations++;
         boolean refreshMarkers = false; //.. set to true if there are new markers to synchronize with db
 
