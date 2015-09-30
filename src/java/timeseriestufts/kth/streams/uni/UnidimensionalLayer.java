@@ -58,6 +58,22 @@ public abstract class UnidimensionalLayer extends DataLayer {
     }
     
     
+    public void popFirstX(int x) throws Exception {
+        if (synchedWithDatabase) { //.. this is the situation when this sucks... 
+            float[] data3 = new float[data.length-x];
+            for (int i=x; i < data.length; i++) {
+                data3[i-x] = data[x];
+            }
+            data = data3;
+        }
+        else {
+            for (int i =0; i <x; i++) {
+                data2.remove(0);
+            } 
+        }
+        
+    }
+    
      /** Returns the last point in the data. Throws an exception if it does not exist
      * @return Point
      * @throws Exception 

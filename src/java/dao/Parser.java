@@ -187,7 +187,7 @@ public abstract class Parser {
     
     protected String getColorsMessage(Experiment e) {
         String retString ="";
-        String[] colors = new String[]{"blue", "orange", "green", "red", "purple"};
+        String[] colors = new String[]{"blue", "orange", "green", "red", "purple", "yellow","black"};
         int index = 0;
         String lastCondition = "";
         ArrayList<String> added = new ArrayList();
@@ -197,7 +197,7 @@ public abstract class Parser {
         for (Instance i : e.matrixes) {
             if ((!i.condition.equals(lastCondition))) {
                 if (!added.contains(i.condition)){
-                    retString += i.condition + " = " + colors[index] + ", ";
+                    retString += i.condition + " = " + colors[index %colors.length] + ", ";
                     index++;
                     added.add(i.condition);
                 }
@@ -208,7 +208,7 @@ public abstract class Parser {
     }
     
     /**Return true if the port is available
-     * @param port
+     * @param port   
      * @return 
      */
     public static boolean available(int port) {

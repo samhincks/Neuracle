@@ -30,10 +30,11 @@ function OutputParser() {
         ///.. start a new condition, so deactivate any running nback evaluator
         if (content.startsWith("Starting")) {
             nbackEvaluator.deactivate();
+            document.getElementById("0A").play();
             console.log(content);
             if(content.startsWith("Starting: junk")) {
-                 $("#consoleInput").val("selfcalibrate2");
-                javaInterface.postToConsole();
+               //  $("#consoleInput").val("selfcalibrate2");
+               // javaInterface.postToConsole();
             }
         }
         

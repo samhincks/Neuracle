@@ -161,7 +161,7 @@ public class InputParser {
             c = new Command("selfcalibrate2");
             c.retMessage = "Nice work, you are done with the annoying part of the experiment! Knowing your cognitive profile, we now want to build a machine learning"
                     + " algorithm that predicts your cognitive workload in realtime. But first, lets save the data::"
-                    + " Type write(participantxxxxx) where xxxxx corresponds to the participant number written on a sheet of paper to your left";
+                    + " Enter feedback the final trial if you haven't already, then type write(participantxxxxx) where xxxxx corresponds to the participant number written on a sheet of paper to your left";
         }
         else if(command.startsWith("rthelp")){   
             c = new Command("rthelp");

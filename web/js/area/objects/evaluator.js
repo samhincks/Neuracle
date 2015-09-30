@@ -82,7 +82,9 @@ function Evaluator(seqNum, con) { // streamlabel(easy,15%1%1)
     //.. turn off any interval
     this.deactivate = function() {
         if (this.active){
-            var total = this.correct + this.wrong;
+            var total;
+            if (this.position >0) total = this.position;
+            else total = this.correct + this.wrong;
             var accuracy =0;
             if (total >0)
                 accuracy = this.correct / total;

@@ -405,11 +405,11 @@ public class AJExperiment {
 
                         ReadWithMatlabMarkers reader = new ReadWithMatlabMarkers(marker,input);
                         ArrayList<ReadWithMatlabMarkers.Trial> trials = reader.readMarkerFileBeste();
-                        reader.readFNIRSFile();
+                        reader.readFNIRSFile(true);
                         reader.writeToFile(output);
                         for (ReadWithMatlabMarkers.Trial t : trials) {
                          //   System.out.println("start: " + t.start + " - " + t.end + " .. "+t.label);
-                        }
+                        }  
                         //break;
                     }
                     

@@ -489,6 +489,24 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     -------------------------------------------------------------------------
     */
     
+    
+    public ChannelSet removeFirst(int readingsBack, boolean copy) throws Exception {
+         if (copy) {
+            ChannelSet cs = getCopy(this.id + "removefirst" + readingsBack);
+            for (UnidimensionalLayer u : streams) {
+                Channel thisChan = (Channel) u;
+                Channel sc = thisChan.removeFirst(readingsBack, true);
+                cs.addStream(sc);
+            }
+            return cs;
+        } else {
+            for (UnidimensionalLayer u : streams) {
+                Channel thisChan = (Channel) u;
+                thisChan.removeFirst(readingsBack, false);
+            }
+            return this;
+        }
+    }
     /**
      * Return a new ChannelSet (with -actual copies- of underlying points) that
      * is a moving average of each of the channels in this dataset. None of the
@@ -643,7 +661,7 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     public ChannelSet anchor(boolean copy, Float firstPoint) throws Exception {
         //.. if we want a new raw points
         if (copy) {
-            ChannelSet cs = getCopy(this.id + "zscore");
+            ChannelSet cs = getCopy(this.id + "anchor");
             //.. apply anchor to each channel
             for (Channel c : streams) {
                 Channel newC = c.anchor(true, firstPoint);
@@ -729,6 +747,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         if (ts.getTransformation().type == Transformation.TransformationType.movingaverage)
             retSet = this.movingAverage((int)ts.getTransformation().params[0], copy);
         
+        
+        
         return retSet;
     }
     
@@ -790,9 +810,8 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         else if (ts.type == Transformation.TransformationType.anchor) 
             retSet = this.anchor(copy, null);
         
-        else if (ts.type == Transformation.TransformationType.subtract) //.. doesnt give as good visualization as anchor
-            retSet = this.anchor(copy,ts.params[0]);
-        
+        else if (ts.type == Transformation.TransformationType.removefirst) 
+            retSet = this.removeFirst((int) ts.params[0], copy);
         
         else if (ts.type == Transformation.TransformationType.trimfirst) 
             retSet = this.trimFirst((ts.params.length > 0)? (int)ts.params[0] : 100);

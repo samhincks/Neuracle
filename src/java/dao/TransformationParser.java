@@ -147,6 +147,11 @@ public class TransformationParser extends Parser{
         command.action = "reload";
         commands.put(command.id, command);
         
+        command = new Command("removelabel");
+        command.documentation = "Remove the entire column of labels at index x or name y";
+        command.action = "reload";
+        commands.put(command.id, command);
+        
         // -- Clean
         command = new Command("clean");
         command.documentation = "With an experiment selected, remove any instances which are longer than the mode";
@@ -232,10 +237,40 @@ public class TransformationParser extends Parser{
             c.retMessage = this.clean();
         }
         
+        else if (command.startsWith("removelabel")) {
+            c = commands.get("removelabel");
+            c.retMessage = this.removeLabels(parameters);
+        }
+        
         if (c == null) {
             return null;
         }
         return c.getJSONObject(ctx.getTutorial(), ctx.getSelfCalibrate());
+    }
+    
+    /**Remove the label from the selected channelset with name x or index y**/
+    private String removeLabels(String [] parameters) throws Exception {
+        String retString = ""; 
+        ArrayList<ChannelSet> channelSets = getChanSets(true);
+        for (ChannelSet cs : channelSets) {
+            for (int i =0; i < parameters.length; i++) {
+                try {
+                   int in= Integer.parseInt(parameters[i]);
+                   cs.markers.remove(in);
+                }
+                catch (Exception e) { //.. input is the name
+                    int in =0; 
+                    int remIn = -1;
+                    for (Markers m : cs.markers) {
+                        if (m.name.equals(parameters[i]))
+                            remIn = in;
+                        in++;
+                    }
+                    if (remIn >=1) cs.markers.remove(remIn);
+                }
+            }
+        }
+        return "Attempted to remove " + parameters.length + " labels"; 
     }
     
     /**Remove instances which are too long or too short
@@ -344,7 +379,7 @@ public class TransformationParser extends Parser{
      * below method, typically called by a callback, but a user could also
      * trigger it. Makes so that data coming in receives the input label*
      */
-    public  String label(String [] parameters) throws Exception {
+    public synchronized String label(String [] parameters) throws Exception {
         String retString ="";
         if (parameters.length < 3) throw new Exception("Command requires three parameters. filename, curLabelName, curLabelValue");
        
@@ -523,7 +558,7 @@ public class TransformationParser extends Parser{
                     theseLabels.addLabel(new Label(thisCondition, "junk", thisSize +i));
                 }
                 
-                if (startPadding < 0) throw new Exception("Start padding is 0");
+                //if (startPadding < 0) throw new Exception("Start padding is 0");
                 
                 //..  update size
                 thisSize = theseLabels.channelLabels.size();

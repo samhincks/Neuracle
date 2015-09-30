@@ -229,7 +229,6 @@ function JavaInterface() {
          
          if(JSONobj.performance != null)
             chartArea.displayPerformance(JSONobj.performance);
-        
     }
     
 }

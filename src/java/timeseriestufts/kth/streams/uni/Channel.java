@@ -44,7 +44,7 @@ import timeseriestufts.kth.streams.tri.Experiment;
 public class Channel extends UnidimensionalLayer  {
     protected double framesize;  
     public float sampleRate; //.. num samples persecond
-    public static float HitachiRPS = 11.7925f; //.. readings per second for the hitachi. You could hack this
+    public static float HitachiRPS = 3.14f; //11.7925f; //.. readings per second for the hitachi. You could hack this
     private Complex [] transformed = null;
     private FrequencyDomain frequencyDomain = null;
     
@@ -230,7 +230,26 @@ public class Channel extends UnidimensionalLayer  {
     }
     
   
-   
+   public Channel removeFirst(int readings, boolean copy) throws Exception {
+        if (copy){
+            Channel sc = new Channel(this.framesize, this.numPoints);
+            sc.setId(id+"rf"+readings);
+            //.. calculate moving average for each point
+            for (int i =readings; i < numPoints; i++) {
+               sc.addPoint(super.getPoint(i));
+            }
+            
+            return sc;
+        }
+        else {
+            //.. calculate moving average for each point
+            for (int i =0 ; i < readings; i++) {
+                this.popFirstX(readings);
+            }
+            return this;
+        }
+   }
+    
    /** Return a new channel with original copies of the data that is the moving
      * average of at "readingsBack" points. The first "readingsBack" points go as
      * far back as they can. If copy = true, return this original layer

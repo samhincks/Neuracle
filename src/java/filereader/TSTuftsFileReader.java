@@ -173,7 +173,14 @@ public class TSTuftsFileReader {
                     //.. if we know this is a channel
                     if(isChannel[i]) {
                         //System.err.println(this.filename + " " + index + " , " + i);
-                        Float f = Float.parseFloat(val); 
+                        Float f;
+                        try{
+                            f = Float.parseFloat(val);
+                        }
+                        catch (NumberFormatException n) {
+                           f =0.0f;
+                        }
+                        
                         rawValues.get(channelIndex).add(f);
                         channelIndex++;
                     }

@@ -13,7 +13,7 @@ import filereader.Markers;
 import filereader.TSTuftsFileReader;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileInputStream;  
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -563,7 +563,7 @@ public class MiscellaneousParser extends Parser{
         String retString = "Initialized " + n +"back for " + seconds + "s.";
         if (port != null)
             retString += ". Broadcasting condition to " + port; 
-        retString += "Sequence: " +sequence;   
+        retString += "Nback Sequence: ";   
         return retString;    
     }  
     
@@ -621,17 +621,61 @@ public class MiscellaneousParser extends Parser{
         return "Pausing for " + duration/1000 + "s... please start over";
     }
      
-     private String custom2(String[] parameters) throws Exception{
-        ctx.inputParser.parseInput("interceptlabel(realtime1,task, 1327)");
-        ctx.inputParser.parseInput("interceptlabel(realtime1,event,1444)");
+    private String custom2(String [] parameters) throws Exception {
+       ctx.inputParser.parseInput("load(idselected)");
+       ctx.setCurrentName("id-oxy-1-csvfs1");
+       ctx.inputParser.parseInput("split(mark)");
+        ctx.setCurrentName("id-oxy-1-csvfs1mark");
+        ctx.inputParser.parseInput("keep(addition)");
+
+
+
+       return "custom2";
+
+    }
+    private String chicustom(String[] parameters) throws Exception{
+        ctx.inputParser.parseInput("load(chi)");
+        ctx.inputParser.parseInput("loadfiles(output/cheatmaptbtappended.csv)");
+        ctx.inputParser.parseInput("loadfiles(output/chififelthi.csv)");
+
+        ctx.setCurrentName("cheatmaptbtappended-csvfs1");
+        ctx.inputParser.parseInput("split(condition)");
+        ctx.setCurrentName("cheatmaptbtappended-csvfs1condition");
+        ctx.inputParser.parseInput("keep(easy,hard)");
+
+
+  //      ctx.inputParser.parseInput("realtime(vizeasy,vizhard)");
         return "custom2";
     }
+     private String startInterceptor( String [] parameters)  throws Exception{
+         ctx.inputParser.parseInput("interceptlabel(realtime1,task, 1327)");
+        Thread.sleep(300);
+        ctx.inputParser.parseInput("interceptlabel(realtime1,event,1444)");
+        return "custom2";
+     }
+    
+    
     private String custom(String[] parameters) throws Exception{
-        loadData();
+        //loadData();
+        loadNewProbe();
         ctx.inputParser.parseInput("synchronize");
+        Thread.sleep(300);
+
         ctx.inputParser.parseInput("interceptlabel(realtime1,task, 1327)");
+        Thread.sleep(300);
+
         ctx.inputParser.parseInput("interceptlabel(realtime1,event,1444)");
         return "custom";
+    }
+    private void loadNewProbe() throws Exception{
+         ctx.inputParser.parseInput("loadfiles(output/derek.csv)");
+         ctx.setCurrentName("derek-csvfs1");  
+         ctx.inputParser.parseInput("split(condition)");
+        ctx.setCurrentName("derek-csvfs1condition");  
+                 ctx.inputParser.parseInput("keep(easy,hard)");
+
+         
+      
     }
     
     private void vizTest() throws Exception {

@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**An independent component. Use it to translate the raw output of a matlab file 
  * to the fNIRS format the program wants. 
@@ -35,8 +36,63 @@ public class ReadWithMatlabMarkers {
          this.fnirsFile = fnirsFile;
          this.markerFile = markerFile;
          fnirsDataIn = new BufferedReader(new java.io.FileReader(fnirsFile));
-         markerDataIn = new BufferedReader(new java.io.FileReader(markerFile));
-         
+         if(markerFile!= null)markerDataIn = new BufferedReader(new java.io.FileReader(markerFile));
+    }
+    
+    /**  RMCRCM until participant 9 and from 9 forward we changed to RCMRMC. (R = rest, M = meditation, C = control).
+     **/
+    public  ArrayList<ReadWithMatlabMarkers.Trial> readMarkerFileLeanne(int index) throws Exception {
+         trials = new ArrayList();
+        boolean readingStart = true; //.. set to false after we have read start
+        HashMap<Integer, String> hm = new HashMap();
+        
+        if (index < 9) {
+            hm.put(0, "Junk");
+            hm.put(1, "Rest");
+            hm.put(2, "Meditation");
+            hm.put(3, "Control");
+            hm.put(4, "Rest");
+            hm.put(5, "Control");
+            hm.put(6, "Meditation");
+        }
+        else {
+            hm.put(0, "Junk");
+            hm.put(1, "Rest");
+            hm.put(2, "Control");
+            hm.put(3, "Meditation");
+            hm.put(4, "Rest");
+            hm.put(5, "Meditation");
+            hm.put(6, "Control");
+        }
+        int start =0;
+        int end =0;
+        String line;
+        int markerIndex = 16;
+        int curIndex =2;
+        int lastMarker = -1;
+        fnirsDataIn.readLine(); //.. read away markers
+        fnirsDataIn.readLine(); //.. read away markers
+        Trial lastTrial = new Trial(curIndex, "junk"); 
+
+        while ((line = fnirsDataIn.readLine()) != null) {
+            String [] vals = line.split("\t");
+            int marker = Integer.parseInt(vals[markerIndex]);
+            if (marker != 0) {
+                if (hm.containsKey(marker)){
+                   lastTrial.end = curIndex;
+                   trials.add(lastTrial);
+                    start = curIndex;
+
+                   lastTrial = new Trial(start, hm.get(marker));
+                }
+                
+            }
+           
+            lastMarker = marker;
+            curIndex++;
+        }
+        
+        return trials;
     }
     /**
      */
@@ -73,11 +129,7 @@ public class ReadWithMatlabMarkers {
                    ReadWithMatlabMarkers.Trial trial = new ReadWithMatlabMarkers.Trial(start, cur, label);
                    trials.add(trial);
                     
-                }
-                
-                
-                
-                
+                }  
             }
         }
         markerDataIn.close();
@@ -148,10 +200,11 @@ public class ReadWithMatlabMarkers {
     
     
     /**Read data into data (ArrayList<String []>) and header into header[]*/
-    public void readFNIRSFile() throws Exception{
+    public void readFNIRSFile(boolean chew) throws Exception{
         if (trials == null) throw new Exception("read marker file first");
-        
-        chew(fnirsDataIn, "Time:");
+       fnirsDataIn = new BufferedReader(new java.io.FileReader(fnirsFile));
+
+        if (chew)chew(fnirsDataIn, "Time:");
         fnirsDataIn.readLine(); //.. read white space
         data = new ArrayList();
         
@@ -232,10 +285,32 @@ public class ReadWithMatlabMarkers {
     }
     
     public static void main(String[] args) {
-        GR();
+        Meditation();
     }
     
-    
+    public static void Meditation() {
+        String folder = "input/meditation/";
+        try {
+            for (int i = 2; i < 14; i++) {
+                String filename = folder +"p"+i+"_HbO_Hb.txt";
+                 String output = "input/meditation_processed/"+i  + ".csv";
+                 System.out.println("Making" + output);
+                 ReadWithMatlabMarkers reader = new ReadWithMatlabMarkers(null, filename);
+                 ArrayList<ReadWithMatlabMarkers.Trial> trials = reader.readMarkerFileLeanne(i);
+                 //reader.readFNIRSFile(false);
+                 //reader.writeToFile(output);
+                 for (Trial t : trials) {
+                           System.out.println("start: " + t.start + " - " + t.end + " .. "+t.label);
+                 }
+                 break;
+
+                 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
     public static void GR() {
         String folder = "input/Glassroutes/";
         try {
@@ -250,7 +325,7 @@ public class ReadWithMatlabMarkers {
 
                     ReadWithMatlabMarkers reader = new ReadWithMatlabMarkers(marker, input);
                     ArrayList<ReadWithMatlabMarkers.Trial> trials = reader.readMarkerFileDan();
-                    reader.readFNIRSFile();
+                    reader.readFNIRSFile(true);
                     reader.writeToFile(output);
                     for (Trial t : trials) {
                       //     System.out.println("start: " + t.start + " - " + t.end + " .. "+t.label);
@@ -277,7 +352,7 @@ public class ReadWithMatlabMarkers {
 
                 ReadWithMatlabMarkers reader = new ReadWithMatlabMarkers(marker,input);
                 ArrayList<ReadWithMatlabMarkers.Trial> trials = reader.readMarkerFileDan();
-                reader.readFNIRSFile();
+                reader.readFNIRSFile(true);
                 reader.writeToFile(output);
 
 
@@ -299,11 +374,16 @@ public class ReadWithMatlabMarkers {
         int start;
         int end;
         String label;
+        public Trial (int start, String label) {
+            this.start = start;
+            this.label = label;
+        }
         public Trial(int start, int end, String label) {
             this.start = start;
             this.end = end;
-            this.label = label.replace("end", "");
-            this.label = this.label.replace("start", "");
+            this.label = label;
+            //this.label = label.replace("end", "");
+            //this.label = this.label.replace("start", "");
         }
         
        

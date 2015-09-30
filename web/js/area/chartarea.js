@@ -35,7 +35,9 @@ function ChartArea(id, descArea) {
         }
         
         else if(JSONobj.type == "correlation") {
-            this.displayCorrelation(JSONobj);
+            var twentyOne = JSONobj.data[20];
+            console.log(twentyOne[13],twentyOne[14], twentyOne[15],twentyOne[16] );
+           this.displayCorrelation(JSONobj);
         }
 
         else if (JSONobj.id == "csrefresh") {

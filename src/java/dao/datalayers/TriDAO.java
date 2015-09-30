@@ -179,7 +179,6 @@ public class TriDAO extends DataLayerDAO {
              outerFrequencyIndexes[i] = frequency.findIndexOf(outerFrequencies[i]);
          }
          
-         
          //.. no matter what, return a basic description of the data layer even if it hasnt been evaluated
          JSONObject descObj = new JSONObject();
          descObj.put("frequenciesX", frequenciesX);
@@ -234,6 +233,100 @@ public class TriDAO extends DataLayerDAO {
          jsonObj.put("description", descObj);
          return jsonObj;
 
-     }
+    }
+     
+    public JSONObject getCorrelationJSON() throws Exception {
+        jsonObj = new JSONObject();
+        Experiment ex = (Experiment) super.dataLayer;
+        try {
+            jsonObj.put("id", getId());
+            JSONArray data = new JSONArray();
+            jsonObj.put("data", data); //.. data is array of arrays, index corresponds to order we see channel
+            
+            int ALPHABET = 5;
+            int LENGTH = 10;//50; //.. 50  
+            
+            boolean first = true;
+            boolean additionEncountered = false;
+            //.. if points = 153400, then these parameters take about 18 seconds
+            int added =0;
+            for (Instance ins : ex.matrixes){
+                HashMap<String, JSONObject> hm = new HashMap(); //.. This hashmap makes it take half the time. EMPIRICALLY
+                int index =0;
+                for (Channel a  : ins.streams) { 
+                     JSONArray correlations = new JSONArray();
+                     for (Channel b : ins.streams) {  
+                         String comboId = a.id + b.id;
+                         String comboId2 = b.id +a.id;//.. it will be in either one of those
+                         JSONObject aFirstVal = hm.get(comboId);
+                         JSONObject bFirstVal = hm.get(comboId2);
+
+                         if (aFirstVal != null) 
+                             correlations.put(aFirstVal);
+
+                         else if (bFirstVal != null)  //.. I think this is the only one that is active, prove it and you can delete a
+                             correlations.put(bFirstVal);
+
+                         else{ //.. With the hashmap this should only happen 50% of the time
+                            int diff = b.getSAXDistanceTo(a,LENGTH, ALPHABET); //.. MAGIC PARAMETER! 750 takes super long but what ive been doing
+                            JSONObject o = new JSONObject();
+                            o.put("data", diff);
+                            o.put("i", a.id);
+                            o.put("j", b.id);
+
+                            hm.put(comboId, o);
+                            correlations.put(o);
+                         }
+                     }
+                     //.. data is an array of correlations, where each object is what's above
+                     //.. upon acquiring a new set of correlations from channel x in a particular condition,
+                     //.. this function either adds that raw correlations object to data (if its the first instnace)
+                     //.. or it iterates through each existing correlation object and adds to the total the value extracted
+                    additionEncountered = true;
+                    if (first) {
+                        data.put(correlations);
+                    }
+                    else {
+                        if (data.length() == 0) throw new Exception ("Bug its zero!");
+                        JSONArray existingCorrelations = data.getJSONArray(index);
+                        for (int i = 0; i < existingCorrelations.length(); i++) {
+                            JSONObject existingCorr = existingCorrelations.getJSONObject(i);
+                            JSONObject newCorr = correlations.getJSONObject(i);
+                            Integer corr = newCorr.getInt("data");
+                            Integer curr = existingCorr.getInt("data");
+                            int total = corr + curr;
+                            existingCorr.put("data", total);
+                        }
+                    }
+                    added++;                        
+                    index++;
+                 }
+                 if (additionEncountered) first = false;
+            } 
+            
+            //.. finally divide the totals by the number added
+            for (int i=0; i < data.length(); i++) {
+                JSONArray corr = data.getJSONArray(i);
+                for (int j=0; j < corr.length(); j++) {
+                    JSONObject obj = corr.getJSONObject(j);
+                    Integer da = obj.getInt("data");
+                    float numAdded =  (added*1.0f/(corr.length()*1.0f));
+                    int realValue = (int) (1.0f *da / numAdded);
+                    //System.out.println(numAdded + " , " +da + " , "+ realValue);
+                  //  obj.put("data",realValue);
+                    //System.out.println("corr between " + i + ", "+ j + " = " + realValue);
+                }
+            }
+            
+            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        jsonObj.put("type","correlation");
+        return jsonObj;
+
+    }
+
 
 }

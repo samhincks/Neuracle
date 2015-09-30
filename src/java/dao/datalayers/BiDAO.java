@@ -74,13 +74,12 @@ public class BiDAO extends DataLayerDAO {
             dataLayer = fileReader.readData(",", fb, fileSampling); //.. try to do csv, but fall back on \t
         } catch (Exception e) {
             dataLayer = fileReader.readData("\t", fb, fileSampling); //.. then if this doesn't work, give up and moan
-
         }
         dataLayer.setId(fb.getName()+ "fs" + fileSampling); //.. No extension
         dataLayer.setStatsMap();
     }
-    
-    /**
+      
+    /**  
      * Create new dataLayer from input file, with a specified sampling rate
      */
     public void make(InputStream is, int fileSampling, String name) throws Exception {

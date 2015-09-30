@@ -1,11 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="20">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="23">
+        <file>
+            <url>src/java/filereader/formatconversion/ReadWithMatlabMarkers.java</url>
+            <bookmark id="23">
+                <name/>
+                <line>202</line>
+                <key/>
+            </bookmark>
+            <bookmark id="22">
+                <name/>
+                <line>290</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/dao/DataManipulationParser.java</url>
+            <bookmark id="5">
+                <name/>
+                <line>1204</line>
+                <key/>
+            </bookmark>
+            <bookmark id="14">
+                <name/>
+                <line>1324</line>
+                <key/>
+            </bookmark>
+        </file>
         <file>
             <url>src/java/dao/MiscellaneousParser.java</url>
             <bookmark id="16">
                 <name/>
-                <line>614</line>
+                <line>646</line>
                 <key/>
             </bookmark>
         </file>
@@ -31,19 +57,6 @@
             </bookmark>
         </file>
         <file>
-            <url>src/java/dao/DataManipulationParser.java</url>
-            <bookmark id="5">
-                <name/>
-                <line>1204</line>
-                <key/>
-            </bookmark>
-            <bookmark id="14">
-                <name/>
-                <line>1324</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>src/java/dao/InputParser.java</url>
             <bookmark id="1">
                 <name/>
@@ -55,12 +68,12 @@
             <url>src/java/dao/TransformationParser.java</url>
             <bookmark id="20">
                 <name/>
-                <line>457</line>
+                <line>512</line>
                 <key/>
             </bookmark>
             <bookmark id="13">
                 <name/>
-                <line>574</line>
+                <line>629</line>
                 <key/>
             </bookmark>
         </file>
@@ -68,17 +81,17 @@
             <url>src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</url>
             <bookmark id="19">
                 <name/>
-                <line>764</line>
+                <line>784</line>
                 <key/>
             </bookmark>
             <bookmark id="17">
                 <name/>
-                <line>920</line>
+                <line>939</line>
                 <key/>
             </bookmark>
             <bookmark id="18">
                 <name/>
-                <line>1066</line>
+                <line>1085</line>
                 <key/>
             </bookmark>
         </file>
@@ -86,20 +99,22 @@
             <url>src/java/timeseriestufts/kth/streams/uni/Channel.java</url>
             <bookmark id="6">
                 <name/>
-                <line>682</line>
+                <line>701</line>
                 <key/>
             </bookmark>
             <bookmark id="7">
                 <name/>
-                <line>974</line>
+                <line>993</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/filereader/experiments/Sort.java</file>
             <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/datalayers/BiDAO.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/TransformationParser.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/filereader/experiments/IDExperiment.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/filereader/EvaluationInterface.java</file>
         </group>
     </open-files>
 </project-private>

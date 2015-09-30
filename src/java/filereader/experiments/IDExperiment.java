@@ -7,9 +7,12 @@
 package filereader.experiments;
 
 import filereader.EvaluationInterface;
+import static filereader.EvaluationInterface.getTechniqueSet;
 import filereader.TSTuftsFileReader;
 import static filereader.experiments.AJExperiment.testAllAJ;
+import static filereader.experiments.HondaExperiment.getFiles;
 import java.util.ArrayList;
+import org.json.JSONArray;
 import timeseriestufts.evaluatable.Dataset;
 import timeseriestufts.evaluatable.TechniqueSet;
 import timeseriestufts.evaluatable.performances.Performances;
@@ -29,16 +32,153 @@ public class IDExperiment extends EvaluationInterface{
     public static void main(String [] args) {
         try {
             int[] requested = {1};
-
-            ArrayList<String> files = IDExperiment.getSpecific(requested);
+            IDExperiment exp = new IDExperiment();
+            ArrayList<String> files = IDExperiment.getFiles();//IDExperiment.getSpecific(requested); //// 
             for (String s : files) {
                 //leftRightML();
-                channelDistances(); 
+               // channelDistances(); 
+            }
+             boolean [][] done = new boolean[52][52];
+             for (int i = 0; i < 52; i++) {
+                for (int j = 0; j < 52; j++) {
+                    done[i][j] = false;
+                }
+             }
+             int tried =0; 
+             float sumOfDiff = 0.0f;
+             //exp.conditionalSaxDistances(files, 24, 45);
+            //exp.evaluateSingles(files);
+            for (int i = 0; i < 52; i++) {
+                for (int j = 0; j < 52; j++) {
+                   // if (!(done[j][i])) {
+                        float likelihood = exp.conditionalSaxDistances(files, i, j);
+                        //sumOfDiff += likelihood;
+                       // tried++;
+                        //System.out.println(tried +" , " +sumOfDiff / (1.0f * tried));
+
+                    //}
+                    done[i][j] = true;
+                }
+            }
+        }
+        catch(Exception e) {e.printStackTrace();}
+    }
+    
+    public float conditionalSaxDistances(ArrayList<String> files, int channelA, int channelB) throws Exception {
+        String condition = "mark";
+        int LENGTH = 5;
+        int ALPHABET = 5;
+        
+        Channel additionAverages = new Channel(1); 
+        Channel restAverages  = new Channel(1);
+
+        for (String filename : files) {
+             //.. read
+            TSTuftsFileReader f = new TSTuftsFileReader();
+            ChannelSet cs = f.readData(",", filename,1);
+            Experiment e = cs.splitByLabel(condition);
+            ArrayList<String> toKeep = new ArrayList();
+            toKeep.add("addition");
+            toKeep.add("rest");
+            e.removeAllClassesBut(toKeep);
+            
+            int additionSum =0;
+            int restSum =0;
+            int additionObs=0;
+            int restObs =0;
+
+            for (Instance ins : e.matrixes) {
+                Channel a = ins.getChannel(channelA);
+                Channel b = ins.getChannel(channelB);
+                a.removeFirst(10, true);
+
+                if (ins.condition.equals("rest")) {
+                    restSum+= b.getSAXDistanceTo(a, LENGTH, ALPHABET);
+                    additionObs++;
+
+                }
+                
+                if (ins.condition.equals("addition")) {
+                    additionSum += b.getSAXDistanceTo(a, LENGTH, ALPHABET);
+                    restObs++;
+                }
+            }
+           
+            float additionAvg = ((1.0f * additionSum) / (1.0f *additionObs));
+            float restAvg = ((1.0f * restSum) / (1.0f * restObs));
+            additionAverages.addPoint(additionAvg);
+            restAverages.addPoint(restAvg);
+            //System.out.println(restAvg);
+        }
+        
+        float additionMean = (float) additionAverages.getMean();
+        float restMean = (float) restAverages.getMean();
+        float additionStDev = (float) additionAverages.getStdDev();
+        float restStDev = (float) restAverages.getStdDev();
+
+        //additionAverages.printStream();
+        float numerator =  Math.abs(restMean - additionMean);
+        float denom = (float) (restMean / Math.sqrt(restAverages.numPoints));
+        
+        float likelihood = (1- numerator / denom);
+        //System.out.println(likelihood);
+        if (likelihood < 0.05f) {
+            System.out.println((channelA + 1)+ ", " + (channelB+1) + " , " + likelihood);;
+        }
+        if(denom ==0) return 0;
+        return likelihood;
+
+    }
+    
+    public void computeAllDifferences(Experiment e, int LENGTH, int ALPHABET) throws Exception{
+        int numChannels = e.matrixes.get(0).streams.size();
+
+        int[][] addition = new int[numChannels][numChannels];
+        int[][] rest = new int[numChannels][numChannels];
+
+        int restAdded = 0;
+        int additionAdded = 0;
+        //.. for each instance
+        for (Instance ins : e.matrixes) {
+            int aIndex = 0;
+
+            //.. for each channel
+            for (Channel a : ins.streams) {
+                int bIndex = 0;
+
+                for (Channel b : ins.streams) {
+                    int diff = b.getSAXDistanceTo(a, LENGTH, ALPHABET);
+                    if (ins.condition.equals("addition")) {
+                        addition[aIndex][bIndex] += diff;
+                        additionAdded++;
+                    }
+                    if (ins.condition.equals("rest")) {
+                        rest[aIndex][bIndex] += diff;
+                        restAdded++;
+                    }
+                    bIndex++;
+                }
+                aIndex++;
             }
 
         }
-        catch(Exception e) {e.printStackTrace();}
-        
+
+        for (int i = 0; i < numChannels; i++) {
+            for (int j = 0; j < numChannels; j++) {
+                System.out.println("addition:" + i + ',' + j + ": " + (1.0f * addition[i][j]) / (1.0f * additionAdded));
+                System.out.println("rest" + i + ',' + j + ": " + (1.0f * rest[i][j]) / (1.0f * restAdded));
+            }
+        }
+    }
+    
+    public void evaluateSingles(ArrayList<String> files) throws Exception{
+      ArrayList<TechniqueSet> techniques = new ArrayList();
+      String condition = "mark";
+      ArrayList<String> toKeep = new ArrayList();
+      toKeep.add("addition");
+      toKeep.add("rest");
+      techniques.add(getTechniqueSet());
+      testMulti(techniques, files, condition, toKeep);
     }
     
     private static void channelDistances() throws Exception {
@@ -184,7 +324,7 @@ public class IDExperiment extends EvaluationInterface{
          String folder = "input/IDOXY/";
          String filename = "ID-OXY-";
          int NUMFILES = 52;
-         for (int i = 1; i <NUMFILES+1; i++) {
+         for (int i = 1; i <NUMFILES; i++) {
              if (i!= 6) {
                 String name = folder+filename + i+".csv";
                 files.add(name);
@@ -230,5 +370,7 @@ public class IDExperiment extends EvaluationInterface{
           return false;
 
      }
+     
+     
     
 }

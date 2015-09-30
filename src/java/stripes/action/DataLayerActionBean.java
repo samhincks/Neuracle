@@ -138,12 +138,15 @@ public class DataLayerActionBean extends BaseActionBean{
            
             //.. correlation
             if (correlation) {
-                if (!(dlGiver instanceof BiDAO)) {
-                    throw new Exception(); //.. fail silently
-                } else {
+                if ((dlGiver instanceof BiDAO)) {
                     BiDAO bDAO = (BiDAO) dlGiver;    
                     jsonObj = bDAO.getCorrelationJSON();
                 }
+                else if (dlGiver instanceof TriDAO) {
+                    TriDAO tDAO = (TriDAO) dlGiver;
+                    jsonObj = tDAO.getCorrelationJSON();
+                }
+                else throw new Exception(); //. fail silenyl
             }
             
             //.. return a streaming view of the frequencies present in the data

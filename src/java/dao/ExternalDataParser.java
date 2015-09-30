@@ -49,7 +49,7 @@ public class ExternalDataParser extends Parser{
                 + " the number that was uttered two numbers ago. So, if we start off by saying 3, you say nothing. If we then say 5, you again say nothing. But when we say our third number, 4, then "
                 + " you say 3, the first number, because this was the number stated two numbers ago. This will continue for thirty seconds. The console will tell you when what condition starts and periodically ask"
                 + " for your personal opinion about your mental state in the previous trial. We will track and reward your accuracy. Good luck!::"
-                + " Type streamlabel(easy%hard, 30%10%20) exactly to initiate 10 thirty-second 0-backs and 10 thirty-second 2-backs with 20-second rest. (You may copy-paste)"; 
+                + " Type streamlabel(easy%hard, 30%7%20) exactly to initiate 7 thirty-second 0-backs and 10 thirty-second 2-backs with 20-second rest. (You may copy-paste)"; 
         command.debug = "Works, but a new feature, so not entirely sure";
         commands.put(command.id, command);
          

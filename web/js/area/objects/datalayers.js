@@ -38,9 +38,7 @@ function DataLayers() {
                 id.removeClass("experimentIntersected");
             }
         }
-    }
-    
-    
+    }    
     
     //.. add the selected to class to target element; remove from all others
     this.selectLayer = function(layerId) {
@@ -171,8 +169,7 @@ function DataLayer(jsonDL) {
                 $(ui.tooltip).dblclick(function(e) {
                     javaInterface.postToDataLayer();
                 });
-
-                if (type =="2D"){ //.. set of chain of showing corr view if its a 2D
+                if (type =="2D" || type == "3D"){ //.. set of chain of showing corr view if its a 2D
                     bId.tooltip('open'); //.. doesnt trigger conventional open
                 }
             }, 

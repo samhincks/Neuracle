@@ -4,12 +4,14 @@
  */
 package filereader;
 
+import filereader.experiments.IDExperiment;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Map.Entry;
 import timeseriestufts.evaluatable.AttributeSelection;
 import timeseriestufts.evaluatable.Dataset;
 import timeseriestufts.evaluatable.FeatureDescription;
@@ -35,7 +37,7 @@ import timeseriestufts.kth.streams.tri.TridimensionalLayer;
 public class EvaluationInterface {
     
     public static void main(String []args) {
-        Aggregated.main(args);
+        IDExperiment.main(args);
     }
     
     public float frameSize =0.0848f;
@@ -56,14 +58,23 @@ public class EvaluationInterface {
                 for (String filename : files) {
                     Dataset ds = new Dataset(filename);
                     performances.addNewDataset(ds);
-                    testFile(ds,ts, filename, condition, keep);
+                    try{
+                        testFile(ds,ts, filename, condition, keep);
+                    }
+                    catch(Exception e) {}//.. fail silently
+                }
+                
+                for(Entry<String, Double> en : ts.getFeatureSet().infogain.entrySet()) {
+                  //  System.out.println(/*en.getKey() + " , " + */(en.getValue() / ts.getFeatureSet().infogainsAdded));
                 }
                 performances.addNewTechniqueSet(ts);
-                performances.printPerformances(bw, first);
+//                performances.printPerformances(bw, first);
                 performances.resetDatasets();
                 first = false;
-                  System.out.println("AVERAGE : " +ts.getAverage());
-              System.out.println("-----------------------");
+                System.out.println("AVERAGE : " +ts.getAverage());
+                System.out.println("-----------------------");
+                
+                
             }
             bw.close();
         } catch (Exception e) {
@@ -80,10 +91,9 @@ public class EvaluationInterface {
             f.FRAMESIZE= frameSize;
             ChannelSet cs = f.readData(",", filename,1);
             //  ChannelSet baseline = f.readData(",", "input/UAV_processed/4.csv");
-
             //cs.detrend(baseline, 1.2, false);
 
-            cs.manipulate(ts, false);
+           // cs.manipulate(ts, false);
             //cs.printStream();
            
             //.. split
@@ -100,14 +110,18 @@ public class EvaluationInterface {
             
             e = e.removeAllClassesBut(keep);
            //  System.out.println(filename + " " +e.matrixes.size());
-            if (ts.getTransformation().type == Transformation.TransformationType.anchor)
+            if ( ts.getTransformation()!= null && ts.getTransformation().type == Transformation.TransformationType.anchor)
                  e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false);
             
            // e.printStream();
-            Enumeration ene = e.getAmountOfEachCondition().elements();
-            while(ene.hasMoreElements()){ System.out.print(ene.nextElement().toString()+" , ");}
+            //Enumeration ene = e.getAmountOfEachCondition().elements();
+          //  while(ene.hasMoreElements()){ System.out.print(ene.nextElement().toString()+" , ");}
             //.. evaluate
+
             e.evaluate(ts, ds,-1);
+            ts.getFeatureSet().addExperimentToInfogain(e.getWekaInstances(false));
+            
+
            // ds.printPredictions();
             System.out.println(filename + ":: Average %CRCT: "+ds.getAverage()); 
         }
@@ -115,6 +129,8 @@ public class EvaluationInterface {
             e.printStackTrace();
         }
     }
+     
+    
     
      public  void testCross(ArrayList<TechniqueSet> techniques, ArrayList<String> files, String condition, ArrayList<String> keep) throws IOException {
         FileWriter fw = new FileWriter(outputFile);
@@ -132,21 +148,18 @@ public class EvaluationInterface {
                     multi.addExperiment(e);
                 }
                 
-                ArrayList<String> toKeep = new ArrayList();
-                toKeep.add("easy");
-                toKeep.add("hard");
 
-                multi.removeAllClassesBut(toKeep);
+                multi.removeAllClassesBut(keep);
 
                 multi.evaluateX(ts);
                 for (TridimensionalLayer l : multi.piles) {
                     Experiment e = (Experiment) l;
-                    System.out.println("When " + e.getDataSet().getId() + "left out, " + "%avg = " + e.getDataSet().getAverage());
+                    System.out.println(/*"When " + e.getDataSet().getId() + "left out, " + "%avg = " +*/ e.getDataSet().getAverage());
                 }
                 System.out.println(ts.getId() + ":: Average %CRCT: " + ts.getAverage());
                 
                 performances.addNewTechniqueSet(ts);
-                performances.printPerformances(bw, first);
+//                performances.printPerformances(bw, first);
                 performances.resetDatasets();
                 first = false;
             }
@@ -177,7 +190,7 @@ public class EvaluationInterface {
         ts.addTechnique(new WekaClassifier(WekaClassifier.MLType.smo));
         FeatureSet fs = new FeatureSet("fs");
       //  fs.addFeaturesFromConsole("sax-kq^sax-ogj^sax-hn^sax-hq^sax-ac^sax-fk^sax-kq^sax-is^sax-hm", "*", "*");
-        fs.addFeaturesFromConsole("*", "*", "*");
+        fs.addFeaturesFromConsole("slope", "*", "WHOLE");
         /*String features ="";
         for (int i=0 ;i < 256; i++) {
             features += "freq-"+i;
@@ -186,9 +199,9 @@ public class EvaluationInterface {
         fs.addFeaturesFromConsole(features, "*", "*");*/
 
         ts.addTechnique(fs);
-        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 0.8f));
-        ts.addTechnique(new Transformation(Transformation.TransformationType.calcoxy));
-        ts.addTechnique(new PassFilter());//PassFilter.FilterType.LowPass, 0.35));
+        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.info, 0.2f));
+        //ts.addTechnique(new Transformation(Transformation.TransformationType.calcoxy));
+        //ts.addTechnique(new PassFilter());//PassFilter.FilterType.LowPass, 0.35));
 
         return ts;
     }

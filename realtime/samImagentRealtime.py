@@ -29,8 +29,8 @@ from time import sleep
 
 #DEVICE = 'CMS50D'
 #DEVICE = 'fNIRS'
-#DEVICE = 'Imagent'
-DEVICE = 'Fake'
+DEVICE = 'Imagent'
+#DEVICE = 'Fake'
 
 """
 Time format info
@@ -84,6 +84,7 @@ else:
     ser = "Fake"
 
 def readFromFake():
+    print("Printing Fake");
     while True:
         conn = pymysql.connect(host='127.0.0.1', port=3306,
                     user='root', db='newttt')
@@ -91,7 +92,7 @@ def readFromFake():
         
 
         #Insert the data to the Table REALTIME            
-        cur.execute("""INSERT INTO REALTIME1(DC1A,DC2A,DC3A,DC4A,DC5A,DC6A,DC7A,DC8A,DC1B,DC2B,DC3B,DC4B,DC5B,DC6B,DC7B,DC8B) VALUES
+        cur.execute("""INSERT INTO REALTIME1(A1HBO,A1HB,A2HBO,A2HB,A3HBO,A3HB,A4HBO,A4HB,B1HBO,B1HB,B2HBO,B2HB,B3HBO,B3HB,B4HBO,B4HB) VALUES
           (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(randint(1,10),randint(1,5),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3)))
         
         
@@ -104,6 +105,8 @@ def readFromImagent():
     count=1
     output = str('')
     s = ""
+    print("About to start reading, and spamming if we see values");
+    printed = False
     while True:
         for line in ser.read():
             cha = chr(line)
@@ -113,9 +116,11 @@ def readFromImagent():
                 # now s is the entire line. Do something with it
                  
                 values = s.split()
-                print(values)
-                print(s)
-                print("---")
+                if (not printed):
+                	print(values)
+                	print(s)
+                	print("---")
+                	printed = True
                 s = ""
 
                 conn = pymysql.connect(host='127.0.0.1', port=3306,
@@ -123,7 +128,7 @@ def readFromImagent():
                 cur=conn.cursor()   
                 
                 #Insert the data to the Table REALTIME            
-                cur.execute("""INSERT INTO REALTIME1(DC1A,DC2A,DC3A,DC4A,DC5A,DC6A,DC7A,DC8A,DC1B,DC2B,DC3B,DC4B,DC5B,DC6B,DC7B,DC8B) VALUES
+                cur.execute("""INSERT INTO REALTIME1(A1HBO,A1HB,A2HBO,A2HB,A3HBO,A3HB,A4HBO,A4HB,B1HBO,B1HB,B2HBO,B2HB,B3HBO,B3HB,B4HBO,B4HB) VALUES
                   (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(float(values[2]),float(values[3]),float(values[4]),float(values[5]),float(values[6]),float(values[7]),float(values[8]),float(values[9]),float(values[10]),float(values[11]),float(values[12]),float(values[13]),float(values[14]),float(values[15]),float(values[16]),float(values[17])))
         
                 
@@ -264,13 +269,15 @@ def main():
     elif DEVICE == "Imagent":
         tableName = "REALTIME1"
         cur.execute("DROP TABLE IF EXISTS " + tableName)
-        createQuery = "CREATE TABLE " + tableName +" (DC1A VARCHAR(45), DC2A VARCHAR(45), DC3A VARCHAR(45), DC4A VARCHAR(45), DC5A VARCHAR(45), DC6A VARCHAR(45), DC7A VARCHAR(45), DC8A VARCHAR(45),DC1B VARCHAR(45), DC2B VARCHAR(45), DC3B VARCHAR(45), DC4B VARCHAR(45), DC5B VARCHAR(45), DC6B VARCHAR(45), DC7B VARCHAR(45), DC8B VARCHAR(45))"; 
+        print("running Imagent")
+        createQuery = "CREATE TABLE " + tableName +" (A1HBO VARCHAR(45), A1HB VARCHAR(45), A2HBO VARCHAR(45), A2HB VARCHAR(45), A3HBO VARCHAR(45), A3HB VARCHAR(45), A4HBO VARCHAR(45), A4HB VARCHAR(45),B1HBO VARCHAR(45), B1HB VARCHAR(45), B2HBO VARCHAR(45), B2HB VARCHAR(45), B3HBO VARCHAR(45), B3HB VARCHAR(45), B4HBO VARCHAR(45), B4HB VARCHAR(45))"; 
         cur.execute(createQuery)
         readFromImagent()
     elif DEVICE == "Fake":
         tableName = "REALTIME1"
+        print("Device is fake")
         cur.execute("DROP TABLE IF EXISTS " + tableName)
-        createQuery = "CREATE TABLE " + tableName +" (DC1A VARCHAR(45), DC2A VARCHAR(45), DC3A VARCHAR(45), DC4A VARCHAR(45), DC5A VARCHAR(45), DC6A VARCHAR(45), DC7A VARCHAR(45), DC8A VARCHAR(45),DC1B VARCHAR(45), DC2B VARCHAR(45), DC3B VARCHAR(45), DC4B VARCHAR(45), DC5B VARCHAR(45), DC6B VARCHAR(45), DC7B VARCHAR(45), DC8B VARCHAR(45))"; 
+        createQuery = "CREATE TABLE " + tableName +" (A1HBO VARCHAR(45), A1HB VARCHAR(45), A2HBO VARCHAR(45), A2HB VARCHAR(45), A3HBO VARCHAR(45), A3HB VARCHAR(45), A4HBO VARCHAR(45), A4HB VARCHAR(45),B1HBO VARCHAR(45), B1HB VARCHAR(45), B2HBO VARCHAR(45), B2HB VARCHAR(45), B3HBO VARCHAR(45), B3HB VARCHAR(45), B4HBO VARCHAR(45), B4HB VARCHAR(45))"; 
          
         cur.execute(createQuery)
         readFromFake()
