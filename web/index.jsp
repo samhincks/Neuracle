@@ -22,6 +22,8 @@
         <link type="text/css" rel="stylesheet" href="css/d3Style.css" />
         <link type="text/css" rel="stylesheet" href="css/consoleStyle.css" /> 
         <link type="text/css" rel="stylesheet" href="css/dlStyle.css" />
+        <link type="text/css" rel="stylesheet" href="css/nback.css" />
+
 
     </head>
     
@@ -47,7 +49,33 @@
              </div>
 
             <!--Where we place our Chart-->
-            <div id ="topRight" class ="component trunzoomed">         
+            <div id ="topRight" class ="component trunzoomed">   
+                
+                <div id="nhead">
+                    <h1 id="nvalue">2</h1>
+                    <div id="left">left=visual-match</div>
+                    <div id="right">right=audio-match</div>
+                </div>
+               
+                
+                <table id ="nback">
+                    <tr>
+                        <td><div id="uno" class="off"></div></td>
+                        <td><div id="dos" class="off"></div></td>
+                        <td><div id="tres" class="off"></div></td>
+                    </tr>
+                    <tr>
+                        <td><div id="cuatro" class="off"></div></td>
+                        <td><div id="cinco" class="off"><img src="images/plus.png" alt=""></div></td>
+                        <td><div id="seis" class="off"></div></td>
+                    </tr>
+                    <tr>
+                        <td><div id="siete" class="off"></div></td>
+                        <td><div id="ocho" class="off"></div></td>
+                        <td><div id="nueve" class="off"></div></td>
+                    </tr>
+                </table> 
+                <div class="btn"><button id="begin" class="pure-button">Begin</button></div>
             </div>
             
             <!--Where we place our the description of selection-->
@@ -68,8 +96,6 @@
                         <s:errors/>
                     </div>
                 </s:form> 
-                
-                
             </div>
            
            
@@ -100,6 +126,8 @@
         <script type="text/javascript" src="js/lib/jquery.pep.js"></script> 
         <script type="text/javascript" src="js/lib/d3.min.js"></script>  
         <script type="text/javascript" src="js/lib/d3tip.js"></script> 
+        <script type="text/javascript" src="js/lib/howler.min.js"></script> 
+
          
 
         <!--VISUALIZATIONS-->
@@ -125,9 +153,9 @@
         <script type="text/javascript" src="js/area/objects/labeler.js"></script> 
         <script type="text/javascript" src="js/area/objects/outputparser.js"></script> 
         <script type="text/javascript" src="js/area/objects/evaluator.js"></script> 
+        <script type="text/javascript" src="js/area/objects/nback.js"></script> 
 
 
-        
         <!--INTERFACE -->
         <script type="text/javascript" src="js/javainterface.js"></script> 
         <script type="text/javascript" src="js/events.js"></script> 

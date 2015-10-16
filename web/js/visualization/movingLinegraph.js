@@ -126,8 +126,6 @@ function LineGraph(argsMap) {
 		// fire an event that data was updated
 		$(container).trigger('LineGraph:dataModification')
 	}
-
-
 	
 	this.switchToPowerScale = function() {
 		yScale = 'pow';

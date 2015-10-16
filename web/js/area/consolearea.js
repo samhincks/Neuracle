@@ -114,6 +114,7 @@ function ConsoleArea() {
             return false;
          }
          
+         
          //.. For periodically updating what the current label is of a synchronized
          //... dataset
          else if(userText.startsWith("streamlabel")) {
@@ -147,8 +148,8 @@ function ConsoleArea() {
             labeler = new Labeler();
             
             //.. a little hacky: if we dont want feedback, then we do streamlabel2, but nobody else needs to know that
-            var feedback = true;
-            if(userText.startsWith("streamlabel2")) feedback =false;
+            var feedback = false;
+            if(userText.startsWith("streamlabel2")) feedback =true;
             
             labeler.initiateLabeling(filename,conditionName,conditions,trialLength,trialsOfEach,restLength,feedback); 
             return true;
@@ -222,7 +223,14 @@ function ConsoleArea() {
         else if (message.indexOf("flatten")!= -1)
           chart.setDataToOne();
        
-       //.. the time it takes for a d3Chart transition to start and last
+        else if (message.indexOf("show") != -1){
+            message = message.replace(")","")
+            var mes = message.split("("); //.. will be parameters (100,200)
+            var params = mes[1].split(",");
+            chartArea.show2DIndexes(params);
+        }
+       
+        //.. the time it takes for a d3Chart transition to start and last
         else if (message.indexOf("transition")!= -1){
             var mes = message.split("("); //.. will be parameters (100,200)
             var params = mes[1].split(",");

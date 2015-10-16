@@ -18,7 +18,7 @@ public class Command {
     public String selfcalibrate = null;  
        
     public Command(String id) {        
-        this.id = id;       
+        this.id = id;             
     }              
       
     /** Returns the JSON representation of the command object

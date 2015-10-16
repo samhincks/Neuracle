@@ -10,7 +10,7 @@ import dao.techniques.TechniquesDAO;
 import filereader.Markers;  
 import java.util.ArrayList;         
 import java.util.Hashtable;             
-import org.json.JSONArray;  
+import org.json.JSONArray;    
 import org.json.JSONObject;  
 import realtime.Client;
 import realtime.Server;
@@ -291,7 +291,6 @@ public class DataManipulationParser extends Parser{
             c.retMessage = classify(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
         }
         
-        
         else if (command.startsWith("imagent")) {
             c = commands.get("imagent");
             c.retMessage = imagent(parameters);
@@ -339,6 +338,7 @@ public class DataManipulationParser extends Parser{
         
         Transformation t = new Transformation(parameters); 
         String retString = "";
+        
         //.. try to get chansets, if thats what appears selected
         if (chanSets != null){
             for (ChannelSet cs : chanSets) {

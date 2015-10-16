@@ -17,6 +17,7 @@ import filereader.TSTuftsFileReader;
 import filereader.experiments.AJExperiment;
 import filereader.experiments.Beste;
 import filereader.experiments.BesteExperiment;
+import filereader.experiments.CHI2016Experiment;
 import java.util.ArrayList;
 import java.util.Random;
 import org.JMathStudio.DataStructure.Vector.Vector;
@@ -35,6 +36,10 @@ import org.apache.commons.math3.transform.FastFourierTransformer;
 import org.apache.commons.math3.transform.TransformType;
 import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.tri.Experiment;
+import timeseriestufts.kth.streams.uni.adaptivefilters.Adapt06;
+import timeseriestufts.kth.streams.uni.adaptivefilters.AdaptEngine01;
+import timeseriestufts.kth.streams.uni.adaptivefilters.AdaptiveResult;
+import timeseriestufts.kth.streams.uni.adaptivefilters.PlotALot05;
 
 /** A collection of floats in one channel, with a particular offset and a consistent
  * framesize determining intervals between points
@@ -47,6 +52,7 @@ public class Channel extends UnidimensionalLayer  {
     public static float HitachiRPS = 3.14f; //11.7925f; //.. readings per second for the hitachi. You could hack this
     private Complex [] transformed = null;
     private FrequencyDomain frequencyDomain = null;
+    public AdaptEngine01 adapter; //.. set this when we've applied a filter once. Save it to the transformation
     
     /**The SynchedChannel class stores the raw data from input files along with corresponding timestamps.    
      * @param _offset - the first index
@@ -589,6 +595,38 @@ public class Channel extends UnidimensionalLayer  {
         return transformed;
     }
     
+    /** Filter out noise present in both channel b and a. 
+     * feedbackGain controls the intensity of the filter
+     * set adapter to null if we dont' already have values
+     **/
+    public Channel adaptiveFilter(Channel b, double feedbackGain, AdaptEngine01 _adapter) throws Exception {
+        Channel chan = this;
+        chan = new Channel(this.framesize, this.numPoints);
+        chan.setId(id + "adaptive");
+                
+        if (_adapter ==null) adapter = new AdaptEngine01(numPoints, feedbackGain);
+        else adapter = _adapter;
+        //adapter = new AdaptEngine01(numPoints, feedbackGain);
+        double output = 0;
+        AdaptiveResult result = null;
+
+        for (int i =0; i < this.numPoints; i++) {
+            
+            double input = this.getPoint(i);
+            double target = b.getPoint(i);
+            result = adapter.adapt(input, target);
+            output = result.output;
+            
+            if (Double.isNaN(output)) output = input; //.. on random data this does not work.. 
+            //System.out.println(input + " , " + target + " : " + output);
+            //Feed the time series data to the plotting object.
+           // plotObj.feedData(input, output, target, err);
+            chan.addPoint((float) output);
+        }
+        //plotObj.plotData();
+
+        return chan;
+    }
     /**Subtract the values of channel c from this one**/
     public Channel subtract(Channel c, boolean copy) throws Exception {
         Channel chan = this;
@@ -955,16 +993,26 @@ public class Channel extends UnidimensionalLayer  {
  
     public static void main(String [] args) {
         try{ 
-            int numPoints = 10;
-            Channel c = generate(numPoints);
-            Channel b = generate(numPoints);
+            int numPoints = 100;
+            Channel c = generate(30);
+            Channel b = generate(0);
+            ChannelSet rcs = CHI2016Experiment.getFiles().get(0);
+            Channel realReference = rcs.getChannel(0);
+            Channel realChan = rcs.getChannel(1);
+
+            
             
             Experiment realE = BesteExperiment.getExperiment("input/bestemusic/bestemusic15.csv");
             Channel ch = realE.matrixes.get(3).streams.get(0);
             
             int TEST =-1; //.. we have our datalayer, now set what we want to test
-            String test = "subtract";
+            String test = "adaptivefilter";
             
+            if(test.equals("adaptivefilter")) {
+                //realChan.printStream();
+                Channel newChan = realChan.adaptiveFilter(realReference, 0.002, null);
+                newChan.printStream();
+            }
             if (test.equals("subtract")) {
                 c.printStream();
                 b.printStream();

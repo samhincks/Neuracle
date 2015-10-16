@@ -4,16 +4,19 @@
  */
 package timeseriestufts.evaluatable;
 
+import timeseriestufts.kth.streams.uni.adaptivefilters.AdaptEngine01;
+
 /**
  *
  * @author samhincks
  */
 public class Transformation extends Technique {
     public static enum TransformationType{zscore, anchor, movingaverage, calcoxy, highpass, 
-        lowpass, bandpass, bwbandpass, none, averagedcalcoxy, subtract, trimfirst, subtractchannel, removefirst};
+        lowpass, bandpass, bwbandpass, none, averagedcalcoxy, subtract, trimfirst, subtractchannel, removefirst, adaptivefilter};
     public TransformationType type;
     public float [] params;
     public boolean for3D =false;
+    public AdaptEngine01 [] adapter = new AdaptEngine01[16];  
     
     /**If initialized from console, first parameter is command name
      * @param parameters 

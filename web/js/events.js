@@ -11,22 +11,25 @@ var plumbTechniques = new PlumbTechniques();
 var plumb = new Plumb();
 var datalayerArea = new DatalayerArea("#content");
 var outputParser = new OutputParser();
-var address =  "http://localhost:8080/Neuracle/" 
-//var address = "http://sensormining.herokuapp.com/"; //.. the address of the back-end
+var address =  "http://localhost:8080/Neuracle/";
+var nback = new NBack();
 
+
+//var address = "http://sensormining.herokuapp.com/"; //.. the address of the back-end
 /* When document is loaded, do init, ie set listeners etc. 
  */
 $( init );
 function init() { 
+    console.log("intitalizes!")
+    //nback.begin(30000);
     //.. Focus on input, so that it is the default location for cursor
     //    $("input").focus();
     
-    //.. Tell consoleArea to display a welcome message. load a file 
+    //.. Tell consoleArea to display a welcome me ssage. load a file 
     consoleArea.introduce();
     
     //.. Retrieve any data layers that might still be loaded in the system
     javaInterface.postToDataLayers();
-    
     //.. get commands
     $("#consoleInput").val("getcommandsnodisplay");
     javaInterface.postToConsole();

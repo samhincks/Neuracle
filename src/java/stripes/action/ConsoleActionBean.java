@@ -34,6 +34,7 @@ public class ConsoleActionBean extends DataLayerActionBean {
      */
     @DefaultHandler
     public Resolution parseInput() throws JSONException{
+        System.out.println("RECEIVED!");
         InputParser inputParser = ctx.inputParser;
         //.. Parse the actual input
         JSONObject jsonObj = new JSONObject();

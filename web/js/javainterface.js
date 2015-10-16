@@ -7,6 +7,8 @@ function JavaInterface() {
     this.postToConsole = function() {
         //.. append the machine's response
         var form = $('#consoleForm');  //.. it seems capped at around 100 million characters.
+        console.log("posting");
+        console.log(address);
         $.post(address+"/Console.action", form.serialize(), this.returnFromConsole);
     }
     

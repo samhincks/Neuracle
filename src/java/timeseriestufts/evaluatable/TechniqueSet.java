@@ -42,6 +42,7 @@ public class TechniqueSet extends Technique{
     private FeatureSet featureSet; //.. What features will be extracted out of the isntance
     private AttributeSelection attributeSelection; //.. to be implemented
     private PassFilter filter;
+    private AdaptiveFilter adaptiveFilter;
     private Transformation transformation; 
     private Transformations transformations; //.. An ordered set of manipulations applied to the channelset
 
@@ -73,6 +74,7 @@ public class TechniqueSet extends Technique{
     public FeatureSet getFeatureSet(){return this.featureSet;}
     public AttributeSelection getAttributeSelection(){return this.attributeSelection;}
     public PassFilter getFilter(){return this.filter;}
+    public AdaptiveFilter getAdaptiveFilter(){return this.adaptiveFilter;}
     public Transformation getTransformation(){return this.transformation;}
     public Transformations getTransformations(){return this.transformations;}
 

@@ -217,7 +217,7 @@ public class ExternalDataParser extends Parser{
      * herself. *
      */
     public JSONObject stream(String [] parameters) throws Exception {
-        if (currentDataLayer.id == null) throw new Exception("Must select a datalayer");
+        if (currentDataLayer.id == null || currentDataLayer == null) throw new Exception("Must select a datalayer");
         String filename = currentDataLayer.id; 
         
         if (parameters.length >0) filename = parameters[0];

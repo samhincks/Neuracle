@@ -1,0 +1,148 @@
+html {
+
+}
+
+td {
+	vertical-align: middle;
+	height: 33%;
+	width: 33%;
+}
+
+td div {
+	height: 90%;
+	width: 90%;
+	background-color: black;
+	margin: auto;
+}
+
+table {
+	border-collapse: collapse;
+	margin: auto;
+	background-color: white;
+	padding: 30px;
+        border-style: solid;
+        border-width:1%;
+        border-color: black;
+        z-index:100;
+        width:400px;
+        height:400px;
+}
+
+img {
+	width: 90%;
+	vertical-align: middle;
+	margin-top: 5%;
+	margin-bottom: 5%;
+}
+
+#cinco {
+	text-align: center;
+}
+
+
+#plus {
+	vertical-align: middle;
+	position: absolute;
+	font-size: 3em;
+}
+
+.off {
+	background-color: white;
+}
+
+.on {
+	background-color: black;
+}
+.green {
+    background-color: green;
+}
+
+.red {
+    background-color: red;
+}
+
+
+div {
+	clear: both;
+	/*text-align: center;*/
+}
+
+#begin {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+	width: 100px;
+	padding: 10px;
+}
+
+#info {
+	margin-left: auto;
+	margin-right: auto;
+	width: 130px;
+	padding: 10px;
+}
+
+.btn {
+	padding: 10px;
+	font-size: .8em;
+}
+
+#nhead {
+	padding: 5px;
+	font-size: 1em;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	background-color: #CFCFCF;
+}
+
+#study {
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px;
+	width: 140px;
+}
+
+#instruct {
+	position: absolute;
+	margin-left: 10%;
+	margin-right: 10%;
+	width: 80%;
+	height: 80%;
+	background-color: #6B6B6B;
+	display: none;
+}
+
+div p {
+	color: white;
+	width: 80%;
+	margin: auto;
+	padding-top: 10px;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	line-height: 200%;
+	vertical-align: middle;
+}
+
+h2 {
+	color: white;
+	padding: 10px;
+}
+
+.close {
+	padding-top: 5%;
+	margin: auto;
+}
+
+.content {
+	margin-top: 10%;
+}
+
+#resultswindow {
+	position: absolute;
+	margin-left: 10%;
+	margin-right: 10%;
+	width: 80%;
+	height: 80%;
+	background-color: #6B6B6B;
+	display: none;
+}
+
+

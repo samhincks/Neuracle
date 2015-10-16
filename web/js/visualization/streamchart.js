@@ -3,7 +3,8 @@
 
 var StreamChart = function (){
      this.added=1;
-    this.displayChart = function(JSONobj, chart, data){
+    this.displayChart = function(JSONobj, chart, data, channelsToShow){
+       
        
       
         /** What it wants:
@@ -14,10 +15,19 @@ var StreamChart = function (){
         *  .maxTime = the last index shown adjusted for seconds
          */
         var channelVals = JSONobj.data.data; //.. the data contained now should be what's added
-        var numUpdates = channelVals.values.length
+        var numUpdates = channelVals.values.length;
+                
         for (var i=0; i < numUpdates; i++) {
             var updateData = [];
-            updateData.values = channelVals.values[i];
+            
+            if (channelsToShow != null) {
+                var toShow = new Array();
+                for (var j in channelsToShow) {
+                    toShow.push(channelVals.values[i][channelsToShow[j]]);
+                }
+                updateData.values = toShow;
+            }
+            else channelVals.values[i];
             updateData.maxTime = channelVals.end + this.added;//channelVals.maxTime;
             updateData.start = this.added;
             updateData.end = channelVals.end + this.added;

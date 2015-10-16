@@ -629,8 +629,8 @@ public class BiDAO extends DataLayerDAO {
         this.addedInLastSynchronization =0;  
         this.numSynchronizations++;
         boolean refreshMarkers = false; //.. set to true if there are new markers to synchronize with db
-
-
+        
+        //.. Connect to mysql and select anyone thats not already there
         MySqlDAO mydao=new MySqlDAO();
         mydao.connSQL();
         ResultSet datalayerData = mydao.selectSQL("select * from " + databaseName);
@@ -655,7 +655,6 @@ public class BiDAO extends DataLayerDAO {
                 datalayerData.first();
                 addedInLastSynchronization = data.size();
             } 
-            
         }
         
         //.. if this has already been initialized, add data to corresponding channels,

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import timeseriestufts.evaluatable.AdaptiveFilter;
 import timeseriestufts.evaluatable.FeatureDescription;
 import timeseriestufts.evaluatable.PassFilter;
 import timeseriestufts.evaluatable.TechniqueSet;
@@ -27,6 +28,7 @@ import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.uni.*;
 import timeseriestufts.kth.streams.uni.Channel;
 import timeseriestufts.kth.streams.uni.UnidimensionalLayer;
+import timeseriestufts.kth.streams.uni.adaptivefilters.AdaptEngine01;
 
 /**An fNIRS channel, but can be repurposed for other sensors
  * @author Sam
@@ -721,6 +723,10 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
      * Return a copy, with fresh points if copy = true
      */
     public ChannelSet manipulate(TechniqueSet ts, boolean copy) throws Exception{
+        
+        /**
+         I DONT USE THIS ANYMORE, GET RID OF IT. IT WASTES TIME!
+         **/
         ChannelSet retSet = this; //.. will be set to something else if copy = true
        
         if (ts.getFilter().filterType == PassFilter.FilterType.BandPass) 
@@ -732,11 +738,12 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         if (ts.getFilter().filterType == PassFilter.FilterType.HighPass) 
            retSet = this.highpass((float)ts.getFilter().pass, copy);
         
+     
         if (ts.getFilter().filterType == PassFilter.FilterType.bwBandPass) 
            retSet = this.bwBandpass(ts.getFilter().order, (float)ts.getFilter().lowPass, (float)ts.getFilter().highPass);
         
         if (ts.getTransformation().type == Transformation.TransformationType.zscore)
-            retSet = this.zScore(copy);
+            retSet = this.zScore(copy);  
         
         if (ts.getTransformation().type == Transformation.TransformationType.calcoxy)
             retSet = this.calcOxy(copy, null, null); //.. set 2nd parameter to empty if 830 comes first
@@ -809,6 +816,13 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                 
         else if (ts.type == Transformation.TransformationType.anchor) 
             retSet = this.anchor(copy, null);
+        
+        else if (ts.type == Transformation.TransformationType.adaptivefilter) {
+            double filterGain =0.1;
+            if (ts.params != null && ts.params.length > 0) 
+                filterGain = ts.params[0];
+            retSet = this.adaptiveFilter(filterGain,ts);
+        }
         
         else if (ts.type == Transformation.TransformationType.removefirst) 
             retSet = this.removeFirst((int) ts.params[0], copy);
@@ -951,6 +965,58 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         cs.setId(s);
         return cs;
     }
+    
+    private ChannelSet adaptiveFilter(double feedbackGain, Transformation t) throws Exception{
+        if (this.streams.size() != 16) throw new Exception("Expected 16 channels");
+       /*Assume: Index 0 -> 2, 4, 6 (AHBO)
+         Index 1 - > 3,5,7(AHB)
+         Index 8 -> 10,12,14(BHBO)
+         Index 9 ->11,13,15(BHB)
+        */        
+        System.out.println("Cs.Af.Applying adaptive filter");
+        ChannelSet retSet = this.getCopy(this.id+"adaptive");
+        Channel ref1 = this.getChannel(0);
+        Channel ref2 = this.getChannel(1);
+        Channel ref3 = this.getChannel(8);
+        Channel ref4 = this.getChannel(9);
+        
+        //.. filter first 3
+        retSet.addStream(ref1);
+        retSet.addStream(this.getChannel(2).adaptiveFilter(ref1,feedbackGain,t.adapter[2]));
+        t.adapter[2] = this.getChannel(2).adapter;
+        retSet.addStream(this.getChannel(4).adaptiveFilter(ref1,feedbackGain,t.adapter[4]));
+        t.adapter[4] = this.getChannel(4).adapter;
+        retSet.addStream(this.getChannel(6).adaptiveFilter(ref1,feedbackGain,t.adapter[6]));
+        t.adapter[6] = this.getChannel(6).adapter;
+        
+        retSet.addStream(ref2);
+        retSet.addStream(this.getChannel(3).adaptiveFilter(ref2,feedbackGain,t.adapter[3]));
+        t.adapter[3] = this.getChannel(3).adapter;
+        retSet.addStream(this.getChannel(5).adaptiveFilter(ref2,feedbackGain,t.adapter[5]));
+        t.adapter[5] = this.getChannel(5).adapter;
+        retSet.addStream(this.getChannel(7).adaptiveFilter(ref2,feedbackGain,t.adapter[7]));
+        t.adapter[7] = this.getChannel(7).adapter;
+        
+        retSet.addStream(ref3);
+        retSet.addStream(this.getChannel(10).adaptiveFilter(ref3,feedbackGain,t.adapter[10]));
+        t.adapter[10] = this.getChannel(10).adapter;
+        retSet.addStream(this.getChannel(12).adaptiveFilter(ref3,feedbackGain, t.adapter[12]));
+        t.adapter[12] = this.getChannel(12).adapter;
+        retSet.addStream(this.getChannel(14).adaptiveFilter(ref3,feedbackGain, t.adapter[14]));
+        t.adapter[14] = this.getChannel(14).adapter;
+        
+        retSet.addStream(ref4);
+        retSet.addStream(this.getChannel(11).adaptiveFilter(ref4,feedbackGain,t.adapter[11]));
+        t.adapter[11] = this.getChannel(11).adapter;
+        retSet.addStream(this.getChannel(13).adaptiveFilter(ref4,feedbackGain,t.adapter[13]));
+        t.adapter[13] = this.getChannel(13).adapter;
+        retSet.addStream(this.getChannel(15).adaptiveFilter(ref4,feedbackGain,t.adapter[15]));
+        t.adapter[15] = this.getChannel(15).adapter;
+        
+        return retSet;
+
+    }
+
     /**Assume this is fNIRS data, and that the input is the intensity of reflected
      light at DC690 and DC830; apply the modified beer-lambert law to estimate the 
      quantity of oxygen. This amounts to combining corresponinding measurements when

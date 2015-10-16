@@ -46,7 +46,7 @@ public class ReadWithMatlabMarkers {
         boolean readingStart = true; //.. set to false after we have read start
         HashMap<Integer, String> hm = new HashMap();
         
-        if (index < 9) {
+        if (index == 3 || index == 5 || index == 6 || index == 7 || index == 8 ) {
             hm.put(0, "Junk");
             hm.put(1, "Rest");
             hm.put(2, "Meditation");
@@ -64,6 +64,7 @@ public class ReadWithMatlabMarkers {
             hm.put(5, "Meditation");
             hm.put(6, "Control");
         }
+        
         int start =0;
         int end =0;
         String line;
@@ -239,7 +240,7 @@ public class ReadWithMatlabMarkers {
         for (String [] row : data) {
             if (row.length!= header.length) System.out.println("Row has " + row.length + " whereas header has " + header.length);
             String label =null;
-            for (int i = FIRSTPROBEINDEX; i < row.length; i++) {
+            for (int i = FIRSTPROBEINDEX; i < row.length-1; i++) {
                  label = getLabel(rowNum); //.. will be null if it doesn't exist
                  
                  if (label != null ) {
@@ -255,10 +256,9 @@ public class ReadWithMatlabMarkers {
                 
                 //.. this is a hack since my program gives an error if a conditon jsut has one line
                 if (condition.equals("passed")) duplicateLastLine(bw, row, condition,20 );
-                
             }
             rowNum++;
-        }
+        }  
         
         bw.close();
     }
@@ -292,17 +292,18 @@ public class ReadWithMatlabMarkers {
         String folder = "input/meditation/";
         try {
             for (int i = 2; i < 14; i++) {
-                String filename = folder +"p"+i+"_HbO_Hb.txt";
-                 String output = "input/meditation_processed/"+i  + ".csv";
-                 System.out.println("Making" + output);
-                 ReadWithMatlabMarkers reader = new ReadWithMatlabMarkers(null, filename);
-                 ArrayList<ReadWithMatlabMarkers.Trial> trials = reader.readMarkerFileLeanne(i);
-                 //reader.readFNIRSFile(false);
-                 //reader.writeToFile(output);
-                 for (Trial t : trials) {
-                           System.out.println("start: " + t.start + " - " + t.end + " .. "+t.label);
-                 }
-                 break;
+                if (i != 4) {
+                    String filename = folder +"p"+i+"_HbO_Hb.txt";
+                     String output = "input/meditation_processed/"+i  + ".csv";
+                     System.out.println("Making" + output);
+                     ReadWithMatlabMarkers reader = new ReadWithMatlabMarkers(null, filename);
+                     ArrayList<ReadWithMatlabMarkers.Trial> trials = reader.readMarkerFileLeanne(i);
+                     reader.readFNIRSFile(false);
+                     reader.writeToFile(output);
+                     for (Trial t : trials) {
+                            System.out.println("start: " + t.start + " - " + t.end + " .. "+t.label);
+                     }
+                }
 
                  
             }

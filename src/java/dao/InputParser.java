@@ -85,11 +85,11 @@ public class InputParser {
             } 
    
             //.. retreive the techinique that's currently selected
-            TechniqueDAO techDAO = ctx.getCurrentTechnique();
+             TechniqueDAO techDAO = ctx.getCurrentTechnique();
             if (techDAO != null) {
                 currentTechnique = techDAO.technique;
             }
-            
+              
             //String command = input.split("(")[0];
             String [] parameters = this.getParameters(input);
             jsonObj = this.rapidExecute(input,parameters, ctx, currentDataLayer,techDAO);

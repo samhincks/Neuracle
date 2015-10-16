@@ -46,6 +46,12 @@ function Labeler()
         if (curCondition == "easy" || curCondition == "hard") 
             curCondition += "%" + (self.trialLength);
         
+        if(curCondition.startsWith("dual")) {
+            var values = curCondition.split("-");
+            console.log("About to begin new trial!");
+            nback.begin(self.trialLength, parseInt(values[1]));
+        }
+        
         //.. send message to backend
         var message = "label(" + self.fileName + "," + self.conditionName + ","+curCondition+")";
         $("#consoleInput").val(message);

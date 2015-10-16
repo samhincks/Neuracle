@@ -11,6 +11,7 @@ function ChartArea(id, descArea) {
    this.lastJSON; //.. we might wnat to redraw the graph, for instance if we resize the graph
    var border =20;
    var sc = new StreamChart();
+   var channelsToShow; //.. an array of 2D channels to show (streaming or not streaming), which we change by view.show()
    
    /*Given a jsonObj packaged as a 2D or 3D datalayer display it in the graph
     *Most JSONObj's returned are straightforward. Experiment is tricky: it's   A collection of instances =
@@ -29,19 +30,17 @@ function ChartArea(id, descArea) {
         }
         
         else if(JSONobj.type == "channelset") {
-            if(JSONobj.data.classifiers==null)this.displayClassificationSet(JSONobj); //. I like this one more for now
-                //this.displayChannelSet(JSONobj);
+            if(JSONobj.data.classifiers==null)//this.displayClassificationSet(JSONobj); //. I like this one more for now
+                this.displayChannelSet(JSONobj); //.. this one can be streamed
             else this.displayClassificationSet(JSONobj);
         }
         
         else if(JSONobj.type == "correlation") {
-            var twentyOne = JSONobj.data[20];
-            console.log(twentyOne[13],twentyOne[14], twentyOne[15],twentyOne[16] );
            this.displayCorrelation(JSONobj);
         }
 
         else if (JSONobj.id == "csrefresh") {
-             sc.displayChart(JSONobj, streamChart, data);
+             sc.displayChart(JSONobj, streamChart, data, channelsToShow);
         }
         this.displayedDL = JSONobj.id;
     }
@@ -75,6 +74,19 @@ function ChartArea(id, descArea) {
         $(selection).children().remove();
         d3.selectAll('.line-graph').remove(); //.. remove if it exists already
         data = JSONobj.data;
+
+        //.. if we've called view.show, then restrict channels to show
+        if (channelsToShow != null) {
+            var toShow = new Array();
+            for (var i in channelsToShow){ 
+                toShow.push(data.values[channelsToShow[i]]);
+                console.log("showing " + channelsToShow[i]);
+            }
+            data.values = toShow;
+
+        }
+        //console.log(data);
+        
         var actualMaxPoints = JSONobj.actualNumPoints;
         var readingsPerSec = JSONobj.readingsPerSec;
         var maxInSeconds = (actualMaxPoints / readingsPerSec);
@@ -84,6 +96,11 @@ function ChartArea(id, descArea) {
         //this.writeMarkerVals(JSONobj.data.markerNames);
     }
     
+    this.show2DIndexes = function(params) {
+        channelsToShow = new Array();
+        channelsToShow = params;
+        console.log(channelsToShow);
+    }
     this.writeMarkerVals = function(JSONarr) {
         var msg = "";
         for (var k =0; k <JSONarr.length; k++) {
