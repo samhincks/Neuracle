@@ -23,8 +23,6 @@
         <link type="text/css" rel="stylesheet" href="css/consoleStyle.css" /> 
         <link type="text/css" rel="stylesheet" href="css/dlStyle.css" />
         <link type="text/css" rel="stylesheet" href="css/nback.css" />
-
-
     </head>
     
     <body id ="doc">   

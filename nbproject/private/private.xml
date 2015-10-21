@@ -15,65 +15,15 @@
             </bookmark>
         </file>
         <file>
-            <url>web/js/area/chartarea.js</url>
-            <bookmark id="25">
-                <name/>
-                <line>72</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/dao/MiscellaneousParser.java</url>
-            <bookmark id="16">
-                <name/>
-                <line>646</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/dao/ExternalDataParser.java</url>
-            <bookmark id="15">
-                <name/>
-                <line>265</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/dao/TransformationParser.java</url>
-            <bookmark id="20">
-                <name/>
-                <line>512</line>
-                <key/>
-            </bookmark>
-            <bookmark id="13">
-                <name/>
-                <line>629</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/timeseriestufts/kth/streams/uni/Channel.java</url>
-            <bookmark id="6">
-                <name/>
-                <line>701</line>
-                <key/>
-            </bookmark>
-            <bookmark id="7">
-                <name/>
-                <line>993</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>src/java/dao/DataManipulationParser.java</url>
             <bookmark id="5">
                 <name/>
-                <line>1204</line>
+                <line>1203</line>
                 <key/>
             </bookmark>
             <bookmark id="14">
                 <name/>
-                <line>1324</line>
+                <line>1323</line>
                 <key/>
             </bookmark>
         </file>
@@ -99,6 +49,22 @@
             </bookmark>
         </file>
         <file>
+            <url>web/js/area/chartarea.js</url>
+            <bookmark id="25">
+                <name/>
+                <line>72</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/dao/MiscellaneousParser.java</url>
+            <bookmark id="16">
+                <name/>
+                <line>646</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>src/java/timeseriestufts/kth/streams/tri/Experiment.java</url>
             <bookmark id="11">
                 <name/>
@@ -112,10 +78,31 @@
             </bookmark>
         </file>
         <file>
+            <url>src/java/dao/ExternalDataParser.java</url>
+            <bookmark id="15">
+                <name/>
+                <line>265</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>src/java/dao/InputParser.java</url>
             <bookmark id="1">
                 <name/>
                 <line>269</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/dao/TransformationParser.java</url>
+            <bookmark id="20">
+                <name/>
+                <line>512</line>
+                <key/>
+            </bookmark>
+            <bookmark id="13">
+                <name/>
+                <line>629</line>
                 <key/>
             </bookmark>
         </file>
@@ -137,8 +124,27 @@
                 <key/>
             </bookmark>
         </file>
+        <file>
+            <url>src/java/timeseriestufts/kth/streams/uni/Channel.java</url>
+            <bookmark id="6">
+                <name/>
+                <line>701</line>
+                <key/>
+            </bookmark>
+            <bookmark id="7">
+                <name/>
+                <line>993</line>
+                <key/>
+            </bookmark>
+        </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/css/nback.css</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/index.jsp</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/labeler.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/nback.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/javainterface.js</file>
+        </group>
     </open-files>
 </project-private>

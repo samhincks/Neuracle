@@ -48,8 +48,17 @@ function Labeler()
         
         if(curCondition.startsWith("dual")) {
             var values = curCondition.split("-");
-            console.log("About to begin new trial!");
-            nback.begin(self.trialLength, parseInt(values[1]));
+            nback.begin(self.trialLength, parseInt(values[1]), true, true);
+        }
+        
+        if(curCondition.startsWith("visual")) {
+            var values = curCondition.split("-");
+            nback.begin(self.trialLength, parseInt(values[1]), false, true);
+        }
+        
+        if (curCondition.startsWith("audio")) {
+            var values = curCondition.split("-");
+            nback.begin(self.trialLength, parseInt(values[1]), true, false);
         }
         
         //.. send message to backend
