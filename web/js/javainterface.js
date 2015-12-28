@@ -16,7 +16,7 @@ function JavaInterface() {
         if (JSONobj.error != null){
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
         }
-        else if(JSONobj.content != ""){
+        else if(JSONobj.content != ""  && (JSONobj.action == null || !(JSONobj.action.id.startsWith("stat")))){
             outputParser.parseOutput(JSONobj.content);
         }
         
@@ -49,6 +49,22 @@ function JavaInterface() {
              }
              else if (JSONobj.action.id == "getcommandsnodisplay") {
                  consoleArea.setCommands(JSONobj.action.data, false);
+             }
+             if (JSONobj.action.id.startsWith("stat")) {
+                var dl = JSONobj.action.id.split("-")[1];
+                var val = JSONobj.content;
+                console.log(dl, val);
+                var devAway = datalayerArea.datalayers.getDLById(dl).processStat(val);
+                if (Math.abs(devAway)>1) {
+                    if (devAway >0){
+                        document.getElementById("C1").play();
+                        consoleArea.displayMessage(devAway+"", "systemmess", "greenline");
+                    }
+                    else {
+                        document.getElementById("B2").play();
+                        consoleArea.displayMessage(devAway + "", "systemmess", "blackline");
+                    }
+                }
              }
         }
     }
@@ -100,7 +116,6 @@ function JavaInterface() {
         $('#stats').val(false); 
         $('#debug').val(false);
 
-        
         if (arguments.length) {
             if (message == "frequency"){
                 $('#frequency').val(true);

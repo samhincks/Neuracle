@@ -145,8 +145,6 @@ function datalayerInit(datalayer) {
         datalayerArea.datalayers.unselectAll();
         datalayerArea.boundsCheck();
     });
-
-    
 }
 
 

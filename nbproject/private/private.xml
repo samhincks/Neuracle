@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="32">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="35">
         <file>
             <url>src/java/filereader/formatconversion/ReadWithMatlabMarkers.java</url>
             <bookmark id="23">
                 <name/>
-                <line>202</line>
+                <line>201</line>
                 <key/>
             </bookmark>
             <bookmark id="22">
                 <name/>
-                <line>290</line>
+                <line>289</line>
+                <key/>
+            </bookmark>
+            <bookmark id="34">
+                <name/>
+                <line>298</line>
                 <key/>
             </bookmark>
         </file>
@@ -37,14 +42,14 @@
         </file>
         <file>
             <url>web/js/area/objects/nback.js</url>
-            <bookmark id="32">
-                <name/>
-                <line>61</line>
-                <key/>
-            </bookmark>
             <bookmark id="31">
                 <name/>
-                <line>285</line>
+                <line>136</line>
+                <key/>
+            </bookmark>
+            <bookmark id="33">
+                <name/>
+                <line>270</line>
                 <key/>
             </bookmark>
         </file>
@@ -60,7 +65,7 @@
             <url>src/java/dao/MiscellaneousParser.java</url>
             <bookmark id="16">
                 <name/>
-                <line>646</line>
+                <line>666</line>
                 <key/>
             </bookmark>
         </file>
@@ -82,6 +87,14 @@
             <bookmark id="15">
                 <name/>
                 <line>265</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/area/objects/datalayers.js</url>
+            <bookmark id="35">
+                <name/>
+                <line>276</line>
                 <key/>
             </bookmark>
         </file>
@@ -140,10 +153,10 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/css/nback.css</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/index.jsp</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/labeler.js</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/nback.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/datalayers.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/ExternalDataParser.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/events.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/MiscellaneousParser.java</file>
             <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/javainterface.js</file>
         </group>
     </open-files>

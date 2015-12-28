@@ -494,7 +494,6 @@ public class BiDAO extends DataLayerDAO {
                     cs = cs.manipulate(t, true);
                 }
             }
-                  
             
             //.. add points at specified increments
             for (int j = 0; j < cs.getMinPoints(); j += pointsInc) {

@@ -138,7 +138,7 @@ function NBack(){
         var thisBlock = [];
         //.. populate with random values
         for(var i = 0; i < numBlocks; i++) { //.. [visual][audio]
-            thisBlock.push([Math.floor(Math.random() * 8), Math.floor(Math.random() * 8)]);
+            thisBlock.push([Math.floor(Math.random() * 8)+1, Math.floor(Math.random() * 8)+1]);
         }
         
         thisBlock = forceMatches(numBlocks,thisBlock,0);    
@@ -163,6 +163,11 @@ function NBack(){
     }
 
     function playBlock(numBlocks, audio, visual) {
+            reactionTimes = [[],[]];
+            visualScores = [0, 0, 0, 0];
+            audioScores = [0, 0, 0, 0];
+            reactionTimes = [[], []];
+             start = 0; //.. for timing
             var currentBlock = prepareBlockSam(numBlocks);
             var blockEval = evaluateBlock(currentBlock);
             var numMatches = Math.floor((numBlocks) * PCTMATCHING);
@@ -186,31 +191,32 @@ function NBack(){
                     $("#nback").css("border-style", "solid");
                     $("#nback").css("border-color", "black");
                     $("#nback").css("border-width", "5px");
-                   //.. if the user didn't press and its not the first, then see if this was 
-                    if (justPressed == false && blockCounter > n-1) {
-                            var position = blockCounter;
-                            var checkPosition = blockCounter-n;
-                            if (visual){
-                                if (currentBlock[position][0] == currentBlock[checkPosition][0]) {
-                                    $("#nback").css("border-style", "dashed");
-                                    visualScores[3] += 1; 
-                                }
-
-                                //.. right
-                                else {
-                                    visualScores[2] += 1; 
-                                }
+                    
+                    //.. if the user didn't press and its not the first, then see if this was 
+                    if (justPressed == false && blockCounter > n) {
+                        var position = blockCounter;
+                        var checkPosition = blockCounter-n;
+                        if (visual){
+                            if (currentBlock[position][0] == currentBlock[checkPosition][0]) {
+                                $("#nback").css("border-style", "dashed");
+                                visualScores[3] += 1; 
                             }
-                            if (audio) {
-                                if (currentBlock[position][0] == currentBlock[checkPosition-1][0]) {
-                                    audioScores[3] += 1; 
-                                }
 
-                                //.. right
-                                else {
-                                    audioScores[2] += 1; 
-                                }                                
+                            //.. right
+                            else {
+                                visualScores[2] += 1; 
                             }
+                        }
+                        if (audio) {
+                            if (currentBlock[position][0] == currentBlock[checkPosition-1][0]) {
+                                audioScores[3] += 1; 
+                            }
+
+                            //.. right
+                            else {
+                                audioScores[2] += 1; 
+                            }                                
+                        }
                    }
                     justPressed = false;
                     start = Date.now();
@@ -342,6 +348,8 @@ function NBack(){
         if (blockRunning === false) {
             playBlock(numBlocks, audio, visual);
         }
+        
+        console.log("now running: " + numBlocks + + " n " + n);
         
         blockRunning = true;
         setTimeout(function () {  

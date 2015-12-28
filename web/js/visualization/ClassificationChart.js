@@ -8,7 +8,7 @@ function ClassificationChart() {
  
     var key = 0; //.. the set of elements in view. If its an array it's acceptable to use index position
     var selection;// = d3.select("body").append("svg:svg");
-    var color = d3.scale.category10();
+    var color = d3.scale.category10();  
     color = d3.scale.category20();
     color = d3.scale.category20b();
     //color = d3.scale.category20c();

@@ -48,6 +48,8 @@ function Labeler()
         
         if(curCondition.startsWith("dual")) {
             var values = curCondition.split("-");
+            if (values.length ==1)
+                nback.begin(self.trialLength,1, true, true);
             nback.begin(self.trialLength, parseInt(values[1]), true, true);
         }
         

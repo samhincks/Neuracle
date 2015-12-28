@@ -249,7 +249,7 @@ function LineGraph(argsMap) {
 	var processDataMap = function(dataMap) {
 		// assign data values to plot over time
 		var dataValues = getRequiredVar(dataMap, 'values', "The data object must contain a 'values' value with a data array.")
-                 var maxTime = getRequiredVar(dataMap, "maxTime", "The data must contain the maximum referenced time in seconds");
+                var maxTime = getRequiredVar(dataMap, "maxTime", "The data must contain the maximum referenced time in seconds");
                 var endTime = getRequiredVar(dataMap, 'end', "The data object must contain an 'end' value with the end time in milliseconds since epoch.")
                 var startTime = getRequiredVar(dataMap, 'start', "The data object must contain a 'start' value with the start time in milliseconds since epoch.")
 		var step = getRequiredVar(dataMap, 'step', "The data object must contain a 'step' value with the time in milliseconds between each data value.")		

@@ -99,7 +99,7 @@ def readFromFake():
         conn.commit()
         cur.close()
         conn.close()
-        sleep(0.1)
+        sleep(0.5)
 
 def readFromImagent():
     count=1

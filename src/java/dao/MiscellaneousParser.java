@@ -26,6 +26,7 @@ import realtime.AudioNBack;
 import realtime.Client;
 import stripes.ext.ThisActionBeanContext;
 import timeseriestufts.evaluatable.TechniqueSet;
+import timeseriestufts.evaluatable.Transformation;
 import timeseriestufts.evaluation.experiment.Classification;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
@@ -228,6 +229,8 @@ public class MiscellaneousParser extends Parser{
         else if (command.startsWith("stat")) {
             c = commands.get("stat");
             c.retMessage = this.stat(parameters);
+            c.action = "stat-" +this.currentDataLayer.id;
+
         }
         else if (command.startsWith("tutorial")) {
             c = commands.get("tutorial");
@@ -573,17 +576,48 @@ public class MiscellaneousParser extends Parser{
         int readingsBack = 40;
         String stat = "slope";
         if (parameters.length >0) stat = parameters[0];
-        if (parameters.length >1) dl = ctx.getDataLayers().get(parameters[1]).dataLayer;
+        if (parameters.length >1) {
+            dl = ctx.getDataLayers().get(parameters[1]).dataLayer;
+            this.currentDataLayer = dl;
+        }
         if (parameters.length >2) channel = Integer.parseInt(parameters[2]);
         if (parameters.length >3) readingsBack = Integer.parseInt(parameters[3]);
         
         if (dl instanceof ChannelSet) {
+            //.. The selected datalayer may or may not be the actual thing which is synchronized with the database
+            //.. It could have transformations applied to it, in which case we need to find its oldest ancestor,
+            //.. synchronize with that, but apply the transformations specified in the layer selected
+            BiDAO bDAO;
+            BiDAO ancestor = null;
             ChannelSet cs = (ChannelSet) dl;
-            Channel c = cs.streams.get(channel);
-            Channel sub = c.getSample(c.numPoints - readingsBack-1, c.numPoints-1, true);
-            if (stat.equals("slope")) return sub.getSlope()+"";
-            if (stat.equals("bestfit")) return sub.getBestFit()+"";
-            if (stat.equals("secondder")) return sub.getSecondDerivative() +"";
+            if (ctx.dataLayersDAO.streams.containsKey(dl.id)) {
+                bDAO = (BiDAO) ctx.dataLayersDAO.get(dl.id);
+        
+                ancestor = (BiDAO) ctx.getAncestorOf(dl.getId());
+                ancestor.synchronizeWithDatabase(ancestor.getId());
+            }
+            //.. if this is a manipulated dataset, then apply manipulation to subset needed (readingsBack),
+            //.. and compute on this instead 
+            if (cs.transformations != null) {
+                ChannelSet original = (ChannelSet) ancestor.dataLayer;
+                Transformation t = cs.transformations.transformations.get(0);
+                ChannelSet chanSet = original.getChannelSetBetween(original.getMaxPoints() - readingsBack -1, original.getMaxPoints()-1);
+                chanSet = chanSet.manipulate(t, true);
+                Channel c = original.streams.get(channel);
+                if (stat.equals("slope")) return c.getSlope()+"";
+                if (stat.equals("bestfit")) return c.getBestFit()+"";
+                if (stat.equals("secondder")) return c.getSecondDerivative() +"";
+            } 
+
+            else{
+                Channel c = cs.streams.get(channel);
+                Channel sub = c.getSample(c.numPoints - readingsBack - 1, c.numPoints - 1, true);
+                if (stat.equals("slope")) return sub.getSlope()+"";
+                if (stat.equals("bestfit")) return sub.getBestFit()+"";
+                if (stat.equals("secondder")) return sub.getSecondDerivative() +"";
+            }
+            
+           
         }
         throw new Exception("Must be a channelset");
     }

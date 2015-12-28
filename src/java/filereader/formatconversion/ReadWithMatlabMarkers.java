@@ -31,6 +31,7 @@ public class ReadWithMatlabMarkers {
     int FIRSTPROBEINDEX = 4;
     int STIMSTRINGINDEX = 3; //.. where String index is has for x;y;z;g
     int CONDINSTIM = 1; //.. where inside the STIMSTRING condition is
+    String DELIMETER = ",";
     
     public ReadWithMatlabMarkers(String markerFile, String fnirsFile) throws Exception{
          this.fnirsFile = fnirsFile;
@@ -76,17 +77,15 @@ public class ReadWithMatlabMarkers {
         Trial lastTrial = new Trial(curIndex, "junk"); 
 
         while ((line = fnirsDataIn.readLine()) != null) {
-            String [] vals = line.split("\t");
+            String [] vals = line.split(DELIMETER);
             int marker = Integer.parseInt(vals[markerIndex]);
             if (marker != 0) {
                 if (hm.containsKey(marker)){
                    lastTrial.end = curIndex;
                    trials.add(lastTrial);
-                    start = curIndex;
-
+                   start = curIndex;
                    lastTrial = new Trial(start, hm.get(marker));
                 }
-                
             }
            
             lastMarker = marker;
@@ -211,10 +210,10 @@ public class ReadWithMatlabMarkers {
         
         //.. read column file
         String line = fnirsDataIn.readLine();
-        header =line.split("\t");
+        header =line.split(DELIMETER);
         
         while ((line = fnirsDataIn.readLine()) != null) {
-             String [] row = line.split("\t");
+             String [] row = line.split(DELIMETER);
              data.add(row);
         }
     }
@@ -235,7 +234,7 @@ public class ReadWithMatlabMarkers {
         
         bw.write("\n");
         int rowNum =0;
-        
+       
         //.. write out actual data
         for (String [] row : data) {
             if (row.length!= header.length) System.out.println("Row has " + row.length + " whereas header has " + header.length);
@@ -291,9 +290,10 @@ public class ReadWithMatlabMarkers {
     public static void Meditation() {
         String folder = "input/meditation/";
         try {
-            for (int i = 2; i < 14; i++) {
-                if (i != 4) {
-                    String filename = folder +"p"+i+"_HbO_Hb.txt";
+            for (int i = 1; i < 14; i++) {
+                if (i == 1) {
+                   // String filename = folder +"p"+i+"_HbO_Hb.txt";
+                    String filename = folder + "oxy_deoxy_p1_meditation.csv";
                      String output = "input/meditation_processed/"+i  + ".csv";
                      System.out.println("Making" + output);
                      ReadWithMatlabMarkers reader = new ReadWithMatlabMarkers(null, filename);

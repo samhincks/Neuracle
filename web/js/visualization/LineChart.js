@@ -56,9 +56,9 @@ function LineChart() {
     //... For the area chart that represents mean of lines of same class
     var area;
     var meanline;
-    var lineTrans =2000;
-    var chartTrans = 2000;
-    var transitionLength =2000; //.. the length of a scale transition
+    var lineTrans =10000;
+    var chartTrans = 10000;
+    var transitionLength =10000; //.. the length of a scale transition
     var drawn; //.. used in transition to average to store averages and standard deviations
     var xAxis;
     var yAxis;
@@ -172,7 +172,7 @@ function LineChart() {
         //.. handle case, where we've cluttered our screen with area chart and removed our lines
        // if (svg.selectAll(".avgArea")[0].length)
          //   chart();
-        var t0 = svg.transition().duration(750);
+        var t0 = svg.transition().duration(transitionLength);
         t0.selectAll(".line").attr("d", line);
         return chart;
     }   

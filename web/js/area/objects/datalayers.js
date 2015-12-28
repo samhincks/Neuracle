@@ -4,6 +4,9 @@ function DataLayers() {
     this.dls =  new Array(); //.. all available datalayers
     var selected = new Array(); //.. a single datalayer that is selected (has a blue square around it)
     this.lastSelectedId ="";
+   
+   
+    
     //.. get this Datalayer by id; return null if it doesn't exist'
     this.getDLById = function(id) {
         for(var i =0; i< this.dls.length; i++) {
@@ -236,7 +239,42 @@ function DataLayer(jsonDL) {
     }
     
     
-   
+    this.slopes = [];
+    
+    function standardDeviation(values) {
+        var avg = d3.mean(values);
+
+        var squareDiffs = values.map(function (value) {
+            var diff = value - avg;
+            var sqrDiff = diff * diff;
+            return sqrDiff;
+        });
+
+        var avgSquareDiff = d3.mean(squareDiffs);
+
+        var stdDev = Math.sqrt(avgSquareDiff);
+        return stdDev;
+    }
+
+ 
+    /** Compute how far how many standard deviatiosn we are from the mean 
+     **/
+    this.processStat = function(val) {
+        val = val*1;
+        this.slopes.push(val);
+        var avg = d3.mean(this.slopes);
+        var dev = standardDeviation(this.slopes);
+        var quant = d3.quantile(this.slopes,0);
+        var diff = val - avg;
+        var deviationsAway = diff / dev;
+       // console.log(this.slopes);
+        //console.log(val);
+        console.log(deviationsAway);
+        return deviationsAway;
+        
+    }
+    
+    
     
     this.getPosition = function() {
        return $("#"+this.id).offset();

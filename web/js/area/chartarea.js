@@ -11,7 +11,7 @@ function ChartArea(id, descArea) {
    this.lastJSON; //.. we might wnat to redraw the graph, for instance if we resize the graph
    var border =20;
    var sc = new StreamChart();
-   var channelsToShow; //.. an array of 2D channels to show (streaming or not streaming), which we change by view.show()
+   var channelsToShow = [1];//=[0,1]; //.. an array of 2D channels to show (streaming or not streaming), which we change by view.show()
    
    /*Given a jsonObj packaged as a 2D or 3D datalayer display it in the graph
     *Most JSONObj's returned are straightforward. Experiment is tricky: it's   A collection of instances =
@@ -39,8 +39,8 @@ function ChartArea(id, descArea) {
            this.displayCorrelation(JSONobj);
         }
 
-        else if (JSONobj.id == "csrefresh") {
-             sc.displayChart(JSONobj, streamChart, data, channelsToShow);
+        else if (JSONobj.id == "csrefresh") { 
+           sc.displayChart(JSONobj, streamChart, data, channelsToShow);
         }
         this.displayedDL = JSONobj.id;
     }
@@ -83,7 +83,6 @@ function ChartArea(id, descArea) {
                 console.log("showing " + channelsToShow[i]);
             }
             data.values = toShow;
-
         }
         //console.log(data);
         
@@ -92,14 +91,12 @@ function ChartArea(id, descArea) {
         var maxInSeconds = (actualMaxPoints / readingsPerSec);
         data["maxTime"] = maxInSeconds;
         streamChart = new LineGraph({containerId: 'topRight', data: data});
-        console.log(JSONobj);
         //this.writeMarkerVals(JSONobj.data.markerNames);
     }
     
     this.show2DIndexes = function(params) {
         channelsToShow = new Array();
         channelsToShow = params;
-        console.log(channelsToShow);
     }
     this.writeMarkerVals = function(JSONarr) {
         var msg = "";
