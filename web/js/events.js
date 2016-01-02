@@ -13,6 +13,7 @@ var datalayerArea = new DatalayerArea("#content");
 var outputParser = new OutputParser();
 var address =  "http://localhost:8080/Neuracle/";
 var nback = new NBack();
+var classifier = new Classifier();
 
 
 //var address = "http://sensormining.herokuapp.com/"; //.. the address of the back-end
@@ -45,7 +46,6 @@ function init() {
         }       
     });
     
-  
     
     //..Wow, that was really challening figuring out that reinit kinda spawns two threads... 
     //... Be careful with that Sam. I think its the reason why double clicking calls the server twice
@@ -93,6 +93,25 @@ function init() {
         }
         chartArea.displayChart(chartArea.lastJSON);
     });
+
+    $("#readingsBack").keyup(function(d) {
+        classifier.readingsBack = $("#readingsBack").val()*1;
+        classifier.recomputeSlopes();
+    });
+    $("#threshold").keyup(function(d) {
+        classifier.threshold = $("#threshold").val()*1; 
+    });
+    
+    $("#classifierchannel").change(function(d) {
+        classifier.resetCorrelations();
+        classifier.channel = $("#classifierchannel").val()*1; 
+    })
+    
+    $("#classifierchannel2").change(function (d) {
+        classifier.resetCorrelations();
+        classifier.channel2 = $("#classifierchannel2").val() * 1;
+    })
+    
 }
 
 

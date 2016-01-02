@@ -50,7 +50,7 @@ function ConsoleArea() {
     this.parseUserMessage = function(userText) {
         this.displayMessage("> " +userText, "usermessage", "");
         
-        if (this.streaming && !(userText.startsWith("streamlabel") || userText.startsWith("nback") || userText.startsWith("interceptlab") )) 
+        if (this.streaming && !(userText.startsWith("streamlabel") || userText.startsWith("slopes")|| userText.startsWith("repeat")  || userText.startsWith("nback") || userText.startsWith("interceptlab") )) 
             this.parseLocally("clearstream");
         
         if(!this.parseLocally(userText)) {   
@@ -75,7 +75,6 @@ function ConsoleArea() {
      *Otherwise, decide how to handle the user's input in javascript */ 
     this.parseLocally = function(userText) {
         userText = userText.trim();
-        
         //.. if this is the end of a streamlabel query
         if (labeler.awaitingFeedback) {
             labeler.parseFeedback(userText);
@@ -161,6 +160,38 @@ function ConsoleArea() {
              return true;
          }
          
+         else if (userText.startsWith("anticorrelated")){
+             var smallest = classifier.getSmallestCorrelation();
+             consoleArea.displayMessage("Smallest correlation is " +  smallest[0] + " between "+ smallest[1] + " and " + smallest[2]);
+             return true;
+         }
+         //.. 
+         else if (userText.startsWith("slopes")) {
+             if (this.streaming == false)  {
+                 this.parseLocally("stream");
+             }
+             var slope = classifier.getSlope(classifier.channel);
+             var val = Math.round(slope[0] * 100) / 100;
+             var dev =  Math.round(slope[1] * 100) / 100;
+             $("#currSlope").text(val);
+             $("#currStdev").text(dev);
+             
+            slope = classifier.getSlope(classifier.channel2);
+            val = Math.round(slope[0] * 100) / 100;
+            dev = Math.round(slope[1] * 100) / 100;
+            $("#currSlope2").text(val);
+            $("#currStdev2").text(dev);
+             
+            slope = classifier.getCorrelationKBack(classifier.channel, classifier.channel2);
+            val = Math.round(slope[0] * 100) / 100;
+            dev = Math.round(slope[1] * 100) / 100;
+            $("#currSlope3").text(val);
+            $("#currStdev3").text(dev);
+             
+             //if (dev > 1) alert("bajs");
+             return true;
+         }
+         
          //.. repeat(classifyLast(), 200) shoots the command classifyLast to the server every 200ms
          else if (userText.startsWith("repeat:")) {
             var mes = userText.split(":"); //.. will be parameters (100,200)
@@ -189,9 +220,16 @@ function ConsoleArea() {
                 duplicatesAdded++;
             }
             
+            var self = this;
             this.pings[commandName] =  setInterval(function() {
-                $("#consoleInput").val(command);
-                javaInterface.postToConsole();
+                if (command.startsWith("slopes")) {
+                    self.parseLocally(command);
+                }
+                else {
+                    $("#consoleInput").val(command);
+                    javaInterface.postToConsole();
+                }
+               
             }, delay);
             consoleArea.displayMessage("Pinging " + command  +  " every " + delay);
             

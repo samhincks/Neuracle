@@ -56,28 +56,118 @@
                 </div>
                
                 
-                <table id ="nback">
+                <table  class = "ntable" id ="nback">
                     <tr>
-                        <td><div id="uno" class="off"></div></td>
-                        <td><div id="dos" class="off"></div></td>
-                        <td><div id="tres" class="off"></div></td>
+                        <td class = "ncol"><div id="uno" class="off"></div></td>
+                        <td class = "ncol"><div id="dos" class="off"></div></td>
+                        <td class = "ncol"><div id="tres" class="off"></div></td>
                     </tr>
                     <tr>
-                        <td><div id="cuatro" class="off"></div></td>
-                        <td><div id="cinco" class="off"><img src="images/plus.png" alt=""></div></td>
-                        <td><div id="seis" class="off"></div></td>
+                        <td class = "ncol"><div id="cuatro" class="off"></div></td>
+                        <td class = "ncol"><div id="cinco" class="off"><img src="images/plus.png" alt=""></div></td>
+                        <td class = "ncol"><div id="seis" class="off"></div></td>
                     </tr>
                     <tr>
-                        <td><div id="siete" class="off"></div></td>
-                        <td><div id="ocho" class="off"></div></td>
-                        <td><div id="nueve" class="off"></div></td>
+                        <td class = "ncol"><div id="siete" class="off"></div></td>
+                        <td class = "ncol"><div id="ocho" class="off"></div></td>
+                        <td class = "ncol"><div id="nueve" class="off"></div></td>
                     </tr>
                 </table> 
                 <div class="btn"><button id="begin" class="pure-button">Begin</button></div>
             </div>
             
             <!--Where we place our the description of selection-->
-            <div id ="farBottomRight" class ="component">         
+            <div id ="farBottomRight" class ="component">      
+                    
+                <table id ="classifier" BORDER="5"    WIDTH="50%"   CELLPADDING="4" CELLSPACING="3">
+                    <tr>
+                        <td>Window</td>
+                        <td>Threshold</td>
+                        <td>Channel</td>
+                        <td>Slope</td>
+                        <td>Stdev</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="number" id = "readingsBack" value="60"> 
+                        </td>
+                        <td>
+                            <input type="number" id = "threshold" value="1"> 
+                        </td>
+
+                        <td> <select id ="classifierchannel" name="channel">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option> 
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            </select>
+                        </td>
+                        <td> 
+                            <div id ="currSlope">000</div>
+                        </td>
+
+                        <td> 
+                            <div id ="currStdev">000</div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td> </td> <td> </td>
+                        <td> <select id ="classifierchannel2" name="channel">
+                                <option value="0">0</option>
+                                <option selected ="selected" value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option> 
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                            </select>
+                        </td>
+                        <td> 
+                            <div id ="currSlope2">000</div>
+                        </td>
+
+                        <td> 
+                            <div id ="currStdev2">000</div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        
+                        <td> 
+                            <div id ="currSlope3">000</div>
+                        </td>
+
+                        <td> 
+                            <div id ="currStdev3">000</div>
+                        </td>
+                    </tr>
+                    
+                </table> 
 
             </div>
             
@@ -125,6 +215,8 @@
         <script type="text/javascript" src="js/lib/d3.min.js"></script>  
         <script type="text/javascript" src="js/lib/d3tip.js"></script> 
         <script type="text/javascript" src="js/lib/howler.min.js"></script> 
+        <script type="text/javascript" src="js/lib/simple-statistics.min.js"></script> 
+
 
          
 
@@ -151,7 +243,8 @@
         <script type="text/javascript" src="js/area/objects/labeler.js"></script> 
         <script type="text/javascript" src="js/area/objects/outputparser.js"></script> 
         <script type="text/javascript" src="js/area/objects/evaluator.js"></script> 
-        <script type="text/javascript" src="js/area/objects/nback.js"></script> 
+        <script type="text/javascript" src="js/area/objects/nback.js"></script>
+        <script type="text/javascript" src="js/area/objects/classifier.js"></script> 
 
 
         <!--INTERFACE -->

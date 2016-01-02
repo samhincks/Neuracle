@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="35">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="36">
         <file>
             <url>src/java/filereader/formatconversion/ReadWithMatlabMarkers.java</url>
             <bookmark id="23">
@@ -33,6 +33,14 @@
             </bookmark>
         </file>
         <file>
+            <url>web/js/area/consolearea.js</url>
+            <bookmark id="36">
+                <name/>
+                <line>168</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>web/js/visualization/movingLinegraph.js</url>
             <bookmark id="24">
                 <name/>
@@ -57,7 +65,7 @@
             <url>web/js/area/chartarea.js</url>
             <bookmark id="25">
                 <name/>
-                <line>72</line>
+                <line>73</line>
                 <key/>
             </bookmark>
         </file>
@@ -65,7 +73,7 @@
             <url>src/java/dao/MiscellaneousParser.java</url>
             <bookmark id="16">
                 <name/>
-                <line>666</line>
+                <line>680</line>
                 <key/>
             </bookmark>
         </file>
@@ -153,11 +161,12 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/datalayers.js</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/ExternalDataParser.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/classifier.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/css/nback.css</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/index.jsp</file>
             <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/events.js</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/MiscellaneousParser.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/javainterface.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/consolearea.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/css/style.css</file>
         </group>
     </open-files>
 </project-private>

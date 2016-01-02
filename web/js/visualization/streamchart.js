@@ -13,9 +13,7 @@ var StreamChart = function (){
          */
         var channelVals = JSONobj.data.data; //.. the data contained now should be what's added
         var numUpdates = channelVals.values.length;
-            
         for (var i=0; i < numUpdates; i++) {
-            
             var updateData = [];
             if (channelsToShow != null) {
                 var toShow = new Array();

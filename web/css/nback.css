@@ -2,20 +2,20 @@ html {
 
 }
 
-td {
+.ncol{
 	vertical-align: middle;
 	height: 33%;
 	width: 33%;
 }
 
-td div {
+.ncol div {
 	height: 90%;
 	width: 90%;
-	background-color: black;
+	background-color: ghostwhite;
 	margin: auto;
 }
 
-table {
+ #nback {
 	border-collapse: collapse;
 	margin: auto;
 	background-color: white;

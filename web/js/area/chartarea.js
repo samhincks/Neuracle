@@ -40,6 +40,7 @@ function ChartArea(id, descArea) {
         }
 
         else if (JSONobj.id == "csrefresh") { 
+           classifier.addData(JSONobj);
            sc.displayChart(JSONobj, streamChart, data, channelsToShow);
         }
         this.displayedDL = JSONobj.id;
@@ -74,7 +75,10 @@ function ChartArea(id, descArea) {
         $(selection).children().remove();
         d3.selectAll('.line-graph').remove(); //.. remove if it exists already
         data = JSONobj.data;
-
+        
+        //.. potentially, initialize a classifier too if we're interested in realtiem front end statistics
+        classifier.initialize(channelsToShow); //.. watch out! now we reinitialie every time it presses
+        
         //.. if we've called view.show, then restrict channels to show
         if (channelsToShow != null) {
             var toShow = new Array();
