@@ -75,10 +75,10 @@ function Classifier() {
         return [corr, Math.abs(deviationsAway)];
 
     }
-    
     this.addData = function(JSONobj) {
         var channelVals = JSONobj.data.data; //.. the data contained now should be what's added
         var numUpdates = channelVals.values.length;
+       
         for (var i = 0; i < numUpdates; i++) {
             //.. push all the data to be saved 
             for (var j =0; j < NUMCHANNELS; j++) {

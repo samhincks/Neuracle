@@ -85,15 +85,19 @@ else:
 
 def readFromFake():
     print("Printing Fake");
+    it =0;
     while True:
         conn = pymysql.connect(host='127.0.0.1', port=3306,
                     user='root', db='newttt')
         cur=conn.cursor()   
         
-
+        it = it +1
+        max =it
+        if it > 100:
+        	max = it
         #Insert the data to the Table REALTIME            
         cur.execute("""INSERT INTO REALTIME1(A1HBO,A1HB,A2HBO,A2HB,A3HBO,A3HB,A4HBO,A4HB,B1HBO,B1HB,B2HBO,B2HB,B3HBO,B3HB,B4HBO,B4HB) VALUES
-          (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(randint(1,10),randint(1,5),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3)))
+          (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(randint(1,max),randint(1,max),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3)))
         
         
         conn.commit()

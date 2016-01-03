@@ -105,11 +105,15 @@ function init() {
     $("#classifierchannel").change(function(d) {
         classifier.resetCorrelations();
         classifier.channel = $("#classifierchannel").val()*1; 
+        chartArea.setChannelsToShow(0, classifier.channel);
+        javaInterface.postToDataLayer();
     })
     
     $("#classifierchannel2").change(function (d) {
         classifier.resetCorrelations();
         classifier.channel2 = $("#classifierchannel2").val() * 1;
+        chartArea.setChannelsToShow(1, classifier.channel2);
+        javaInterface.postToDataLayer();
     })
     
 }

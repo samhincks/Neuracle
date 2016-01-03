@@ -89,7 +89,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <input type="number" id = "readingsBack" value="60"> 
+                            <input type="number" id = "readingsBack" value="20"> 
                         </td>
                         <td>
                             <input type="number" id = "threshold" value="1"> 

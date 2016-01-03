@@ -404,8 +404,13 @@ function LineGraph(argsMap) {
 	}
 	
 	var initYleft = function() {
-		var maxYscaleLeft = calculateMaxY(data, 'left');
-                var minYscaleLeft = calculateMinY(data, 'left');
+                var curChan = 0;
+                var readingsBack = 60;
+                //var maxYscaleLeft = d3.max(data.values[curChan].slice(data.values[curChan].length, data.values[curChan].length - readingsBack)) // calculateMaxY(data, 'left');
+                // var minYscaleLeft = d3.min(data.values[curChan].slice(data.values[curChan].length, data.values[curChan].length - readingsBack)
+               //.. taking max of max gives occasional bugs
+		var maxYscaleLeft = d3.max(data.values[curChan]); // calculateMaxY(data, 'left');
+                var minYscaleLeft = d3.min(data.values[curChan]);//calculateMinY(data, 'left');
 		//debug("initY => maxYscale: " + maxYscaleLeft);
 		var numAxisLabels = 6;
 		if(yScale == 'pow') {
@@ -425,6 +430,7 @@ function LineGraph(argsMap) {
 	
 	var initYright = function() {
 		var maxYscaleRight = calculateMaxY(data, 'right')
+                
 		// only create the right axis if it has values
 		if(maxYscaleRight != undefined) {
 			//debug("initY => maxYscale: " + maxYscaleRight);

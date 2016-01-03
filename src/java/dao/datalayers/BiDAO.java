@@ -302,7 +302,6 @@ public class BiDAO extends DataLayerDAO {
             jsonObj.put("id", getId());
             int MAXPOINTS =300;
             jsonObj.put("data", getChannels(channelSet, MAXPOINTS, 16, 0));
-            
             int numPoints = channelSet.getMinPoints();
             double scale = 1;
             if (MAXPOINTS < numPoints) scale = numPoints / MAXPOINTS;

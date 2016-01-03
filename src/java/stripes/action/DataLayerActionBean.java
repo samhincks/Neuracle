@@ -14,6 +14,7 @@ import java.util.Map;
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.Validate;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import static stripes.action.BaseActionBean.INDEX;
@@ -181,7 +182,7 @@ public class DataLayerActionBean extends BaseActionBean{
             else { //.. STATS
                  jsonObj = dlGiver.getJSON();
             }
-            
+           
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));
         }
         catch (Exception e) {

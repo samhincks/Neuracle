@@ -325,6 +325,7 @@ public class InputParser {
                 ctx.setCurrentName("reale");
                 tDAO = (TriDAO) ctx.getCurrentDataLayer();
                 JSONObject jo = tDAO.getJSON();
+                
                 System.out.println(jo);
             }
             

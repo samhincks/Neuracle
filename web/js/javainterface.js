@@ -13,6 +13,7 @@ function JavaInterface() {
     /**Having parsed the input and considered a response, post it to console*/
     this.returnFromConsole = function(xhr) {
         var JSONobj = eval('('+ xhr +')'); 
+        console.log(JSONobj);
         if (JSONobj.error != null){
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
         }
@@ -25,7 +26,7 @@ function JavaInterface() {
         
         if (JSONobj.tutorial != "")
             consoleArea.displayMessage(JSONobj.selfcalibrate, "systemmess", "orangeline");
-        
+
         //.. is there some action to complete here? A new dataset to reload
         if(JSONobj.action != null) {
             if (JSONobj.action.id == "reload") {
