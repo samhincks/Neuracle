@@ -77,7 +77,7 @@
             </div>
             
             <!--Where we place our the description of selection-->
-            <div id ="farBottomRight" class ="component">      
+            <div id ="farBottomRight" class ="component ">      
                     
                 <table id ="classifier" BORDER="5"    WIDTH="50%"   CELLPADDING="4" CELLSPACING="3">
                     <tr>
@@ -188,11 +188,11 @@
            
            
             <!--Bottom right, where we put the console  -->
-            <div id ="bottomRight" class ="component">
+            <div id ="bottomRight" class ="component bottomRightUnzoomed">
                 <!--The console --> 
                 <div id = "console"> 
                     <div id = "pastmessages"> </div>     
-                    <div class = "usermessage">
+                    <div id = "usrmessage" class = "usermessage">
                           <span class = "prompt"> > </span> 
                           <span class = "cursor"> </span> 
                           <input id = "userinput" ></input> 

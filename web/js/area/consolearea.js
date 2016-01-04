@@ -165,7 +165,19 @@ function ConsoleArea() {
              consoleArea.displayMessage("Smallest correlation is " +  smallest[0] + " between "+ smallest[1] + " and " + smallest[2]);
              return true;
          }
-         //.. 
+         else if (userText.startsWith("journal")) {
+            consoleArea.displayMessage("Journaling... ");
+             $("#usrmessage").append("<textarea id = journalinput></textarea>");
+             $("#userinput").remove();
+             $("#bottomRight").removeClass("bottomRightUnZoomed")
+             $("#bottomRight").addClass("bottomRightZoomed")
+             //.. next make so that it cant be resized, and so that it is the right size, has the right font
+             //.. and suggests interaction, like the words you are writing, especialyl at the start have a special flair to them 
+            //.. and make so that it takes up the whole left half of the screen 
+            return true;
+         }
+         
+         //.. get the slopes of all channels; in additoin commence streaming if its not 
          else if (userText.startsWith("slopes")) {
              if (this.streaming == false)  {
                  this.parseLocally("stream");

@@ -69,12 +69,20 @@
     }
     
     #bottomRight {
+        background:whitesmoke;
+        z-index: 2;
+    }
+    .bottomRightUnzoomed {
         width: 60%;
         height: 38%;
-        background:whitesmoke;
         top:61%;
         left: 20%;
-        z-index: 2;
+    }
+    .bottomRightZoomed {
+        top:10%;
+        left: 2%;
+        width: 700px;//45%;
+        height: 80%;
     }
     #farBottomRight {
         width: 19%;

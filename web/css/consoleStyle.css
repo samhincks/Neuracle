@@ -54,6 +54,22 @@
         width: 10%;
         background-color:#666666; 
     }
+    .journalcursor {
+        
+    }/*journal*/
+    #journalinput {
+        background-color:#F5F5F5;
+        border-radius: 15px;   
+        height: 600px;
+        font-family: "Monaco","Courier New",monospace;
+        font-size:16px;
+        resize:none;
+        outline:0px !important;
+        -webkit-appearance:none;
+        padding:50px;
+        width: 70%
+
+    }
 
     input {
         background: #EEEEEE;
