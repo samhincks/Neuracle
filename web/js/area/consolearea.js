@@ -167,10 +167,13 @@ function ConsoleArea() {
          }
          else if (userText.startsWith("journal")) {
             consoleArea.displayMessage("Journaling... ");
-             $("#usrmessage").append("<textarea id = journalinput></textarea>");
-             $("#userinput").remove();
-             $("#bottomRight").removeClass("bottomRightUnZoomed")
-             $("#bottomRight").addClass("bottomRightZoomed")
+            
+            //.. move writing location
+            $("#userinput").remove();
+            $("#bottomRight").removeClass("bottomRightUnZoomed")
+            $("#bottomRight").addClass("bottomRightZoomed")
+             
+           journal.initialize();
              //.. next make so that it cant be resized, and so that it is the right size, has the right font
              //.. and suggests interaction, like the words you are writing, especialyl at the start have a special flair to them 
             //.. and make so that it takes up the whole left half of the screen 
@@ -184,19 +187,19 @@ function ConsoleArea() {
              }
              var slope = classifier.getSlope(classifier.channel);
              var val = Math.round(slope[0] * 100) / 100;
-             var dev =  Math.round(slope[1] * 100) / 100;
+             var dev =  Math.round(Math.abs(slope[1]) * 100) / 100;
              $("#currSlope").text(val);
              $("#currStdev").text(dev);
              
             slope = classifier.getSlope(classifier.channel2);
             val = Math.round(slope[0] * 100) / 100;
-            dev = Math.round(slope[1] * 100) / 100;
+            dev = Math.round(Math.abs(slope[1]) * 100) / 100;
             $("#currSlope2").text(val);
             $("#currStdev2").text(dev);
              
             slope = classifier.getCorrelationKBack(classifier.channel, classifier.channel2);
             val = Math.round(slope[0] * 100) / 100;
-            dev = Math.round(slope[1] * 100) / 100;
+            dev = Math.round(Math.abs(slope[1]) * 100) / 100;
             $("#currSlope3").text(val);
             $("#currStdev3").text(dev);
              

@@ -245,6 +245,8 @@
         <script type="text/javascript" src="js/area/objects/evaluator.js"></script> 
         <script type="text/javascript" src="js/area/objects/nback.js"></script>
         <script type="text/javascript" src="js/area/objects/classifier.js"></script> 
+        <script type="text/javascript" src="js/area/objects/journal.js"></script> 
+
 
 
         <!--INTERFACE -->

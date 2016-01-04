@@ -57,20 +57,34 @@
     .journalcursor {
         
     }/*journal*/
+    #journal { //.. div containing both input and writing
+        
+    }
     #journalinput {
-        background-color:#F5F5F5;
+        height:10px;
+        width:10px;
+        background-color:whitesmoke;
         border-radius: 15px;   
-        height: 600px;
         font-family: "Monaco","Courier New",monospace;
         font-size:16px;
         resize:none;
         outline:0px !important;
         -webkit-appearance:none;
+    }
+    #journalwriting {
+        background-color:#F5F5F5;
+        border-radius: 15px;   
+        font-family: "Monaco","Courier New",monospace;
+        font-size:16px;
         padding:50px;
         width: 70%
-
     }
-
+    
+    .correct {
+        padding:0.1%;
+        background-color: lightblue;
+        border-radius:4px;
+    }
     input {
         background: #EEEEEE;
         height: 10%; 

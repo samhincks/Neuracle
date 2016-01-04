@@ -14,6 +14,9 @@ var outputParser = new OutputParser();
 var address =  "http://localhost:8080/Neuracle/";
 var nback = new NBack();
 var classifier = new Classifier();
+var journal  = new Journal();
+
+
 
 
 //var address = "http://sensormining.herokuapp.com/"; //.. the address of the back-end
@@ -115,6 +118,7 @@ function init() {
         chartArea.setChannelsToShow(1, classifier.channel2);
         javaInterface.postToDataLayer();
     })
+    
     
 }
 

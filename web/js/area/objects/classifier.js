@@ -72,7 +72,7 @@ function Classifier() {
         //console.log(corr, scaledCorr, x.length, y.length, x[0], y[0]);
         //console.log(x, y);
 
-        return [corr, Math.abs(deviationsAway)];
+        return [corr, deviationsAway];
 
     }
     this.addData = function(JSONobj) {
