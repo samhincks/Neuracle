@@ -184,7 +184,10 @@ function ConsoleArea() {
          else if (userText.startsWith("slopes")) {
              if (this.streaming == false)  {
                  this.parseLocally("stream");
+                 this.parseUserMessage("repeat:stat(HR)");
+                 this.parseUserMessage("repeat:stat(HRV)");
              }
+             
              var slope = classifier.getSlope(classifier.channel);
              var val = Math.round(slope[0] * 100) / 100;
              var dev =  Math.round(Math.abs(slope[1]) * 100) / 100;
@@ -202,6 +205,11 @@ function ConsoleArea() {
             dev = Math.round(Math.abs(slope[1]) * 100) / 100;
             $("#currSlope3").text(val);
             $("#currStdev3").text(dev);
+            
+            var hr = Math.round(classifier.heartrate * 100) / 100;
+            var hrv =  Math.round(classifier.heartratevariability * 100) / 100; 
+            $("#currSlope4").text(hr);
+            $("#currStdev4").text(hrv);
              
              //if (dev > 1) alert("bajs");
              return true;

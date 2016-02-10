@@ -52,9 +52,18 @@ function JavaInterface() {
              }
              if (JSONobj.action.id.startsWith("stat")) {
                 var dl = JSONobj.action.id.split("-")[1];
-                var val = JSONobj.content;
-                console.log(dl, val);
+                var returnVal = JSONobj.content;
+                var type = returnVal.split("-")[0];
+                var val = returnVal.split("-")[1];
+                console.log(dl, val, type, returnVal);
                 var devAway = datalayerArea.datalayers.getDLById(dl).processStat(val);
+                
+                if (type == "hr") {
+                    classifier.heartrate = val;
+                }
+                if (type == "hrv") {
+                    classifier.heartratevariability = val;
+                }/*
                 if (Math.abs(devAway)>1) {
                     if (devAway >0){
                         document.getElementById("C1").play();
@@ -64,7 +73,7 @@ function JavaInterface() {
                         document.getElementById("B2").play();
                         consoleArea.displayMessage(devAway + "", "systemmess", "blackline");
                     }
-                }
+                }*/ 
              }
         }
     }

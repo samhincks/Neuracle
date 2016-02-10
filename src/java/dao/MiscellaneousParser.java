@@ -572,8 +572,8 @@ public class MiscellaneousParser extends Parser{
     
     private String stat(String [] parameters) throws Exception{
         DataLayer dl = this.currentDataLayer;
-        int channel = 3; 
-        int readingsBack = 40;
+        int channel = 0; 
+        int readingsBack = 500;
         String stat = "slope";
         if (parameters.length >0) stat = parameters[0];
         if (parameters.length >1) {
@@ -607,16 +607,20 @@ public class MiscellaneousParser extends Parser{
                 if (stat.equals("slope")) return c.getSlope()+"";
                 if (stat.equals("bestfit")) return c.getBestFit()+"";
                 if (stat.equals("secondder")) return c.getSecondDerivative() +"";
+               if( stat.equals("hrv")) return "hrv-"+c.getHRVariability()+"";
+                if( stat.equals("hr")) return "hr-"+c.getPulse()+"";
             } 
 
             else{
                 Channel c = cs.streams.get(channel);
                 Channel sub = c.getSample(c.numPoints - readingsBack - 1, c.numPoints - 1, true);
-                if (stat.equals("slope")) return sub.getSlope()+"";
-                if (stat.equals("bestfit")) return sub.getBestFit()+"";
-                if (stat.equals("secondder")) return sub.getSecondDerivative() +"";
+                if (stat.equals("slope")) return "slope-"+ sub.getSlope()+"";
+                if (stat.equals("bestfit")) return "bestfit-"+ sub.getBestFit()+"";
+                if (stat.equals("secondder")) return "secondder-"+ sub.getSecondDerivative() +"";
+                if( stat.equals("hrv")) return "hrv-"+sub.getHRVariability()+"";
+                if( stat.equals("hr")) return "hr-"+sub.getPulse()+"";
+
             }
-            
            
         }
         throw new Exception("Must be a channelset");

@@ -13,6 +13,10 @@ function Classifier() {
     this.correlations =[];
     this.scaledCorrelations =[];
     
+    //.. this is a bit different, btu I'm going to associate HRV and HR with this guy too. I'm going to have so that it just gets recorded here
+    this.heartrate =0;
+    this.heartratevariability=0;
+    
     this.resetCorrelations = function() {
         this.correlations = new Array();
         this.scaledCorrelations = new Array();

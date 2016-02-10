@@ -167,6 +167,19 @@
                         </td>
                     </tr>
                     
+                    <tr>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+
+                        <td> 
+                            <div id ="currSlope4">000</div>
+                        </td>
+
+                        <td> 
+                            <div id ="currStdev4">000</div>
+                        </td>
+                    </tr>
                 </table> 
 
             </div>
