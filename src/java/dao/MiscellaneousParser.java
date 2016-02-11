@@ -694,7 +694,8 @@ public class MiscellaneousParser extends Parser{
     
     
     private String custom(String[] parameters) throws Exception{
-        //loadData();
+        manipulateTest();
+        /*//loadData();
         loadNewProbe();
         ctx.inputParser.parseInput("synchronize");
         Thread.sleep(300);
@@ -702,7 +703,7 @@ public class MiscellaneousParser extends Parser{
         ctx.inputParser.parseInput("interceptlabel(realtime1,task, 1327)");
         Thread.sleep(300);
 
-        ctx.inputParser.parseInput("interceptlabel(realtime1,event,1444)");
+        ctx.inputParser.parseInput("interceptlabel(realtime1,event,1444)");*/
         return "custom";
     }
     private void loadNewProbe() throws Exception{

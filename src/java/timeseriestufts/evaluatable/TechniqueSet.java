@@ -117,10 +117,6 @@ public class TechniqueSet extends Technique{
             transformation =(Transformation)t;
         }
         
-        else if (t instanceof Transformations) {
-            if (transformations!= null)return false; //.. if we've already set this value
-            transformations =(Transformations)t;
-        }
        
         //.. For example if we are adding a Filter or this class itself
         else {
@@ -129,6 +125,7 @@ public class TechniqueSet extends Technique{
         
         return true;
     }
+    
     
     /**Like add technique but change underlying technique even if it already exists*/
     public void resetTechnique(Technique t) throws Exception{
@@ -154,7 +151,11 @@ public class TechniqueSet extends Technique{
             throw new Exception("Cannot add Technique " +t.id);
         }
     }
-    
+   
+    public void addTransformation(Transformation t) {
+        if (transformations == null) transformations = new Transformations();
+        transformations.addTransformation(t);
+    }
    
    @Override 
    public void addPredictions(Predictions p) {

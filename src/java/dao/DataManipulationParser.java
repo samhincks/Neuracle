@@ -9,6 +9,7 @@ import dao.techniques.TechniqueDAO;
 import dao.techniques.TechniquesDAO;
 import filereader.Markers;  
 import java.util.ArrayList;         
+import java.util.HashMap;
 import java.util.Hashtable;             
 import org.json.JSONArray;    
 import org.json.JSONObject;  
@@ -30,6 +31,7 @@ import timeseriestufts.evaluatable.performances.Predictions;
 import timeseriestufts.kth.streams.DataLayer;
 import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.bi.ChannelSet.Tuple;
+import timeseriestufts.kth.streams.bi.Instance;
 import timeseriestufts.kth.streams.quad.MultiExperiment;
 import timeseriestufts.kth.streams.tri.ChannelSetSet;
 import timeseriestufts.kth.streams.tri.Experiment;  
@@ -158,6 +160,12 @@ public class DataManipulationParser extends Parser{
         command = new Command("classifylast");
         command.documentation = " With a 2D channelset selected and intersecting a trained machine learning "
                 + " algorithm, classifies the last points of the channelset equal to the length of the training trial ";
+        commands.put(command.id, command);
+        
+        //-- evaluate slope
+        command = new Command("hcii");
+        command.documentation = " With a 2D channelset selected and intersecting a trained machine learning "
+                + " algorithm, evaluates how well a naive, single channel detector performs ";
         commands.put(command.id, command);
         
         //-- fnirs 
@@ -289,6 +297,12 @@ public class DataManipulationParser extends Parser{
             c = commands.get("classify");
             c.action = "reload"; //.. since we add predictions to the view
             c.retMessage = classify(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
+        }
+        
+        else if (command.startsWith("hcii")) {
+            c = commands.get("hcii");
+            c.action = "reload"; //.. since we add predictions to the view
+            c.retMessage = hcii(parameters, ctx.getCurrentDataLayer(), ctx.getPerformances());
         }
         
         else if (command.startsWith("imagent")) {
@@ -1193,7 +1207,120 @@ public class DataManipulationParser extends Parser{
         return "Unexpected evaluation failure. Actually, unreachable statement";
     }
     
-   
+    /** Note you must intersect with some other trained classifer - eve
+     **/
+    private String hcii(String[] parameters, DataLayerDAO dDAO, Performances performances) throws Exception {
+        if (!(currentDataLayer instanceof ChannelSet)) {
+            throw new Exception("The command classify only "
+                    + "applies to 2D Channelsets " + currentDataLayer.id + " doesn't fit that bill");
+        }
+        ChannelSet cs = (ChannelSet) currentDataLayer;
+
+        //.. retrieve the hovered over classifier, and bitch if somethings wrong
+        ArrayList<ClassificationAlgorithm> classifiers = dDAO.getClassifiers();
+        if (classifiers.size() > 1) {
+            throw new Exception("It is ambiguous which classifier you want to use");
+        }
+        if (classifiers.isEmpty()) {
+            throw new Exception("You must connect the dataset with a trained classifier");
+        }
+
+        WekaClassifier classifier = (WekaClassifier) classifiers.get(0);
+        int readEvery = 30;
+        int channel =0;
+        float lower = -1;
+        float higher = 1;
+        
+        if (parameters.length > 0) {
+            readEvery = Integer.parseInt(parameters[0]);
+        }
+        if (parameters.length > 1) {
+            lower = Float.parseFloat(parameters[1]);
+        }
+        if (parameters.length > 2) {
+            higher = Float.parseFloat(parameters[2]);
+        }
+       
+        if (cs.getMinPoints() < readEvery) {
+            throw new Exception("There is not enough space to create even one instance. Testing must be larger");
+        }
+        Experiment streamingExperiment = cs.getMovingExperiment(classifier.lastTrainedClassification, readEvery, readEvery, true);
+        //.. Retrieve our instance-packed version of the stream and get weka version of it
+        streamingExperiment.setTechniqueSet(classifier.lastTechniqueTested);
+
+        if (classifier.lastTechniqueTested.getTransformations() != null) {
+            for (Transformation t : classifier.lastTechniqueTested.getTransformations().transformations) {
+                if (t.for3D) {
+                    streamingExperiment = streamingExperiment.manipulate(t, true);
+                }
+            }
+        }
+        int higherGuesses =0;
+        int lowerGuesses =0;
+        int neitherGuesses =0;
+        HashMap<String,Integer> hmHigher = new HashMap();
+        HashMap<String, Integer> hmLower = new HashMap();
+        HashMap<String, Integer> neither = new HashMap();
+
+
+        for (String con : streamingExperiment.classification.values) {
+            System.out.println("adding " + con);
+            hmHigher.put(con, 0);
+            hmLower.put(con, 0);
+            neither.put(con, 0);
+        }
+        streamingExperiment.classification.getCondition(0);
+        for (Instance ins : streamingExperiment.matrixes) {
+            double slope = ins.getChannel(channel).getSlope();
+            if (slope > higher) {
+                higherGuesses++;
+                try {
+                    hmHigher.put(ins.condition, hmHigher.get(ins.condition) +1);
+                }
+                catch(Exception e) {
+                    hmHigher.put(ins.condition, 1);
+                }
+                
+            }
+            if (slope < lower) {
+                lowerGuesses++;
+                try{
+                    hmLower.put(ins.condition, hmLower.get(ins.condition) + 1);
+                }
+                catch(Exception e) {
+                    hmLower.put(ins.condition, 1);
+                }
+            }
+            else {
+                neitherGuesses++;
+                try {
+                    neither.put(ins.condition, neither.get(ins.condition) + 1);
+                } catch (Exception e) {
+                    neither.put(ins.condition,1);
+                }
+
+            }
+        }
+        
+        String retString = "condition - thresholdA:numberOfGuesses - thresholdB:numberOfGuesses::";
+        for (String con : streamingExperiment.classification.values) {
+            retString += con + "  " + lower + ":"+ hmLower.get(con)+"     .    ";
+            retString += "-" + higher + ":"+ hmHigher.get(con);
+            retString += "     AND NEITHER: "  + ":" + neither.get(con);
+
+            retString += "::";
+            System.out.println(con);
+            System.out.println("higher: " + hmHigher.get(con));
+            System.out.println("lower: " + hmLower.get(con));
+            System.out.println("---------------------");
+
+        }
+        return retString;
+
+    
+    }
+    
+    
     private String classify(String [] parameters, DataLayerDAO dDAO, Performances performances) throws Exception{
         if(!(currentDataLayer instanceof ChannelSet)) throw new Exception("The command classify only "
                 + "applies to 2D Channelsets " + currentDataLayer.id + " doesn't fit that bill");
@@ -1217,8 +1344,8 @@ public class DataManipulationParser extends Parser{
     
        //..Classify the  
        Predictions p = classifier.testRealStream(classifier.lastTrainedClassification,
-               classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), 
-               performances), cs, classifier.lastInstanceLength, readEvery, classifier.lastAsAlgosUsed,threshold, getEvery); 
+            classifier.lastTechniqueTested, this.getDatasetForEvaluations(dDAO.getId(), 
+            performances), cs, classifier.lastInstanceLength, readEvery, classifier.lastAsAlgosUsed,threshold, getEvery); 
         
        
        p.setId(dDAO.getId());//.. this is an exception, since here we actualyl do want to set the id
@@ -1324,21 +1451,21 @@ public class DataManipulationParser extends Parser{
                 }
             }
             else {
-                toKeep.add("easy");
+                toKeep.add("easy");  
                 toKeep.add("hard");
             }    
             e = e.removeAllClassesBut(toKeep);  
             if (e.matrixes.isEmpty()) throw new Exception("No conditions left");
 
             //.. anchor it, setting start to zero
-            e = e.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);
-            e = e.manipulate(new Transformation(Transformation.TransformationType.movingaverage, 15), false);
+            //e = e.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);
+            //e = e.manipulate(new Transformation(Transformation.TransformationType.movingaverage, 15), false);
             //e = e.manipulate(new Transformation(Transformation.TransformationType.subtract, 25), true);
-            e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false); //. wierd if anchor comes before?
-            e = e.manipulate(new Transformation(Transformation.TransformationType.lowpass, 0.1f), true); 
+           // e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false); //. wierd if anchor comes before?
+            //e = e.manipulate(new Transformation(Transformation.TransformationType.lowpass, 0.1f), true); 
             e.setParent(cs.getId()); //.. set parent to what we derived it from
   
-  
+    
             //.. make a new data access object, and add it to our stream
             TriDAO pDAO = new TriDAO(e);
 

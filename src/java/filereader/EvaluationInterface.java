@@ -5,6 +5,8 @@
 package filereader;
 
 import filereader.experiments.IDExperiment;
+import filereader.experiments.UAV;
+import static filereader.formatconversion.ReadWithMatlabMarkers.UAV;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,7 +39,7 @@ import timeseriestufts.kth.streams.tri.TridimensionalLayer;
 public class EvaluationInterface {
     
     public static void main(String []args) {
-        IDExperiment.main(args);
+        UAV.main(args);
     }
     
     public float frameSize =0.0848f;
@@ -84,6 +86,7 @@ public class EvaluationInterface {
     }
    
      public void testFile(Dataset ds, TechniqueSet ts, String filename, String condition, ArrayList<String> keep ) {
+         if (!filename.equals("input/UAV_processed/10.csv")) return;
          try {
             //.. read
             TSTuftsFileReader f = new TSTuftsFileReader();
@@ -92,8 +95,10 @@ public class EvaluationInterface {
             ChannelSet cs = f.readData(",", filename,1);
             //  ChannelSet baseline = f.readData(",", "input/UAV_processed/4.csv");
             //cs.detrend(baseline, 1.2, false);
-
-           // cs.manipulate(ts, false);
+           try {
+            for (Transformation t : ts.getTransformations().transformations){
+               cs = cs.manipulate(t, false);
+            }}catch(Exception e) {}
             //cs.printStream();
            
             //.. split
@@ -190,7 +195,11 @@ public class EvaluationInterface {
         ts.addTechnique(new WekaClassifier(WekaClassifier.MLType.smo));
         FeatureSet fs = new FeatureSet("fs");
       //  fs.addFeaturesFromConsole("sax-kq^sax-ogj^sax-hn^sax-hq^sax-ac^sax-fk^sax-kq^sax-is^sax-hm", "*", "*");
-        fs.addFeaturesFromConsole("slope", "*", "WHOLE");
+        /*mean, smallest, largest, fwhm, slope, absslope, 
+            stddev, secondder, t2p, absmean, sax, saxdist, bestfit, bfintercept, freq,
+            granger, saxpair
+        */
+        fs.addFeaturesFromConsole("slope^mean^slope", "*", "WHOLE");
         /*String features ="";
         for (int i=0 ;i < 256; i++) {
             features += "freq-"+i;
@@ -199,9 +208,8 @@ public class EvaluationInterface {
         fs.addFeaturesFromConsole(features, "*", "*");*/
 
         ts.addTechnique(fs);
-        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.info, 0.2f));
-        //ts.addTechnique(new Transformation(Transformation.TransformationType.calcoxy));
-        //ts.addTechnique(new PassFilter());//PassFilter.FilterType.LowPass, 0.35));
+        ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 0.8f));
+       // ts.addTransformation(new Transformation(Transformation.TransformationType.movingaverage, 20));
 
         return ts;
     }

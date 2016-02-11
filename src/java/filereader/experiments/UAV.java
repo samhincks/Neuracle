@@ -31,6 +31,7 @@ public class UAV  extends EvaluationInterface {
         toKeep.add("hard");
     }
     
+    
     /** (1) getTechniqueSetsByML() 
      * SMo: 64%
      * (2) getTechniqueSetsByFeature()
@@ -45,7 +46,7 @@ public class UAV  extends EvaluationInterface {
     public void evaluateSingles() throws Exception {
         ArrayList<TechniqueSet> techniques = new ArrayList();
         techniques.add(getTechniqueSet());
-        testMulti(techniques, AJExperiment.getFiles(), condition, toKeep);
+        testMulti(techniques, getFiles(), condition, toKeep);
     }
     
     /**Bad part. = 1, 6, 14, 16, 17, 19, 20**/
@@ -82,7 +83,6 @@ public class UAV  extends EvaluationInterface {
         System.out.println("Testing on " + files.size());
         return files;
     }
-    
     
     
      

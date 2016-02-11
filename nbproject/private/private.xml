@@ -146,17 +146,17 @@
             <url>src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</url>
             <bookmark id="19">
                 <name/>
-                <line>784</line>
+                <line>783</line>
                 <key/>
             </bookmark>
             <bookmark id="17">
                 <name/>
-                <line>939</line>
+                <line>938</line>
                 <key/>
             </bookmark>
             <bookmark id="18">
                 <name/>
-                <line>1085</line>
+                <line>1084</line>
                 <key/>
             </bookmark>
         </file>
@@ -176,14 +176,13 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/classifier.js</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/index.jsp</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/journal.js</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/css/consoleStyle.css</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/events.js</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/consolearea.js</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/MiscellaneousParser.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/javainterface.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/filereader/experiments/UAV.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/DataManipulationParser.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/evaluatable/Transformation.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/evaluatable/FeatureDescription.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/evaluatable/FeatureSet.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/filereader/EvaluationInterface.java</file>
         </group>
     </open-files>
 </project-private>

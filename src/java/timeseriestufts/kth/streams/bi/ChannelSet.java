@@ -723,7 +723,6 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
      * Return a copy, with fresh points if copy = true
      */
     public ChannelSet manipulate(TechniqueSet ts, boolean copy) throws Exception{
-        
         /**
          I DONT USE THIS ANYMORE, GET RID OF IT. IT WASTES TIME!
          **/
