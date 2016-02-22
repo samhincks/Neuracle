@@ -12,6 +12,7 @@ var plumb = new Plumb();
 var datalayerArea = new DatalayerArea("#content");
 var outputParser = new OutputParser();
 var address =  "http://localhost:8080/Neuracle/";
+//var address = "http://sensormining.herokuapp.com/";
 var nback = new NBack();
 var classifier = new Classifier();
 var journal  = new Journal();

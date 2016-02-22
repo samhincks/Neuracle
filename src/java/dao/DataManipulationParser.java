@@ -1455,13 +1455,17 @@ public class DataManipulationParser extends Parser{
                 toKeep.add("hard");
             }    
             e = e.removeAllClassesBut(toKeep);  
+            e = e.removeUnfitInstances(e.getMostCommonInstanceLength(), 0.1, true);
+
             if (e.matrixes.isEmpty()) throw new Exception("No conditions left");
 
             //.. anchor it, setting start to zero
-            //e = e.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);
-            //e = e.manipulate(new Transformation(Transformation.TransformationType.movingaverage, 15), false);
+            e = e.manipulate(new Transformation(Transformation.TransformationType.averagedcalcoxy), true);
+            e = e.manipulate(new Transformation(Transformation.TransformationType.zscore), true);
+
+            e = e.manipulate(new Transformation(Transformation.TransformationType.movingaverage, 15), false);
             //e = e.manipulate(new Transformation(Transformation.TransformationType.subtract, 25), true);
-           // e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false); //. wierd if anchor comes before?
+            e = e.manipulate(new Transformation(Transformation.TransformationType.anchor), false); //. wierd if anchor comes before?
             //e = e.manipulate(new Transformation(Transformation.TransformationType.lowpass, 0.1f), true); 
             e.setParent(cs.getId()); //.. set parent to what we derived it from
   

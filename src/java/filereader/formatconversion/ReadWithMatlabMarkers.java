@@ -6,6 +6,7 @@ package filereader.formatconversion;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -38,6 +39,10 @@ public class ReadWithMatlabMarkers {
          this.markerFile = markerFile;
          fnirsDataIn = new BufferedReader(new java.io.FileReader(fnirsFile));
          if(markerFile!= null)markerDataIn = new BufferedReader(new java.io.FileReader(markerFile));
+    }
+    
+    public ReadWithMatlabMarkers() {
+        
     }
     
     /**  RMCRCM until participant 9 and from 9 forward we changed to RCMRMC. (R = rest, M = meditation, C = control).
@@ -94,6 +99,8 @@ public class ReadWithMatlabMarkers {
         
         return trials;
     }
+    
+   
     /**
      */
     public ArrayList<ReadWithMatlabMarkers.Trial> readMarkerFileDan() throws Exception{
@@ -283,10 +290,60 @@ public class ReadWithMatlabMarkers {
         return null;
     }
     
-    public static void main(String[] args) {
-        Meditation();
+    public ArrayList<ReadWithMatlabMarkers.Trial> readMarkerFileRemote(BufferedWriter bw,File f,int chanOfInterest, int markerIndex) throws Exception {
+        fnirsDataIn = new BufferedReader(new java.io.FileReader(f));
+        String line; 
+        int index =0;
+        String condition = "t"+index;
+        while ((line = fnirsDataIn.readLine()) != null) {
+            String[] vals = line.split(DELIMETER);
+            int marker = Integer.parseInt(vals[markerIndex]);
+            String chanVal = vals[chanOfInterest];
+            bw.write(chanVal+","+condition+"\n");
+            if (marker != 0) {
+                index++; 
+                condition = "t"+ index;
+            }
+            
+
+        }
+
+        return trials;
     }
     
+    public static void main(String[] args) {
+        Remote();
+    }
+    public static void Remote() {
+        String folderName = "input/Remote_processed/E3/csv";
+        File folder = new File(folderName);
+        String outputName = "input/Remote_processed/E3/P1E3.csv";
+
+        try {
+            ReadWithMatlabMarkers reader = new ReadWithMatlabMarkers();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(outputName));
+            bw.write("chan" + 0 + ",condition\n");
+
+            for (File f : folder.listFiles()) {
+                System.out.println(f.getName());
+                if(!(f.getName().startsWith("."))) {
+                    if (f.getName().startsWith("P1_E3_T3_ISSDataHbO")){
+                        reader.readMarkerFileRemote(bw,f,0,8);
+                    }
+                    if (f.getName().startsWith("P1_E3_T2_CMOS_dataHbO")) {
+                        reader.readMarkerFileRemote(bw, f, 0, 4);
+                    } 
+                    if (f.getName().startsWith("P1_E3_T1_PIXIS_dataHbO")) {
+                        reader.readMarkerFileRemote(bw, f, 0, 4);
+                    }
+                }
+                
+            }
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public static void Meditation() {
         String folder = "input/meditation/";
         try {

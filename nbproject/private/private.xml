@@ -1,39 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="40">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="45">
         <file>
             <url>src/java/filereader/formatconversion/ReadWithMatlabMarkers.java</url>
-            <bookmark id="23">
+            <bookmark id="45">
                 <name/>
-                <line>201</line>
+                <line>46</line>
                 <key/>
             </bookmark>
-            <bookmark id="22">
+            <bookmark id="44">
                 <name/>
-                <line>289</line>
-                <key/>
-            </bookmark>
-            <bookmark id="34">
-                <name/>
-                <line>298</line>
+                <line>316</line>
                 <key/>
             </bookmark>
         </file>
         <file>
             <url>src/java/dao/DataManipulationParser.java</url>
-            <bookmark id="40">
+            <bookmark id="42">
                 <name/>
-                <line>411</line>
+                <line>358</line>
                 <key/>
             </bookmark>
-            <bookmark id="5">
+            <bookmark id="41">
                 <name/>
-                <line>1203</line>
+                <line>1211</line>
                 <key/>
             </bookmark>
             <bookmark id="14">
                 <name/>
-                <line>1323</line>
+                <line>1450</line>
                 <key/>
             </bookmark>
         </file>
@@ -60,6 +55,14 @@
             <bookmark id="24">
                 <name/>
                 <line>791</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/filereader/EvaluationInterface.java</url>
+            <bookmark id="43">
+                <name/>
+                <line>87</line>
                 <key/>
             </bookmark>
         </file>
@@ -176,13 +179,9 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/filereader/experiments/UAV.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/DataManipulationParser.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/evaluatable/Transformation.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/evaluatable/FeatureDescription.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/evaluatable/FeatureSet.java</file>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/filereader/EvaluationInterface.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/events.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/javainterface.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/filereader/formatconversion/ReadWithMatlabMarkers.java</file>
         </group>
     </open-files>
 </project-private>

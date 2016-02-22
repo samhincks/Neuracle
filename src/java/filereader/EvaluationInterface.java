@@ -66,9 +66,9 @@ public class EvaluationInterface {
                     catch(Exception e) {}//.. fail silently
                 }
                 
-                for(Entry<String, Double> en : ts.getFeatureSet().infogain.entrySet()) {
+             //   for(Entry<String, Double> en : ts.getFeatureSet().infogain.entrySet()) {
                   //  System.out.println(/*en.getKey() + " , " + */(en.getValue() / ts.getFeatureSet().infogainsAdded));
-                }
+               // }
                 performances.addNewTechniqueSet(ts);
 //                performances.printPerformances(bw, first);
                 performances.resetDatasets();
@@ -86,7 +86,6 @@ public class EvaluationInterface {
     }
    
      public void testFile(Dataset ds, TechniqueSet ts, String filename, String condition, ArrayList<String> keep ) {
-         if (!filename.equals("input/UAV_processed/10.csv")) return;
          try {
             //.. read
             TSTuftsFileReader f = new TSTuftsFileReader();
@@ -161,7 +160,7 @@ public class EvaluationInterface {
                     Experiment e = (Experiment) l;
                     System.out.println(/*"When " + e.getDataSet().getId() + "left out, " + "%avg = " +*/ e.getDataSet().getAverage());
                 }
-                System.out.println(ts.getId() + ":: Average %CRCT: " + ts.getAverage());
+                System.out.println(/*ts.getId() + ":: Average %CRCT: " + */ts.getAverage());
                 
                 performances.addNewTechniqueSet(ts);
 //                performances.printPerformances(bw, first);
@@ -199,7 +198,7 @@ public class EvaluationInterface {
             stddev, secondder, t2p, absmean, sax, saxdist, bestfit, bfintercept, freq,
             granger, saxpair
         */
-        fs.addFeaturesFromConsole("slope^mean^slope", "*", "WHOLE");
+        fs.addFeaturesFromConsole("mean^stddev^bestfit", "*", "SECONDHALF^WHOLE");
         /*String features ="";
         for (int i=0 ;i < 256; i++) {
             features += "freq-"+i;
@@ -209,7 +208,7 @@ public class EvaluationInterface {
 
         ts.addTechnique(fs);
         ts.addTechnique(new AttributeSelection(AttributeSelection.ASType.none, 0.8f));
-       // ts.addTransformation(new Transformation(Transformation.TransformationType.movingaverage, 20));
+        //ts.addTransformation(new Transformation(Transformation.TransformationType.zscore, 20));
 
         return ts;
     }

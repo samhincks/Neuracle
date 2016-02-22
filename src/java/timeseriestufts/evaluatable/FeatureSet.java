@@ -44,6 +44,7 @@ public class FeatureSet extends Technique{
     /**Add the instances in another experiment to this infogain. If it already exists,
      then average with existing.  **/
     public void addExperimentToInfogain(weka.core.Instances instances) throws Exception {
+        if (1==1)return;
        HashMap<String, Double> infogaintemp = new HashMap();
         
         for (Map.Entry<weka.core.Attribute, Double> m : AttributeSelection.infoGainRanker(instances).entrySet()) {
