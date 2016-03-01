@@ -67,7 +67,6 @@ function NBack(){
                             break;
                     case 2:
                             $('#dos').toggleClass(toToggle);
-                            
                             setTimeout(function(){$('#dos').toggleClass(toToggle)}, 500);
                             break;
                     case 3:
@@ -318,11 +317,7 @@ function NBack(){
                     return sum / arr.length;
                 }
                }
-            
-          
-    
-    
-    
+     
     //.. [viz-true-positives, audio-false-positives
     this.displayScore = function() {
         
@@ -349,7 +344,7 @@ function NBack(){
             playBlock(numBlocks, audio, visual);
         }
         
-        console.log("now running: " + numBlocks + + " n " + n);
+        console.log("now running: " + numBlocks + "at  n = " + n + " for " + time);
         
         blockRunning = true;
         setTimeout(function () {  

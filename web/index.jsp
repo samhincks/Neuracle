@@ -231,8 +231,6 @@
         <script type="text/javascript" src="js/lib/simple-statistics.min.js"></script> 
 
 
-         
-
         <!--VISUALIZATIONS-->
         <script type="text/javascript" src="js/visualization/LineChart.js"></script> 
         <script type="text/javascript" src="js/visualization/BarChart.js"></script> 

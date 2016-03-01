@@ -55,6 +55,9 @@ function Labeler()
         
         if(curCondition.startsWith("visual")) {
             var values = curCondition.split("-");
+            if (values.length ==1)
+                nback.begin(self.trialLength, 1, false, true);
+
             nback.begin(self.trialLength, parseInt(values[1]), false, true);
         }
         
