@@ -9,6 +9,8 @@ import stripes.ext.ThisActionBeanContext;
  */ 
 public class BaseActionBean implements ActionBean{    
     protected static final String INDEX = "index.jsp";    
+    protected static final String TASK = "task.jsp";
+    
     private String  userName;
     private String password;
     

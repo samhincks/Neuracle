@@ -315,7 +315,7 @@ function ConsoleArea() {
             var scrollHeight = Math.max(this.scrollHeight, this.clientHeight);
             this.scrollTop = scrollHeight - this.clientHeight;
         }); 
-        $("input").focus();
+        //$("input").focus();
 
     };
       

@@ -36,15 +36,27 @@ function Labeler()
         consoleArea.displayMessage("Initiating labeling protocol for a total of " +this.trialsToDo 
                 +" trials on " +this.fileName + " for " + trialLength + "s with rest of " + restLength + "s", "systemmess", "blackline");
         self = this;
-        this.labelCondition(this.feedback);
+        
+        setTimeout(function() {
+            self.labelCondition(this.feedback);
+        }, self.restLength);
     }
     
     /**Alternate conditions and rest, ping the server each time the label switches, 
-     * which alternates how data will be labeled**/
+     * which alternates how data will be labeled
+     * streamlabel(visual-1,30%1%10)
+     * **/
     this.labelCondition = function() {
         var curCondition = self.conditions[self.iterations%self.conditions.length];
         if (curCondition == "easy" || curCondition == "hard") 
             curCondition += "%" + (self.trialLength);
+        
+        //.. send message to backend
+        var message = "label(" + self.fileName + "," + self.conditionName + ","+curCondition+")";
+        $("#consoleInput").val(message);
+        javaInterface.postToConsole();
+        self.iterations++;
+        self.num =1;
         
         if(curCondition.startsWith("dual")) {
             var values = curCondition.split("-");
@@ -54,6 +66,8 @@ function Labeler()
         }
         
         if(curCondition.startsWith("visual")) {
+        
+
             var values = curCondition.split("-");
             if (values.length ==1)
                 nback.begin(self.trialLength, 1, false, true);
@@ -66,12 +80,7 @@ function Labeler()
             nback.begin(self.trialLength, parseInt(values[1]), true, false);
         }
         
-        //.. send message to backend
-        var message = "label(" + self.fileName + "," + self.conditionName + ","+curCondition+")";
-        $("#consoleInput").val(message);
-        javaInterface.postToConsole();
-        self.iterations++;
-        self.num =1;
+        
         
         //.. initiate rest
         self.restOrJunk(self.trialLength);
@@ -160,6 +169,8 @@ function Labeler()
         if (self.feedback) {
             setTimeout(self.solicitFeedback, self.FEEDBACKDELAY);
         }
+        
+        
     }
     
     this.labelRest = function() {

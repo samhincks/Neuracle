@@ -29,8 +29,8 @@ from time import sleep
 
 #DEVICE = 'CMS50D'
 #DEVICE = 'fNIRS'
-DEVICE = 'Imagent'
-#DEVICE = 'Fake'
+#DEVICE = 'Imagent'
+DEVICE = 'Fake'
 
 """
 Time format info

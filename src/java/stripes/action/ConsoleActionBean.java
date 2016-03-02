@@ -11,6 +11,7 @@ import dao.techniques.TechniqueDAO;
 import dao.techniques.TechniquesDAO;
 import java.io.StringReader;
 import net.sourceforge.stripes.action.DefaultHandler;
+import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import org.json.JSONException;
@@ -34,11 +35,13 @@ public class ConsoleActionBean extends DataLayerActionBean {
      */
     @DefaultHandler
     public Resolution parseInput() throws JSONException{
-        System.out.println("RECEIVED!");
         InputParser inputParser = ctx.inputParser;
         //.. Parse the actual input
         JSONObject jsonObj = new JSONObject();
         try {
+            if(consoleInput.startsWith("task")) {
+                return new ForwardResolution(INDEX);
+            }
             //--- SET any additional parameters not parsed in text for certain commands
             if (this.getTechnique()!=null){
                 ctx.setCurrentTechnique(technique);
@@ -52,7 +55,7 @@ public class ConsoleActionBean extends DataLayerActionBean {
                 setTechniqueParams();
             }
             System.out.println("parsing " + consoleInput);
-                jsonObj = inputParser.parseInput(consoleInput);
+            jsonObj = inputParser.parseInput(consoleInput);
             return new StreamingResolution("text", new StringReader(jsonObj.toString()));
         }
         catch(Exception e) {

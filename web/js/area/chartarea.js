@@ -33,9 +33,9 @@ function ChartArea(id, descArea) {
         }
         
         else if(JSONobj.type == "channelset") {
-            if(JSONobj.data.classifiers==null)//this.displayClassificationSet(JSONobj); //. I like this one more for now
+            /*if(JSONobj.data.classifiers==null)//this.displayClassificationSet(JSONobj); //. I like this one more for now
                 this.displayChannelSet(JSONobj); //.. this one can be streamed
-            else this.displayClassificationSet(JSONobj);
+            else */this.displayClassificationSet(JSONobj);//.. this one displays conditions
         }
         
         else if(JSONobj.type == "correlation") {

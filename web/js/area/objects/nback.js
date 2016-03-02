@@ -4,6 +4,8 @@ function NBack(){
     $("#nback").hide();
     $("#nhead").hide();
     $('#begin').hide();
+    
+    var dualMode = false; //.. if dualMode is true, then left is audio. Otherwise left is yes
 
     var letb = new Howl({
             urls: ['audio/b.mp3', 'audio/b.ogg', 'audio/b.wav']
@@ -203,7 +205,14 @@ function NBack(){
 
                             //.. right
                             else {
-                                visualScores[2] += 1; 
+                                if (dualMode)
+                                    visualScores[2] += 1; 
+                                else  {
+                                    //$("#nback").css("border-color", "red");
+                                    $("#nback").css("border-style", "dashed");
+
+                                    visualScores[3] += 1; 
+                                }
                             }
                         }
                         if (audio) {
@@ -220,20 +229,41 @@ function NBack(){
                     justPressed = false;
                     start = Date.now();
                     $('html').on('keydown', function(event) {
-                        if(event.which == 37) {
-                            hitsThisValue[0] = 1;
-                            if (visual &&!(justPressed)) {
-                                 justPressed = true;
-                                 checkAccuracy("visual");
-                             }
-                          
-                        } else if( audio && event.which == 39) {
-                            hitsThisValue[1] = 1;
-                            if (!(justPressed)){
-                                justPressed = true;
-                                checkAccuracy("audio");
-                            }
+                        //.. in a dual nback left is audio, right is visual
+                        if (dualMode) {
+                            if(event.which == 37) {
+                                hitsThisValue[0] = 1;
+                                if (visual &&!(justPressed)) {
+                                     justPressed = true;
+                                     checkAccuracy("visual");
+                                 }
 
+                            } else if( audio && event.which == 39) {
+                                hitsThisValue[1] = 1;
+                                if (!(justPressed)){
+                                    justPressed = true;
+                                    checkAccuracy("audio");
+                                }
+
+                            }
+                        }
+                        else { //. otherwise audio 
+                             if(event.which == 37) { //.. yes
+                                hitsThisValue[0] = 1;
+                                if (visual &&!(justPressed)) {
+                                     justPressed = true;
+                                     checkAccuracyTDCS("yes");
+                                 }
+
+                            }
+                            else if(event.which == 39) {
+                                hitsThisValue[1] = 1;
+                                if (!(justPressed)){
+                                    justPressed = true;
+                                    checkAccuracyTDCS("no");
+                                }
+
+                            }
                         }
                     });
                     
@@ -250,9 +280,30 @@ function NBack(){
                         if (visual) {
                             consoleArea.displayMessage("Visual scores: ")
                             var corr = pctCorrect(visualScores);
+                            var ave = (corr[0] / corr[1]);
+                            if (corr[1] == 0) ave = 0;
+
                             consoleArea.displayMessage("    Correct: " +  corr[0] +
                                     " / " + corr[1] + " = " + (corr[0] / corr[1])); 
-                            consoleArea.displayMessage("    Average reaction time = " +getAverage(reactionTimes[0])); 
+                            var reactAve = getAverage(reactionTimes[0]);
+                            
+                            consoleArea.displayMessage("    Average reaction time = " +reactAve); 
+                            setTimeout(function () { // streamlabel(visual-1,10%1%1)
+                                var mess = "retrolabel(corr,condition," + getThreshold(ave) + ",0,realtime1)";
+
+                                $("#consoleInput").val(mess);
+                                javaInterface.postToConsole(); 
+                                
+                            }, 5000);
+                            
+                            setTimeout(function () { // streamlabel(visual-1,10%1%1)
+                                var mess = "retrolabel(reaction,condition," + getNum(reactAve) + ",0,realtime1)";
+
+                                $("#consoleInput").val(mess);
+                                javaInterface.postToConsole();
+
+                            }, 5000);
+                            
                         }
                         if (audio) {
                             consoleArea.displayMessage("Audio scores: ")
@@ -266,7 +317,58 @@ function NBack(){
                         reactionTimes = [];
                     }
                 }
+                
+                //.. given a number return a string
+                function getThreshold(num) {
+                    if (num <=1) {
+                        var nums = ["zero","ten", "twenty", "thirty", "forty","fifty","sixty","seventy","eighty","ninety","hundred"];
+                        return nums[Math.floor(num*10)];
+                    }
+                }
+                function getNum(num) {
+                    numStr = Math.floor(num) +"";
+                    var nums = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "hundred"];
+                    var retStr = "";
+                    for (var i =0; i < numStr.length; i++) {
+                        retStr +=nums[numStr[i]]+"-"
+                    }
+                    return retStr;
+                }
+                //.. set as wrong if 
+                function checkAccuracyTDCS(ans) {
+                    $("#nback").css("border-style", "solid");
+                    var elapsed = Date.now() - start;
+                    var position = blockCounter;
+                    var checkPosition = blockCounter - n;
+                    if (checkPosition < 0)
+                        return;
+                    reactionTimes[0].push(elapsed);
                     
+                    //.. answer = yes,
+                    if (ans =="yes") {
+                        if (currentBlock[position][0] == currentBlock[checkPosition][0]) {
+                            $("#nback").css("border-color", "green");
+                            visualScores[0] += 1;
+                        }
+                        else {
+                            $("#nback").css("border-color", "red");
+                            visualScores[1] += 1;
+                        }
+                    }
+                    
+                    //.. answer = no;
+                    if (ans == "no") {
+                        if (currentBlock[position][0] == currentBlock[checkPosition][0]) {
+                            $("#nback").css("border-color", "red");
+                            visualScores[1] += 1;
+                        }
+                        else {
+                            $("#nback").css("border-color", "green");
+                            visualScores[0] += 1;
+                        }
+                    }
+                }
+
                 function checkAccuracy(hit) {
                         $("#nback").css("border-style", "solid");
                         var elapsed = Date.now() -start;
@@ -331,13 +433,41 @@ function NBack(){
 
     var n = 1;
     var PCTMATCHING = 0.4;
+    this.appendBack = function() {
+        
+        $("#topRight").append(" <div id='nhead'>" +
+                " <h1 id='nvalue'>2</h1>" +
+                "<div id='left'>left=yes</div>" +
+                "<div id='right'>right=no</div>" +
+                "</div>");
+
+        $("#topRight").append("<table  class = 'ntable' id='nback'>" +
+                "   <tr>" +
+                "<td class = 'ncol'><div id='uno' class='off'></div></td>" +
+                "<td class = 'ncol'><div id='dos' class='off'></div></td>" +
+                "<td class = 'ncol'><div id='tres' class='off'></div></td>" +
+                "</tr>" +
+                "<tr>" +
+                "   <td class = 'ncol'><div id='cuatro' class='off'></div></td>" +
+                "  <td class = 'ncol'><div id='cinco' class='off'><img src='images/plus.png' alt=''></div></td>" +
+                " <td class = 'ncol'><div id='seis' class='off'></div></td>" +
+                "</tr>" +
+                "<tr>" +
+                "   <td class = 'ncol'><div id='siete' class='off'></div></td>" +
+                "  <td class = 'ncol'><div id='ocho' class='off'></div></td>" +
+                " <td class = 'ncol'><div id='nueve' class='off'></div></td>" +
+                "</tr>" +
+                "</table> ");
+    }
     //. streamlabel(visual-3, 10%1%1)
     this.begin = function (time, _n, audio, visual) {
-         n = _n;
-         $("#nback").show();
-         $("#nhead").show();
-         $('#begin').show();
-         $("#nvalue").text("n = " + n);
+        $("#topRight").empty();
+        this.appendBack();
+        //$("userinput").blur();
+
+        //$("#nback").focus();
+        n = _n;
+        $("#nvalue").text("n = " + n);
 
         var numBlocks =  (time / 3000) - n;
         if (blockRunning === false) {
@@ -351,7 +481,6 @@ function NBack(){
             blockRunning = false;
             $("#nback").hide();
             $("#nhead").hide();
-            $('#begin').hide();
         }, time-3000);
     }
     
