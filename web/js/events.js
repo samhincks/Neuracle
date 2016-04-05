@@ -25,7 +25,15 @@ var journal  = new Journal();
  */
 $( init );
 function init() { 
-    console.log("intitalizes!")
+    console.log("intitalizes!");
+    
+      /*$("#flipbook").turn({
+            width: 600,
+            height: 400,
+            autoCenter: true
+       });*/ 
+    element = $("<div />").html(" It is a truth universally acknowledged that a single man in possession of a good fortune, must be in want of a wife.");
+    //$("#flipbook").turn("addPage", element, 3);
     //nback.begin(30000);
     //.. Focus on input, so that it is the default location for cursor
     //    $("input").focus();
