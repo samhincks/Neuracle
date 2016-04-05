@@ -116,7 +116,8 @@ function ConsoleArea() {
          
          //.. For periodically updating what the current label is of a synchronized
          //... dataset
-         else if(userText.startsWith("streamlabel")) {
+         else if(userText.startsWith("streamlabel")) {            
+             
             //.. get the two possible set of parameters
             var mes = userText.split("("); //.. will be parameters (100,200)
             var params = new Array();

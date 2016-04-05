@@ -287,6 +287,9 @@ function NBack(){
                                     " / " + corr[1] + " = " + (corr[0] / corr[1])); 
                             var reactAve = getAverage(reactionTimes[0]);
                             
+                            $("#consoleInput").val("regstat("+n +"," +ave+","+reactAve+")");
+                            javaInterface.postToConsole(); 
+                            
                             consoleArea.displayMessage("    Average reaction time = " +reactAve); 
                             setTimeout(function () { // streamlabel(visual-1,10%1%1)
                                 var mess = "retrolabel(corr,condition," + getThreshold(ave) + ",0,realtime1)";

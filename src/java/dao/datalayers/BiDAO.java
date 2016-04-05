@@ -127,7 +127,6 @@ public class BiDAO extends DataLayerDAO {
         }
     }
     
-    
     /**
      * Add all the channels to a channelSet (they may be unsynched)
      * @param name 
@@ -804,6 +803,8 @@ public class BiDAO extends DataLayerDAO {
             ex.printStackTrace();
         }
     }
+
+    
 
 
 

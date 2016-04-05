@@ -87,7 +87,11 @@ public class TransformationParser extends Parser{
                 + " of the trial in another condition k trials back";
         command.parameters = "1. newConditionName, 2. oldConditionName, 3. value, 4. kConditionsBack, 5=filename";
         commands.put(command.id, command);
-        
+         
+        command = new Command("regstat");
+        command.documentation = "save meta data to subjects file, which will be written along side it with write command";
+        command.parameters = "a,b,c,d.... data separated by commas";
+        commands.put(command.id, command);
         
         //-- KEEP
         command = new Command("keep");
@@ -192,12 +196,16 @@ public class TransformationParser extends Parser{
         }
         
         
-        
         else if (command.startsWith("retrolabel")) {
             c = commands.get("retrolabel");
             c.retMessage = this.retroLabel(parameters);
         }
-
+        
+        //.. save stats to a data layer, which get written in a separate file when we do write
+        else if (command.startsWith("regstat")) {
+            c = commands.get("regstat");
+            c.retMessage = this.regStat(parameters);
+        }
         
         //... Makes a new experiment with only these instances
         else if (command.startsWith("keep")) {
@@ -505,6 +513,20 @@ public class TransformationParser extends Parser{
            if(l.disconnect()) disconnected++;
         }
         return "Closed " + disconnected + " interceptors";
+    }
+    
+    /*Save stats associated with a subject, realtime1 */
+    private String regStat(String [] parameters) throws Exception { 
+        String csvTrial ="";
+        for (String s : parameters) {
+            csvTrial += s +",";
+        }
+        
+        //.. get appropriate dataset
+        BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get("realtime1");
+        ChannelSet cs = (ChannelSet) bDAO.dataLayer;
+        cs.addStat(csvTrial);
+        return "Saved " + csvTrial;
     }
     
     /*Retroactively label a potentially streaming file, to have some new value for some potentially new condition.

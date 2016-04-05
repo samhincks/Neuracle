@@ -70,7 +70,7 @@
                         <div class="hard"></div>
                         <div class="hard"></div>
                     </div> -->
-                
+                <!--
                   <div class="t">
                       <div class="tc rel">
                           <div class="book" id="book">
@@ -94,6 +94,7 @@
 
 
 </div>
+                              
                               <div class="page">"Is that his design in settling here?"
 
    "Design! nonsense, how can you talk so! But it is very likely that he may fall in love with one of them, and therefore you must visit him as soon as he comes."
@@ -139,9 +140,9 @@
 
                           </div>
                       </div>
-                  </div>
+                  </div> -->
 
-            </div>
+            </div> 
             
             <!--Where we place our the description of selection-->
             <div id ="farBottomRight" class ="component ">      

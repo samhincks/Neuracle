@@ -36,10 +36,18 @@ function Labeler()
         consoleArea.displayMessage("Initiating labeling protocol for a total of " +this.trialsToDo 
                 +" trials on " +this.fileName + " for " + trialLength + "s with rest of " + restLength + "s", "systemmess", "blackline");
         self = this;
+        // streamlabel(visual-1, 10%1%1)
         
-        setTimeout(function() {
+        var r= $('<input type="button" id ="startButton" value="click to begin n-back... "/>');
+        $("#topRight").append(r);
+        
+        $("#startButton").on('click', function(){
             self.labelCondition(this.feedback);
-        }, self.restLength);
+        });
+       
+       // setTimeout(function() {
+         //   self.labelCondition(this.feedback);
+      //  }, self.restLength);
     }
     
     /**Alternate conditions and rest, ping the server each time the label switches, 

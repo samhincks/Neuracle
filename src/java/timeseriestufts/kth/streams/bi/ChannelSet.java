@@ -41,7 +41,9 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
     public float readingsPerSecond;
     public boolean test = false;//.. set to true if we fabricated this as a sample -- will change display message
     public Transformations transformations;
-      
+    public ArrayList<String> stats = null; //.. an array of stats
+
+    
     public ChannelSet() {
         streams = new ArrayList();
         this.readingsPerSecond = Channel.HitachiRPS; 
@@ -95,7 +97,11 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
                
     }
   
-
+ /**Add statistics associated with this trial**/
+    public void addStat(String csvTrial) {
+        if (stats == null) stats = new ArrayList();
+        stats.add(csvTrial);
+    }
  
     /**Returns the channel at index
      * @param index
@@ -446,6 +452,17 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             bw.write("\n");
         }
         bw.close();
+        
+        if (stats!= null) {
+            filename = filename.replaceAll(".csv", "");
+            f = new File(filename+"stats.csv");
+            bw = new BufferedWriter(new FileWriter(f));
+            for (String s: stats) {
+                bw.write(s);
+                bw.write("\n");
+            }
+            bw.close();
+        }
     }
 
     /** Append one chanset to the end of the other **/

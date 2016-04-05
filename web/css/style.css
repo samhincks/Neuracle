@@ -136,6 +136,16 @@
     #container {
         margin-left: 400px ;
     }
+    
+    #startButton {
+        position:relative;
+        top: 200px;
+        left: 100px;
+        border-style: solid;
+        border-width:1%;
+        border-color: black;
+        
+    }
 
     #instruction {
         margin-left: 200px;
