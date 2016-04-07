@@ -7,7 +7,7 @@ function Journal() {
     var queryInterval = 1000;
     
     var self = this;
-    this.updateText = function(newText) {
+    this.updateText = function(newText ) {
         //.. first text received: start a timer
         if(curText.length == 0) {
             var d = new Date();

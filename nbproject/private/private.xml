@@ -36,12 +36,12 @@
             <url>web/js/area/consolearea.js</url>
             <bookmark id="38">
                 <name/>
-                <line>175</line>
+                <line>176</line>
                 <key/>
             </bookmark>
             <bookmark id="39">
                 <name/>
-                <line>183</line>
+                <line>184</line>
                 <key/>
             </bookmark>
         </file>
@@ -75,12 +75,12 @@
             </bookmark>
             <bookmark id="46">
                 <name/>
-                <line>289</line>
+                <line>292</line>
                 <key/>
             </bookmark>
             <bookmark id="33">
                 <name/>
-                <line>312</line>
+                <line>315</line>
                 <key/>
             </bookmark>
         </file>
@@ -141,12 +141,12 @@
             <url>src/java/dao/TransformationParser.java</url>
             <bookmark id="20">
                 <name/>
-                <line>512</line>
+                <line>534</line>
                 <key/>
             </bookmark>
             <bookmark id="13">
                 <name/>
-                <line>629</line>
+                <line>651</line>
                 <key/>
             </bookmark>
         </file>
@@ -154,17 +154,17 @@
             <url>src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</url>
             <bookmark id="19">
                 <name/>
-                <line>783</line>
+                <line>800</line>
                 <key/>
             </bookmark>
             <bookmark id="17">
                 <name/>
-                <line>938</line>
+                <line>955</line>
                 <key/>
             </bookmark>
             <bookmark id="18">
                 <name/>
-                <line>1084</line>
+                <line>1101</line>
                 <key/>
             </bookmark>
         </file>
@@ -184,8 +184,15 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/index.jsp</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/timeseriestufts/kth/streams/bi/ChannelSet.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/DataManipulationParser.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/labeler.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/events.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/javainterface.js</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/js/area/objects/nback.js</file>
             <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/web/css/turnbook.css</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/TransformationParser.java</file>
+            <file>file:/Users/shincks/Box%20Sync/Development/Neuracle/src/java/dao/InputParser.java</file>
         </group>
     </open-files>
 </project-private>
