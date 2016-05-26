@@ -277,6 +277,8 @@ function NBack(){
                    }
                     //.. user is done
                     else {
+                        $("#consoleInput").val("write(nback-data)");
+                        javaInterface.postToConsole(); 
                         if (visual) {
                             consoleArea.displayMessage("Visual scores: ")
                             var corr = pctCorrect(visualScores);

@@ -77,8 +77,8 @@ function Classifier() {
         //console.log(x, y);
 
         return [corr, deviationsAway];
-
     }
+    
     this.addData = function(JSONobj) {
         var channelVals = JSONobj.data.data; //.. the data contained now should be what's added
         var numUpdates = channelVals.values.length;

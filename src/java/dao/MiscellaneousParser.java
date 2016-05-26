@@ -573,6 +573,7 @@ public class MiscellaneousParser extends Parser{
     private String stat(String [] parameters) throws Exception{
         DataLayer dl = this.currentDataLayer;
         int channel = 0; 
+        int channel2 = -1; //. set this to some other channel if it exists
         int readingsBack = 500;
         String stat = "slope";
         if (parameters.length >0) stat = parameters[0];
@@ -582,6 +583,10 @@ public class MiscellaneousParser extends Parser{
         }
         if (parameters.length >2) channel = Integer.parseInt(parameters[2]);
         if (parameters.length >3) readingsBack = Integer.parseInt(parameters[3]);
+        if (parameters.length >4) {
+            channel2 = Integer.parseInt(parameters[3]);
+            readingsBack = Integer.parseInt(parameters[4]);
+        }
         
         if (dl instanceof ChannelSet) {
             //.. The selected datalayer may or may not be the actual thing which is synchronized with the database
@@ -604,21 +609,35 @@ public class MiscellaneousParser extends Parser{
                 ChannelSet chanSet = original.getChannelSetBetween(original.getMaxPoints() - readingsBack -1, original.getMaxPoints()-1);
                 chanSet = chanSet.manipulate(t, true);
                 Channel c = original.streams.get(channel);
-                if (stat.equals("slope")) return c.getSlope()+"";
-                if (stat.equals("bestfit")) return c.getBestFit()+"";
-                if (stat.equals("secondder")) return c.getSecondDerivative() +"";
-               if( stat.equals("hrv")) return "hrv-"+c.getHRVariability()+"";
+                Channel c2 = null;
+                if (channel2 != -1)
+                    c2 = original.streams.get(channel2);
+                
+                
+                if (stat.equals("slope")) return "slope-" + c.getSlope()+"";
+                if (stat.equals("bestfit")) return "bestfit-" +c.getBestFit()+"";
+                if (stat.equals("secondder")) return "secondder-" +c.getSecondDerivative() +"";
+                if( stat.equals("hrv")) return "hrv-"+c.getHRVariability()+"";
                 if( stat.equals("hr")) return "hr-"+c.getPulse()+"";
+                if (stat.equals("corr")) return c.getCorrelationTo(c2)+"";
             } 
 
             else{
                 Channel c = cs.streams.get(channel);
                 Channel sub = c.getSample(c.numPoints - readingsBack - 1, c.numPoints - 1, true);
+                
+                Channel sub2 = null;
+                if (channel2 != -1) {
+                    Channel c2 = cs.streams.get(channel2);
+                     sub2 = c2.getSample(c.numPoints - readingsBack - 1, c.numPoints - 1, true);
+                }
+                
                 if (stat.equals("slope")) return "slope-"+ sub.getSlope()+"";
                 if (stat.equals("bestfit")) return "bestfit-"+ sub.getBestFit()+"";
                 if (stat.equals("secondder")) return "secondder-"+ sub.getSecondDerivative() +"";
                 if( stat.equals("hrv")) return "hrv-"+sub.getHRVariability()+"";
                 if( stat.equals("hr")) return "hr-"+sub.getPulse()+"";
+                if( stat.equals("corr")) return "corr-"+sub.getCorrelationTo(sub2)+"";
 
             }
            
@@ -691,27 +710,33 @@ public class MiscellaneousParser extends Parser{
         ctx.inputParser.parseInput("interceptlabel(realtime1,event,1444)");
         return "custom2";
      }
-    
+      
     
     private String custom(String[] parameters) throws Exception{
-        manipulateTest();
-        /*//loadData();
-        loadNewProbe();
-        ctx.inputParser.parseInput("synchronize");
-        Thread.sleep(300);
-
-        ctx.inputParser.parseInput("interceptlabel(realtime1,task, 1327)");
-        Thread.sleep(300);
-
-        ctx.inputParser.parseInput("interceptlabel(realtime1,event,1444)");*/
-        return "custom";
+        
+        trainMachineLearningOnAttention(); 
+        return "custom";  
+    }
+    
+    /** For Attention Experiment - 
+     *   select realtime1, split on condition, apply 
+     **/
+    private void trainMachineLearningOnAttention() {
+        
     }
     private void loadNewProbe() throws Exception{
          ctx.inputParser.parseInput("loadfiles(output/derek.csv)");
          ctx.setCurrentName("derek-csvfs1");  
          ctx.inputParser.parseInput("split(condition)");
-        ctx.setCurrentName("derek-csvfs1condition");  
-                 ctx.inputParser.parseInput("keep(easy,hard)");
+         ctx.setCurrentName("derek-csvfs1condition");  
+         ctx.inputParser.parseInput("keep(easy,hard)");
+         
+         /**
+          ctx.inputParser.parseInput("interceptlabel(realtime1,task, 1327)");
+        Thread.sleep(300);
+
+        ctx.inputParser.parseInput("interceptlabel(realtime1,event,1444)");**/
+         
 
          
       

@@ -162,8 +162,6 @@ public class TransformationParser extends Parser{
         command.action = "reload";
         commands.put(command.id, command);
         
-        
-
     }
 
     public JSONObject execute(String command, String[] parameters,
@@ -194,7 +192,6 @@ public class TransformationParser extends Parser{
             c = commands.get("closeinterceptors");
             c.retMessage = this.closeInterceptors();
         }
-        
         
         else if (command.startsWith("retrolabel")) {
             c = commands.get("retrolabel");

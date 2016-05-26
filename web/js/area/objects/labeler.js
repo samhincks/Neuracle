@@ -88,6 +88,9 @@ function Labeler()
             nback.begin(self.trialLength, parseInt(values[1]), true, false);
         }
         
+        if (curCondition.startsWith("hgwells")) {
+            turnbook.init();        
+        }
         
         
         //.. initiate rest

@@ -80,6 +80,14 @@ function ConsoleArea() {
             labeler.parseFeedback(userText);
             return true;
         }
+        
+        //.. initiate turnbook
+        if (userText.startsWith("hgwells")){
+            turnbook.init();
+           // turnbook.initAudio();
+            return true;
+        }
+        
         //.. redirect all input to seeing if theyre getting the right nback response
         if (nbackEvaluator.active && !(userText.startsWith("interrupt"))) {
             nbackEvaluator.guess(userText);

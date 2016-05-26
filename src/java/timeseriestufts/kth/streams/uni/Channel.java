@@ -34,6 +34,7 @@ import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
 import org.apache.commons.math3.transform.TransformType;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import timeseriestufts.kth.streams.bi.ChannelSet;
 import timeseriestufts.kth.streams.tri.Experiment;
 import timeseriestufts.kth.streams.uni.adaptivefilters.Adapt06;
@@ -471,6 +472,28 @@ public class Channel extends UnidimensionalLayer  {
             }
             return this;
         }
+    }
+    
+    private static double[] convertFloatsToDoubles(float[] input)
+    {
+        if (input == null)
+        {
+            return null; // Or throw an exception - your choice
+        }
+        double[] output = new double[input.length];
+        for (int i = 0; i < input.length; i++)
+        {
+            output[i] = input[i];
+        }
+        return output;
+    }    
+    
+    public double getCorrelationTo(Channel c2) {
+        PearsonsCorrelation pc = new PearsonsCorrelation();
+        double [] a = Channel.convertFloatsToDoubles(this.getData());
+        double [] b = Channel.convertFloatsToDoubles(c2.getData());
+        return pc.correlation(a,b);
+        
     }
     
     /**Average the values of the other channel with this one. If they are different size, keep it

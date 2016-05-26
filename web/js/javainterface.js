@@ -57,6 +57,7 @@ function JavaInterface() {
                 var val = returnVal.split("-")[1];
                 console.log(dl, val, type, returnVal);
                 var devAway = datalayerArea.datalayers.getDLById(dl).processStat(val);
+                consoleArea.displayMessage(val+"", "systemmess", "greenline");
                 
                 if (type == "hr") {
                     classifier.heartrate = val;

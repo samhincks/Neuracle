@@ -11,7 +11,7 @@ function ChartArea(id, descArea) {
    this.lastJSON; //.. we might wnat to redraw the graph, for instance if we resize the graph
    var border =20;
    var sc = new StreamChart();
-   var channelsToShow = [0,1];//=[0,1]; //.. an array of 2D channels to show (streaming or not streaming), which we change by view.show()
+   var channelsToShow = [1,2];//=[0,1]; //.. an array of 2D channels to show (streaming or not streaming), which we change by view.show()
    //.. changed in events when we alter channel selection by slope display
    this.setChannelsToShow= function(index, val) {
        channelsToShow[index] = val;
@@ -33,9 +33,9 @@ function ChartArea(id, descArea) {
         }
         
         else if(JSONobj.type == "channelset") {
-            /*if(JSONobj.data.classifiers==null)//this.displayClassificationSet(JSONobj); //. I like this one more for now
+            if(JSONobj.data.classifiers==null)//this.displayClassificationSet(JSONobj); //. I like this one more for now
                 this.displayChannelSet(JSONobj); //.. this one can be streamed
-            else */this.displayClassificationSet(JSONobj);//.. this one displays conditions
+            else  this.displayClassificationSet(JSONobj);//.. this one displays conditions
         }
         
         else if(JSONobj.type == "correlation") {

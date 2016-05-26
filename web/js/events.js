@@ -16,6 +16,8 @@ var address =  "http://localhost:8080/Neuracle/";
 var nback = new NBack();
 var classifier = new Classifier();
 var journal  = new Journal();
+var turnbook  = new Turnbook();
+
 
 
 
@@ -25,7 +27,6 @@ var journal  = new Journal();
  */
 $( init );
 function init() { 
-    console.log("intitalizes!");
     
       /*$("#flipbook").turn({
             width: 600,
