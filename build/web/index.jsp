@@ -17,15 +17,18 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF8">
         <title>Neuracle</title>
+        <link type="text/css" rel="stylesheet" href="css/nback.css" />
+
         <link type="text/css" rel="stylesheet" href="css/jquery-ui.css" /> 
         <link type="text/css" rel="stylesheet" href="css/style.css" />
         <link type="text/css" rel="stylesheet" href="css/d3Style.css" />
         <link type="text/css" rel="stylesheet" href="css/consoleStyle.css" /> 
         <link type="text/css" rel="stylesheet" href="css/dlStyle.css" />
+        <link type="text/css" rel="stylesheet" href="css/turnbook.css" />
 
     </head>
     
-    <body class ="unselectable" id ="doc">   
+    <body id ="doc">   
         <div id ="timemine"> 
              <!--Default location for selectable data layers-->
              <div id ="topLeft" class ="component">
@@ -46,14 +49,121 @@
                                
              </div>
 
+             
             <!--Where we place our Chart-->
-            <div id ="topRight" class ="component trunzoomed">         
-            </div>
+            <div id ="topRight" class ="component trunzoomed">   
+                 
+                 
+            </div>  
             
             <!--Where we place our the description of selection-->
-            <div id ="farBottomRight" class ="component">         
+            
+            <div id ="farBottomRight" class ="component ">      
+                    
+                <table id ="classifier" BORDER="5"    WIDTH="50%"   CELLPADDING="4" CELLSPACING="3">
+                    <tr>
+                        <td>Window</td>
+                        <td>Threshold</td>
+                        <td>Channel</td>
+                        <td>Slope</td>
+                        <td>Stdev</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="number" id = "readingsBack" value="20"> 
+                        </td>
+                        <td>
+                            <input type="number" id = "threshold" value="1"> 
+                        </td>
 
-            </div>
+                        <td> <select id ="classifierchannel" name="channel">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option> 
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            </select>
+                        </td>
+                        <td> 
+                            <div id ="currSlope">000</div>
+                        </td>
+
+                        <td> 
+                            <div id ="currStdev">000</div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td> </td> <td> </td>
+                        <td> <select id ="classifierchannel2" name="channel">
+                                <option value="0">0</option>
+                                <option selected ="selected" value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option> 
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                            </select>
+                        </td>
+                        <td> 
+                            <div id ="currSlope2">000</div>
+                        </td>
+
+                        <td> 
+                            <div id ="currStdev2">000</div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        
+                        <td> 
+                            <div id ="currSlope3">000</div>
+                        </td>
+
+                        <td> 
+                            <div id ="currStdev3">000</div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+
+                        <td> 
+                            <div id ="currSlope4">000</div>
+                        </td>
+
+                        <td> 
+                            <div id ="currStdev4">000</div>
+                        </td>
+                    </tr>
+                </table> 
+
+            </div> 
             
             <!--For communicating File variables to Stripes -->             
             <div id ="bottomLeft" class ="component">
@@ -68,23 +178,21 @@
                         <s:errors/>
                     </div>
                 </s:form> 
-                
-                
             </div>
            
            
             <!--Bottom right, where we put the console  -->
-            <div id ="bottomRight" class ="component">
+            <div id ="bottomRight" class ="component bottomRightUnzoomed">
                 <!--The console --> 
                 <div id = "console"> 
                     <div id = "pastmessages"> </div>     
-                    <div class = "usermessage">
+                    <div id = "usrmessage" class = "usermessage">
                           <span class = "prompt"> > </span> 
                           <span class = "cursor"> </span> 
                           <input id = "userinput" ></input> 
                   </div> 
                 </div>  
-                 <s:form beanclass ="stripes.action.ConsoleActionBean" id = "consoleForm" class ="unselectable"> 
+                 <s:form beanclass ="stripes.action.ConsoleActionBean" id = "consoleForm"> 
                        <!--A message to the console--> 
                        <s:text name = "consoleInput" id = "consoleInput" style ="visibility:hidden"/> 
                        <s:text name = "connections" id = "connections" style = "visibility:hidden"/>
@@ -100,7 +208,11 @@
         <script type="text/javascript" src="js/lib/jquery.pep.js"></script> 
         <script type="text/javascript" src="js/lib/d3.min.js"></script>  
         <script type="text/javascript" src="js/lib/d3tip.js"></script> 
-         
+        <script type="text/javascript" src="js/lib/howler.min.js"></script> 
+        <script type="text/javascript" src="js/lib/simple-statistics.min.js"></script> 
+        <script type="text/javascript" src="js/lib/turn.min.js"></script> 
+
+
 
         <!--VISUALIZATIONS-->
         <script type="text/javascript" src="js/visualization/LineChart.js"></script> 
@@ -111,9 +223,6 @@
         <script type="text/javascript" src="js/visualization/CorrelationMatrix.js"></script> 
         <script type="text/javascript" src="js/visualization/PredictionChart.js"></script> 
         <script type="text/javascript" src="js/visualization/ClassificationChart.js"></script> 
-
-        <script type="text/javascript" src="js/visualization/Heatmap.js"></script> 
-
 
 
 
@@ -126,13 +235,39 @@
         <script type="text/javascript" src="js/area/objects/techniques.js"></script> 
         <script type="text/javascript" src="js/area/consolearea.js"></script> 
         <script type="text/javascript" src="js/area/objects/labeler.js"></script> 
-        
+        <script type="text/javascript" src="js/area/objects/outputparser.js"></script> 
+        <script type="text/javascript" src="js/area/objects/evaluator.js"></script> 
+        <script type="text/javascript" src="js/area/objects/nback.js"></script>
+        <script type="text/javascript" src="js/area/objects/classifier.js"></script> 
+        <script type="text/javascript" src="js/area/objects/journal.js"></script> 
+        <script type="text/javascript" src="js/area/objects/turnbook.js"></script>
+        <script type="text/javascript" src="js/area/objects/wells.js"></script>
+
+
+
+
+
         <!--INTERFACE -->
         <script type="text/javascript" src="js/javainterface.js"></script> 
         <script type="text/javascript" src="js/events.js"></script> 
         
+        <audio id="0A" src="audio/A0.wav" preload="auto"></audio>
+        <audio id="0B" src="audio/A1.wav" preload="auto"></audio>
+        <audio id="0C" src="audio/A2.wav" preload="auto"></audio>
+        <audio id="1A" src="audio/B0.wav" preload="auto"></audio>
+        <audio id="1B" src="audio/B1.wav" preload="auto"></audio>
+        <audio id="1C" src="audio/B2.wav" preload="auto"></audio>
+        <audio id="2A" src="audio/C0.wav" preload="auto"></audio>
+        <audio id="2B" src="audio/B1.wav" preload="auto"></audio>
+        <audio id="2C" src="audio/C2.wav" preload="auto"></audio>
+        <audio id="3A" src="audio/D0.wav" preload="auto"></audio>
+        <audio id="3B" src="audio/D1.wav" preload="auto"></audio>
+        <audio id="3C" src="audio/D2.wav" preload="auto"></audio>
+        <audio id="hgwellsaudio" src="audio/foodofthegods.mp3" preload="auto"></audio>
 
-         
+
+
+        
     </body>
     
 </html> 

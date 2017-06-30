@@ -3,28 +3,47 @@
  *file is evoked. The function init() is always called. The function reinit() is
  *called everytime we load a new datalayer: it is where we set the bulk of our listeners
  ***/
+var nbackEvaluator = new Evaluator(-1);
 var consoleArea = new ConsoleArea();
 var chartArea = new ChartArea("#topRight");
 var javaInterface = new JavaInterface();
 var plumbTechniques = new PlumbTechniques();
 var plumb = new Plumb();
 var datalayerArea = new DatalayerArea("#content");
-var address =  "http://localhost:8080/SensorMining/" 
-//var address = "http://sensormining.herokuapp.com/"; //.. the address of the back-end
+var outputParser = new OutputParser();
+var address =  "http://localhost:8080/Neuracle/";
+//var address = "http://sensormining.herokuapp.com/";
+var nback = new NBack();
+var classifier = new Classifier();
+var journal  = new Journal();
+var turnbook  = new Turnbook();
 
+
+
+
+
+//var address = "http://sensormining.herokuapp.com/"; //.. the address of the back-end
 /* When document is loaded, do init, ie set listeners etc. 
  */
 $( init );
 function init() { 
+    
+      /*$("#flipbook").turn({
+            width: 600,
+            height: 400,
+            autoCenter: true
+       });*/ 
+    element = $("<div />").html(" It is a truth universally acknowledged that a single man in possession of a good fortune, must be in want of a wife.");
+    //$("#flipbook").turn("addPage", element, 3);
+    //nback.begin(30000);
     //.. Focus on input, so that it is the default location for cursor
     //    $("input").focus();
     
-    //.. Tell consoleArea to display a welcome message. load a file 
+    //.. Tell consoleArea to display a welcome me ssage. load a file 
     consoleArea.introduce();
     
     //.. Retrieve any data layers that might still be loaded in the system
     javaInterface.postToDataLayers();
-    
     //.. get commands
     $("#consoleInput").val("getcommandsnodisplay");
     javaInterface.postToConsole();
@@ -40,7 +59,6 @@ function init() {
         }       
     });
     
-  
     
     //..Wow, that was really challening figuring out that reinit kinda spawns two threads... 
     //... Be careful with that Sam. I think its the reason why double clicking calls the server twice
@@ -88,6 +106,30 @@ function init() {
         }
         chartArea.displayChart(chartArea.lastJSON);
     });
+
+    $("#readingsBack").keyup(function(d) {
+        classifier.readingsBack = $("#readingsBack").val()*1;
+        classifier.recomputeSlopes();
+    });
+    $("#threshold").keyup(function(d) {
+        classifier.threshold = $("#threshold").val()*1; 
+    });
+    
+    $("#classifierchannel").change(function(d) {
+        classifier.resetCorrelations();
+        classifier.channel = $("#classifierchannel").val()*1; 
+        chartArea.setChannelsToShow(0, classifier.channel);
+        javaInterface.postToDataLayer();
+    })
+    
+    $("#classifierchannel2").change(function (d) {
+        classifier.resetCorrelations();
+        classifier.channel2 = $("#classifierchannel2").val() * 1;
+        chartArea.setChannelsToShow(1, classifier.channel2);
+        javaInterface.postToDataLayer();
+    })
+    
+    
 }
 
 
@@ -140,8 +182,6 @@ function datalayerInit(datalayer) {
         datalayerArea.datalayers.unselectAll();
         datalayerArea.boundsCheck();
     });
-
-    
 }
 
 

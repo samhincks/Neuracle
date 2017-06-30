@@ -16,14 +16,16 @@ function JavaInterface() {
         if (JSONobj.error != null){
             consoleArea.displayMessage(JSONobj.error, "systemmess", "redline");
         }
-        else if(JSONobj.content != "")
-            consoleArea.displayMessage(JSONobj.content, "systemmess", "blueline");
+        else if(JSONobj.content != ""  && (JSONobj.action == null || !(JSONobj.action.id.startsWith("stat")))){
+            outputParser.parseOutput(JSONobj.content);
+        }
         
         if (JSONobj.tutorial != "")
             consoleArea.displayMessage(JSONobj.tutorial, "systemmess", "orangeline");
         
-  
-        
+        if (JSONobj.tutorial != "")
+            consoleArea.displayMessage(JSONobj.selfcalibrate, "systemmess", "orangeline");
+
         //.. is there some action to complete here? A new dataset to reload
         if(JSONobj.action != null) {
             if (JSONobj.action.id == "reload") {
@@ -47,6 +49,32 @@ function JavaInterface() {
              }
              else if (JSONobj.action.id == "getcommandsnodisplay") {
                  consoleArea.setCommands(JSONobj.action.data, false);
+             }
+             if (JSONobj.action.id.startsWith("stat")) {
+                var dl = JSONobj.action.id.split("-")[1];
+                var returnVal = JSONobj.content;
+                var type = returnVal.split("-")[0];
+                var val = returnVal.split("-")[1];
+                console.log(dl, val, type, returnVal);
+                var devAway = datalayerArea.datalayers.getDLById(dl).processStat(val);
+                consoleArea.displayMessage(val+"", "systemmess", "greenline");
+                
+                if (type == "hr") {
+                    classifier.heartrate = val;
+                }
+                if (type == "hrv") {
+                    classifier.heartratevariability = val;
+                }/*
+                if (Math.abs(devAway)>1) {
+                    if (devAway >0){
+                        document.getElementById("C1").play();
+                        consoleArea.displayMessage(devAway+"", "systemmess", "greenline");
+                    }
+                    else {
+                        document.getElementById("B2").play();
+                        consoleArea.displayMessage(devAway + "", "systemmess", "blackline");
+                    }
+                }*/ 
              }
         }
     }
@@ -98,7 +126,6 @@ function JavaInterface() {
         $('#stats').val(false); 
         $('#debug').val(false);
 
-        
         if (arguments.length) {
             if (message == "frequency"){
                 $('#frequency').val(true);
@@ -227,7 +254,6 @@ function JavaInterface() {
          
          if(JSONobj.performance != null)
             chartArea.displayPerformance(JSONobj.performance);
-        
     }
     
 }
