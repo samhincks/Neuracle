@@ -15,6 +15,85 @@
             </bookmark>
         </file>
         <file>
+            <url>web/js/area/consolearea.js</url>
+            <bookmark id="38">
+                <name/>
+                <line>208</line>
+                <key/>
+            </bookmark>
+            <bookmark id="39">
+                <name/>
+                <line>216</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/filereader/EvaluationInterface.java</url>
+            <bookmark id="43">
+                <name/>
+                <line>87</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/area/chartarea.js</url>
+            <bookmark id="25">
+                <name/>
+                <line>77</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/dao/MiscellaneousParser.java</url>
+            <bookmark id="16">
+                <name/>
+                <line>684</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/dao/ExternalDataParser.java</url>
+            <bookmark id="15">
+                <name/>
+                <line>339</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/js/area/objects/datalayers.js</url>
+            <bookmark id="35">
+                <name/>
+                <line>276</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/dao/TransformationParser.java</url>
+            <bookmark id="20">
+                <name/>
+                <line>534</line>
+                <key/>
+            </bookmark>
+            <bookmark id="13">
+                <name/>
+                <line>651</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/timeseriestufts/kth/streams/uni/Channel.java</url>
+            <bookmark id="6">
+                <name/>
+                <line>701</line>
+                <key/>
+            </bookmark>
+            <bookmark id="7">
+                <name/>
+                <line>993</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>src/java/dao/DataManipulationParser.java</url>
             <bookmark id="42">
                 <name/>
@@ -33,19 +112,6 @@
             </bookmark>
         </file>
         <file>
-            <url>web/js/area/consolearea.js</url>
-            <bookmark id="38">
-                <name/>
-                <line>176</line>
-                <key/>
-            </bookmark>
-            <bookmark id="39">
-                <name/>
-                <line>184</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>web/js/visualization/movingLinegraph.js</url>
             <bookmark id="37">
                 <name/>
@@ -55,14 +121,6 @@
             <bookmark id="24">
                 <name/>
                 <line>791</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/filereader/EvaluationInterface.java</url>
-            <bookmark id="43">
-                <name/>
-                <line>87</line>
                 <key/>
             </bookmark>
         </file>
@@ -85,22 +143,6 @@
             </bookmark>
         </file>
         <file>
-            <url>web/js/area/chartarea.js</url>
-            <bookmark id="25">
-                <name/>
-                <line>76</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/dao/MiscellaneousParser.java</url>
-            <bookmark id="16">
-                <name/>
-                <line>684</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>src/java/timeseriestufts/kth/streams/tri/Experiment.java</url>
             <bookmark id="11">
                 <name/>
@@ -114,39 +156,10 @@
             </bookmark>
         </file>
         <file>
-            <url>src/java/dao/ExternalDataParser.java</url>
-            <bookmark id="15">
-                <name/>
-                <line>265</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/js/area/objects/datalayers.js</url>
-            <bookmark id="35">
-                <name/>
-                <line>276</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>src/java/dao/InputParser.java</url>
             <bookmark id="1">
                 <name/>
                 <line>269</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/dao/TransformationParser.java</url>
-            <bookmark id="20">
-                <name/>
-                <line>534</line>
-                <key/>
-            </bookmark>
-            <bookmark id="13">
-                <name/>
-                <line>651</line>
                 <key/>
             </bookmark>
         </file>
@@ -159,30 +172,28 @@
             </bookmark>
             <bookmark id="17">
                 <name/>
-                <line>955</line>
+                <line>960</line>
                 <key/>
             </bookmark>
             <bookmark id="18">
                 <name/>
-                <line>1101</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/timeseriestufts/kth/streams/uni/Channel.java</url>
-            <bookmark id="6">
-                <name/>
-                <line>701</line>
-                <key/>
-            </bookmark>
-            <bookmark id="7">
-                <name/>
-                <line>993</line>
+                <line>1164</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/Users/shincks/Documents/Brain-Prediction/Neuracle/src/java/stripes/action/DataLayerActionBean.java</file>
+            <file>file:/Users/shincks/Documents/Brain-Prediction/Neuracle/src/java/dao/MiscellaneousParser.java</file>
+            <file>file:/Users/shincks/Documents/Brain-Prediction/Neuracle/src/java/dao/InputParser.java</file>
+            <file>file:/Users/shincks/Documents/Brain-Prediction/Neuracle/web/js/area/audioarea.js</file>
+            <file>file:/Users/shincks/Documents/Brain-Prediction/Neuracle/src/java/dao/ExternalDataParser.java</file>
+            <file>file:/Users/shincks/Documents/Brain-Prediction/Neuracle/src/java/dao/datalayers/BiDAO.java</file>
+            <file>file:/Users/shincks/Documents/Brain-Prediction/Neuracle/web/js/experiment.js</file>
+            <file>file:/Users/shincks/Documents/Brain-Prediction/Neuracle/src/java/dao/DataManipulationParser.java</file>
+            <file>file:/Users/shincks/Documents/Brain-Prediction/Neuracle/web/js/javainterface.js</file>
+            <file>file:/Users/shincks/Documents/Brain-Prediction/Neuracle/src/java/dao/TransformationParser.java</file>
+        </group>
     </open-files>
 </project-private>

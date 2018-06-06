@@ -29,12 +29,14 @@ function OutputParser() {
         
         ///.. start a new condition, so deactivate any running nback evaluator
         if (content.startsWith("Starting")) {
-            nbackEvaluator.deactivate();
-            document.getElementById("0A").play();
-            console.log(content);
-            if(content.startsWith("Starting: junk")) {
-               //  $("#consoleInput").val("selfcalibrate2");
-               // javaInterface.postToConsole();
+            if (!(content.startsWith("Starting: awa"))) { // hacky, but in experiment, we dont want this when we abort dmn
+                nbackEvaluator.deactivate();
+                document.getElementById("0A").play();
+                console.log(content);
+                if(content.startsWith("Starting: junk")) {
+                   //  $("#consoleInput").val("selfcalibrate2");
+                   // javaInterface.postToConsole();
+                }
             }
         }
         

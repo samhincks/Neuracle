@@ -42,11 +42,13 @@ public class ConsoleActionBean extends DataLayerActionBean {
             if(consoleInput.startsWith("task")) {
                 return new ForwardResolution(INDEX);
             }
+            
             //--- SET any additional parameters not parsed in text for certain commands
             if (this.getTechnique()!=null){
                 ctx.setCurrentTechnique(technique);
             }
-           if (consoleInput == null || consoleInput.equals("")) return new StreamingResolution("text", "Enter tab to see all available commands");
+            
+            if (consoleInput == null || consoleInput.equals("")) return new StreamingResolution("text", "Enter tab to see all available commands");
 
             //.. if this is an evaluation command, set the technique parameters
             if (connections != null && (consoleInput.startsWith("evaluate") 

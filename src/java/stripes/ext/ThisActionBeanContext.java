@@ -41,7 +41,7 @@ public class ThisActionBeanContext extends ActionBeanContext{
         this.test = test;
     }
     public boolean test = false;
- 
+    
     private static String currentDataLayer;
     private static String currentTechnique;
     public static DataLayersDAO dataLayersDAO = new DataLayersDAO(); //.. may want to save to ctx

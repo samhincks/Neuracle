@@ -1,5 +1,9 @@
 /** With ALL the data known about some object, compute the probability of various features.
- * I could even give this guy visual representation on the screen, and I could calibrate it
+ * I could even give this guy visual representation on the screen, and I could calibrate it.
+ * 
+ * TODO: Implement Dynamic segmentation algorithm. A window is a salient chunk of
+ * fNIRS data pertaining to one cycle. The risk is that motion causes you to create
+ * a new window, so we use correlation between Hb and HbO to throttle false positive segmentation. 
  **/
 function Classifier() {
     var data; //.. 2D array of raw data
@@ -12,6 +16,8 @@ function Classifier() {
     this.channel2 =1;
     this.correlations =[];
     this.scaledCorrelations =[];
+   
+    this.windows = []; // A given segment of data
     
     //.. this is a bit different, btu I'm going to associate HRV and HR with this guy too. I'm going to have so that it just gets recorded here
     this.heartrate =0;
@@ -49,6 +55,8 @@ function Classifier() {
         }
         return [smallest, smallestI, smallestJ];
     }
+    
+    // This COULD be wrong. hb / hbo may be adjacent. Todo: double check.
     this.isHBO = function (i) {
         if (i == 1 || i ==2 || i==3  || i==9 || i==10 || i==11) return true;
         return false;
@@ -61,7 +69,8 @@ function Classifier() {
         
         var corr = ss.sampleCorrelation(x, y);
         var scale = d3.scale.linear().domain([d3.min(this.correlations), d3.max(this.correlations)]).range([-1, 1]);
-       // var scaledCorr = scale(corr);
+       
+        // var scaledCorr = scale(corr);
         var avg = ss.mean(this.correlations);
         var dev = ss.standardDeviation(this.correlations);
 
@@ -94,6 +103,21 @@ function Classifier() {
                 }
             }
         }
+        if (this.windows.length == 0) {
+            var window = new Window();
+            this.windows.push(window);
+        }
+        var lastWindow = this.windows[this.windows.length-1];
+        var added = lastWindow.addData(channelVals, numUpdates);
+        
+        // if we didn't add data here (this is a new segment, push new data)
+        if (!added) {
+            var window = new Window();
+            this.windows.push(window);
+        }
+        
+        console.log(this.getSmallestCorrelation());
+        
     }
     
     var getSlope = function(x) {

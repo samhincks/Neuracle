@@ -69,6 +69,21 @@ public class ExternalDataParser extends Parser{
         command.selfcalibrate = "Now we want to organize the data into two groups: one for the 0-back trials and one for the 2-back trials::"
                 + "Double click on the rectangular object in the top-left, then Type realtime(easy,hard) to apply a series of manipulations to your data. ";
         commands.put(command.id, command);
+        
+         //-- PLAYBACK
+        command = new Command("playback");
+        command.documentation = "Write the selected dataset to a file with the same name as its id";
+        command.action = "csrefresh";
+
+        command.parameters = "1. filename (must be in input/)";
+        commands.put(command.id, command);
+        
+        
+        command = new Command("ff");
+        command.documentation = "Fast forward to new position in Playback. Doesnt work for now";
+
+        command.parameters = "1. Number of positions to advance";
+        commands.put(command.id, command);
     }
 
     /**Executes the specified command
@@ -98,6 +113,16 @@ public class ExternalDataParser extends Parser{
             c = commands.get("stream");
             c.data = this.stream(parameters);   
         }      
+        
+        else if (command.startsWith("playback")) {
+            c = commands.get("playback");
+            c.data = this.playback(parameters);
+        }
+        
+        else if (command.startsWith("ff")) {
+            c = commands.get("ff");
+            c.data = this.fastforward(parameters);
+        }
         
         else if (command.startsWith("write")) {
             c = commands.get("write");
@@ -177,7 +202,7 @@ public class ExternalDataParser extends Parser{
      /**
      * Parses: synchronize(dataname). If there is a session-datalayer with the
      * name datalayer, it pings the database to make sure it is up-to-date; if
-     * no such datalayer exists, it creates a new one *
+     * no such datalayer exists, it creates a new one.
      */
     public String synchronize(String [] parameters) throws Exception {
         String filename ;
@@ -209,6 +234,55 @@ public class ExternalDataParser extends Parser{
         }
     }
 
+    public JSONObject fastforward(String [] parameters) throws Exception {
+        String filename = currentDataLayer.id;
+
+        if (ctx.dataLayersDAO.streams.containsKey(filename)) {
+            BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(filename);
+            if (parameters.length > 0) {
+                int pos = Integer.parseInt(parameters[0]);
+                bDAO.curPos += pos;
+            }
+            else {
+                bDAO.curPos += 50;
+            }
+            
+            ChannelSet cs = (ChannelSet) bDAO.dataLayer;
+            BiDAO ancestor = (BiDAO) ctx.getAncestorOf(bDAO.getId());
+            
+            return ancestor.getPlaybackJSON(cs.transformations);
+        }
+        else {
+            throw new Exception("Context does not contain datalayer " + filename);
+        }
+    }
+    /**
+     * Handle: playback(datalayername). This returns the most recent readings of
+     * some dataset being read. It's like "csrefresh" or "stream" but instead of 
+     * querying this streamed dataset, we give back the readings which have not been
+     * read from some old dataset.
+     */
+    public JSONObject playback(String [] parameters) throws Exception {
+        
+        //TODO: Implement all code below. 
+        if (currentDataLayer.id == null || currentDataLayer == null) throw new Exception("Must select a datalayer");
+        String filename = currentDataLayer.id; 
+        
+        if (parameters.length > 0) filename = parameters[0];
+        
+        if (ctx.dataLayersDAO.streams.containsKey(filename)) {
+            BiDAO bDAO = (BiDAO) ctx.dataLayersDAO.get(filename);
+            
+            //.. The selected datalayer may or may not be the actual thing which is synchronized with the database
+            //.. It could have transformations applied to it, in which case we need to find its oldest ancestor,
+            //.. synchronize with that, but apply the transformations specified in the layer selected
+            ChannelSet cs = (ChannelSet)bDAO.dataLayer;
+            BiDAO ancestor = (BiDAO) ctx.getAncestorOf(bDAO.getId());
+            return ancestor.getPlaybackJSON(cs.transformations);           
+        } else {
+            throw new Exception("Context does not contain datalayer " + filename);
+        }   
+    }  
     /**
      * Handle: refresh(datalayername). Return the newest values from the
      * specified datalayer. This is a bit different from most requests in this

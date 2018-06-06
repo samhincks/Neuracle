@@ -3,6 +3,10 @@
  *file is evoked. The function init() is always called. The function reinit() is
  *called everytime we load a new datalayer: it is where we set the bulk of our listeners
  ***/
+
+var STREAMINTERVAL = 100;
+var channelsToShow = [1,9];//[1,2];//=[0,1]; //.. an array of 2D channels to show (streaming or not streaming), which we change by view.show()
+
 var nbackEvaluator = new Evaluator(-1);
 var consoleArea = new ConsoleArea();
 var chartArea = new ChartArea("#topRight");
@@ -17,7 +21,13 @@ var nback = new NBack();
 var classifier = new Classifier();
 var journal  = new Journal();
 var turnbook  = new Turnbook();
+var context = new AudioContext();
+var audioArea = new AudioArea(context);
+var experiment = new Experiment();
 
+var songs = new Songs();
+//songs.vivacitateMe();
+//songs.play();
 
 
 

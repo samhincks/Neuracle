@@ -57,7 +57,6 @@
             </div>  
             
             <!--Where we place our the description of selection-->
-            
             <div id ="farBottomRight" class ="component ">      
                     
                 <table id ="classifier" BORDER="5"    WIDTH="50%"   CELLPADDING="4" CELLSPACING="3">
@@ -164,7 +163,7 @@
                 </table> 
 
             </div> 
-            
+
             <!--For communicating File variables to Stripes -->             
             <div id ="bottomLeft" class ="component">
                <s:form beanclass ="stripes.action.DataLayerActionBean" id = "submitform" class ="unselectable"> 
@@ -225,7 +224,6 @@
         <script type="text/javascript" src="js/visualization/ClassificationChart.js"></script> 
 
 
-
         <!--AREAS-->
         <script type="text/javascript" src="js/area/chartarea.js"></script>
         <script type="text/javascript" src="js/area/datalayerarea.js"></script> 
@@ -238,19 +236,31 @@
         <script type="text/javascript" src="js/area/objects/outputparser.js"></script> 
         <script type="text/javascript" src="js/area/objects/evaluator.js"></script> 
         <script type="text/javascript" src="js/area/objects/nback.js"></script>
+        
+        <script type="text/javascript" src="js/area/objects/window.js"></script> 
         <script type="text/javascript" src="js/area/objects/classifier.js"></script> 
         <script type="text/javascript" src="js/area/objects/journal.js"></script> 
         <script type="text/javascript" src="js/area/objects/turnbook.js"></script>
         <script type="text/javascript" src="js/area/objects/wells.js"></script>
 
 
+        <script type="text/javascript" src="js/web-audio/adaptive-song.js"></script> 
+        <script type="text/javascript" src="js/web-audio/adaptive-chords.js"></script> 
+        <script type="text/javascript" src="js/web-audio/track.js"></script> 
+        <script type="text/javascript" src="js/web-audio/songs.js"></script> 
 
+        <script type="text/javascript" src="js/web-audio/poly-synth-voice.js"></script> 
+        <script type="text/javascript" src="js/web-audio/poly-synth.js"></script> 
+        <script type="text/javascript" src="js/area/audioarea.js"></script>
 
 
         <!--INTERFACE -->
+        <script type="text/javascript" src="js/experiment.js"></script> 
+
         <script type="text/javascript" src="js/javainterface.js"></script> 
         <script type="text/javascript" src="js/events.js"></script> 
         
+      
         <audio id="0A" src="audio/A0.wav" preload="auto"></audio>
         <audio id="0B" src="audio/A1.wav" preload="auto"></audio>
         <audio id="0C" src="audio/A2.wav" preload="auto"></audio>
@@ -263,7 +273,9 @@
         <audio id="3A" src="audio/D0.wav" preload="auto"></audio>
         <audio id="3B" src="audio/D1.wav" preload="auto"></audio>
         <audio id="3C" src="audio/D2.wav" preload="auto"></audio>
+          <!--
         <audio id="hgwellsaudio" src="audio/foodofthegods.mp3" preload="auto"></audio>
+        -->
 
 
 

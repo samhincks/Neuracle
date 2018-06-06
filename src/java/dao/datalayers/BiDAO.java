@@ -48,7 +48,7 @@ public class BiDAO extends DataLayerDAO {
     public boolean synchronizedWithDatabase = false; //.. if this layer changes in response to a database
     public int numSynchronizations =0; //.. number of times this has been synchronized
     public int addedInLastSynchronization =0;
-    public int curPos = 0; //.. DELETE THIS LATER
+    public int curPos = 0; //.. The current position in a dataset that is being played back.
     public Hashtable<String,String> curLabels = null; //.. when data is streamed in
     public ArrayList<Labels> labels = null; //.. a collection of labels describing condition of corresponding points
     
@@ -253,7 +253,14 @@ public class BiDAO extends DataLayerDAO {
             //.. add points at specified increments
             for (int j = 0; j < numPoints; j += pointsInc) { //. 0, numPoints, change later
                 float p = channel.getPointOrNull(j);
-                channelData.put(p);
+                try {
+                    channelData.put(p);
+                }
+                catch (Exception e) {
+                    // If infinity, put previous point
+                    channelData.put(0);
+                    System.out.println(p);
+                }
             }
             values.put(channelData);
         }
@@ -448,6 +455,102 @@ public class BiDAO extends DataLayerDAO {
         
         return jsonObj;
     } 
+     
+    /**
+     * Here, some old dataset is being periodically updated, and we get X points at
+     * a time. How many we get at a time depends on the refresh rate.
+     */ 
+    public JSONObject getPlaybackJSON(Transformations transformations) throws Exception {
+        jsonObj = new JSONObject();
+        ChannelSet channelSet = (ChannelSet) dataLayer;
+      
+        try {
+            JSONObject data = new JSONObject();
+
+            //.. add id of each column as label, then add to the data obj
+            JSONArray names = new JSONArray();
+            for (String s : channelSet.getColumnNames()) {
+                names.put(s);
+            }
+            data.put("names", names);
+
+            /*Values should be an an array of arrays, the inner values are
+             timestamp at each channel and the outer values are the timestamps
+             */
+            JSONArray values = new JSONArray();
+            int pointsInc =1;
+            
+            int refreshSize = 5; // TODO: CHANGE, this is how quickly it's all being streamed,
+                                    // It must line up with sample rate of machine and refresh rate
+            
+            //.. Add each point in data to JSONArray
+            //... BUT DO NOT ADD MORE THAN MAX POINTS
+            int startingPoint = curPos;
+            int endPoint = curPos + refreshSize;
+            curPos+=refreshSize;
+            
+            
+            /**------- NEW WAY OF ADDING DATA: SUPPORTS MANIPULATION--------*/
+            ChannelSet cs = channelSet.getChannelSetBetween(startingPoint, endPoint);
+            if (transformations != null) {
+                for (Transformation t : transformations.transformations) {
+                    cs = cs.manipulate(t, true); // This is troubling me, since it seems to me the transformation should apply to the whole channel
+                }
+            }
+            
+            //.. add points at specified increments
+            for (int j = 0; j < cs.getMinPoints(); j += pointsInc) {
+                JSONArray timeData = new JSONArray(); //.. each channel's value at the timestamp
+                
+                for (int i = 0; i < cs.getChannelCount(); i++) {
+                    UnidimensionalLayer channel = cs.getChannel(i);
+                    Float p = channel.getPointOrNull(j);          
+                    if (p!= null){   
+                        JSONArray arr = new JSONArray();   
+                        arr.put(p);       //.. little one element arrays!
+                        timeData.put(arr);
+                    }
+                }
+                
+                //... Add numerically visualizable markers
+                if(cs.markers!= null){
+                    int lastIndex =0;
+                    for (int i = 0; i < cs.markers.size(); i++) {
+                        Markers m = cs.markers.get(i);
+                        int index; 
+                        try {                     
+                            String conName = m.saveLabels.channelLabels.get(j).value;
+                            index = m.getClassification().getIndex(conName);
+                        }
+
+                        //.. Not impossible that marker and data is a little out of synch, which is ok
+                        catch(Exception e ) {index = lastIndex;}  //.. just assign as the last one 
+                        JSONArray arr = new JSONArray();
+                        arr.put(index);
+                        timeData.put(arr);
+                    }
+                }
+                values.put(timeData);    
+            }  
+                
+            int mostPoints = channelSet.getMaxPoints();
+            float maxTime = (mostPoints / channelSet.readingsPerSecond);
+            data.put("maxTime", maxTime);
+            data.put("start", startingPoint);   
+            data.put("end", endPoint);
+            data.put("step", pointsInc);
+            data.put("values", values);
+            
+            //.. save this array
+            jsonObj.put("id", getId());
+            jsonObj.put("data", data);
+            jsonObj.put("type", "csrefresh");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObj;
+    }
      
     /**
      * Potenitally, this datalayer is periodically updated with respect to a

@@ -81,6 +81,30 @@ function ConsoleArea() {
             return true;
         }
         
+        if (experiment.awaitingFeedback) {
+            experiment.parseFeedback(userText);
+            return true;
+        }
+        
+        if (experiment.playingAudio) {
+            
+            // Just a blank enter without text when you are doing the experiment
+            // And its playing audio indicates that you are returning from zoning out.
+            // And you retrolabel zoned-out
+            experiment.returnsFromDMNThisTrial++; 
+            var conditionName = "awareness" +experiment.returnsFromDMNThisTrial; 
+            var message = "label(" + "realtime1" + "," + "awareness" + "," + conditionName + ")";
+            
+            $("#consoleInput").val(message);
+            javaInterface.postToConsole();
+            return true;
+        }
+        
+        //.. initiate poly-synth
+        if (userText.startsWith("synth")) {
+            
+        }
+        
         //.. initiate turnbook
         if (userText.startsWith("hgwells")){
             turnbook.init();
@@ -105,8 +129,15 @@ function ConsoleArea() {
              return false;//.. return false as we still want to go to java
          }
         
+        if (userText.startsWith("experiment")) {
+            if (!(this.streaming)) this.displayMessage("No data is currently being collected. Type stream or playback");
+            
+            experiment.initiateAudio();
+            return true;
+        }
+        
         //.. for realtime visualization, update stream repeatedly, and terminate it when I do another command
-        else if (userText.startsWith("stream(") || userText == "stream") {
+        else if (userText.startsWith("stream(") || userText == "stream" || userText =="playback") {
             if (this.streaming){
                 this.displayMessage("A streaming procedure is already being run; terminate it with clearstream()", "systemmes", "redline");
                 return true;
@@ -117,9 +148,10 @@ function ConsoleArea() {
             this.streamInterval= setInterval(function() {
                 $("#consoleInput").val(userText +"(" + datalayerArea.datalayers.lastSelectedId);
                 javaInterface.postToConsole();
-            }, 100); //.. less than 50 and there are errors
+            }, STREAMINTERVAL); //.. less than 50 and there are errors
             return false;
          }
+         
          
          
          //.. For periodically updating what the current label is of a synchronized

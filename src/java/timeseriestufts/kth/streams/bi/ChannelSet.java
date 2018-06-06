@@ -837,7 +837,12 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
             double filterGain =0.1;
             if (ts.params != null && ts.params.length > 0) 
                 filterGain = ts.params[0];
-            retSet = this.adaptiveFilter(filterGain,ts);
+           
+            // Temporarily changing this to reverse adaptive filter
+            if (true)
+                retSet = this.adaptiveFilter(filterGain,ts);
+            else
+                retSet = this.reverseAdaptiveFilter(filterGain, ts);
         }
         
         else if (ts.type == Transformation.TransformationType.removefirst) 
@@ -981,7 +986,65 @@ public class ChannelSet extends BidimensionalLayer<Channel>{
         cs.setId(s);
         return cs;
     }
+    private ChannelSet reverseAdaptiveFilter(double feedbackGain, Transformation t) throws Exception{
+        if (this.streams.size() != 16) throw new Exception("Expected 16 channels");
+       /*Assume: Index 0 -> 2, 4, 6 (AHBO)
+         Index 1 - > 3,5,7(AHB)
+         Index 8 -> 10,12,14(BHBO)
+         Index 9 ->11,13,15(BHB)
+        */        
+        System.out.println("Cs.Af.Applying reverse adaptive filter");
+        ChannelSet retSet = this.getCopy(this.id+"adaptive");
+        Channel ref1 = this.getChannel(0);
+        Channel ref2 = this.getChannel(1);
+        Channel ref3 = this.getChannel(8);
+        Channel ref4 = this.getChannel(9);
+        
+        
+        //.. filter first 3
+        retSet.addStream(ref1);
+        retSet.addStream(ref1.adaptiveFilter(this.getChannel(2),feedbackGain, t.adapter[2]));
+        t.adapter[2] = ref1.adapter; // I think this is just for memory efficiency 
+        retSet.addStream(ref1.adaptiveFilter(this.getChannel(4),feedbackGain, t.adapter[4]));
+        t.adapter[4] = ref1.adapter; 
+        retSet.addStream(ref1.adaptiveFilter(this.getChannel(6),feedbackGain, t.adapter[6]));
+        t.adapter[6] = ref1.adapter; 
+        
+        
+        retSet.addStream(ref2);
+        retSet.addStream(ref2.adaptiveFilter(this.getChannel(1),feedbackGain, t.adapter[1]));
+        t.adapter[1] = ref2.adapter; // I think this is just for memory efficiency 
+        retSet.addStream(ref2.adaptiveFilter(this.getChannel(3),feedbackGain, t.adapter[3]));
+        t.adapter[3] = ref2.adapter; 
+        retSet.addStream(ref2.adaptiveFilter(this.getChannel(5),feedbackGain, t.adapter[5]));
+        t.adapter[5] = ref2.adapter; 
+        
+        retSet.addStream(ref3);
+        retSet.addStream(ref3.adaptiveFilter(this.getChannel(10),feedbackGain, t.adapter[10]));
+        t.adapter[10] = ref3.adapter; // I think this is just for memory efficiency 
+        retSet.addStream(ref3.adaptiveFilter(this.getChannel(12),feedbackGain, t.adapter[12]));
+        t.adapter[12] = ref3.adapter; 
+        retSet.addStream(ref3.adaptiveFilter(this.getChannel(14),feedbackGain, t.adapter[14]));
+        t.adapter[14] = ref3.adapter;
+        
+        retSet.addStream(ref4);
+        retSet.addStream(ref4.adaptiveFilter(this.getChannel(11),feedbackGain, t.adapter[11]));
+        t.adapter[11] = ref4.adapter; // I think this is just for memory efficiency 
+        retSet.addStream(ref4.adaptiveFilter(this.getChannel(13),feedbackGain, t.adapter[13]));
+        t.adapter[13] = ref4.adapter; 
+        retSet.addStream(ref4.adaptiveFilter(this.getChannel(15),feedbackGain, t.adapter[14]));
+        t.adapter[15] = ref4.adapter;
+        
+        return retSet;
+    }
     
+    /**
+     * Returns the information in the reference signal which is not in the brain.
+     * @param feedbackGain
+     * @param t
+     * @return
+     * @throws Exception 
+     */
     private ChannelSet adaptiveFilter(double feedbackGain, Transformation t) throws Exception{
         if (this.streams.size() != 16) throw new Exception("Expected 16 channels");
        /*Assume: Index 0 -> 2, 4, 6 (AHBO)

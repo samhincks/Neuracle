@@ -11,8 +11,9 @@ function ChartArea(id, descArea) {
    this.lastJSON; //.. we might wnat to redraw the graph, for instance if we resize the graph
    var border =20;
    var sc = new StreamChart();
-   var channelsToShow = [1,2];//=[0,1]; //.. an array of 2D channels to show (streaming or not streaming), which we change by view.show()
-   //.. changed in events when we alter channel selection by slope display
+   
+    
+    //.. changed in events when we alter channel selection by slope display
    this.setChannelsToShow= function(index, val) {
        channelsToShow[index] = val;
    }
@@ -78,7 +79,6 @@ function ChartArea(id, descArea) {
         $(selection).children().remove();
         d3.selectAll('.line-graph').remove(); //.. remove if it exists already
         data = JSONobj.data;
-        
         //.. potentially, initialize a classifier too if we're interested in realtiem front end statistics
         classifier.initialize(channelsToShow); //.. watch out! now we reinitialie every time it presses
         
@@ -99,6 +99,11 @@ function ChartArea(id, descArea) {
         data["maxTime"] = maxInSeconds;
         streamChart = new LineGraph({containerId: 'topRight', data: data});
         //this.writeMarkerVals(JSONobj.data.markerNames);
+        
+        
+        // ADDED JANUARY 2018
+        
+        
     }
     
     this.show2DIndexes = function(params) {

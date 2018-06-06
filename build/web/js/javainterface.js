@@ -163,7 +163,19 @@ function JavaInterface() {
             consoleArea.displayJSONObj(JSONobj);
         }
         else { //.. no error
+            
+            // Put this back when you want to work with the audio area again
+            /*
+            // CREATE a new audio object here! 
+            console.log(JSONobj.type);
+            if (JSONobj.type != "experiment")
+                audioArea.initializeWithData(JSONobj);
+            */ 
+            console.log(JSONobj);
             chartArea.displayChart(JSONobj);
+            console.log('ret');
+            //console.log(JSONobj); //.. This should have the needed information to play audio.
+            
         }
         
     }

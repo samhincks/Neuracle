@@ -30,7 +30,7 @@ from time import sleep
 #DEVICE = 'CMS50D'
 #DEVICE = 'fNIRS'
 DEVICE = 'Imagent'
-DEVICE = 'Fake'
+#DEVICE = 'Fake'
 
 """
 Time format info
@@ -62,11 +62,21 @@ if DEVICE == 'CMS50D':
 #serialport = serial('COM1','InputBufferSize',2048,'BaudRate',57600, ...
     #'StopBits',1,'Terminator','LF','Parity','none','FlowControl','none', ...
     #'Timeout',2);
-elif DEVICE == 'Imagent':
+elif DEVICE == 'ImagentOld':
     ser = serial.Serial(
         #port='COM1',\
         port='/dev/cu.usbserial',\
         baudrate=57600,\
+        parity=serial.PARITY_NONE,\
+        stopbits=serial.STOPBITS_ONE,\
+        bytesize=serial.EIGHTBITS,\
+        timeout=2)
+
+elif DEVICE == 'Imagent':
+    ser = serial.Serial(
+        #port='COM1',\
+        port='/dev/cu.usbserial',\
+        baudrate=115200,\
         parity=serial.PARITY_NONE,\
         stopbits=serial.STOPBITS_ONE,\
         bytesize=serial.EIGHTBITS,\
@@ -85,25 +95,40 @@ else:
 
 def readFromFake():
     print("Printing Fake");
-    it =0;
+    
+    it = 0;
+    # Switch should occur every fifteen seconds
+    sleepLength = 0.1
+
+    # When switchIt is 45 we switch from incrementing to dec
+    switchIt = 120
+    change = 0.001
+    value = 0
+    inc = True
+    
     while True:
         conn = pymysql.connect(host='127.0.0.1', port=3306,
                     user='root', db='newttt')
         cur=conn.cursor()   
         
-        it = it +1
-        max =it
-        if it > 100:
-        	max = it
+        if it % switchIt == 0 :
+            inc = not inc 
+
+        if inc:
+            value = value + change
+        else:
+            value = value - change
+
+        it = it + 1
         #Insert the data to the Table REALTIME            
         cur.execute("""INSERT INTO REALTIME1(A1HBO,A1HB,A2HBO,A2HB,A3HBO,A3HB,A4HBO,A4HB,B1HBO,B1HB,B2HBO,B2HB,B3HBO,B3HB,B4HBO,B4HB) VALUES
-          (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(randint(1,max),randint(1,max),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3),randint(1,3)))
+          (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(value,value,value,value,value,value,value,value,value,value,value,value,value,value,value,value))
         
         
         conn.commit()
         cur.close()
         conn.close()
-        sleep(0.5)
+        sleep(sleepLength)
 
 def readFromImagent():
     count=1
@@ -114,19 +139,24 @@ def readFromImagent():
     while True:
         for line in ser.read():
             cha = chr(line)
+
             s = s + cha
             if line == 10: 
                 ser.read() # read away the 13
                 # now s is the entire line. Do something with it
-                 
-                values = s.split()
+                values1 = s.split()
+                values = []
+
+                for part in values1:
+                    val = part.split("=")[1]
+                    values.append(val)
+
                 if (not printed):
-                	print(values)
-                	print(s)
+                	print(values[2])
+                	#print(s)
                 	print("---")
                 	printed = True
                 s = ""
-
                 conn = pymysql.connect(host='127.0.0.1', port=3306,
                             user='root', db='newttt')
                 cur=conn.cursor()   
